@@ -1,0 +1,50 @@
+{
+  "type": "response.create",
+  "model": "gpt-6-astra",
+  "previous_response_id": "resp_0a275ede0bf93a37016a9ee39ba6e487d0976455828b809c16",
+  "input": [
+    {
+      "type": "custom_tool_call_output",
+      "id": "ctco_01a07ca9-2a67-79b2-a6f8-40aa0206a2c5",
+      "call_id": "call_ScJBNWXuYVtf7PElMZNw2msM",
+      "output": [
+        {
+          "type": "input_text",
+          "text": "Script completed\nWall time 2.0 seconds\nOutput:\n"
+        },
+        {
+          "type": "input_text",
+          "text": "{\"chunk_id\":\"9e3b59\",\"wall_time_seconds\":0.4949896,\"exit_code\":1,\"original_token_count\":0,\"output\":\"\"}"
+        }
+      ]
+    }
+  ],
+  "tool_choice": "auto",
+  "parallel_tool_calls": false,
+  "reasoning": {
+    "effort": "low",
+    "summary": "detailed",
+    "context": "all_turns"
+  },
+  "store": false,
+  "stream": true,
+  "include": [
+    "reasoning.encrypted_content"
+  ],
+  "service_tier": "priority",
+  "prompt_cache_key": "01a07ca4-f7d5-75d1-b08b-c6f4eb165eaf",
+  "text": {
+    "verbosity": "low"
+  },
+  "client_metadata": {
+    "root_turn_id": "01a07ca8-fd65-7531-8f50-0d7479759644",
+    "thread_id": "01a07ca4-f7d5-75d1-b08b-c6f4eb165eaf",
+    "x-codex-installation-id": "fb05e372-5936-4b35-a18f-0069d7deff7f",
+    "session_id": "01a07ca4-f7d5-75d1-b08b-c6f4eb165eaf",
+    "x-codex-turn-metadata": "{\"installation_id\":\"fb05e372-5936-4b35-a18f-0069d7deff7f\",\"session_id\":\"01a07ca4-f7d5-75d1-b08b-c6f4eb165eaf\",\"thread_id\":\"01a07ca4-f7d5-75d1-b08b-c6f4eb165eaf\",\"agent_name\":\"/root\",\"turn_id\":\"01a07ca8-fd65-7531-8f50-0d7479759644\",\"window_id\":\"01a07ca4-f7d5-75d1-b08b-c6f4eb165eaf:0\",\"window_number\":0,\"context_window_id\":\"01a07ca4-f7d5-75d1-b08b-c70e10f16fb0\",\"request_kind\":\"turn\",\"root_turn_id\":\"01a07ca8-fd65-7531-8f50-0d7479759644\",\"thread_source\":\"user\",\"turn_trigger\":\"composer\",\"sandbox\":\"none\",\"sandbox_mode\":\"danger-full-access\",\"auto_review_enabled\":false,\"node_repl_auto_review_required\":true,\"node_repl_disabled\":false,\"turn_started_at_unix_ms\":1788797844881,\"workspace_kind\":\"projectless\"}",
+    "ws_request_header_x_openai_internal_codex_responses_lite": "true",
+    "x-codex-window-id": "01a07ca4-f7d5-75d1-b08b-c6f4eb165eaf:0",
+    "turn_id": "01a07ca8-fd65-7531-8f50-0d7479759644",
+    "x-codex-ws-stream-request-start-ms": "1788797856388"
+  }
+}

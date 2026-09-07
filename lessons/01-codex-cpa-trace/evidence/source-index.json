@@ -1,0 +1,86 @@
+[
+  {
+    "stage": "00-prewarm",
+    "timestamp": "2026-09-08T00:13:01.6236898+08:00",
+    "clientSource": "E:\\Develop\\CPA-Stack\\runtime\\cli-proxy-api\\auth\\logs\\request-log-parts-websocket-timeline-2525274943\\request-3031887003.tmp",
+    "requestLine": 3,
+    "completedLine": 27,
+    "upstreamSource": "E:\\Develop\\CPA-Stack\\runtime\\cli-proxy-api\\auth\\logs\\request-log-parts-api-websocket-timeline-2098804534\\part-1520500025.tmp",
+    "upstreamLine": 18,
+    "responseId": "resp_066a1a3d7ceb5466016a9ee290bec487d0812731411c039e9b",
+    "previousResponseId": null,
+    "fieldDifferences": [
+      "instructions"
+    ]
+  },
+  {
+    "stage": "01-turn1-read-skill",
+    "timestamp": "2026-09-08T00:13:20.1049982+08:00",
+    "clientSource": "E:\\Develop\\CPA-Stack\\runtime\\cli-proxy-api\\auth\\logs\\request-log-parts-websocket-timeline-2525274943\\request-458005293.tmp",
+    "requestLine": 3,
+    "completedLine": 363,
+    "upstreamSource": "E:\\Develop\\CPA-Stack\\runtime\\cli-proxy-api\\auth\\logs\\request-log-parts-api-websocket-timeline-2098804534\\part-2979037695.tmp",
+    "upstreamLine": 18,
+    "responseId": "resp_0a275ede0bf93a37016a9ee2a09f8887d0a30324408f94baa0",
+    "previousResponseId": null,
+    "fieldDifferences": [
+      "instructions"
+    ]
+  },
+  {
+    "stage": "02-turn1-final",
+    "timestamp": "2026-09-08T00:13:27.4569662+08:00",
+    "clientSource": "E:\\Develop\\CPA-Stack\\runtime\\cli-proxy-api\\auth\\logs\\request-log-parts-websocket-timeline-2525274943\\request-1933561661.tmp",
+    "requestLine": 3,
+    "completedLine": 759,
+    "upstreamSource": "E:\\Develop\\CPA-Stack\\runtime\\cli-proxy-api\\auth\\logs\\request-log-parts-api-websocket-timeline-2098804534\\part-1737459068.tmp",
+    "upstreamLine": 18,
+    "responseId": "resp_0a275ede0bf93a37016a9ee2a7c36087d0b4d79d7228523bb2",
+    "previousResponseId": "resp_0a275ede0bf93a37016a9ee2a09f8887d0a30324408f94baa0",
+    "fieldDifferences": [
+      "instructions"
+    ]
+  },
+  {
+    "stage": "03-turn2-read-skill",
+    "timestamp": "2026-09-08T00:17:25.1076228+08:00",
+    "clientSource": "E:\\Develop\\CPA-Stack\\runtime\\cli-proxy-api\\auth\\logs\\request-log-parts-websocket-timeline-2525274943\\request-1287661011.tmp",
+    "requestLine": 3,
+    "completedLine": 431,
+    "upstreamSource": "E:\\Develop\\CPA-Stack\\runtime\\cli-proxy-api\\auth\\logs\\request-log-parts-api-websocket-timeline-2098804534\\part-2532509983.tmp",
+    "upstreamLine": 18,
+    "responseId": "resp_0a275ede0bf93a37016a9ee395d0bc87d0918078410edf323c",
+    "previousResponseId": "resp_0a275ede0bf93a37016a9ee2a7c36087d0b4d79d7228523bb2",
+    "fieldDifferences": [
+      "instructions"
+    ]
+  },
+  {
+    "stage": "04-turn2-find-context",
+    "timestamp": "2026-09-08T00:17:31.3472917+08:00",
+    "clientSource": "E:\\Develop\\CPA-Stack\\runtime\\cli-proxy-api\\auth\\logs\\request-log-parts-websocket-timeline-2525274943\\request-877952337.tmp",
+    "requestLine": 3,
+    "completedLine": 231,
+    "upstreamSource": "E:\\Develop\\CPA-Stack\\runtime\\cli-proxy-api\\auth\\logs\\request-log-parts-api-websocket-timeline-2098804534\\part-3757533280.tmp",
+    "upstreamLine": 18,
+    "responseId": "resp_0a275ede0bf93a37016a9ee39ba6e487d0976455828b809c16",
+    "previousResponseId": "resp_0a275ede0bf93a37016a9ee395d0bc87d0918078410edf323c",
+    "fieldDifferences": [
+      "instructions"
+    ]
+  },
+  {
+    "stage": "05-turn2-final",
+    "timestamp": "2026-09-08T00:17:36.3888301+08:00",
+    "clientSource": "E:\\Develop\\CPA-Stack\\runtime\\cli-proxy-api\\auth\\logs\\request-log-parts-websocket-timeline-2525274943\\request-1931961851.tmp",
+    "requestLine": 3,
+    "completedLine": 1295,
+    "upstreamSource": "E:\\Develop\\CPA-Stack\\runtime\\cli-proxy-api\\auth\\logs\\request-log-parts-api-websocket-timeline-2098804534\\part-943077336.tmp",
+    "upstreamLine": 18,
+    "responseId": "resp_0a275ede0bf93a37016a9ee3a12e1c87d0a01a5666df950be9",
+    "previousResponseId": "resp_0a275ede0bf93a37016a9ee39ba6e487d0976455828b809c16",
+    "fieldDifferences": [
+      "instructions"
+    ]
+  }
+]
