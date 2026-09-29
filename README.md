@@ -1,12 +1,12 @@
-# 从「你好」到理解 Agent
+# Codex 的一次完整运行
 
-**在一个真实的 TypeScript 小项目里使用 Codex Desktop，再沿着 CPA 日志看懂：模型收到了什么、谁执行了工具、任务怎样完成。**
+**沿着真实 TypeScript 小项目的输入、输出与 CPA 日志，拆开看清 Codex Desktop 怎样组装上下文、调用工具，并完成任务。**
 
-[在线阅读](https://chrichuang218.github.io/agent-harness-notes/) · [开始第一章](https://chrichuang218.github.io/agent-harness-notes/#/lesson/01-hello) · [完整修复案例](https://chrichuang218.github.io/agent-harness-notes/#/lesson/07-fix) · [实验起始项目](examples/01-baseline/README.md)
+[在线连续阅读](https://chrichuang218.github.io/agent-harness-notes/) · [讲义导读](course/introduction.md) · [完整修复案例](https://chrichuang218.github.io/agent-harness-notes/#/lesson/07-fix) · [实验起始项目](examples/01-baseline/README.md)
 
 [![教程首页预览](docs/images/site-preview.png)](https://chrichuang218.github.io/agent-harness-notes/)
 
-从一句“你好”开始，依次学习工具调用、`AGENTS.md`、Skills、会话、上下文压缩、记忆、MCP、规划、权限、多 Agent 和任务恢复。每章围绕一个问题，用真实操作、关键证据和一个小验证建立理解。
+从一句“你好”开始，沿同一个项目依次拆解工具调用、`AGENTS.md`、Skills、会话、上下文压缩、记忆、MCP、规划、权限、多 Agent 和任务恢复。白底紫色的文档页面、左侧目录与连续讲义沿用旧版阅读方式；对话原文和证据工作台嵌在对应章节里。
 
 > A hands-on guide to understanding agents through Codex Desktop, a small TypeScript project, and real CPA traces. Follow the evidence from a greeting to tool execution, context management, and a verified bug fix.
 
@@ -22,11 +22,13 @@
 
 这个 bug 能通过 TypeScript 类型检查，但行为测试会失败。先保留错误，在前几章观察对话、文件读取和项目规则；第 7 章再让 Codex 定位、修改并验证。随后继续在熟悉的项目里展开各个 Agent 机制。
 
-正文展示少量关键字段，完整记录按需打开。你可以先读提供的真实样本，也可以复现实验，用自己的日志核对结论。
+每一步都把“用户说了什么、请求新增什么、模型返回什么、工具结果怎样回传”联系起来。第一节逐项解释初始请求的 `input`；第 4 节对照全局与项目规则的组装；第 7 节完整追踪五次模型请求。所有阶段的公开输入、输出、工具定义和 CPA 上游数据均可在内嵌工作台展开核对，不把节选冒充完整请求。
+
+第一节还展示[实验者提供的真实 Desktop 截图](docs/images/desktop-hello-readme.png)，对照“你好 → 继续对话 → 读取 README”三轮消息。截图说明界面发生了什么，请求日志解释模型实际收到了什么。
 
 ## 学习路线
 
-路线分为四个阶段，共 20 个主题。各章与网站目录分别标注“真实实验”或“含待验证项”；章节状态描述证据覆盖，不代表读者已经掌握。
+讲义分为四个阶段，共 20 个主题。网页可以连续向下阅读，也可以从左侧目录定位。各章分别标注“真实实验”或“含待验证项”；章节状态描述证据覆盖，不代表读者已经掌握。
 
 | 阶段 | 章节 |
 | --- | --- |
@@ -81,4 +83,4 @@ npm run dev
 
 如果这份教程帮你看懂了一个机制，欢迎 Star 或分享给正在学习 Agent 的朋友。
 
-历史 `lessons/01-codex-cpa-trace/` 中的 JSON 保留供溯源，新网站的学习入口与正文以 `course/` 为准。变更见[发布记录](CHANGELOG.md)。
+历史 [两轮对话完整讲义](lessons/01-codex-cpa-trace/学习文档.md)及其 JSON 保留供溯源。当前讲义位于 `course/`，把旧版的连续拆解方式用于这次 TS 项目实验；历史样本与本次样本的字段差异分别说明。变更见[发布记录](CHANGELOG.md)。

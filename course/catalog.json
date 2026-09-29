@@ -1,6 +1,6 @@
 {
-  "title": "从你好开始，看懂 Codex",
-  "description": "在真实 TypeScript 小项目里使用 Codex Desktop，沿 CPA 日志理解 Agent 的工作过程。",
+  "title": "Codex 的一次完整运行",
+  "description": "在真实 TypeScript 小项目里，逐项拆解 Codex Desktop 的上下文组装、模型输出与工具执行。",
   "groups": [
     {
       "id": "basic",

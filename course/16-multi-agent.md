@@ -21,13 +21,47 @@
 
 它来自[父任务第一阶段输出](../evidence/desktop-lab/16-multi-agent/00-request.output-items.json)中的 `function_call.arguments`，先解析该 JSON 字符串即可核对。公开证据对密文做了脱敏，没有把密文解释成可读的任务正文。
 
+## 父任务先委派，返回的还不是检查结论
+
+两次 `spawn_agent` 并不是同一个模型响应里同时发出的。父任务实际用了五次请求：
+
+| 阶段 | 本次新获得什么 | 输出动作 |
+| --- | --- | --- |
+| [00](../evidence/desktop-lab/16-multi-agent/00-request.output-items.json) | 当前权限/环境更新和用户分工要求 | `spawn_agent` 创建 A |
+| [01](../evidence/desktop-lab/16-multi-agent/01-request.output-items.json) | A 的任务路径 | `spawn_agent` 创建 B |
+| [02](../evidence/desktop-lab/16-multi-agent/02-request.output-items.json) | B 的任务路径 | 读取项目决定和 README |
+| [03](../evidence/desktop-lab/16-multi-agent/03-request.output-items.json) | 项目文档正文 | `wait_agent` 等待结果 |
+| [04](../evidence/desktop-lab/16-multi-agent/04-request.output-items.json) | 等待结果、子任务消息和重组后的历史 | 分别汇总 A、B 的发现 |
+
+阶段 01 请求的工具返回原文是 `{"task_name":"/root/a_price_boundaries"}`，通过 `call_LleINkkheKDASZQRQPmQ4KgN` 对应第一次委派。它证明任务已建立并给出地址，不代表 A 已经完成审阅。B 的创建返回同理。A 可以在父任务准备 B 时继续运行，所以委派动作先后发生与后续执行区间重叠并不矛盾。
+
 ## 它们确实是不同任务
 
 [协作记录](../evidence/desktop-lab/16-multi-agent/collaboration.json)连接了父子任务 ID、原始 rollout 行号、开始与结束事件及最终汇总。A、B 各有独立的 `threadId`、当前 `turnId` 和模型响应链。
 
-两个子任务的首次请求各包含 22 项输入，能看到先前的项目决定、折扣计划、实施结果和当前检查要求。这里使用了 `fork_turns: "all"`，实际表现是继承已有对话材料，随后在不同任务中继续生成；不是两个完全没有上下文的空白模型。
+两个子任务的首个正式请求各包含 22 项输入，能看到先前的项目决定、折扣计划、实施结果和当前检查要求。这里使用了 `fork_turns: "all"`，实际表现是继承已有对话材料，随后在不同任务中继续生成；不是两个完全没有上下文的空白模型。
+
+两份首个正式请求还携带各自的 `previous_response_id`，分别接到子任务自己的预热响应。可对照 [A 预热请求](../evidence/desktop-lab/16-agent-a/00-prewarm.request.json)、[A 预热完成事件](../evidence/desktop-lab/16-agent-a/00-prewarm.response.json)，以及 [B 预热请求](../evidence/desktop-lab/16-agent-b/00-prewarm.request.json)、[B 预热完成事件](../evidence/desktop-lab/16-agent-b/00-prewarm.response.json)：预热各有 2 项输入、`generate: false`、没有生成输出；首个正式请求是在该响应基础上提交 22 项新增内容。
+
+因此 22 不是完整有效上下文的总项数。读取一份正式请求时，仍然必须查看它引用的响应。两次预热也不是两个子任务已经完成了检查，不能计入下面的正式推理与工具动作数量。
 
 子任务 rollout 还复制了父任务之前的轮次记录。采集时只选择各子任务自己的当前轮次，不能把继承记录再次计作子任务刚完成的工作。
+
+## 子任务内部也有各自的工具循环
+
+独立 Agent 并不是把用户提示拆成两段文字后拼回应答。A 和 B 都有自己的“提出调用 → 取得结果 → 继续判断”过程：
+
+| 子任务阶段 | 当前请求收到什么 | 本次模型输出 |
+| --- | --- | --- |
+| [A 00](../evidence/desktop-lab/16-agent-a/00-request.output-items.json) | 22 项继承与委派上下文 | 读取并给 `src/price.ts` 加行号 |
+| [A 01](../evidence/desktop-lab/16-agent-a/01-request.output-items.json) | 函数源码 | 读取项目规则、package 和本机 Skill |
+| [A 02](../evidence/desktop-lab/16-agent-a/02-request.output-items.json) | 上述读取结果 | 运行短 Node 探针 |
+| [A 03](../evidence/desktop-lab/16-agent-a/03-request.output-items.json) | 探针输出与退出码 0 | 提交实现边界结论 |
+| [B 00](../evidence/desktop-lab/16-agent-b/00-request.output-items.json) | 22 项继承与委派上下文 | 读取规则、测试、源码和 package |
+| [B 01](../evidence/desktop-lab/16-agent-b/01-request.output-items.json) | 文件正文 | 读取本机 Skill |
+| [B 02](../evidence/desktop-lab/16-agent-b/02-request.output-items.json) | 技能正文 | 提交静态覆盖分析 |
+
+它们的工具结果分别进入各自下一请求；父任务没有在这期间代替 A 执行探针，也没有凭创建成功返回就知道 B 的覆盖判断。两个子任务都读了本机 `ponytail` Skill，这是当前环境的影响，不是多 Agent 协议必需环节。
 
 ## 是否并行，要看真实时间
 
@@ -41,6 +75,23 @@
 两个运行区间重叠 30.815 秒，支持本次存在并发工作的判断。它不证明任意一瞬间都有两个 CPU 指令同时执行，也不能仅凭这个重叠计算“快了多少”；那需要另做串行对照。
 
 父任务在等待期间读取了项目决定和 README，并通过 `wait_agent` 等待子任务结果，最后分别列出 A、B 的发现。
+
+## 结论怎样回到父模型？
+
+[父任务第 04 请求](../evidence/desktop-lab/16-multi-agent/04-request.request.json)值得完整展开：它有 75 项输入，没有 `previous_response_id`。它重新携带历史，并增加子任务消息；不能把这一阶段画成“只发送一个等待结果”的普通增量请求。当前证据能描述这种重组方式，没有证明内部为何在此时切换。
+
+末尾几个位置各司其职：
+
+| 位置 | 类型 | 内容 |
+| --- | --- | --- |
+| `input[70]` | `function_call` | 父任务此前提出的 `wait_agent` |
+| `input[71]` | `function_call_output` | `{"message":"Wait completed.","timed_out":false}` |
+| `input[72]` | `agent_message` | `Sender: /root/b_test_coverage` 与 B 的完整结论 |
+| `input[74]` | `agent_message` | `Sender: /root/a_price_boundaries` 与 A 的完整结论 |
+
+等待结果只说明等待结束。真正的审阅内容出现在另两项 `agent_message` 中，文本带有 `Message Type: FINAL_ANSWER`、发送方和 `Payload`。模型收到它们以后，才有材料生成父任务的最终汇总。这里可观察到的传递内容是显式结果消息，不能据此宣称父模型获得了另一个 Agent 的全部内部推理。
+
+因此可以沿两条关联追踪：用 `call_id` 找委派与等待的工具返回；用子任务路径、`threadId` 和 `agent_message` 发送方追踪检查结果来源。创建成功、执行完成、结果已交到父模型，是三个不同节点。
 
 ## 两份检查，证据强度不同
 

@@ -44,6 +44,7 @@ assert(!JSON.stringify(cleaned).includes('veryLongPrivate'));
 // Missing linked evidence must fail; only an absent catalog can skip export checks.
 async function verifyExports(catalog) {
   let checked = 0;
+  const responseIds = new Set(catalog.experiments.flatMap(experiment => experiment.stages.map(stage => stage.responseId)));
   for (const experiment of catalog.experiments) {
     if (experiment.manifestFile) {
       const manifest = JSON.parse(await readFile(experiment.manifestFile, 'utf8'));
@@ -80,8 +81,12 @@ async function verifyExports(catalog) {
       const completion = JSON.parse(await readFile(exported.responseFile, 'utf8'));
       assert.equal(completion.type, 'response.completed');
       assert.equal(completion.response.id, exported.responseId);
+      const events = JSON.parse(await readFile(exported.eventsFile, 'utf8'));
+      assert(events.every(event => event.data?.type?.startsWith('response.')), `${exported.eventsFile}: transport headers or non-response events must not be published`);
       const request = JSON.parse(await readFile(exported.requestFile, 'utf8'));
       assert.equal(request.client_metadata.thread_id, experiment.threadId);
+      assert.equal(exported.prewarm, request.generate === false, `${exported.requestFile}: prewarm label must match the request`);
+      if (request.previous_response_id) assert(responseIds.has(request.previous_response_id), `${exported.requestFile}: referenced response is missing from the public dataset`);
       if (!exported.prewarm) assert(experiment.turnIds.includes(request.client_metadata.turn_id));
     }
     for (const file of await readdir(join('evidence/desktop-lab', experiment.id))) {

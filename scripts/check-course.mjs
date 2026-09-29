@@ -89,7 +89,9 @@ if (catalog && index) {
     }
   }
   check(lessons.some(lesson => lesson.id === '12-memory'), 'The memory chapter and its evidence boundary must be present.');
-  for (const file of ['README.md', 'GLOSSARY.md', 'CHANGELOG.md']) await documentLinks(file);
+  for (const file of ['README.md', 'PROGRESS.md', 'GLOSSARY.md', 'CHANGELOG.md', 'course/introduction.md']) await documentLinks(file);
+  const coveredExperiments = new Set(lessons.flatMap(lesson => lesson.evidenceIds || []));
+  for (const experiment of experiments) check(coveredExperiments.has(experiment.id), `Experiment missing from the reader: ${experiment.id}`);
 
   // Only these schema fields are public file references. Source metadata may
   // deliberately point to redacted or private original logs and is not a link.

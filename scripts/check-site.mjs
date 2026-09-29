@@ -4,13 +4,14 @@ import { readFile, mkdir } from 'node:fs/promises';
 import { resolve, extname } from 'node:path';
 import { chromium } from '@playwright/test';
 
-// Run after npm run build. A private headless browser never touches Desktop.
 const root = resolve('dist');
 const catalog = JSON.parse(await readFile('course/catalog.json', 'utf8'));
-const evidence = JSON.parse(await readFile('evidence/desktop-lab/index.json', 'utf8'));
+const { experiments } = JSON.parse(await readFile('evidence/desktop-lab/index.json', 'utf8'));
 const captureReadme = process.argv.includes('--capture-readme');
-assert.equal(catalog.lessons.length, 20, 'Final site must contain all 20 chapters.');
-const types = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json' };
+const stages = experiments.flatMap(experiment => experiment.stages.map((stage, index) => ({ experiment, stage, index })));
+assert.equal(catalog.lessons.length, 20);
+assert.equal(catalog.groups.length, 4);
+const types = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.png': 'image/png', '.svg': 'image/svg+xml' };
 const server = createServer(async (request, response) => {
   try {
     const pathname = decodeURIComponent(new URL(request.url, 'http://localhost').pathname);
@@ -24,138 +25,182 @@ await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
 let browser;
 try {
   browser = await chromium.launch({ channel: 'chrome', headless: true });
-  const context = await browser.newContext({ viewport: { width: 1440, height: 1000 }, permissions: ['clipboard-read', 'clipboard-write'] });
+  const context = await browser.newContext({ viewport: { width: 1440, height: 1000 }, permissions: ['clipboard-read', 'clipboard-write'], reducedMotion: 'reduce' });
   const page = await context.newPage();
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
   page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
   const url = `http://127.0.0.1:${server.address().port}/`;
-  const openLesson = async lesson => {
-    assert.ok(lesson, 'Requested lesson is missing from catalog.');
-    await page.goto(url + '#/lesson/' + lesson.id);
-    await page.waitForFunction(id => {
-      const main = document.querySelector('#main');
-      return main?.dataset.lessonId === id && main.getAttribute('aria-busy') === 'false';
-    }, lesson.id);
-    await page.locator('.prose').waitFor();
-  };
-  const noOverflow = async () => assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, 'horizontal page overflow');
-  await page.goto(url);
-  await page.locator('.hero h1').waitFor();
-  assert.equal(await page.locator('.lesson-row').count(), catalog.lessons.length);
-  assert.ok((await page.locator('.trace-window').innerText()).includes(evidence.experiments[0].reply));
-  await noOverflow();
-  await mkdir('work', { recursive: true });
-  await page.screenshot({ path: 'work/site-home-desktop.png', fullPage: true, animations: 'disabled' });
-  if (captureReadme) {
-    await mkdir('docs/images', { recursive: true });
-    await page.screenshot({ path: 'docs/images/site-preview.png', fullPage: false, animations: 'disabled' });
+  const readJson = async path => JSON.parse(await readFile(path, 'utf8'));
+  const owner = experiment => catalog.lessons.find(lesson => lesson.evidenceIds.includes(experiment.id));
+  const noOverflow = async label => assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, label + ': horizontal page overflow');
+  async function openWorkbench(experiment, stage, view, extra = {}) {
+    const lesson = owner(experiment);
+    assert.ok(lesson, 'Experiment is not reachable: ' + experiment.id);
+    const query = new URLSearchParams({ experiment: experiment.id, stage: String(stage), view, ...extra });
+    await page.goto(url + '#/lesson/' + lesson.id + '?' + query);
+    await page.waitForFunction(({ id, experimentId, index, viewName }) => {
+      const host = document.querySelector(`[data-workbench="${id}"]`);
+      return host?.dataset.experiment === experimentId && host.dataset.stage === String(index) && host.dataset.view === viewName && host.getAttribute('aria-busy') === 'false' && host.dataset.ready === 'true';
+    }, { id: lesson.id, experimentId: experiment.id, index: stage, viewName: view });
+    return page.locator(`[data-workbench="${lesson.id}"]`);
   }
-
-  for (const lesson of catalog.lessons) {
-    await openLesson(lesson);
-    assert.equal(await page.locator('h1').count(), 1, lesson.id + ' duplicate title');
-    assert.equal(await page.locator('.lesson-header h1').innerText(), lesson.title);
-    assert.ok((await page.locator('.prose').innerText()).length > 100, lesson.id + ' missing content');
-    assert.equal(await page.locator('.experiment').count(), lesson.evidenceIds.length);
-    const sourceHrefs = await page.locator('.prose a.source-link').evaluateAll(links => links.map(link => link.href));
-    assert.ok(sourceHrefs.every(href => href.startsWith('https://github.com/chrichuang218/agent-harness-notes/blob/main/')), lesson.id + ' source link has no shareable fallback');
-    await noOverflow();
-  }
-  await openLesson(catalog.lessons[0]);
-  await page.screenshot({ path: 'work/site-reader-desktop.png', fullPage: true, animations: 'disabled' });
-  await page.locator('.experiment summary').first().click();
-  await page.locator('[data-experiment]').first().click();
-  await page.locator('.evidence-code').filter({ hasText: 'response.create' }).waitFor();
-  await page.getByRole('tab', { name: '输出项', exact: true }).click();
-  await page.locator('.evidence-file').filter({ hasText: 'output-items.json' }).waitFor();
-  await page.locator('#copy-evidence').click();
-  await page.locator('.toast.visible').waitFor();
-  assert.equal(await page.locator('.toast').innerText(), '已复制');
-  await page.getByRole('button', { name: '关闭证据' }).click();
-  const sourceLink = page.locator('.prose a.source-link').first();
-  if (await sourceLink.count()) {
-    await sourceLink.click();
-    await page.locator('#evidence-dialog[open]').waitFor();
-    await page.getByRole('button', { name: '关闭证据' }).click();
-  }
-  const compaction = evidence.experiments.find(item => item.requestKind === 'compaction');
-  const compactionLesson = compaction && catalog.lessons.find(lesson => lesson.evidenceIds.includes(compaction.id));
-  assert.ok(compactionLesson, 'Compaction experiment must appear in the public course.');
-  if (compactionLesson) {
-    await openLesson(compactionLesson);
-    const card = page.locator('.experiment').filter({ has: page.locator(`[data-experiment="${compaction.id}"]`) });
-    await card.locator('summary').click();
-    assert.ok((await card.innerText()).includes('没有普通聊天输入'));
-    await card.locator('[data-experiment]').first().click();
-    await page.getByRole('tab', { name: '压缩记录', exact: true }).click();
-    await page.locator('.evidence-code').filter({ hasText: 'replacement_history' }).waitFor();
-    assert.ok((await page.locator('.evidence-footer').innerText()).includes('rollout'));
-    await page.getByRole('button', { name: '关闭证据' }).click();
-  }
-  const interrupted = evidence.experiments.find(item => item.status === 'interrupted');
-  const interruptionLesson = interrupted && catalog.lessons.find(lesson => lesson.evidenceIds.includes(interrupted.id));
-  assert.ok(interruptionLesson, 'Interrupted experiment must appear in the public course.');
-  await openLesson(interruptionLesson);
-  const interruptedCard = page.locator('.experiment').filter({ has: page.locator(`[data-experiment="${interrupted.id}"]`) });
-  assert.ok((await interruptedCard.locator('summary').innerText()).includes('已中断'));
-  await interruptedCard.locator('summary').click();
-  if (!interrupted.reply) assert.equal(await interruptedCard.locator('.experiment-conversation > div:last-child p').innerText(), '本轮已中断，没有最终回复。');
-  await interruptedCard.locator('[data-experiment]').first().click();
-  await page.getByRole('tab', { name: '中断记录', exact: true }).click();
-  await page.locator('.evidence-code').filter({ hasText: 'turn_aborted' }).waitFor();
-  assert.deepEqual(JSON.parse(await page.locator('.evidence-code').innerText()), JSON.parse(await readFile(interrupted.interruptionFile, 'utf8')));
-  await page.getByRole('tab', { name: '完成事件', exact: true }).click();
-  assert.ok((await page.locator('.evidence-footer').innerText()).includes('不代表用户任务完成'));
-  await page.getByRole('button', { name: '关闭证据' }).click();
-
-  for (const [lessonId, filename] of [['15-permissions', 'runtime-context.json'], ['16-multi-agent', 'collaboration.json'], ['17-goal', 'goal-state.json']]) {
-    await openLesson(catalog.lessons.find(lesson => lesson.id === lessonId));
-    await page.locator(`.prose a.source-link[href$="${filename}"]`).first().click();
-    await page.locator('#evidence-dialog[open]').waitFor();
-    await page.waitForFunction(() => {
-      try { JSON.parse(document.querySelector('.evidence-code').textContent); return true; } catch { return false; }
-    });
-    const expected = JSON.parse(await readFile(`evidence/desktop-lab/${lessonId}/${filename}`, 'utf8'));
-    assert.deepEqual(JSON.parse(await page.locator('.evidence-code').innerText()), expected);
-    await page.getByRole('button', { name: '关闭证据' }).click();
-  }
-  await page.getByRole('button', { name: '搜索教程' }).click();
-  await page.locator('#search-input').fill('call_id');
-  await page.waitForFunction(() => document.querySelectorAll('.search-result').length > 0);
-  assert.ok((await page.locator('#search-results').innerText()).includes('README'));
-  await page.locator('.search-result').first().click();
-  assert.equal(await page.locator('#search-dialog').evaluate(element => element.open), false);
-  await page.getByRole('button', { name: '切换深浅主题' }).click();
-  assert.equal(await page.locator('html').evaluate(element => element.classList.contains('dark')), true);
-  await page.reload();
-  await page.locator('#main[aria-busy="false"]').waitFor();
-  await page.locator('.prose').waitFor();
-  assert.equal(await page.locator('html').evaluate(element => element.classList.contains('dark')), true);
-  await page.screenshot({ path: 'work/site-reader-dark.png', fullPage: true, animations: 'disabled' });
-  await page.getByRole('button', { name: '切换深浅主题' }).click();
-
-  for (const width of [390, 768]) {
-    await page.setViewportSize({ width, height: 844 });
-    await page.goto(url); await page.locator('.hero').waitFor(); await noOverflow();
-    if (width === 390) await page.screenshot({ path: 'work/site-home-mobile.png', fullPage: true, animations: 'disabled' });
-    for (const lesson of catalog.lessons) {
-      await openLesson(lesson); await noOverflow();
+  async function verifyItems(host, expected, prefix, label) {
+    const rendered = await host.locator('.workbench-content').evaluate((container, prefix) => [...container.querySelectorAll(`.trace-item[data-item-path^="${prefix}["]`)].map(item => ({
+      path: item.dataset.itemPath,
+      role: item.querySelector(':scope > summary .role-badge').textContent,
+      original: JSON.parse(item.querySelector(':scope > .trace-item-body > .raw-details > .code-panel > pre').textContent),
+      blocks: [...item.querySelectorAll('[data-full-content]')].map(block => ({ path: block.dataset.fullContent, text: block.textContent })),
+    })), prefix);
+    assert.equal(rendered.length, expected.length, label + ': omitted/reordered items');
+    for (let index = 0; index < expected.length; index++) {
+      const actual = rendered[index]; const source = expected[index];
+      assert.equal(actual.path, `${prefix}[${index}]`, label + ': item position');
+      assert.equal(actual.role, source.role || '无 role 字段', label + ': role');
+      assert.ok(JSON.stringify(actual.original) === JSON.stringify(source), `${label}: complete ${prefix}[${index}] fields changed`);
+      if (Array.isArray(source.content)) {
+        assert.equal(actual.blocks.length, source.content.length, `${label}: content block omitted`);
+        source.content.forEach((block, blockIndex) => {
+          const value = actual.blocks[blockIndex];
+          assert.equal(value.path, `${prefix}[${index}].content[${blockIndex}]`);
+          assert.ok(value.text === (typeof block.text === 'string' ? block.text : JSON.stringify(block, null, 2)), `${label}: ${prefix}[${index}].content[${blockIndex}] truncated or changed`);
+        });
+      }
     }
+  }
+  await page.goto(url);
+  await page.locator('#main[aria-busy="false"]').waitFor();
+  assert.equal(await page.locator('#main > .error-state').count(), 0, await page.locator('#main').innerText());
+  assert.equal(await page.locator('.introduction h1').innerText(), 'Codex 的一次完整运行');
+  assert.ok((await page.locator('.introduction h1').boundingBox()).y >= (await page.locator('.site-header').boundingBox()).height, 'Fixed header must not cover the opening title.');
+  assert.equal(await page.locator('.chapter').count(), 20);
+  assert.equal(await page.locator('.course-stage').count(), 4);
+  assert.equal(await page.locator('dialog,.hero').count(), 0, 'Reading/evidence must not depend on dialogs or a marketing hero.');
+  assert.ok(await page.locator('.mermaid svg').count(), 'Introduction diagram did not render.');
+  assert.ok(await page.locator('.mermaid svg').first().evaluate(svg => svg.getBoundingClientRect().width >= svg.viewBox.baseVal.width - 1), 'Diagram text must not be scaled down to fit the article.');
+  await noOverflow('Desktop introduction');
+  assert.equal(await page.locator('.prose').first().evaluate(element => getComputedStyle(element).fontSize), '15px');
+  assert.equal(await page.locator('.prose').first().evaluate(element => getComputedStyle(element).lineHeight), '25.5px');
+  await mkdir('work', { recursive: true });
+  await page.screenshot({ path: 'work/site-reader-desktop.png', fullPage: false, animations: 'disabled' });
+  if (captureReadme) { await mkdir('docs/images', { recursive: true }); await page.screenshot({ path: 'docs/images/site-preview.png', fullPage: false, animations: 'disabled' }); }
+  const screenshot = page.locator('img[src*="desktop-hello-readme"]').first();
+  assert.ok(await screenshot.count(), 'Real Desktop screenshot is missing.');
+  const asset = await screenshot.getAttribute('src');
+  assert.equal((await context.request.get(new URL(asset, url).href)).status(), 200, 'Vite image asset is missing.');
+  assert.equal(await screenshot.locator('..').getAttribute('target'), '_blank');
+  assert.equal(await screenshot.locator('..').getAttribute('href'), new URL(asset, url).href);
+  assert.ok((await screenshot.locator('..').innerText()).includes('点击查看原图'));
+
+  // Every recorded stage, including prewarms, is selectable. Compare all input
+  // items, roles, content blocks and original objects against public sources.
+  let previousCount = 0;
+  for (const { experiment, stage, index } of stages) {
+    const label = experiment.id + '/' + stage.id;
+    let host = await openWorkbench(experiment, index, 'request');
+    assert.equal(await host.locator('.stage-select option').count(), experiment.stages.length, label + ': stage selection incomplete');
+    const request = await readJson(stage.requestFile);
+    await verifyItems(host, request.input || [], 'input', label);
+    const top = await host.locator('.workbench-content > .raw-details pre').textContent();
+    assert.ok(JSON.stringify(JSON.parse(top)) === JSON.stringify(Object.fromEntries(Object.entries(request).filter(([key]) => key !== 'input'))), label + ': request-level fields changed');
+    if (stage.prewarm) assert.ok((await host.locator('.stage-select option:checked').innerText()).includes('预热'));
+    if (request.previous_response_id) {
+      const previousHref = await host.locator('.request-metadata dl > div').nth(2).locator('a').getAttribute('href');
+      const target = new URLSearchParams(previousHref.split('?')[1]);
+      const targetExperiment = experiments.find(item => item.id === target.get('experiment'));
+      assert.equal(targetExperiment?.stages[Number(target.get('stage'))]?.responseId, request.previous_response_id, label + ': previous response points to wrong stage');
+      previousCount++;
+    }
+    host = await openWorkbench(experiment, index, 'output');
+    const derived = stage.outputItemsFile ? await readJson(stage.outputItemsFile) : { items: [] };
+    await verifyItems(host, derived.items || [], 'output', label);
+    assert.ok((await host.locator('.workbench-content').innerText()).includes('衍生视图'), label + ': derived output must be labelled');
+    const completed = await host.locator('.workbench-content > .raw-details pre').textContent();
+    assert.ok(JSON.stringify(JSON.parse(completed)) === JSON.stringify(await readJson(stage.responseFile)), label + ': completed event changed');
+    host = await openWorkbench(experiment, index, 'compare');
+    assert.ok(await host.locator('[data-client-raw]').textContent() === await readFile(stage.requestFile, 'utf8'), label + ': client comparison is incomplete');
+    assert.ok(await host.locator('[data-upstream-raw]').textContent() === await readFile(stage.upstreamFile, 'utf8'), label + ': upstream comparison is incomplete');
+    host = await openWorkbench(experiment, index, 'raw', { kind: 'eventsFile' });
+    assert.ok(await host.locator('[data-raw-content]').textContent() === await readFile(stage.eventsFile, 'utf8'), label + ': streamed events differ from current public source');
+  }
+  console.log(`Verified all ${experiments.length} experiments / ${stages.length} stages: complete inputs, roles, content blocks, tools, output objects, completion events, client/upstream snapshots; ${previousCount} response references.`);
+
+  const hello = experiments.find(item => item.id === '01-hello');
+  let host = await openWorkbench(hello, 1, 'request');
+  const request = await readJson(hello.stages[1].requestFile);
+  await host.locator('[data-expand-inputs]').click();
+  assert.ok(await host.locator('[data-full-content]').first().evaluate(element => parseFloat(getComputedStyle(element).fontSize)) >= 13, 'Desktop full-text source font is too small.');
+  const block = host.locator('[data-content-path="input[5].content[1]"]');
+  await block.locator(':scope > .code-panel [data-copy]').click();
+  const copiedText = await page.evaluate(() => navigator.clipboard.readText());
+  // Windows clipboard converts LF into CRLF; verify every other character and
+  // every line, while the DOM checks above remain byte-for-character exact.
+  assert.ok(copiedText.replace(/\r\n/g, '\n') === request.input[5].content[1].text.replace(/\r\n/g, '\n'), 'Copied AGENTS/environment text changed beyond native clipboard line endings.');
+  await block.locator('summary').first().scrollIntoViewIfNeeded();
+  await page.screenshot({ path: 'work/site-input-fulltext-desktop.png', fullPage: false, animations: 'disabled' });
+  await host.locator('[data-share]').click();
+  const share = await page.evaluate(() => navigator.clipboard.readText());
+  assert.ok(share.includes('experiment=01-hello') && share.includes('stage=1'));
+  await page.reload(); await page.locator('#main[aria-busy="false"]').waitFor();
+  await page.waitForFunction(() => document.querySelector('[data-workbench="01-hello"]').dataset.ready === 'true');
+  assert.equal(await page.locator('[data-workbench="01-hello"] .stage-select').inputValue(), '1');
+
+  const readme = experiments.find(item => item.id === '03-readme');
+  host = await openWorkbench(readme, 0, 'calls');
+  assert.ok((await host.locator('.call-pair').innerText()).includes('call_'));
+  assert.ok(await host.locator('[data-call-item]').count() >= 2, 'Tool call was not paired with its result.');
+  const interrupted = experiments.find(item => item.status === 'interrupted');
+  host = await openWorkbench(interrupted, 1, 'calls');
+  assert.ok((await host.locator('.experiment-summary').innerText()).includes('已中断'));
+  assert.ok((await host.locator('.experiment-summary').innerText()).includes('没有最终回复'));
+  assert.ok((await host.locator('.workbench-content').innerText()).includes('20-resume'), 'Interrupted tool result must link across experiments.');
+  host = await openWorkbench(interrupted, 1, 'raw', { kind: 'interruptionFile' });
+  assert.ok((await host.locator('[data-raw-content]').innerText()).includes('turn_aborted'));
+  const compact = experiments.find(item => item.requestKind === 'compaction');
+  host = await openWorkbench(compact, 0, 'raw', { kind: 'compactionFile' });
+  assert.ok((await host.locator('[data-raw-content]').innerText()).includes('replacement_history'));
+  const plan = experiments.find(item => item.id === '14-plan');
+  host = await openWorkbench(plan, 0, 'request');
+  assert.ok((await host.locator('.conversation').innerText()).includes('没有普通最终回复'));
+  const child = experiments.find(item => item.id === '16-agent-a');
+  host = await openWorkbench(child, 0, 'request');
+  assert.ok((await host.locator('.experiment-summary').innerText()).includes('由父任务委派'));
+
+  for (const [lessonId, path] of [['introduction', 'evidence/desktop-lab/index.json'], ['15-permissions', 'evidence/desktop-lab/15-permissions/runtime-context.json'], ['16-multi-agent', 'evidence/desktop-lab/16-multi-agent/collaboration.json'], ['17-goal', 'evidence/desktop-lab/17-goal/goal-state.json']]) {
+    await page.goto(url + '#/lesson/' + lessonId + '?file=' + encodeURIComponent(path));
+    const supplement = page.locator('#supplement-' + lessonId);
+    await supplement.locator('[data-supplement-content]').waitFor({ state: 'visible' });
+    assert.ok(await supplement.locator('[data-supplement-content]').textContent() === await readFile(path, 'utf8'), path + ': supplemental source changed');
+  }
+  await page.locator('#chapter-search').fill('call_id');
+  assert.ok(await page.locator('.nav-chapter:not([hidden])').count() > 0);
+  assert.ok(await page.locator('.nav-chapter[hidden]').count() > 0);
+  await page.locator('#chapter-search').fill('');
+  await page.goto(url + '#/');
+  await page.getByRole('button', { name: '切换深浅主题' }).click();
+  assert.ok(await page.locator('html').evaluate(element => element.classList.contains('dark')));
+  assert.equal(await page.locator('.mermaid').first().evaluate(element => getComputedStyle(element).backgroundColor), 'rgb(250, 250, 250)', 'Neutral diagram must retain a readable light background in dark mode.');
+  assert.ok(await page.locator('.mermaid').first().evaluate(element => [...element.querySelectorAll('.nodeLabel p,.edgeLabel p')].every(label => Math.max(...getComputedStyle(label).color.match(/\d+/g).slice(0, 3).map(Number)) < 140)), 'Diagram labels must remain dark on the light canvas after a theme toggle.');
+  await page.screenshot({ path: 'work/site-reader-dark.png', fullPage: false });
+  await page.getByRole('button', { name: '切换深浅主题' }).click();
+  for (const width of [768, 390]) {
+    await page.setViewportSize({ width, height: 844 });
+    for (const lesson of catalog.lessons) { await page.goto(url + '#/lesson/' + lesson.id); await noOverflow(`${width}px ${lesson.id}`); }
+    host = await openWorkbench(hello, 1, 'request'); await noOverflow(`${width}px structured input`);
+    assert.ok(await host.locator('[data-full-content]').first().evaluate(element => parseFloat(getComputedStyle(element).fontSize)) >= 12, 'Mobile full-text source font is too small.');
     if (width === 390) {
       await page.getByRole('button', { name: '展开学习目录' }).click();
       assert.equal(await page.locator('.menu-toggle').getAttribute('aria-expanded'), 'true');
-      await page.locator('.chapter-link:visible').first().click();
-      await page.waitForFunction(() => document.querySelector('.menu-toggle').getAttribute('aria-expanded') === 'false');
-      await page.locator('.prose').waitFor();
+      await page.locator('.intro-link').click();
       assert.equal(await page.locator('.menu-toggle').getAttribute('aria-expanded'), 'false');
-      await page.screenshot({ path: 'work/site-reader-mobile.png', fullPage: true, animations: 'disabled' });
+      assert.ok(await page.locator('.mermaid').first().evaluate(element => element.scrollWidth > element.clientWidth), 'Wide mobile diagram must scroll inside its frame.');
+      assert.ok(await page.locator('.mermaid svg').first().evaluate(svg => svg.getBoundingClientRect().width >= svg.viewBox.baseVal.width - 1), 'Mobile diagram must retain its intrinsic scale.');
+      await page.screenshot({ path: 'work/site-reader-mobile.png', fullPage: false, animations: 'disabled' });
+      await openWorkbench(hello, 1, 'request'); await page.screenshot({ path: 'work/site-workbench-mobile.png', fullPage: false, animations: 'disabled' });
     }
   }
-  await page.goto(url + '#/lesson/missing-chapter'); await page.locator('.error-state').waitFor();
-  assert.deepEqual(errors, []);
-  console.log(`Site checks passed: ${catalog.lessons.length} chapters at 3 widths; routes, search, evidence, compaction, interruption, runtime/goal/collaboration sources, copy, theme, mobile navigation, unknown route; no page or console errors. Screenshots: work/site-*.png`);
-} finally {
-  await browser?.close();
-  server.close();
-}
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await openWorkbench(hello, 1, 'request'); await page.screenshot({ path: 'work/site-workbench-desktop.png', fullPage: false, animations: 'disabled' });
+  assert.deepEqual(errors, [], 'Browser errors must not be swallowed.');
+  console.log(`Site checks passed: continuous 20-section reader; all ${stages.length} stages; full-text copy/share; cross-experiment call/response links; native records; real image asset; 3 widths; no page or console errors.`);
+} finally { await browser?.close(); server.close(); }

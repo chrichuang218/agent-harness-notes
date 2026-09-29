@@ -12,9 +12,39 @@
     "toolCalls": 3,
     "inputTokens": 167691,
     "outputTokens": 1516,
-    "prewarms": 0
+    "prewarms": 1
   },
   "stages": [
+    {
+      "id": "00-prewarm",
+      "requestFile": "evidence/desktop-lab/16-agent-a/00-prewarm.request.json",
+      "responseFile": "evidence/desktop-lab/16-agent-a/00-prewarm.response.json",
+      "eventsFile": "evidence/desktop-lab/16-agent-a/00-prewarm.events.json",
+      "upstreamFile": "evidence/desktop-lab/16-agent-a/00-prewarm.upstream.json",
+      "outputItemsFile": "evidence/desktop-lab/16-agent-a/00-prewarm.output-items.json",
+      "requestTimestamp": "2026-09-30T00:48:30.3477569+08:00",
+      "responseId": "resp_0cb21cb38d58289c016abbebe216e087d091efea910309e3e5",
+      "previousResponseId": null,
+      "inputCount": 2,
+      "prewarm": true,
+      "source": {
+        "request": {
+          "file": "v1-responses-2026-09-30T005410-9fd33604.log",
+          "line": 34,
+          "timestamp": "2026-09-30T00:48:30.3477569+08:00"
+        },
+        "completed": {
+          "file": "v1-responses-2026-09-30T005410-9fd33604.log",
+          "line": 58,
+          "timestamp": "2026-09-30T00:48:33.1054116+08:00"
+        },
+        "upstream": {
+          "file": "v1-responses-2026-09-30T005410-9fd33604.log",
+          "line": 4484,
+          "timestamp": "2026-09-30T00:48:30.3543013+08:00"
+        }
+      }
+    },
     {
       "id": "00-request",
       "requestFile": "evidence/desktop-lab/16-agent-a/00-request.request.json",
@@ -140,7 +170,8 @@
     "Matched exact response event ids against rollout token_usage_record.response_id; text mentions are not matches.",
     "response.json preserves the recorded response.completed event. Its output may be empty; output-items.json is a separately labelled derivation.",
     "Only JSON request bodies and response.* events are exported. HTTP headers and transport header events are omitted.",
-    "Counts exclude prewarm stages. Token usage is the sum of formal model responses, not unique context size."
+    "Counts exclude prewarm stages. Token usage is the sum of formal model responses, not unique context size.",
+    "Backfilled the generate=false prewarm from the merged CPA log by exact response event id referenced by the first formal request. Formal request files and stage ids are unchanged."
   ],
   "sanitization": {
     "mode": "structure-preserving-redaction",
@@ -149,6 +180,14 @@
       "Credential values, encrypted content, installation and safety ids → <REDACTED>"
     ],
     "changedPaths": [
+      "00-prewarm.events.json[0].data.response.safety_identifier",
+      "00-prewarm.events.json[1].data.response.safety_identifier",
+      "00-prewarm.events.json[2].data.response.safety_identifier",
+      "00-prewarm.request.json.client_metadata.x-codex-installation-id",
+      "00-prewarm.request.json.client_metadata.x-codex-turn-metadata.installation_id",
+      "00-prewarm.response.json.response.safety_identifier",
+      "00-prewarm.upstream.json.client_metadata.x-codex-installation-id",
+      "00-prewarm.upstream.json.client_metadata.x-codex-turn-metadata.installation_id",
       "00-request.events.json[0].data.response.safety_identifier",
       "00-request.events.json[10].data.obfuscation",
       "00-request.events.json[11].data.obfuscation",
@@ -1251,5 +1290,6 @@
     ]
   },
   "rolloutSource": "<USER_HOME>/.codex/sessions/2026/09/30/rollout-2026-09-30T00-48-30-01a0ee11-5b79-7942-ab2f-24dc8a0e0d2a.jsonl",
-  "collectedAt": "2026-09-29T16:51:30.985Z"
+  "collectedAt": "2026-09-29T16:51:30.985Z",
+  "prewarmBackfilledAt": "2026-09-29T18:37:51.643Z"
 }

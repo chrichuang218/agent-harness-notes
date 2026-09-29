@@ -4,7 +4,16 @@
 
 ## 先保留一次没有中断的对照
 
-第一次实验要求：先运行类型检查，等待 30 秒，再运行测试。它在停止操作之前已正常结束，类型检查和测试都通过。这份[对照记录](../evidence/desktop-lab/20-uninterrupted-control/manifest.json)不能被写成“中断成功”。
+第一次实验要求：先运行类型检查，等待 30 秒，再运行测试。它在停止操作之前已正常结束，类型检查和测试都通过。这份[对照记录](../evidence/desktop-lab/20-uninterrupted-control/manifest.json)不能被写成“中断成功”。它的四次请求形成正常链路：
+
+| 阶段 | 新收到的输入 | 随后的模型输出 |
+| --- | --- | --- |
+| [对照 00](../evidence/desktop-lab/20-uninterrupted-control/00-request.output-items.json) | 顺序检查的用户要求 | `exec` 运行 typecheck |
+| [对照 01](../evidence/desktop-lab/20-uninterrupted-control/01-request.output-items.json) | 类型检查退出码 0 | `clock.sleep`，`duration_ms: 30000` |
+| [对照 02](../evidence/desktop-lab/20-uninterrupted-control/02-request.output-items.json) | `Sleep completed`，实际约 30.0257 秒 | `exec` 运行 test |
+| [对照 03](../evidence/desktop-lab/20-uninterrupted-control/03-request.output-items.json) | 11 项测试通过 | 汇报正常完成 |
+
+等待也是工具调用，需要返回结果才能进入下一步模型生成。这个对照让我们知道：未中断时，等待成功结果会触发后面的测试调用。
 
 于是延长观察窗口，在同一任务再次发送：
 
@@ -38,6 +47,20 @@
 
 这比只引用助手自述更具体：15.3 秒来自等待工具的实际返回。整轮记录的持续时间约 27.714 秒，还包括模型处理和此前类型检查，不能与等待时长混用。本章不使用界面停止提示中的计时作为这两个数值的测量依据。
 
+## 中断把哪一段闭环截住了？
+
+真正中断实验的[第 00 请求](../evidence/desktop-lab/20-interrupted/00-request.request.json)只有新用户消息，并引用之前正常结束的响应；模型仍先运行类型检查。其结果在[第 01 请求](../evidence/desktop-lab/20-interrupted/01-request.request.json)中通过 `call_6VrFE3R2Sx87HEfZFkHQ77bZ` 回来，退出码是 0。模型这才生成 60 秒等待调用。
+
+到这里和正常对照结构相同。区别发生在等待执行中：它没有返回 `Sleep completed`，而是被取消。原轮次因此没有再产生一份“收到等待成功 → 运行测试”的模型请求。取消结果先留在本地记录里，在后续用户明确继续时才进入恢复请求。
+
+```text
+正常：类型检查结果 → 模型提出等待 → 等待完成 → 下一模型请求 → 提出测试
+中断：类型检查结果 → 模型提出等待 → 用户停止 → 本地记录取消，原轮次结束
+恢复：取消结果 + 中断说明 + 新的继续要求 → 模型只提出剩余测试
+```
+
+这是按本次记录画出的执行路径，不是用一条最终回答推演的流程。
+
 ## 模型响应完成，不等于用户任务完成
 
 中断前已有两次模型响应各自发出 `response.completed`：第一次提出类型检查调用，第二次提出等待调用。它们结束的是对应模型生成过程，不是后续工具和整个用户任务。
@@ -64,9 +87,19 @@
 }
 ```
 
-相同 `call_id` 将它连接到此前的 `clock.sleep`。请求还包含中断提示与新的继续要求，模型因此能区分“等待没完成”和“类型检查已经成功”。
+相同 `call_id` 将它连接到此前的 `clock.sleep`。恢复首请求不是只有一条“继续”，而是 3 项新增输入：
 
-本次继续只执行了 `npm test`，工具结果为退出码 0、11 项通过、0 失败。没有重跑类型检查，也没有重启等待。最终回答分别说明已完成检查、被打断的等待和新完成的测试。
+| 位置 | 类型 | 信息来源 |
+| --- | --- | --- |
+| `input[0]` | `function_call_output` | 未完成的等待调用返回取消信息 |
+| `input[1]` | developer 消息 | 运行环境注入的中断说明 |
+| `input[2]` | user 消息 | 只运行尚未执行测试的新要求 |
+
+它的 `previous_response_id` 仍指向发出等待调用的那次响应。引用保留了此前类型检查成功的历史，取消结果说明等待的实际结局，新用户输入指定接下来允许做什么。三个部分一起决定恢复动作，不能只靠“记得原计划”直接重跑。
+
+在[恢复阶段 00 输出](../evidence/desktop-lab/20-resume/00-request.output-items.json)中，模型确实只提出 `npm test`，调用编号是 `call_PuqMbofyzZ4XDvPgK9HcuHGn`。它的执行结果进入[恢复阶段 01 请求](../evidence/desktop-lab/20-resume/01-request.request.json)，再通过响应引用接续这一轮。
+
+结果为退出码 0、11 项通过、0 失败。没有重跑类型检查，也没有重启等待。[最后输出](../evidence/desktop-lab/20-resume/01-request.output-items.json)分别说明已完成检查、被打断的等待和新完成的测试。恢复完成是新的两次模型请求形成的闭环，不是把原轮次的 `turn_aborted` 改成成功。
 
 ## 不同工具，需要不同的恢复核对
 

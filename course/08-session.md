@@ -47,6 +47,46 @@
 
 新任务的 `input` 中找不到 `PRICE-A7`。原任务追问的当前 `input` 也没有重写代号，但它引用了设置代号那次响应。沿引用可以找到先前信息，因此不能只搜索当前这一份输入就断言遗忘。
 
+## 用真正的响应 ID 把“记得”拆开
+
+先打开[设置代号的完成事件](../evidence/desktop-lab/08-session-seed/00-request.response.json)，它的 `response.id` 是：
+
+```text
+resp_0061bd7340416e34016abbe3f61b1887d085792e6d9fb02f1d
+```
+
+再打开原任务追问请求，`previous_response_id` 正好等于这个值。下面节选真实请求的两个字段，其他字段省略：
+
+```json
+{
+  "previous_response_id": "resp_0061bd7340416e34016abbe3f61b1887d085792e6d9fb02f1d",
+  "input": [
+    {
+      "type": "message",
+      "role": "user",
+      "content": [{
+        "type": "input_text",
+        "text": "不读文件、不搜索其他任务。如果当前上下文里有本项目的实验临时代号，请给出；如果没有，请回答不知道，不要猜。\n"
+      }]
+    }
+  ]
+}
+```
+
+上面省略了消息 `id`，没有用代号替换响应 ID。模型这次新收到的是问题，先前的代号则位于被引用的响应链中。最后在[输出项](../evidence/desktop-lab/08-session-resume/00-request.output-items.json)看到普通 assistant 消息 `PRICE-A7`，没有读取磁盘或检索其他任务的工具调用。这里的接续路径是“引用历史后生成回答”。
+
+新任务走的是另一条路径：[首请求](../evidence/desktop-lab/08-session-new/00-request.request.json)重新组装 7 项输入。`input[0]` 是工具定义，`input[1]` 至 `input[4]` 是 developer 消息，`input[5]` 附加项目规则和环境，`input[6]` 才是相同的追问。它没有引用设置代号的响应，也没有把那条旧消息放入 `input`；[输出项](../evidence/desktop-lab/08-session-new/00-request.output-items.json)于是回答“不知道”。项目路径相同，并没有把另一任务的消息自动添加到这份请求中。
+
+下面用 `S`、`N`、`R` 作为三次请求的阅读代号，不是协议字段：
+
+```text
+原任务：之前的修复响应 → S（写入对话：PRICE-A7）→ 回答“收到。”
+新任务：重新组装上下文 → N（询问代号）          → 回答“不知道。”
+原任务：引用 S 的响应  → R（相同的询问）        → 回答“PRICE-A7”
+```
+
+`thread_id` 标识本地任务归属，`response.id` 标识一次模型响应，`previous_response_id` 指向需要接续的上游响应。三者分别回答“在哪个任务”“哪一次生成”“接哪段历史”，不要把任务 ID 当作模型请求中的历史正文。
+
 ## 同一项目，不等于共享聊天历史
 
 新任务仍然可以获得项目环境、规则和可用工具，这些信息来自项目和应用上下文。它们与另一个任务里的临时对话是不同来源。

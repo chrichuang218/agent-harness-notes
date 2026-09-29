@@ -42,6 +42,18 @@
 
 `network_access: false` 是本轮配置中的一个事实，本实验没有发起网络请求，不能据此声称已经实测网络拦截。
 
+## 权限变化怎样进入这一轮上下文？
+
+运行时配置决定执行边界，模型也需要知道当前边界。[阶段 00 请求](../evidence/desktop-lab/15-permissions/00-request.request.json)的 3 项新输入正好包含：
+
+| 位置 | 角色与内容 | 本次作用 |
+| --- | --- | --- |
+| `input[0]` | developer，`<permissions instructions>` | 告知当前为 `workspace-write` 及权限处理方式 |
+| `input[1]` | user，`<environment_context>` | 更新日期、工作区与文件系统环境 |
+| `input[2]` | user，普通实验输入 | 只尝试一次，不申请额外权限，被阻止就停 |
+
+请求还通过 `previous_response_id` 接续上一阶段。更新权限并没有另起一个完全空白的对话，但它改变了本轮执行条件。这里应同时看两种证据：请求中的文字说明证明模型被告知了什么；本地 `turn_context` 与真实命令结果证明运行环境实际采用什么，前者不能单独替代后者。
+
 ## 写入真的尝试了，也真的失败了
 
 在[阶段 00 输出项](../evidence/desktop-lab/15-permissions/00-request.output-items.json)中，模型通过一次外层 `exec` 调用了命令执行工具。它提交的写入命令是：
@@ -63,7 +75,9 @@ Set-Content -LiteralPath 'E:/Develop/github/agent-harness-notes/work/permission-
 
 上面的 `output` 只节选了错误句，完整原文仍在链接记录中。相同的 `call_id` 把这份返回与前面的外层调用连接起来。
 
-随后模型报告真实错误并结束。整轮只有 2 次正式模型请求和 1 次外层工具调用，没有申请额外权限、再次尝试其他路径或替代写入方式。对应计数可以在[实验清单](../evidence/desktop-lab/15-permissions/manifest.json)中核对。
+把两次模型生成与中间的执行分开看：第 00 响应提出写入；运行环境执行后拒绝；第 01 请求用 `call_GxUd0ul2eyqM8woOoPWcG7Mb` 带回退出码 1；第 01 响应才报告错误并停止。模型生成工具代码，不等于这段代码必然能突破本机权限。
+
+整轮只有 2 次正式模型请求和 1 次外层工具调用，没有申请额外权限、再次尝试其他路径或替代写入方式。对应计数可以在[实验清单](../evidence/desktop-lab/15-permissions/manifest.json)中核对。这里的循环以“收到失败后停止”结束，同样是完整处理结果的一种方式；Agent Loop 并不要求每次工具失败都继续重试。
 
 ## 命令报错之后，文件是否真的没变？
 

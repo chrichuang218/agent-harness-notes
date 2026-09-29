@@ -18,6 +18,22 @@ Codex 检查适用规则和文件是否存在，用 `apply_patch` 创建文档�
 
 可在[写入阶段输出](../evidence/desktop-lab/12-memory-write/02-request.output-items.json)查看补丁，在后续阶段查看重读结果。信息已经进入项目文件，不需要依赖原任务一直保持在上下文里。
 
+## 写一行笔记，为什么经过五次请求？
+
+这不是模型直接在回复里写一句“已记住”就结束。写入实验有一条完整的工具闭环，所有阶段的 `input.length` 都为 1，后续请求用 `previous_response_id` 接上前一响应：
+
+| 阶段 | 本次模型新获得的信息 | 本次模型提出的动作 |
+| --- | --- | --- |
+| [00 请求](../evidence/desktop-lab/12-memory-write/00-request.request.json) | 明确写入决定的用户要求 | 搜索适用规则与已有 `DECISIONS.md` |
+| [01 请求](../evidence/desktop-lab/12-memory-write/01-request.request.json) | 搜索结果只有项目 `AGENTS.md` 等信息 | 读取规则，检查 `docs` 及目标文件是否存在 |
+| [02 请求](../evidence/desktop-lab/12-memory-write/02-request.request.json) | 规则正文与存在性检查结果 | `apply_patch` 创建决定文件 |
+| [03 请求](../evidence/desktop-lab/12-memory-write/03-request.request.json) | 修改工具返回 `{}` | 读取刚写入的文件核对 |
+| [04 请求](../evidence/desktop-lab/12-memory-write/04-request.request.json) | 实际文件正文、退出码 0 | 汇报已记录一条决定 |
+
+例如，[阶段 02 输出](../evidence/desktop-lab/12-memory-write/02-request.output-items.json)中的外层调用编号是 `call_DSJ0OJJ2QNh19LfsKRsx1o5A`；下一请求以相同编号回传结果。`{}` 没有给出完整落盘后的正文，所以模型又读了一次。最终确认来自第 04 请求中的真实文件内容，而不是从补丁文本推断“应该写成这样”。
+
+现在信息存在于两个地方：旧任务的对话历史记录了写入过程，磁盘上的 `docs/DECISIONS.md` 保存了决定。后者可以被另一个任务独立读取，这是持久化起作用的位置。
+
 ## 新任务通过读取获得决定
 
 在同一项目下新建任务，发送：
@@ -37,7 +53,26 @@ Codex 检查适用规则和文件是否存在，用 `apply_patch` 创建文档�
 }
 ```
 
-因此本次跨任务复用有一条明确链路：旧任务写文件 → 新任务读文件 → 工具结果进入模型 → 回答引用来源。这是文件笔记，不能把它称为已验证的原生自动记忆召回。
+再把新任务的两次请求展开：[`00` 请求](../evidence/desktop-lab/12-memory-read/00-request.request.json)包含 7 项基础上下文和新用户要求，没有 `previous_response_id`；[`00` 输出](../evidence/desktop-lab/12-memory-read/00-request.output-items.json)生成 `Get-Content` 调用。调用编号 `call_Lrw0R8e67zTmGTkq5mPT5GAj` 在 `01` 请求的 `custom_tool_call_output` 中再次出现，连接了这次读取与上面的正文。`01` 再引用 `00` 的响应，最后[输出](../evidence/desktop-lab/12-memory-read/01-request.output-items.json)带文件来源回答。
+
+这一次的文件读取路径，是由新用户明确指出的。不能据此宣称应用会自动扫描所有 Markdown，也不能把“知道去哪读”和“文件内容已经在上下文里”合并。
+
+```mermaid
+sequenceDiagram
+    participant A as 旧任务
+    participant F as docs/DECISIONS.md
+    participant B as 新任务的运行环境
+    participant M as 新任务中的模型
+    A->>F: apply_patch 保存决定，并重读确认
+    B->>M: 新上下文 + 用户指定文件
+    M-->>B: exec：请读取该文件
+    B->>F: Get-Content
+    F-->>B: 项目决定文本
+    B->>M: 同 call_id 的工具结果 + 前一响应引用
+    M-->>B: 回答决定并注明文件来源
+```
+
+图按这次证据整理。两个任务之间传递内容的媒介是磁盘文件；新任务内从第一次请求到第二次请求，则又使用了普通工具结果与响应引用。跨任务持久化与同任务上下文接续在这里配合，不能统称为一个“记忆开关”。
 
 ## 原生 Memories 的入口确实存在
 

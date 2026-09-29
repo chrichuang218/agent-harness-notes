@@ -28,7 +28,25 @@ server.registerTool(
 );
 ```
 
-这段是源码节选，处理函数没有展开。工具名称告诉客户端可以调用什么；描述帮助模型判断用途；输入 schema 约束参数；处理函数才执行真正的查询。未知 SKU 返回带 `isError: true` 的明确错误，不把找不到价格变成 0 元。
+这段是源码节选，处理函数没有展开。工具名称告诉客户端可以调用什么；描述帮助模型判断用途；输入 schema 约束参数。模型拿到的是一个可调用接口，不需要把整个服务源码加载进上下文。
+
+真正查询发生在本地处理函数中。下面是[同一源码](../examples/13-mcp/mcp/catalog.ts)的处理函数节选；`prices` 是保存两条商品的 `Map`：
+
+```ts
+async ({ sku }) => {
+  const unitPrice = prices.get(sku);
+  if (unitPrice === undefined) {
+    return {
+      isError: true,
+      content: [{ type: 'text', text: `Unknown SKU: ${sku}. Supported SKUs: NOTEBOOK, PENCIL.` }],
+    };
+  }
+  const product = { sku, unitPrice, currency: 'CNY' };
+  return { content: [{ type: 'text', text: JSON.stringify(product) }], structuredContent: product };
+}
+```
+
+当客户端传入 `{"sku":"NOTEBOOK"}`，SDK 将参数交给这个处理函数；函数取出 12，再把结果包装为 MCP 工具结果。未知 SKU 返回 `isError: true`，不把找不到价格变成 0 元。这段代码在服务进程执行，不是在模型里执行。
 
 `readOnlyHint` 是工具声明。这个服务的实际只读行为来自实现：它只查询本地 `Map`，没有文件写入或网络请求。不要把一个提示性注解当成系统强制隔离。
 
@@ -84,7 +102,13 @@ cwd = "C:/path/to/codex-ts-demo"
 
 这段提示要求查询实际工具，同时指定了工具不可用时的行为。它不直接告诉模型单价是 12，让我们能够检查这个数字从哪里进入上下文。
 
-实际执行并没有完全按照提示中的先后顺序进行：
+## 第一次请求：还没查价，先发现工具
+
+打开[阶段 00 请求](../evidence/desktop-lab/13-mcp/00-request.request.json)：`input` 有 12 项，没有 `previous_response_id`。`input[0..5]` 是工具与基础上下文，`input[6..10]` 重发了上一章读取项目笔记的消息、调用、结果与回答，`input[11]` 才是这次查价要求。因此“本轮第一请求”不等于“空白上下文”。
+
+`input[0].tools` 中列的是 `functions`、`clock`、`collaboration`、`mcp__cua_repl` 等外层命名空间。这里不能仅靠顶层工具列表中没有一个直写的 `get_product_price` 项，就断言运行环境里不存在商品工具。本次模型使用 `exec` 查询运行环境的 `ALL_TOOLS`，从返回目录得到可调用名称。
+
+实际执行也没有完全按照提示中的先后顺序进行：
 
 | 阶段 | 实际发生的动作 | 对应证据 |
 | --- | --- | --- |
@@ -92,7 +116,24 @@ cwd = "C:/path/to/codex-ts-demo"
 | `01` | 第二次 `exec` 调用商品 MCP，随后再次读取 `src/price.ts` | [阶段 01 输出项](../evidence/desktop-lab/13-mcp/01-request.output-items.json) |
 | `02` | 模型收到真实价格与代码后，回答总价 36 元 | [阶段 02 请求](../evidence/desktop-lab/13-mcp/02-request.request.json) |
 
-第一次工具目录检索还产生了大量输出，记录中出现了截断提示。这是本次执行的额外动作，不是使用 MCP 必须重复的操作。第二次调用的代码很短：
+第一阶段的调用编号是 `call_75g7fEltP0HEVgJJJOpXMJns`。[阶段 01 请求](../evidence/desktop-lab/13-mcp/01-request.request.json)用同一个 `call_id` 带回结果，同时用 `previous_response_id` 引用产生目录查询的响应。模型这时新得到的目录结果中，商品工具的声明如下，摘自 `input[0].output[1].text` 中的说明：
+
+```ts
+declare const tools: {
+  mcp__product_catalog__get_product_price(args: {
+    // 商品编号：NOTEBOOK 或 PENCIL
+    sku: string;
+  }): Promise<CallToolResult>;
+};
+```
+
+把它和服务源码对照：MCP 服务注册名是 `get_product_price`，配置中的服务名是 `product_catalog`，在本次 Code Mode 运行环境里组合成 `mcp__product_catalog__get_product_price`。服务里的 Zod `inputSchema` 用于参数校验，上面的声明则是本次提供给模型使用的调用形式；两者不是同一份文本。本章没有把这段 TypeScript 声明冒充原始 MCP `tools/list` JSON。
+
+第一次目录检索还产生了大量输出，记录中出现了截断提示；商品声明仍保留在返回开头。这个广泛检索是本次执行的额外动作，不是使用 MCP 必须重复的操作。
+
+## 第二次生成：把查询变成真正的调用
+
+目录结果到达后，模型没有直接回答单价，而是生成下一次外层调用，编号变为 `call_p7bdY59aNNKkV0ISyHbxziJ8`。其中商品查询代码为：
 
 ```js
 text(await tools.mcp__product_catalog__get_product_price({sku:"NOTEBOOK"}));
@@ -100,7 +141,9 @@ text(await tools.mcp__product_catalog__get_product_price({sku:"NOTEBOOK"}));
 
 这是阶段 01 外层 `exec` 内容中的实际节选。其后还有一次读取项目文件的命令，完整内容保留在原记录中。因此，“2 次外层工具调用”不能解读成“查询了两次商品价格”。
 
-## 找到价格进入模型的那一刻
+运行环境执行这段 JavaScript，调用已连接的本地 MCP 服务，SDK 再调用前面的处理函数。接口名和参数由模型选择，12 元由服务执行产生。若只看到代码里写了 `get_product_price`，仍只能证明提出了调用，还要继续检查返回。
+
+## 第三次请求：价格进入模型，循环才能结束
 
 在阶段 02 请求中，`input[0]` 是前一次外层调用的返回，`call_id` 与阶段 01 的调用对应。解析它的 `output[1].text`，可以得到以下结构：
 
@@ -120,7 +163,9 @@ text(await tools.mcp__product_catalog__get_product_price({sku:"NOTEBOOK"}));
 }
 ```
 
-这里既有文本内容，也有结构化结果。两者都来自服务返回，不是模型回答里自行编出的价格。紧接着的 `output[2].text` 是文件读取结果，其中包含：
+这里既有文本内容，也有结构化结果。两者都来自服务返回，不是模型回答里自行编出的价格。在这一层外面还有 `custom_tool_call_output`，其 `call_id` 是第二次外层调用的编号；MCP 结果作为其中一个内容块回传。不能把“外层 exec 结果”和“内部 MCP 结果”再算作两次模型生成。
+
+紧接着的 `output[2].text` 是再次读取文件的结果，其中包含：
 
 ```ts
 export function calculateTotal(unitPrice: number, quantity: number): number {
@@ -128,7 +173,25 @@ export function calculateTotal(unitPrice: number, quantity: number): number {
 }
 ```
 
-模型据此回答 `12 × 3 = 36 元`。本轮读取了函数并进行计算，没有另行运行 `calculateTotal(12, 3)`；不要把这份回答描述成程序实际执行该输入的输出。现有业务测试的运行验证属于前面的项目检查。
+这份请求继续引用阶段 01 的响应，模型因而同时拥有任务要求、已发现的接口、真实单价和乘法实现，最后在[阶段 02 输出](../evidence/desktop-lab/13-mcp/02-request.output-items.json)回答 `12 × 3 = 36 元`，没有再提出工具调用。Agent Loop 至此结束本轮工作。
+
+本轮读取了函数并进行计算，没有另行运行 `calculateTotal(12, 3)`；不要把这份回答描述成程序实际执行该输入的输出。现有业务测试的运行验证属于前面的项目检查。
+
+```mermaid
+sequenceDiagram
+    participant M as 模型（经 CPA）
+    participant H as Desktop 工具运行环境
+    participant S as 本地 product_catalog 服务
+    M->>H: 阶段 00：exec 查询工具目录并读 price.ts
+    H-->>M: 阶段 01 请求：工具声明、文件结果
+    M->>H: 阶段 01：exec 调用 get_product_price
+    H->>S: MCP 工具调用，sku=NOTEBOOK
+    S-->>H: unitPrice=12，currency=CNY
+    H-->>M: 阶段 02 请求：MCP 结果及重读源码
+    M-->>H: 最终回答：3 件共 36 元
+```
+
+图中的本地服务通信由配置、服务源码、SDK 验证和实际调用结果共同支持；CPA 捕获的是模型一侧箭头，不是图中每段箭头的底层抓包。
 
 ## 不同记录各自证明什么？
 
