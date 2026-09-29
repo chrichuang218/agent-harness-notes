@@ -1,0 +1,54 @@
+{
+  "type": "response.create",
+  "model": "gpt-6-astra",
+  "previous_response_id": "resp_0061bd7340416e34016abbe333571887d0a121cf3b28a26801",
+  "input": [
+    {
+      "type": "custom_tool_call_output",
+      "id": "ctco_01a0edef-993b-76d2-a67f-e1d6edfecdbb",
+      "call_id": "call_4WQ06tMXNBdMizNTpdUKgRAl",
+      "output": [
+        {
+          "type": "input_text",
+          "text": "Script completed\nWall time 4.4 seconds\nOutput:\n"
+        },
+        {
+          "type": "input_text",
+          "text": "{\"command\":\"npm run typecheck\",\"status\":\"fulfilled\",\"value\":{\"chunk_id\":\"bc9251\",\"wall_time_seconds\":4.185079,\"exit_code\":0,\"original_token_count\":10,\"output\":\"\\n> codex-ts-demo@0.1.0 typecheck\\n> tsc\\n\\n\"}}"
+        },
+        {
+          "type": "input_text",
+          "text": "{\"command\":\"npm test\",\"status\":\"fulfilled\",\"value\":{\"chunk_id\":\"0a899f\",\"wall_time_seconds\":2.3710565,\"exit_code\":1,\"original_token_count\":238,\"output\":\"\\n> codex-ts-demo@0.1.0 test\\n> node --test tests/price.test.ts\\n\\n✖ 单价 10 元、数量 3 时，总价应为 30 元 (1.3283ms)\\nℹ tests 1\\nℹ suites 0\\nℹ pass 0\\nℹ fail 1\\nℹ cancelled 0\\nℹ skipped 0\\nℹ todo 0\\nℹ duration_ms 135.2061\\n\\n✖ failing tests:\\n\\ntest at tests\\\\price.test.ts:5:1\\n✖ 单价 10 元、数量 3 时，总价应为 30 元 (1.3283ms)\\n  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\\n  \\n  13 !== 30\\n  \\n      at TestContext.<anonymous> (file:///E:/Develop/github/codex-ts-demo/tests/price.test.ts:6:10)\\n      at Test.runInAsyncScope (node:async_hooks:228:14)\\n      at Test.run (node:internal/test_runner/test:1118:25)\\n      at Test.start (node:internal/test_runner/test:1015:17)\\n      at startSubtestAfterBootstrap (node:internal/test_runner/harness:358:17) {\\n    generatedMessage: true,\\n    code: 'ERR_ASSERTION',\\n    actual: 13,\\n    expected: 30,\\n    operator: 'strictEqual',\\n    diff: 'simple'\\n  }\\n\"}}"
+        }
+      ]
+    }
+  ],
+  "tool_choice": "auto",
+  "parallel_tool_calls": false,
+  "reasoning": {
+    "effort": "xhigh",
+    "summary": "detailed",
+    "context": "all_turns"
+  },
+  "store": false,
+  "stream": true,
+  "include": [
+    "reasoning.encrypted_content"
+  ],
+  "service_tier": "priority",
+  "prompt_cache_key": "01a0eded-ff1b-7e82-ac47-067861c26ea8",
+  "text": {
+    "verbosity": "low"
+  },
+  "client_metadata": {
+    "turn_id": "01a0edef-774d-7de3-aeee-e56cb9817f2b",
+    "x-codex-installation-id": "<REDACTED>",
+    "x-codex-ws-stream-request-start-ms": "1790698297695",
+    "thread_id": "01a0eded-ff1b-7e82-ac47-067861c26ea8",
+    "root_turn_id": "01a0edef-774d-7de3-aeee-e56cb9817f2b",
+    "x-codex-window-id": "01a0eded-ff1b-7e82-ac47-067861c26ea8:0",
+    "session_id": "01a0eded-ff1b-7e82-ac47-067861c26ea8",
+    "x-codex-turn-metadata": "{\"installation_id\":\"<REDACTED>\",\"session_id\":\"01a0eded-ff1b-7e82-ac47-067861c26ea8\",\"thread_id\":\"01a0eded-ff1b-7e82-ac47-067861c26ea8\",\"agent_name\":\"/root\",\"turn_id\":\"01a0edef-774d-7de3-aeee-e56cb9817f2b\",\"window_id\":\"01a0eded-ff1b-7e82-ac47-067861c26ea8:0\",\"window_number\":0,\"context_window_id\":\"01a0eded-ff1b-7e82-ac47-068ef12a5afc\",\"request_kind\":\"turn\",\"root_turn_id\":\"01a0edef-774d-7de3-aeee-e56cb9817f2b\",\"thread_source\":\"user\",\"turn_trigger\":\"composer\",\"sandbox\":\"none\",\"sandbox_mode\":\"danger-full-access\",\"auto_review_enabled\":false,\"node_repl_auto_review_required\":true,\"node_repl_disabled\":false,\"turn_started_at_unix_ms\":1790698289031,\"analytics_enabled\":true,\"model\":\"gpt-6-astra\",\"reasoning_effort\":\"xhigh\",\"workspace_kind\":\"project\"}",
+    "ws_request_header_x_openai_internal_codex_responses_lite": "true"
+  }
+}

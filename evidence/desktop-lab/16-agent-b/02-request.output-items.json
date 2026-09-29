@@ -1,0 +1,45 @@
+{
+  "provenance": "Derived by collecting response.output_item.done.item in event order; response.completed is unchanged.",
+  "items": [
+    {
+      "id": "rs_0ad0e63663459e28016abbebf923f487d0a88da688f8fafdb5",
+      "type": "reasoning",
+      "content": [],
+      "encrypted_content": "<REDACTED>",
+      "internal_chat_message_metadata_passthrough": {
+        "turn_id": "01a0ee11-713a-7371-8eed-72faa809e4d2"
+      },
+      "summary": [
+        {
+          "type": "summary_text",
+          "text": "**Selecting exact test input**"
+        }
+      ],
+      "metadata": {
+        "turn_id": "01a0ee11-713a-7371-8eed-72faa809e4d2"
+      }
+    },
+    {
+      "id": "msg_0ad0e63663459e28016abbec01321c87d09e0eccd736cdb3a0",
+      "type": "message",
+      "status": "completed",
+      "content": [
+        {
+          "type": "output_text",
+          "annotations": [],
+          "logprobs": [],
+          "text": "B：测试覆盖符合已批准方案，未发现必需场景遗漏。\n\n- [tests/price.test.ts:5](/E:/Develop/github/codex-ts-demo/tests/price.test.ts:5)：覆盖旧两个参数调用、显式 `undefined` 和 `0`，均断言返回 `30`。\n- [tests/price.test.ts:14](/E:/Develop/github/codex-ts-demo/tests/price.test.ts:14)：覆盖 `10% → 27`、`100% → 0`、`25% → 22.5`。\n- [tests/price.test.ts:26](/E:/Develop/github/codex-ts-demo/tests/price.test.ts:26)：覆盖 `-1`、`101`、`1.5`、`NaN`、正负 `Infinity`，逐项断言异常名称 `RangeError` 及完整错误消息。\n- 静态统计共 11 个测试。有价值的可选补充：现有 `22.5` 用例不能防止未来引入“两位小数舍入”；可用 `(0.125, 1, 50) → 0.0625` 固定“不额外舍入”的约定。这不属于已批准测试清单的遗漏。\n\n仅做静态读取，未运行测试、未修改文件。"
+        }
+      ],
+      "internal_chat_message_metadata_passthrough": {
+        "create_time": 1790700536.311957,
+        "turn_id": "01a0ee11-713a-7371-8eed-72faa809e4d2"
+      },
+      "phase": "final_answer",
+      "role": "assistant",
+      "metadata": {
+        "turn_id": "01a0ee11-713a-7371-8eed-72faa809e4d2"
+      }
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "type": "response.create",
+  "model": "gpt-6-astra",
+  "previous_response_id": "resp_0d30a0e4ba796638016abbe6b5fd4487d0ad6919a58e3bbb1b",
+  "input": [
+    {
+      "type": "custom_tool_call_output",
+      "id": "ctco_01a0edfd-402d-7df2-887a-275a74d84423",
+      "call_id": "call_Lrw0R8e67zTmGTkq5mPT5GAj",
+      "output": [
+        {
+          "type": "input_text",
+          "text": "Script completed\nWall time 0.9 seconds\nOutput:\n"
+        },
+        {
+          "type": "input_text",
+          "text": "{\"chunk_id\":\"f6fe8f\",\"wall_time_seconds\":0.5040769,\"exit_code\":0,\"original_token_count\":14,\"output\":\"- 当前商品总价使用元，暂不支持折扣。\\n\\r\\n\"}"
+        }
+      ]
+    }
+  ],
+  "tool_choice": "auto",
+  "parallel_tool_calls": false,
+  "reasoning": {
+    "effort": "xhigh",
+    "summary": "detailed",
+    "context": "all_turns"
+  },
+  "store": false,
+  "stream": true,
+  "include": [
+    "reasoning.encrypted_content"
+  ],
+  "service_tier": "priority",
+  "prompt_cache_key": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+  "text": {
+    "verbosity": "low"
+  },
+  "client_metadata": {
+    "session_id": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+    "x-codex-turn-metadata": "{\"installation_id\":\"<REDACTED>\",\"session_id\":\"01a0edfd-0bdc-7042-985c-5c6a957c6895\",\"thread_id\":\"01a0edfd-0bdc-7042-985c-5c6a957c6895\",\"agent_name\":\"/root\",\"turn_id\":\"01a0edfd-2778-77a2-b0d4-e9f00da37785\",\"window_id\":\"01a0edfd-0bdc-7042-985c-5c6a957c6895:0\",\"window_number\":0,\"context_window_id\":\"01a0edfd-0bdc-7042-985c-5c7ecd005716\",\"request_kind\":\"turn\",\"root_turn_id\":\"01a0edfd-2778-77a2-b0d4-e9f00da37785\",\"thread_source\":\"user\",\"turn_trigger\":\"composer\",\"sandbox\":\"none\",\"sandbox_mode\":\"danger-full-access\",\"auto_review_enabled\":false,\"node_repl_auto_review_required\":true,\"node_repl_disabled\":false,\"turn_started_at_unix_ms\":1790699186105,\"analytics_enabled\":true,\"model\":\"gpt-6-astra\",\"reasoning_effort\":\"xhigh\",\"workspace_kind\":\"project\"}",
+    "turn_id": "01a0edfd-2778-77a2-b0d4-e9f00da37785",
+    "thread_id": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+    "x-codex-ws-stream-request-start-ms": "1790699192673",
+    "ws_request_header_x_openai_internal_codex_responses_lite": "true",
+    "root_turn_id": "01a0edfd-2778-77a2-b0d4-e9f00da37785",
+    "x-codex-installation-id": "<REDACTED>",
+    "x-codex-window-id": "01a0edfd-0bdc-7042-985c-5c6a957c6895:0"
+  }
+}

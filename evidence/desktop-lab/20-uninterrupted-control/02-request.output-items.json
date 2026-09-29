@@ -1,0 +1,20 @@
+{
+  "provenance": "Derived by collecting response.output_item.done.item in event order; response.completed is unchanged.",
+  "items": [
+    {
+      "id": "ctc_0d30a0e4ba796638016abbee01a77887d087eac27b14f04c8f",
+      "type": "custom_tool_call",
+      "status": "completed",
+      "call_id": "call_ZK6TltXqwzT7fCRlkizTC7Ud",
+      "input": "text(await tools.exec_command({cmd:\"npm test\",\"workdir\":\"E:\\\\Develop\\\\github\\\\codex-ts-demo\",\"max_output_tokens\":3000}));\n",
+      "internal_chat_message_metadata_passthrough": {
+        "create_time": 1790701056.700219,
+        "turn_id": "01a0ee19-067b-7452-b3f6-eddffafa7ac9"
+      },
+      "name": "exec",
+      "metadata": {
+        "turn_id": "01a0ee19-067b-7452-b3f6-eddffafa7ac9"
+      }
+    }
+  ]
+}

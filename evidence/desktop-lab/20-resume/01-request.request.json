@@ -1,0 +1,50 @@
+{
+  "type": "response.create",
+  "model": "gpt-6-astra",
+  "previous_response_id": "resp_0d30a0e4ba796638016abbeec472c087d09536fc32346994f8",
+  "input": [
+    {
+      "type": "custom_tool_call_output",
+      "id": "ctco_01a0ee1c-c8ac-7873-8a53-537f088a67a8",
+      "call_id": "call_PuqMbofyzZ4XDvPgK9HcuHGn",
+      "output": [
+        {
+          "type": "input_text",
+          "text": "Script completed\nWall time 1.4 seconds\nOutput:\n"
+        },
+        {
+          "type": "input_text",
+          "text": "{\"chunk_id\":\"6c3e34\",\"wall_time_seconds\":1.26791,\"exit_code\":0,\"original_token_count\":203,\"output\":\"\\n> codex-ts-demo@0.1.0 test\\n> node --test tests/price.test.ts\\n\\n✔ 单价 10 元、数量 3 时，总价应为 30 元 (1.7171ms)\\n✔ 折扣为 undefined 或 0 时，总价应为 30 元 (0.27ms)\\n✔ 减免 10% 时，总价应为 27 元 (0.2208ms)\\n✔ 减免 100% 时，总价应为 0 元 (0.2118ms)\\n✔ 减免 25% 时，总价应为 22.5 元 (0.216ms)\\n✔ 折扣为 -1 时，应抛出 RangeError (1.2753ms)\\n✔ 折扣为 101 时，应抛出 RangeError (0.2296ms)\\n✔ 折扣为 1.5 时，应抛出 RangeError (0.1615ms)\\n✔ 折扣为 NaN 时，应抛出 RangeError (0.1804ms)\\n✔ 折扣为 Infinity 时，应抛出 RangeError (0.3294ms)\\n✔ 折扣为 -Infinity 时，应抛出 RangeError (0.1654ms)\\nℹ tests 11\\nℹ suites 0\\nℹ pass 11\\nℹ fail 0\\nℹ cancelled 0\\nℹ skipped 0\\nℹ todo 0\\nℹ duration_ms 172.6606\\n\"}"
+        }
+      ]
+    }
+  ],
+  "tool_choice": "auto",
+  "parallel_tool_calls": false,
+  "reasoning": {
+    "effort": "xhigh",
+    "summary": "detailed",
+    "context": "all_turns"
+  },
+  "store": false,
+  "stream": true,
+  "include": [
+    "reasoning.encrypted_content"
+  ],
+  "service_tier": "priority",
+  "prompt_cache_key": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+  "text": {
+    "verbosity": "low"
+  },
+  "client_metadata": {
+    "x-codex-installation-id": "<REDACTED>",
+    "x-codex-window-id": "01a0edfd-0bdc-7042-985c-5c6a957c6895:0",
+    "root_turn_id": "01a0ee1c-a608-7b02-9124-a529fafcb58c",
+    "ws_request_header_x_openai_internal_codex_responses_lite": "true",
+    "session_id": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+    "turn_id": "01a0ee1c-a608-7b02-9124-a529fafcb58c",
+    "x-codex-turn-metadata": "{\"installation_id\":\"<REDACTED>\",\"session_id\":\"01a0edfd-0bdc-7042-985c-5c6a957c6895\",\"thread_id\":\"01a0edfd-0bdc-7042-985c-5c6a957c6895\",\"agent_name\":\"/root\",\"turn_id\":\"01a0ee1c-a608-7b02-9124-a529fafcb58c\",\"window_id\":\"01a0edfd-0bdc-7042-985c-5c6a957c6895:0\",\"window_number\":0,\"context_window_id\":\"01a0edfd-0bdc-7042-985c-5c7ecd005716\",\"request_kind\":\"turn\",\"root_turn_id\":\"01a0ee1c-a608-7b02-9124-a529fafcb58c\",\"thread_source\":\"user\",\"turn_trigger\":\"composer\",\"sandbox\":\"none\",\"sandbox_mode\":\"danger-full-access\",\"auto_review_enabled\":false,\"node_repl_auto_review_required\":true,\"node_repl_disabled\":false,\"turn_started_at_unix_ms\":1790701250114,\"analytics_enabled\":true,\"model\":\"gpt-6-astra\",\"reasoning_effort\":\"xhigh\",\"workspace_kind\":\"project\"}",
+    "thread_id": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+    "x-codex-ws-stream-request-start-ms": "1790701258955"
+  }
+}

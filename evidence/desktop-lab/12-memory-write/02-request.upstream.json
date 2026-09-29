@@ -1,0 +1,50 @@
+{
+  "type": "response.create",
+  "model": "gpt-6-astra",
+  "previous_response_id": "resp_0b151dee69886a16016abbe629e51c87d0a6771a261d91367e",
+  "input": [
+    {
+      "type": "custom_tool_call_output",
+      "id": "ctco_01a0edfb-249d-7473-8910-478e616a6371",
+      "call_id": "call_sgFbV13FJre9Tzo11UHDImiv",
+      "output": [
+        {
+          "type": "input_text",
+          "text": "Script completed\nWall time 0.9 seconds\nOutput:\n"
+        },
+        {
+          "type": "input_text",
+          "text": "{\"chunk_id\":\"927150\",\"wall_time_seconds\":0.4800495,\"exit_code\":0,\"original_token_count\":52,\"output\":\"# 项目约定\\r\\n\\r\\n- 当用户要求介绍本项目时，回复以“项目观察：”开头，再说明用途和运行方法。\\r\\n- 用户没有要求修改时，只读取文件，不修改业务源码。\\r\\n\"}"
+        }
+      ]
+    }
+  ],
+  "tool_choice": "auto",
+  "parallel_tool_calls": false,
+  "reasoning": {
+    "effort": "xhigh",
+    "summary": "detailed",
+    "context": "all_turns"
+  },
+  "store": false,
+  "stream": true,
+  "include": [
+    "reasoning.encrypted_content"
+  ],
+  "service_tier": "priority",
+  "prompt_cache_key": "01a0eded-ff1b-7e82-ac47-067861c26ea8",
+  "text": {
+    "verbosity": "low"
+  },
+  "client_metadata": {
+    "thread_id": "01a0eded-ff1b-7e82-ac47-067861c26ea8",
+    "x-codex-window-id": "01a0eded-ff1b-7e82-ac47-067861c26ea8:1",
+    "x-codex-turn-metadata": "{\"installation_id\":\"<REDACTED>\",\"session_id\":\"01a0eded-ff1b-7e82-ac47-067861c26ea8\",\"thread_id\":\"01a0eded-ff1b-7e82-ac47-067861c26ea8\",\"agent_name\":\"/root\",\"turn_id\":\"01a0edfa-f7b8-7e43-81d6-1a4628f45077\",\"window_id\":\"01a0eded-ff1b-7e82-ac47-067861c26ea8:1\",\"window_number\":1,\"context_window_id\":\"01a0edf8-457d-7f83-bdfb-ab23279a74c0\",\"request_kind\":\"turn\",\"root_turn_id\":\"01a0edfa-f7b8-7e43-81d6-1a4628f45077\",\"thread_source\":\"user\",\"turn_trigger\":\"composer\",\"sandbox\":\"none\",\"sandbox_mode\":\"danger-full-access\",\"auto_review_enabled\":false,\"node_repl_auto_review_required\":true,\"node_repl_disabled\":false,\"turn_started_at_unix_ms\":1790699042818,\"analytics_enabled\":true,\"model\":\"gpt-6-astra\",\"reasoning_effort\":\"xhigh\",\"workspace_kind\":\"project\"}",
+    "x-codex-ws-stream-request-start-ms": "1790699054502",
+    "x-codex-installation-id": "<REDACTED>",
+    "root_turn_id": "01a0edfa-f7b8-7e43-81d6-1a4628f45077",
+    "turn_id": "01a0edfa-f7b8-7e43-81d6-1a4628f45077",
+    "ws_request_header_x_openai_internal_codex_responses_lite": "true",
+    "session_id": "01a0eded-ff1b-7e82-ac47-067861c26ea8"
+  }
+}

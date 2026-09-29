@@ -1,0 +1,41 @@
+{
+  "type": "response.create",
+  "model": "gpt-6-astra",
+  "previous_response_id": "resp_0d30a0e4ba796638016abbe9a55fb887d0aba50b9ced0ba755",
+  "input": [
+    {
+      "type": "function_call_output",
+      "id": "fco_01a0ee0a-2c8d-7333-b19f-2e2e526cd25b",
+      "call_id": "call_9f8LTJWOrmPRVjiloSJ9B6EL",
+      "output": "{\"answers\":{\"rounding_policy\":{\"answers\":[\"保持现有数值精度 (Recommended)\"]}}}"
+    }
+  ],
+  "tool_choice": "auto",
+  "parallel_tool_calls": false,
+  "reasoning": {
+    "effort": "xhigh",
+    "summary": "detailed",
+    "context": "all_turns"
+  },
+  "store": false,
+  "stream": true,
+  "include": [
+    "reasoning.encrypted_content"
+  ],
+  "service_tier": "priority",
+  "prompt_cache_key": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+  "text": {
+    "verbosity": "low"
+  },
+  "client_metadata": {
+    "x-codex-installation-id": "<REDACTED>",
+    "turn_id": "01a0ee08-4c19-72b0-9345-676981bd6d8e",
+    "x-codex-ws-stream-request-start-ms": "1790700039346",
+    "x-codex-window-id": "01a0edfd-0bdc-7042-985c-5c6a957c6895:0",
+    "thread_id": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+    "session_id": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+    "root_turn_id": "01a0ee08-4c19-72b0-9345-676981bd6d8e",
+    "ws_request_header_x_openai_internal_codex_responses_lite": "true",
+    "x-codex-turn-metadata": "{\"installation_id\":\"<REDACTED>\",\"session_id\":\"01a0edfd-0bdc-7042-985c-5c6a957c6895\",\"thread_id\":\"01a0edfd-0bdc-7042-985c-5c6a957c6895\",\"agent_name\":\"/root\",\"turn_id\":\"01a0ee08-4c19-72b0-9345-676981bd6d8e\",\"window_id\":\"01a0edfd-0bdc-7042-985c-5c6a957c6895:0\",\"window_number\":0,\"context_window_id\":\"01a0edfd-0bdc-7042-985c-5c7ecd005716\",\"request_kind\":\"turn\",\"root_turn_id\":\"01a0ee08-4c19-72b0-9345-676981bd6d8e\",\"thread_source\":\"user\",\"turn_trigger\":\"composer\",\"sandbox\":\"none\",\"sandbox_mode\":\"danger-full-access\",\"auto_review_enabled\":false,\"node_repl_auto_review_required\":true,\"node_repl_disabled\":false,\"turn_started_at_unix_ms\":1790699916372,\"analytics_enabled\":true,\"model\":\"gpt-6-astra\",\"reasoning_effort\":\"xhigh\",\"workspace_kind\":\"project\"}"
+  }
+}

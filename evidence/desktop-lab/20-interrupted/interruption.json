@@ -1,0 +1,285 @@
+{
+  "provenance": "Selected native rollout events for explicitly interrupted turns. Completed model responses do not imply that the user turn or its outstanding tools completed.",
+  "source": "<USER_HOME>/.codex/sessions/2026/09/30/rollout-2026-09-30T00-26-18-01a0edfd-0bdc-7042-985c-5c6a957c6895.jsonl",
+  "turns": [
+    {
+      "turnId": "01a0ee1a-ad09-7131-9368-5c7bc06db9db",
+      "events": [
+        {
+          "sourceLine": 316,
+          "event": {
+            "timestamp": "2026-09-29T16:58:40.834Z",
+            "ordinal": 315,
+            "type": "event_msg",
+            "payload": {
+              "type": "task_started",
+              "turn_id": "01a0ee1a-ad09-7131-9368-5c7bc06db9db",
+              "root_turn_id": "01a0ee1a-ad09-7131-9368-5c7bc06db9db",
+              "started_at": 1790701120,
+              "model_context_window": 828400,
+              "collaboration_mode_kind": "default"
+            }
+          }
+        },
+        {
+          "sourceLine": 318,
+          "event": {
+            "timestamp": "2026-09-29T16:58:41.062Z",
+            "ordinal": 317,
+            "type": "response_item",
+            "payload": {
+              "type": "message",
+              "id": "msg_01a0ee1a-ae26-7071-819f-1bb3d330b19c",
+              "role": "user",
+              "content": [
+                {
+                  "type": "input_text",
+                  "text": "再做一次中断实验，把观察窗口延长：先单独运行 npm run typecheck 并报告退出码；随后单独等待 120 秒，等待完整结束后才运行 npm test。不要修改文件。我会在等待时点击停止；被停止后不要自行重试。\n"
+                }
+              ],
+              "internal_chat_message_metadata_passthrough": {
+                "turn_id": "01a0ee1a-ad09-7131-9368-5c7bc06db9db",
+                "create_time": 1790701121.062732,
+                "content_item_kinds": [
+                  "user.text"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "sourceLine": 323,
+          "event": {
+            "timestamp": "2026-09-29T16:58:47.022Z",
+            "ordinal": 322,
+            "type": "response_item",
+            "payload": {
+              "type": "message",
+              "id": "msg_0d30a0e4ba796638016abbee488ae087d093d5620250bf181b",
+              "role": "assistant",
+              "content": [
+                {
+                  "type": "output_text",
+                  "text": "我会先单独运行类型检查并报告退出码，再等待共 120 秒，完整等待结束后才运行测试。若被停止，我不会自行重试。\n"
+                }
+              ],
+              "phase": "commentary",
+              "internal_chat_message_metadata_passthrough": {
+                "turn_id": "01a0ee1a-ad09-7131-9368-5c7bc06db9db",
+                "create_time": 1790701123.67424,
+                "content_item_kinds": [
+                  "unknown"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "sourceLine": 324,
+          "event": {
+            "timestamp": "2026-09-29T16:58:47.120Z",
+            "ordinal": 323,
+            "type": "response_item",
+            "payload": {
+              "type": "custom_tool_call",
+              "id": "ctc_0d30a0e4ba796638016abbee48a92487d0892ac09c88f89774",
+              "status": "completed",
+              "call_id": "call_6VrFE3R2Sx87HEfZFkHQ77bZ",
+              "name": "exec",
+              "input": "text(await tools.exec_command({cmd:\"npm run typecheck\",\"workdir\":\"E:\\\\Develop\\\\github\\\\codex-ts-demo\",\"max_output_tokens\":2000}));\n",
+              "internal_chat_message_metadata_passthrough": {
+                "turn_id": "01a0ee1a-ad09-7131-9368-5c7bc06db9db",
+                "create_time": 1790701123.67424
+              }
+            }
+          }
+        },
+        {
+          "sourceLine": 326,
+          "event": {
+            "timestamp": "2026-09-29T16:58:49.671Z",
+            "ordinal": 325,
+            "type": "event_msg",
+            "payload": {
+              "type": "item_completed",
+              "thread_id": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+              "turn_id": "01a0ee1a-ad09-7131-9368-5c7bc06db9db",
+              "item": {
+                "type": "CommandExecution",
+                "id": "exec-3e4a7e57-b024-402d-a6a6-68578b1ccd59",
+                "process_id": "40397",
+                "command": [
+                  "<USER_HOME>\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe",
+                  "-Command",
+                  "npm run typecheck"
+                ],
+                "cwd": "file:///E:/Develop/github/codex-ts-demo",
+                "parsed_cmd": [
+                  {
+                    "type": "unknown",
+                    "cmd": "npm run typecheck"
+                  }
+                ],
+                "source": "unified_exec_startup",
+                "status": "completed",
+                "stdout": "\n> codex-ts-demo@0.1.0 typecheck\n> tsc\n\n",
+                "stderr": "",
+                "aggregated_output": "\n> codex-ts-demo@0.1.0 typecheck\n> tsc\n\n",
+                "exit_code": 0,
+                "duration": {
+                  "secs": 2,
+                  "nanos": 364929000
+                },
+                "formatted_output": "\n> codex-ts-demo@0.1.0 typecheck\n> tsc\n\n"
+              },
+              "started_at_ms": 1790701127306,
+              "completed_at_ms": 1790701129671
+            }
+          }
+        },
+        {
+          "sourceLine": 327,
+          "event": {
+            "timestamp": "2026-09-29T16:58:49.704Z",
+            "ordinal": 326,
+            "type": "response_item",
+            "payload": {
+              "type": "custom_tool_call_output",
+              "id": "ctco_01a0ee1a-cfe8-76b1-abf7-2e2f6e66bfd4",
+              "call_id": "call_6VrFE3R2Sx87HEfZFkHQ77bZ",
+              "output": [
+                {
+                  "type": "input_text",
+                  "text": "Script completed\nWall time 2.6 seconds\nOutput:\n"
+                },
+                {
+                  "type": "input_text",
+                  "text": "{\"chunk_id\":\"cc881f\",\"wall_time_seconds\":2.3649595,\"exit_code\":0,\"original_token_count\":10,\"output\":\"\\n> codex-ts-demo@0.1.0 typecheck\\n> tsc\\n\\n\"}"
+                }
+              ],
+              "internal_chat_message_metadata_passthrough": {
+                "turn_id": "01a0ee1a-ad09-7131-9368-5c7bc06db9db",
+                "create_time": 1790701129.7048867
+              }
+            },
+            "metadata": {
+              "client_authored": false,
+              "fallback_token_limit_override": 12000
+            }
+          }
+        },
+        {
+          "sourceLine": 330,
+          "event": {
+            "timestamp": "2026-09-29T16:58:52.331Z",
+            "ordinal": 329,
+            "type": "response_item",
+            "payload": {
+              "type": "message",
+              "id": "msg_0d30a0e4ba796638016abbee4d1c7087d080f0171c15e20f8c",
+              "role": "assistant",
+              "content": [
+                {
+                  "type": "output_text",
+                  "text": "`npm run typecheck` 已完成，退出码 **0**。现在开始等待 120 秒，分两段各 60 秒执行；完整结束前不会运行 `npm test`。\n"
+                }
+              ],
+              "phase": "commentary",
+              "internal_chat_message_metadata_passthrough": {
+                "turn_id": "01a0ee1a-ad09-7131-9368-5c7bc06db9db",
+                "create_time": 1790701131.856348,
+                "content_item_kinds": [
+                  "unknown"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "sourceLine": 331,
+          "event": {
+            "timestamp": "2026-09-29T16:58:52.503Z",
+            "ordinal": 330,
+            "type": "response_item",
+            "payload": {
+              "type": "function_call",
+              "id": "fc_0d30a0e4ba796638016abbee4df9e087d0b4797002536c553d",
+              "name": "sleep",
+              "namespace": "clock",
+              "arguments": "{\"duration_ms\":60000}",
+              "call_id": "call_MgxCc9ZeSdtTTeTO6HqupFTC",
+              "internal_chat_message_metadata_passthrough": {
+                "turn_id": "01a0ee1a-ad09-7131-9368-5c7bc06db9db",
+                "create_time": 1790701131.856348
+              }
+            }
+          }
+        },
+        {
+          "sourceLine": 333,
+          "event": {
+            "timestamp": "2026-09-29T16:59:07.850Z",
+            "ordinal": 332,
+            "type": "response_item",
+            "payload": {
+              "type": "function_call_output",
+              "id": "fco_01a0ee1b-16ca-77a0-a668-ce1f53faa24f",
+              "call_id": "call_MgxCc9ZeSdtTTeTO6HqupFTC",
+              "output": "aborted by user after 15.3s",
+              "internal_chat_message_metadata_passthrough": {
+                "turn_id": "01a0ee1a-ad09-7131-9368-5c7bc06db9db",
+                "create_time": 1790701147.850023
+              }
+            },
+            "metadata": {
+              "client_authored": false,
+              "fallback_token_limit_override": 12000
+            }
+          }
+        },
+        {
+          "sourceLine": 335,
+          "event": {
+            "timestamp": "2026-09-29T16:59:07.877Z",
+            "ordinal": 334,
+            "type": "response_item",
+            "payload": {
+              "type": "message",
+              "id": "msg_01a0ee1b-16e5-7a50-906f-6944440a649c",
+              "role": "developer",
+              "content": [
+                {
+                  "type": "input_text",
+                  "text": "<turn_aborted>\nThe previous turn was interrupted on purpose. Any running unified exec processes may still be running in the background. If any tools/commands were aborted, they may have partially executed.\n</turn_aborted>"
+                }
+              ],
+              "internal_chat_message_metadata_passthrough": {
+                "turn_id": "01a0ee1a-ad09-7131-9368-5c7bc06db9db",
+                "create_time": 1790701147.8772142,
+                "content_item_kinds": [
+                  "generic.turn_aborted"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "sourceLine": 336,
+          "event": {
+            "timestamp": "2026-09-29T16:59:08.547Z",
+            "ordinal": 335,
+            "type": "event_msg",
+            "payload": {
+              "type": "turn_aborted",
+              "turn_id": "01a0ee1a-ad09-7131-9368-5c7bc06db9db",
+              "reason": "interrupted",
+              "started_at": 1790701120,
+              "completed_at": 1790701148,
+              "duration_ms": 27714
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

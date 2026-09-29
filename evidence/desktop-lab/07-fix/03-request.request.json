@@ -1,0 +1,50 @@
+{
+  "type": "response.create",
+  "model": "gpt-6-astra",
+  "previous_response_id": "resp_0061bd7340416e34016abbe3776f4c87d0bca4b851aadf79f3",
+  "input": [
+    {
+      "type": "custom_tool_call_output",
+      "id": "ctco_01a0edf0-a230-74c2-8fb5-8868aa4aed7f",
+      "call_id": "call_GpRIplrClvzLfrtkkMHGVzEA",
+      "output": [
+        {
+          "type": "input_text",
+          "text": "Script completed\nWall time 0.0 seconds\nOutput:\n"
+        },
+        {
+          "type": "input_text",
+          "text": "{}"
+        }
+      ]
+    }
+  ],
+  "tool_choice": "auto",
+  "parallel_tool_calls": false,
+  "reasoning": {
+    "effort": "xhigh",
+    "summary": "detailed",
+    "context": "all_turns"
+  },
+  "store": false,
+  "stream": true,
+  "include": [
+    "reasoning.encrypted_content"
+  ],
+  "service_tier": "priority",
+  "prompt_cache_key": "01a0eded-ff1b-7e82-ac47-067861c26ea8",
+  "text": {
+    "verbosity": "low"
+  },
+  "client_metadata": {
+    "x-codex-turn-metadata": "{\"installation_id\":\"<REDACTED>\",\"session_id\":\"01a0eded-ff1b-7e82-ac47-067861c26ea8\",\"thread_id\":\"01a0eded-ff1b-7e82-ac47-067861c26ea8\",\"agent_name\":\"/root\",\"turn_id\":\"01a0edf0-47eb-7873-9476-2ea1d0d21769\",\"window_id\":\"01a0eded-ff1b-7e82-ac47-067861c26ea8:0\",\"window_number\":0,\"context_window_id\":\"01a0eded-ff1b-7e82-ac47-068ef12a5afc\",\"request_kind\":\"turn\",\"root_turn_id\":\"01a0edf0-47eb-7873-9476-2ea1d0d21769\",\"thread_source\":\"user\",\"turn_trigger\":\"composer\",\"sandbox\":\"none\",\"sandbox_mode\":\"danger-full-access\",\"auto_review_enabled\":false,\"node_repl_auto_review_required\":true,\"node_repl_disabled\":false,\"turn_started_at_unix_ms\":1790698342439,\"analytics_enabled\":true,\"model\":\"gpt-6-astra\",\"reasoning_effort\":\"xhigh\",\"workspace_kind\":\"project\"}",
+    "root_turn_id": "01a0edf0-47eb-7873-9476-2ea1d0d21769",
+    "turn_id": "01a0edf0-47eb-7873-9476-2ea1d0d21769",
+    "x-codex-ws-stream-request-start-ms": "1790698365526",
+    "x-codex-installation-id": "<REDACTED>",
+    "thread_id": "01a0eded-ff1b-7e82-ac47-067861c26ea8",
+    "session_id": "01a0eded-ff1b-7e82-ac47-067861c26ea8",
+    "ws_request_header_x_openai_internal_codex_responses_lite": "true",
+    "x-codex-window-id": "01a0eded-ff1b-7e82-ac47-067861c26ea8:0"
+  }
+}

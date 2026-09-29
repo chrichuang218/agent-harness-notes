@@ -1,0 +1,20 @@
+{
+  "provenance": "Derived by collecting response.output_item.done.item in event order; response.completed is unchanged.",
+  "items": [
+    {
+      "id": "ctc_0ad0e63663459e28016abbebeb480c87d08d9e2024d46d8118",
+      "type": "custom_tool_call",
+      "status": "completed",
+      "call_id": "call_afcKXHTAwsrmth6AM6qMuxYV",
+      "input": "const result = await tools.exec_command({cmd:\"$paths = @('AGENTS.md','tests/AGENTS.md','tests/price.test.ts','src/price.ts','package.json'); foreach ($path in $paths) { if (Test-Path -LiteralPath $path) { Write-Output \\\"FILE: $path\\\"; $line = 0; Get-Content -LiteralPath $path | ForEach-Object { $line++; '{0}: {1}' -f $line, $_ } } }\",\"workdir\":\"E:\\\\Develop\\\\github\\\\codex-ts-demo\",\"max_output_tokens\":7000});text(result);\n",
+      "internal_chat_message_metadata_passthrough": {
+        "create_time": 1790700522.345955,
+        "turn_id": "01a0ee11-713a-7371-8eed-72faa809e4d2"
+      },
+      "name": "exec",
+      "metadata": {
+        "turn_id": "01a0ee11-713a-7371-8eed-72faa809e4d2"
+      }
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "provenance": "Derived by collecting response.output_item.done.item in event order; response.completed is unchanged.",
+  "items": [
+    {
+      "id": "ctc_0d30a0e4ba796638016abbecea3e7887d0baa82a117b06c776",
+      "type": "custom_tool_call",
+      "status": "completed",
+      "call_id": "call_YsmXkQ20OnP2aXJvYXjopZxm",
+      "input": "const results = await Promise.allSettled([\n  tools.exec_command({cmd:\"npm run typecheck\",\"workdir\":\"E:\\\\Develop\\\\github\\\\codex-ts-demo\",\"max_output_tokens\":2000}),\n  tools.exec_command({cmd:\"npm test\",\"workdir\":\"E:\\\\Develop\\\\github\\\\codex-ts-demo\",\"max_output_tokens\":3000})\n]);\nresults.forEach((result, index) => text({command:index === 0 ? \"npm run typecheck\" : \"npm test\", ...result}));\n",
+      "internal_chat_message_metadata_passthrough": {
+        "create_time": 1790700774.82766,
+        "turn_id": "01a0ee15-3137-7322-94f4-cb76d65df790"
+      },
+      "name": "exec",
+      "metadata": {
+        "turn_id": "01a0ee15-3137-7322-94f4-cb76d65df790"
+      }
+    }
+  ]
+}

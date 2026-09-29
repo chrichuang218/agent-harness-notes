@@ -1,0 +1,50 @@
+{
+  "type": "response.create",
+  "model": "gpt-6-astra",
+  "previous_response_id": "resp_0e37249022131978016abbe1b0762087d08637b9adb365b489",
+  "input": [
+    {
+      "type": "custom_tool_call_output",
+      "id": "ctco_01a0ede9-a2ec-74a1-996e-2a11a490d8f0",
+      "call_id": "call_a288dLl8tyNv8JFlTJgNdtfK",
+      "output": [
+        {
+          "type": "input_text",
+          "text": "Script completed\nWall time 0.9 seconds\nOutput:\n"
+        },
+        {
+          "type": "input_text",
+          "text": "{\"chunk_id\":\"745006\",\"wall_time_seconds\":0.5163432,\"exit_code\":0,\"original_token_count\":263,\"output\":\"# Codex TS Demo\\n\\n一个计算商品总价的极简 TypeScript 项目，用于在 Codex Desktop 中测试文件读取、代码修改和测试执行，并通过 CPA 日志观察过程。\\n\\n## 环境\\n\\n需要 Node.js 24 或更高版本。直接运行 TypeScript，使用 Node.js 内置测试工具；TypeScript 编译器用于类型检查。\\n\\n```powershell\\nnpm install\\nnpm start\\nnpm run typecheck\\nnpm test\\n```\\n\\n## 功能与当前问题\\n\\n总价应等于单价乘以数量。本例仅使用整数单价和数量。\\n\\n当前测试场景：单价为 10 元、数量为 3，预期总价为 30 元，程序实际输出 13 元。\\n\\n这是供后续修复实验使用的初始状态：类型检查应通过，行为测试应失败。先保留这个问题，开始修复实验时再修改代码。\\n\\n## 文件\\n\\n- [src/index.ts](src/index.ts)：示例运行入口。\\n- [src/price.ts](src/price.ts)：总价计算函数。\\n- [tests/price.test.ts](tests/price.test.ts)：验证预期行为的测试。\\n\\n在 Codex Desktop 中打开本项目目录，即可开始实验。\\n\\r\\n\"}"
+        }
+      ]
+    }
+  ],
+  "tool_choice": "auto",
+  "parallel_tool_calls": false,
+  "reasoning": {
+    "effort": "xhigh",
+    "summary": "detailed",
+    "context": "all_turns"
+  },
+  "store": false,
+  "stream": true,
+  "include": [
+    "reasoning.encrypted_content"
+  ],
+  "service_tier": "priority",
+  "prompt_cache_key": "01a0edd8-fde9-7d31-9f55-d1623325e6e5",
+  "text": {
+    "verbosity": "low"
+  },
+  "client_metadata": {
+    "x-codex-ws-stream-request-start-ms": "1790697906960",
+    "root_turn_id": "01a0ede9-7793-7513-ba04-da061fcd167e",
+    "x-codex-window-id": "01a0edd8-fde9-7d31-9f55-d1623325e6e5:0",
+    "turn_id": "01a0ede9-7793-7513-ba04-da061fcd167e",
+    "thread_id": "01a0edd8-fde9-7d31-9f55-d1623325e6e5",
+    "session_id": "01a0edd8-fde9-7d31-9f55-d1623325e6e5",
+    "x-codex-turn-metadata": "{\"installation_id\":\"<REDACTED>\",\"session_id\":\"01a0edd8-fde9-7d31-9f55-d1623325e6e5\",\"thread_id\":\"01a0edd8-fde9-7d31-9f55-d1623325e6e5\",\"agent_name\":\"/root\",\"turn_id\":\"01a0ede9-7793-7513-ba04-da061fcd167e\",\"window_id\":\"01a0edd8-fde9-7d31-9f55-d1623325e6e5:0\",\"window_number\":0,\"context_window_id\":\"01a0edd8-fde9-7d31-9f55-d1759ecd2fab\",\"request_kind\":\"turn\",\"root_turn_id\":\"01a0ede9-7793-7513-ba04-da061fcd167e\",\"thread_source\":\"user\",\"turn_trigger\":\"composer\",\"sandbox\":\"none\",\"sandbox_mode\":\"danger-full-access\",\"auto_review_enabled\":false,\"node_repl_auto_review_required\":true,\"node_repl_disabled\":false,\"turn_started_at_unix_ms\":1790697895891,\"analytics_enabled\":true,\"model\":\"gpt-6-astra\",\"reasoning_effort\":\"xhigh\",\"workspace_kind\":\"project\"}",
+    "x-codex-installation-id": "<REDACTED>",
+    "ws_request_header_x_openai_internal_codex_responses_lite": "true"
+  }
+}

@@ -1,0 +1,125 @@
+{
+  "id": "01-hello",
+  "title": "只说一句你好，实际发送了什么",
+  "threadId": "01a0edd8-fde9-7d31-9f55-d1623325e6e5",
+  "turnIds": [
+    "01a0edd9-1f47-70f3-b690-d38f98b1142a"
+  ],
+  "prompt": "你好\n",
+  "reply": "你好！今天想一起做点什么？",
+  "stats": {
+    "requests": 1,
+    "toolCalls": 0,
+    "inputTokens": 32774,
+    "outputTokens": 13,
+    "prewarms": 1
+  },
+  "stages": [
+    {
+      "id": "00-prewarm",
+      "requestFile": "evidence/desktop-lab/01-hello/00-prewarm.request.json",
+      "responseFile": "evidence/desktop-lab/01-hello/00-prewarm.response.json",
+      "eventsFile": "evidence/desktop-lab/01-hello/00-prewarm.events.json",
+      "upstreamFile": "evidence/desktop-lab/01-hello/00-prewarm.upstream.json",
+      "outputItemsFile": "evidence/desktop-lab/01-hello/00-prewarm.output-items.json",
+      "requestTimestamp": "2026-09-29T23:46:56.4784015+08:00",
+      "responseId": "resp_07b3f06be6f86204016abbdd743ac887d0952f12d2c8c68c4d",
+      "previousResponseId": null,
+      "inputCount": 2,
+      "prewarm": true,
+      "source": {
+        "request": {
+          "file": "v1-responses-2026-09-29T235208-16cc17b6.log",
+          "line": 32,
+          "timestamp": "2026-09-29T23:46:56.4784015+08:00"
+        },
+        "completed": {
+          "file": "v1-responses-2026-09-29T235208-16cc17b6.log",
+          "line": 56,
+          "timestamp": "2026-09-29T23:46:58.9999219+08:00"
+        },
+        "upstream": {
+          "file": "v1-responses-2026-09-29T235208-16cc17b6.log",
+          "line": 166,
+          "timestamp": "2026-09-29T23:46:56.4863932+08:00"
+        }
+      }
+    },
+    {
+      "id": "01-request",
+      "requestFile": "evidence/desktop-lab/01-hello/01-request.request.json",
+      "responseFile": "evidence/desktop-lab/01-hello/01-request.response.json",
+      "eventsFile": "evidence/desktop-lab/01-hello/01-request.events.json",
+      "upstreamFile": "evidence/desktop-lab/01-hello/01-request.upstream.json",
+      "outputItemsFile": "evidence/desktop-lab/01-hello/01-request.output-items.json",
+      "requestTimestamp": "2026-09-29T23:47:06.4687743+08:00",
+      "responseId": "resp_0e37249022131978016abbdd7cb40c87d09c1a684b05dbefc1",
+      "previousResponseId": null,
+      "inputCount": 7,
+      "prewarm": false,
+      "source": {
+        "request": {
+          "file": "v1-responses-2026-09-29T235208-16cc17b6.log",
+          "line": 60,
+          "timestamp": "2026-09-29T23:47:06.4687743+08:00"
+        },
+        "completed": {
+          "file": "v1-responses-2026-09-29T235208-16cc17b6.log",
+          "line": 140,
+          "timestamp": "2026-09-29T23:47:08.7102913+08:00"
+        },
+        "upstream": {
+          "file": "v1-responses-2026-09-29T235208-16cc17b6.log",
+          "line": 234,
+          "timestamp": "2026-09-29T23:47:06.4770828+08:00"
+        }
+      }
+    }
+  ],
+  "notes": [
+    "Matched exact response event ids against rollout token_usage_record.response_id; text mentions are not matches.",
+    "response.json preserves the recorded response.completed event. Its output may be empty; output-items.json is a separately labelled derivation.",
+    "Only JSON request bodies and response.* events are exported. HTTP headers and transport header events are omitted.",
+    "Counts exclude prewarm stages. Token usage is the sum of formal model responses, not unique context size."
+  ],
+  "sanitization": {
+    "mode": "structure-preserving-redaction",
+    "replacements": [
+      "Windows user home → <USER_HOME>",
+      "Credential values, encrypted content, installation and safety ids → <REDACTED>"
+    ],
+    "changedPaths": [
+      "00-prewarm.events.json[0].data.response.safety_identifier",
+      "00-prewarm.events.json[1].data.response.safety_identifier",
+      "00-prewarm.events.json[2].data.response.safety_identifier",
+      "00-prewarm.request.json.client_metadata.x-codex-installation-id",
+      "00-prewarm.request.json.client_metadata.x-codex-turn-metadata.installation_id",
+      "00-prewarm.response.json.response.safety_identifier",
+      "00-prewarm.upstream.json.client_metadata.x-codex-installation-id",
+      "00-prewarm.upstream.json.client_metadata.x-codex-turn-metadata.installation_id",
+      "01-request.events.json[0].data.response.safety_identifier",
+      "01-request.events.json[10].data.obfuscation",
+      "01-request.events.json[11].data.obfuscation",
+      "01-request.events.json[12].data.obfuscation",
+      "01-request.events.json[16].data.response.safety_identifier",
+      "01-request.events.json[1].data.response.safety_identifier",
+      "01-request.events.json[4].data.obfuscation",
+      "01-request.events.json[5].data.obfuscation",
+      "01-request.events.json[6].data.obfuscation",
+      "01-request.events.json[7].data.obfuscation",
+      "01-request.events.json[8].data.obfuscation",
+      "01-request.events.json[9].data.obfuscation",
+      "01-request.request.json.client_metadata.x-codex-installation-id",
+      "01-request.request.json.client_metadata.x-codex-turn-metadata.installation_id",
+      "01-request.request.json.input[2].content[1].text",
+      "01-request.request.json.input[5].content[2].text",
+      "01-request.response.json.response.safety_identifier",
+      "01-request.upstream.json.client_metadata.x-codex-installation-id",
+      "01-request.upstream.json.client_metadata.x-codex-turn-metadata.installation_id",
+      "01-request.upstream.json.input[2].content[1].text",
+      "01-request.upstream.json.input[5].content[2].text"
+    ]
+  },
+  "rolloutSource": "<USER_HOME>/.codex/sessions/2026/09/29/rollout-2026-09-29T23-46-56-01a0edd8-fde9-7d31-9f55-d1623325e6e5.jsonl",
+  "collectedAt": "2026-09-29T16:06:16.466Z"
+}

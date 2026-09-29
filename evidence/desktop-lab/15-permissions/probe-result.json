@@ -1,0 +1,7 @@
+{
+  "file": "work/permission-probe.txt",
+  "before": "UNCHANGED",
+  "after": "UNCHANGED",
+  "source": "Direct filesystem read after sandboxed task completed",
+  "checkedAt": "2026-09-29T16:46:25.4310860Z"
+}

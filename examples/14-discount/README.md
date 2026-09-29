@@ -1,0 +1,41 @@
+# Codex TS Demo
+
+一个计算商品总价的极简 TypeScript 项目，用于在 Codex Desktop 中测试文件读取、代码修改和测试执行，并通过 CPA 日志观察过程。
+
+## 环境
+
+需要 Node.js 24 或更高版本。直接运行 TypeScript，使用 Node.js 内置测试工具；TypeScript 编译器用于类型检查。
+
+```powershell
+npm install
+npm start
+npm run typecheck
+npm test
+```
+
+## 功能与当前状态
+
+金额单位为元，总价按 `(unitPrice * quantity) * ((100 - discountPercent) / 100)` 计算。本例仅使用整数单价和数量。
+
+`calculateTotal(unitPrice, quantity, discountPercent = 0)` 支持可选的减免百分比：`10` 表示减免 10%，`100` 表示全部减免。省略第三个参数或传入 `undefined` 时，默认不打折，兼容原来的两个参数调用。
+
+`discountPercent` 仅接受 0～100 的整数。超出范围、小数、`NaN` 或正负 `Infinity` 等非法值会抛出 `RangeError`，消息为 `discountPercent must be an integer between 0 and 100`，不会自动转换或截断输入。
+
+```ts
+calculateTotal(10, 3);      // 30 元
+calculateTotal(10, 3, 10);  // 27 元
+calculateTotal(10, 3, 100); // 0 元
+calculateTotal(10, 3, 25);  // 22.5 元
+```
+
+结果保留 JavaScript `number` 的数值精度，不额外四舍五入；单价和数量沿用原有行为。
+
+测试覆盖旧调用、默认折扣、百分比减免和非法折扣。示例程序仍使用两个参数调用，预期总价为 30 元。
+
+## 文件
+
+- [src/index.ts](src/index.ts)：示例运行入口。
+- [src/price.ts](src/price.ts)：总价计算函数。
+- [tests/price.test.ts](tests/price.test.ts)：验证预期行为的测试。
+
+在 Codex Desktop 中打开本项目目录，即可开始实验。

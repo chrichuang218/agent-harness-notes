@@ -1,0 +1,19 @@
+{
+  "name": "codex-ts-demo",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "A minimal TypeScript order total project for Codex Desktop experiments.",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "start": "node src/index.ts",
+    "test": "node --test tests/price.test.ts",
+    "typecheck": "tsc"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.0",
+    "typescript": "7.0.2"
+  }
+}

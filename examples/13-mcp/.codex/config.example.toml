@@ -1,0 +1,5 @@
+# Replace all example paths before saving this file as config.toml.
+[mcp_servers.product_catalog]
+command = "C:/path/to/node.exe"
+args = ["C:/path/to/codex-ts-demo/mcp/catalog.ts"]
+cwd = "C:/path/to/codex-ts-demo"

@@ -1,0 +1,53 @@
+{
+  "type": "response.create",
+  "model": "gpt-6-astra",
+  "previous_response_id": "resp_0ad0e63663459e28016abbebe9fcf887d094a74f00c791cc2d",
+  "input": [
+    {
+      "type": "custom_tool_call_output",
+      "id": "ctco_01a0ee11-94aa-70a2-947e-1ad570435e97",
+      "call_id": "call_afcKXHTAwsrmth6AM6qMuxYV",
+      "output": [
+        {
+          "type": "input_text",
+          "text": "Script completed\nWall time 0.8 seconds\nOutput:\n"
+        },
+        {
+          "type": "input_text",
+          "text": "{\"chunk_id\":\"889005\",\"wall_time_seconds\":0.5225507,\"exit_code\":0,\"original_token_count\":651,\"output\":\"FILE: AGENTS.md\\r\\n1: # 项目约定\\r\\n2: \\r\\n3: - 当用户要求介绍本项目时，回复以“项目观察：”开头，再说明用途和运行方法。\\r\\n4: - 用户没有要求修改时，只读取文件，不修改业务源码。\\r\\nFILE: tests/price.test.ts\\r\\n1: import assert from 'node:assert/strict';\\r\\n2: import { test } from 'node:test';\\r\\n3: import { calculateTotal } from '../src/price.ts';\\r\\n4: \\r\\n5: test('单价 10 元、数量 3 时，总价应为 30 元', () => {\\r\\n6:   assert.equal(calculateTotal(10, 3), 30);\\r\\n7: });\\r\\n8: \\r\\n9: test('折扣为 undefined 或 0 时，总价应为 30 元', () => {\\r\\n10:   assert.equal(calculateTotal(10, 3, undefined), 30);\\r\\n11:   assert.equal(calculateTotal(10, 3, 0), 30);\\r\\n12: });\\r\\n13: \\r\\n14: test('减免 10% 时，总价应为 27 元', () => {\\r\\n15:   assert.equal(calculateTotal(10, 3, 10), 27);\\r\\n16: });\\r\\n17: \\r\\n18: test('减免 100% 时，总价应为 0 元', () => {\\r\\n19:   assert.equal(calculateTotal(10, 3, 100), 0);\\r\\n20: });\\r\\n21: \\r\\n22: test('减免 25% 时，总价应为 22.5 元', () => {\\r\\n23:   assert.equal(calculateTotal(10, 3, 25), 22.5);\\r\\n24: });\\r\\n25: \\r\\n26: for (const discountPercent of [-1, 101, 1.5, NaN, Infinity, -Infinity]) {\\r\\n27:   test(`折扣为 ${discountPercent} 时，应抛出 RangeError`, () => {\\r\\n28:     assert.throws(() => calculateTotal(10, 3, discountPercent), {\\r\\n29:       name: 'RangeError',\\r\\n30:       message: 'discountPercent must be an integer between 0 and 100',\\r\\n31:     });\\r\\n32:   });\\r\\n33: }\\r\\nFILE: src/price.ts\\r\\n1: export function calculateTotal(\\r\\n2:   unitPrice: number,\\r\\n3:   quantity: number,\\r\\n4:   discountPercent: number = 0\\r\\n5: ): number {\\r\\n6:   if (!Number.isInteger(discountPercent) || discountPercent < 0 || discountPercent > 100) {\\r\\n7:     throw new RangeError('discountPercent must be an integer between 0 and 100');\\r\\n8:   }\\r\\n9: \\r\\n10:   return (unitPrice * quantity) * ((100 - discountPercent) / 100);\\r\\n11: }\\r\\nFILE: package.json\\r\\n1: {\\r\\n2:   \\\"name\\\": \\\"codex-ts-demo\\\",\\r\\n3:   \\\"version\\\": \\\"0.1.0\\\",\\r\\n4:   \\\"private\\\": true,\\r\\n5:   \\\"type\\\": \\\"module\\\",\\r\\n6:   \\\"description\\\": \\\"A minimal TypeScript order total project for Codex Desktop experiments.\\\",\\r\\n7:   \\\"engines\\\": {\\r\\n8:     \\\"node\\\": \\\">=24\\\"\\r\\n9:   },\\r\\n10:   \\\"scripts\\\": {\\r\\n11:     \\\"start\\\": \\\"node src/index.ts\\\",\\r\\n12:     \\\"test\\\": \\\"node --test tests/price.test.ts\\\",\\r\\n13:     \\\"typecheck\\\": \\\"tsc\\\",\\r\\n14:     \\\"mcp:check\\\": \\\"node mcp/check-catalog.ts\\\"\\r\\n15:   },\\r\\n16:   \\\"devDependencies\\\": {\\r\\n17:     \\\"@types/node\\\": \\\"24.19.0\\\",\\r\\n18:     \\\"typescript\\\": \\\"7.0.2\\\"\\r\\n19:   },\\r\\n20:   \\\"dependencies\\\": {\\r\\n21:     \\\"@modelcontextprotocol/sdk\\\": \\\"1.31.0\\\",\\r\\n22:     \\\"zod\\\": \\\"4.6.5\\\"\\r\\n23:   }\\r\\n24: }\\r\\n\"}"
+        }
+      ]
+    }
+  ],
+  "tool_choice": "auto",
+  "parallel_tool_calls": false,
+  "reasoning": {
+    "effort": "xhigh",
+    "summary": "detailed",
+    "context": "all_turns"
+  },
+  "store": false,
+  "stream": true,
+  "include": [
+    "reasoning.encrypted_content"
+  ],
+  "service_tier": "priority",
+  "prompt_cache_key": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+  "text": {
+    "verbosity": "low"
+  },
+  "client_metadata": {
+    "x-codex-window-id": "01a0ee11-70a9-7ec1-9db2-aa40cfb9672d:0",
+    "parent_turn_id": "01a0ee11-38aa-76f1-b4b2-0bc5d34086c1",
+    "turn_id": "01a0ee11-713a-7371-8eed-72faa809e4d2",
+    "x-codex-parent-thread-id": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+    "ws_request_header_x_openai_internal_codex_responses_lite": "true",
+    "x-codex-ws-stream-request-start-ms": "1790700524749",
+    "session_id": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+    "x-codex-installation-id": "<REDACTED>",
+    "root_turn_id": "01a0ee11-38aa-76f1-b4b2-0bc5d34086c1",
+    "thread_id": "01a0ee11-70a9-7ec1-9db2-aa40cfb9672d",
+    "x-openai-subagent": "collab_spawn",
+    "x-codex-turn-metadata": "{\"installation_id\":\"<REDACTED>\",\"session_id\":\"01a0edfd-0bdc-7042-985c-5c6a957c6895\",\"thread_id\":\"01a0ee11-70a9-7ec1-9db2-aa40cfb9672d\",\"agent_name\":\"/root/b_test_coverage\",\"turn_id\":\"01a0ee11-713a-7371-8eed-72faa809e4d2\",\"window_id\":\"01a0ee11-70a9-7ec1-9db2-aa40cfb9672d:0\",\"window_number\":0,\"context_window_id\":\"01a0edfd-0bdc-7042-985c-5c7ecd005716\",\"request_kind\":\"turn\",\"parent_thread_id\":\"01a0edfd-0bdc-7042-985c-5c6a957c6895\",\"parent_turn_id\":\"01a0ee11-38aa-76f1-b4b2-0bc5d34086c1\",\"root_turn_id\":\"01a0ee11-38aa-76f1-b4b2-0bc5d34086c1\",\"subagent_kind\":\"thread_spawn\",\"thread_source\":\"subagent\",\"turn_trigger\":\"composer\",\"sandbox\":\"none\",\"sandbox_mode\":\"danger-full-access\",\"auto_review_enabled\":false,\"node_repl_auto_review_required\":true,\"node_repl_disabled\":false,\"turn_started_at_unix_ms\":1790700515700,\"analytics_enabled\":true,\"model\":\"gpt-6-astra\",\"reasoning_effort\":\"xhigh\"}"
+  }
+}

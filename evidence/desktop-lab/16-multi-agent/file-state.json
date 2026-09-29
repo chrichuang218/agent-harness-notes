@@ -1,0 +1,58 @@
+{
+  "source": "Compare preserved post-implementation snapshot with live project after the two read-only agents",
+  "checks": [
+    {
+      "file": "tsconfig.json",
+      "unchanged": true
+    },
+    {
+      "file": "tests/price.test.ts",
+      "unchanged": true
+    },
+    {
+      "file": "src/price.ts",
+      "unchanged": true
+    },
+    {
+      "file": "src/index.ts",
+      "unchanged": true
+    },
+    {
+      "file": "README.md",
+      "unchanged": true
+    },
+    {
+      "file": "package.json",
+      "unchanged": true
+    },
+    {
+      "file": "package-lock.json",
+      "unchanged": true
+    },
+    {
+      "file": "mcp/check-catalog.ts",
+      "unchanged": true
+    },
+    {
+      "file": "mcp/catalog.ts",
+      "unchanged": true
+    },
+    {
+      "file": "docs/DECISIONS.md",
+      "unchanged": true
+    },
+    {
+      "file": "AGENTS.md",
+      "unchanged": true
+    },
+    {
+      "file": ".gitignore",
+      "unchanged": true
+    },
+    {
+      "file": ".agents/skills/price-project-check/SKILL.md",
+      "unchanged": true
+    }
+  ],
+  "allUnchanged": true
+}

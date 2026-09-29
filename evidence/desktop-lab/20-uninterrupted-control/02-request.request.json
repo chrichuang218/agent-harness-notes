@@ -1,0 +1,41 @@
+{
+  "type": "response.create",
+  "model": "gpt-6-astra",
+  "previous_response_id": "resp_0d30a0e4ba796638016abbedddbd6087d08e8c99ca2c3db373",
+  "input": [
+    {
+      "type": "function_call_output",
+      "id": "fco_01a0ee19-aa2a-7471-bb7c-724c64953864",
+      "call_id": "call_GA5L6cic1EmjiYyykuy3s725",
+      "output": "Wall time: 30.0257 seconds\nSleep completed."
+    }
+  ],
+  "tool_choice": "auto",
+  "parallel_tool_calls": false,
+  "reasoning": {
+    "effort": "xhigh",
+    "summary": "detailed",
+    "context": "all_turns"
+  },
+  "store": false,
+  "stream": true,
+  "include": [
+    "reasoning.encrypted_content"
+  ],
+  "service_tier": "priority",
+  "prompt_cache_key": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+  "text": {
+    "verbosity": "low"
+  },
+  "client_metadata": {
+    "x-codex-window-id": "01a0edfd-0bdc-7042-985c-5c6a957c6895:0",
+    "ws_request_header_x_openai_internal_codex_responses_lite": "true",
+    "thread_id": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+    "x-codex-turn-metadata": "{\"installation_id\":\"<REDACTED>\",\"session_id\":\"01a0edfd-0bdc-7042-985c-5c6a957c6895\",\"thread_id\":\"01a0edfd-0bdc-7042-985c-5c6a957c6895\",\"agent_name\":\"/root\",\"turn_id\":\"01a0ee19-067b-7452-b3f6-eddffafa7ac9\",\"window_id\":\"01a0edfd-0bdc-7042-985c-5c6a957c6895:0\",\"window_number\":0,\"context_window_id\":\"01a0edfd-0bdc-7042-985c-5c7ecd005716\",\"request_kind\":\"turn\",\"root_turn_id\":\"01a0ee19-067b-7452-b3f6-eddffafa7ac9\",\"thread_source\":\"user\",\"turn_trigger\":\"composer\",\"sandbox\":\"none\",\"sandbox_mode\":\"danger-full-access\",\"auto_review_enabled\":false,\"node_repl_auto_review_required\":true,\"node_repl_disabled\":false,\"turn_started_at_unix_ms\":1790701012663,\"analytics_enabled\":true,\"model\":\"gpt-6-astra\",\"reasoning_effort\":\"xhigh\",\"workspace_kind\":\"project\"}",
+    "x-codex-installation-id": "<REDACTED>",
+    "session_id": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+    "turn_id": "01a0ee19-067b-7452-b3f6-eddffafa7ac9",
+    "x-codex-ws-stream-request-start-ms": "1790701054586",
+    "root_turn_id": "01a0ee19-067b-7452-b3f6-eddffafa7ac9"
+  }
+}

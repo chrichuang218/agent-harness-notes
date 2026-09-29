@@ -1,0 +1,140 @@
+[
+  {
+    "id": "compact-menu",
+    "capturedAt": "2026-09-29T16:20:44.354Z",
+    "source": "Computer Use accessibility snapshot",
+    "threadId": "01a0eded-ff1b-7e82-ac47-067861c26ea8",
+    "controls": [
+      "按钮 MCP 显示 MCP 服务器状态",
+      "按钮 压缩 压缩此聊天的上下文（已使用 5%）",
+      "按钮 状态 显示聊天 ID、上下文用量和速率限制",
+      "按钮 目标 设置要持续追求的目标"
+    ]
+  },
+  {
+    "id": "compact-completed",
+    "capturedAt": "2026-09-29T16:22:19.690Z",
+    "source": "Computer Use accessibility snapshot",
+    "threadId": "01a0eded-ff1b-7e82-ac47-067861c26ea8",
+    "controls": [
+      "文本 上下文已压缩",
+      "图形 上下文用量：1%"
+    ]
+  },
+  {
+    "id": "native-memory-settings",
+    "capturedAt": "2026-09-29T16:28:57.674Z",
+    "source": "Computer Use accessibility snapshot and visual inspection",
+    "surface": "Settings > Personalization",
+    "controls": [
+      "标题 个性化",
+      "文本 Codex 记忆",
+      "文本 Configure how Codex manages memory for Local.",
+      "切换 (settable, string) Enable Codex memories",
+      "文本 从使用过 MCP 工具或网页搜索的聊天生成记忆",
+      "切换 (disabled) Allow memories from tool-assisted chats"
+    ],
+    "nativeMemoriesEnabled": false,
+    "toolAssistedMemoryControlDisabled": true,
+    "note": "Read-only inspection. No settings changed; custom instructions and existing memory contents are not exported."
+  },
+  {
+    "id": "mcp-project-config-visible",
+    "capturedAt": "2026-09-29T16:35:49.839Z",
+    "source": "Computer Use accessibility snapshot and visual inspection",
+    "surface": "Settings > Plugins > MCP",
+    "server": "product_catalog",
+    "listed": true,
+    "enabled": true,
+    "settingsEditable": false,
+    "note": "Project-defined server appears enabled in settings; this alone does not prove a successful tool call."
+  },
+  {
+    "id": "plan-mode-menu",
+    "capturedAt": "2026-09-29T16:38:14.469Z",
+    "source": "Computer Use accessibility snapshot",
+    "threadId": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+    "controls": [
+      "按钮 计划模式 开启计划模式"
+    ]
+  },
+  {
+    "id": "plan-implementation-choice",
+    "capturedAt": "2026-09-29T16:42:13.755Z",
+    "source": "Computer Use accessibility snapshot",
+    "threadId": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+    "controls": [
+      "文本 实施此计划？",
+      "单选按钮 (selectable, settable, string) 是，实施此计划",
+      "按钮 为 calculateTotal 增加可选折扣 Description: 为 calculateTotal 增加可选折扣"
+    ],
+    "roundingChoice": "保持现有数值精度，不新增舍入规则"
+  },
+  {
+    "id": "permission-menu",
+    "capturedAt": "2026-09-29T16:45:02.872Z",
+    "source": "Computer Use accessibility snapshot",
+    "threadId": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+    "initialMode": "完全访问",
+    "controls": [
+      "菜单项 请求批准 编辑外部文件和使用互联网时始终询问",
+      "菜单项 帮我批准 仅对检测到的风险操作请求批准",
+      "菜单项 完全访问权限 可不受限制地访问互联网和你电脑上的任何文件"
+    ],
+    "probe": "Dedicated disposable file outside the demo workspace; no personal files involved."
+  },
+  {
+    "id": "permission-restored",
+    "capturedAt": "2026-09-29T16:47:00.868Z",
+    "source": "Computer Use accessibility snapshot",
+    "threadId": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+    "controls": [
+      "文本 完全访问",
+      "完全访问"
+    ],
+    "note": "Restored the same task to its original mode after a single denied disposable-file write probe.",
+    "checkedAt": "2026-09-29T16:47:38.050Z"
+  },
+  {
+    "id": "goal-compose",
+    "capturedAt": "2026-09-29T16:52:34.235Z",
+    "source": "Computer Use accessibility snapshot",
+    "threadId": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+    "controls": [
+      "编辑 (settable, string) 描述你的目标，定义可衡量的成果，以获得最佳效果 Value: 检查当前总价实现是否满足 README 的折扣约定，运行 npm run typecheck 和 npm test，每项至多一次。两项通过且给出退出码与结论后完成目标；不修改文件，不创建子智能体，不扩展任务。若失败就报告具体失败。",
+      "按钮 明确目标"
+    ],
+    "tokenBudgetRequested": false
+  },
+  {
+    "id": "goal-finished-ui",
+    "capturedAt": "2026-09-29T16:54:33.991Z",
+    "source": "Computer Use accessibility snapshot",
+    "threadId": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+    "controls": [
+      "文本 目标已完成。未修改文件，未创建子智能体。"
+    ]
+  },
+  {
+    "id": "interruption-before-stop",
+    "capturedAt": "2026-09-29T16:57:57.031Z",
+    "source": "Computer Use accessibility snapshot",
+    "threadId": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+    "controls": [
+      "文本 。现在单独等待 30 秒；尚未运行",
+      "按钮 停止"
+    ]
+  },
+  {
+    "id": "interruption-confirmed",
+    "capturedAt": "2026-09-29T17:00:04.101Z",
+    "source": "Computer Use action plus Codex task status",
+    "threadId": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+    "turnId": "01a0ee1a-ad09-7131-9368-5c7bc06db9db",
+    "observedTaskStatus": "interrupted",
+    "taskStatusSource": "wait_threads revision 43",
+    "controls": [
+      "文本 你在 0秒 后停止了"
+    ]
+  }
+]

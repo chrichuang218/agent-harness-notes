@@ -1,0 +1,77 @@
+{
+  "id": "08-session-resume",
+  "title": "返回原任务后仍可接续",
+  "threadId": "01a0eded-ff1b-7e82-ac47-067861c26ea8",
+  "turnIds": [
+    "01a0edf5-a929-7572-92a4-f3fba33584e8"
+  ],
+  "prompt": "不读文件、不搜索其他任务。如果当前上下文里有本项目的实验临时代号，请给出；如果没有，请回答不知道，不要猜。\n",
+  "reply": "PRICE-A7",
+  "stats": {
+    "requests": 1,
+    "toolCalls": 0,
+    "inputTokens": 40219,
+    "outputTokens": 7,
+    "prewarms": 0
+  },
+  "stages": [
+    {
+      "id": "00-request",
+      "requestFile": "evidence/desktop-lab/08-session-resume/00-request.request.json",
+      "responseFile": "evidence/desktop-lab/08-session-resume/00-request.response.json",
+      "eventsFile": "evidence/desktop-lab/08-session-resume/00-request.events.json",
+      "upstreamFile": "evidence/desktop-lab/08-session-resume/00-request.upstream.json",
+      "outputItemsFile": "evidence/desktop-lab/08-session-resume/00-request.output-items.json",
+      "requestTimestamp": "2026-09-30T00:18:15.3428563+08:00",
+      "responseId": "resp_0061bd7340416e34016abbe4c958b487d088fe5c9f66aaad2a",
+      "previousResponseId": "resp_0061bd7340416e34016abbe3f61b1887d085792e6d9fb02f1d",
+      "inputCount": 1,
+      "prewarm": false,
+      "source": {
+        "request": {
+          "file": "request-log-parts-websocket-timeline-2945755955/request-2518866317.tmp",
+          "line": 3,
+          "timestamp": "2026-09-30T00:18:15.3428563+08:00"
+        },
+        "completed": {
+          "file": "request-log-parts-websocket-timeline-2945755955/request-2518866317.tmp",
+          "line": 59,
+          "timestamp": "2026-09-30T00:18:17.0401537+08:00"
+        },
+        "upstream": {
+          "file": "request-log-parts-api-websocket-timeline-2599159138/part-3882983330.tmp",
+          "line": 19,
+          "timestamp": "2026-09-30T00:18:15.3439334+08:00"
+        }
+      }
+    }
+  ],
+  "notes": [
+    "Matched exact response event ids against rollout token_usage_record.response_id; text mentions are not matches.",
+    "response.json preserves the recorded response.completed event. Its output may be empty; output-items.json is a separately labelled derivation.",
+    "Only JSON request bodies and response.* events are exported. HTTP headers and transport header events are omitted.",
+    "Counts exclude prewarm stages. Token usage is the sum of formal model responses, not unique context size."
+  ],
+  "sanitization": {
+    "mode": "structure-preserving-redaction",
+    "replacements": [
+      "Windows user home → <USER_HOME>",
+      "Credential values, encrypted content, installation and safety ids → <REDACTED>"
+    ],
+    "changedPaths": [
+      "00-request.events.json[0].data.response.safety_identifier",
+      "00-request.events.json[10].data.response.safety_identifier",
+      "00-request.events.json[1].data.response.safety_identifier",
+      "00-request.events.json[4].data.obfuscation",
+      "00-request.events.json[5].data.obfuscation",
+      "00-request.events.json[6].data.obfuscation",
+      "00-request.request.json.client_metadata.x-codex-installation-id",
+      "00-request.request.json.client_metadata.x-codex-turn-metadata.installation_id",
+      "00-request.response.json.response.safety_identifier",
+      "00-request.upstream.json.client_metadata.x-codex-installation-id",
+      "00-request.upstream.json.client_metadata.x-codex-turn-metadata.installation_id"
+    ]
+  },
+  "rolloutSource": "<USER_HOME>/.codex/sessions/2026/09/30/rollout-2026-09-30T00-09-52-01a0eded-ff1b-7e82-ac47-067861c26ea8.jsonl",
+  "collectedAt": "2026-09-29T16:19:05.603Z"
+}

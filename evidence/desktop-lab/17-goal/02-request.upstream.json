@@ -1,0 +1,50 @@
+{
+  "type": "response.create",
+  "model": "gpt-6-astra",
+  "previous_response_id": "resp_0d30a0e4ba796638016abbece0de5487d08570e88432f5ae6b",
+  "input": [
+    {
+      "type": "custom_tool_call_output",
+      "id": "ctco_01a0ee15-5c5c-7f12-bf09-33dd4ef5a407",
+      "call_id": "call_ZLRBD6iYVOn6OjjV3WceOhSg",
+      "output": [
+        {
+          "type": "input_text",
+          "text": "Script completed\nWall time 0.9 seconds\nOutput:\n"
+        },
+        {
+          "type": "input_text",
+          "text": "{\"chunk_id\":\"85cdfd\",\"wall_time_seconds\":0.4740423,\"exit_code\":0,\"original_token_count\":62,\"output\":\"{\\\"compilerOptions\\\":{\\\"target\\\":\\\"ES2022\\\",\\\"module\\\":\\\"NodeNext\\\",\\\"strict\\\":true,\\\"noEmit\\\":true,\\\"allowImportingTsExtensions\\\":true,\\\"types\\\":[\\\"node\\\"]},\\\"include\\\":[\\\"src/**/*.ts\\\",\\\"tests/**/*.ts\\\",\\\"mcp/**/*.ts\\\"]}\"}"
+        }
+      ]
+    }
+  ],
+  "tool_choice": "auto",
+  "parallel_tool_calls": false,
+  "reasoning": {
+    "effort": "xhigh",
+    "summary": "detailed",
+    "context": "all_turns"
+  },
+  "store": false,
+  "stream": true,
+  "include": [
+    "reasoning.encrypted_content"
+  ],
+  "service_tier": "priority",
+  "prompt_cache_key": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+  "text": {
+    "verbosity": "low"
+  },
+  "client_metadata": {
+    "x-codex-window-id": "01a0edfd-0bdc-7042-985c-5c6a957c6895:0",
+    "ws_request_header_x_openai_internal_codex_responses_lite": "true",
+    "root_turn_id": "01a0ee15-3137-7322-94f4-cb76d65df790",
+    "x-codex-installation-id": "<REDACTED>",
+    "turn_id": "01a0ee15-3137-7322-94f4-cb76d65df790",
+    "x-codex-turn-metadata": "{\"installation_id\":\"<REDACTED>\",\"session_id\":\"01a0edfd-0bdc-7042-985c-5c6a957c6895\",\"thread_id\":\"01a0edfd-0bdc-7042-985c-5c6a957c6895\",\"agent_name\":\"/root\",\"turn_id\":\"01a0ee15-3137-7322-94f4-cb76d65df790\",\"window_id\":\"01a0edfd-0bdc-7042-985c-5c6a957c6895:0\",\"window_number\":0,\"context_window_id\":\"01a0edfd-0bdc-7042-985c-5c7ecd005716\",\"request_kind\":\"turn\",\"root_turn_id\":\"01a0ee15-3137-7322-94f4-cb76d65df790\",\"thread_source\":\"user\",\"turn_trigger\":\"goal\",\"sandbox\":\"none\",\"sandbox_mode\":\"danger-full-access\",\"auto_review_enabled\":false,\"node_repl_auto_review_required\":true,\"node_repl_disabled\":false,\"turn_started_at_unix_ms\":1790700761445,\"analytics_enabled\":true,\"model\":\"gpt-6-astra\",\"reasoning_effort\":\"xhigh\"}",
+    "x-codex-ws-stream-request-start-ms": "1790700772704",
+    "session_id": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+    "thread_id": "01a0edfd-0bdc-7042-985c-5c6a957c6895"
+  }
+}

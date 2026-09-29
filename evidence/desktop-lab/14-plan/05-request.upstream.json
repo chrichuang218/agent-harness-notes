@@ -1,0 +1,58 @@
+{
+  "type": "response.create",
+  "model": "gpt-6-astra",
+  "previous_response_id": "resp_0d30a0e4ba796638016abbea094fc087d0bdd26f6a333ef952",
+  "input": [
+    {
+      "type": "custom_tool_call_output",
+      "id": "ctco_01a0ee0a-53e9-7342-a9c4-c673e137c3a8",
+      "call_id": "call_DK4OP8GdVc4rlyLG9RHIW4op",
+      "output": [
+        {
+          "type": "input_text",
+          "text": "Script completed\nWall time 2.9 seconds\nOutput:\n"
+        },
+        {
+          "type": "input_text",
+          "text": "{\"status\":\"fulfilled\",\"value\":{\"name\":\"test\",\"chunk_id\":\"b09a82\",\"wall_time_seconds\":1.2689873999999999,\"exit_code\":0,\"original_token_count\":61,\"output\":\"\\n> codex-ts-demo@0.1.0 test\\n> node --test tests/price.test.ts\\n\\n✔ 单价 10 元、数量 3 时，总价应为 30 元 (1.1446ms)\\nℹ tests 1\\nℹ suites 0\\nℹ pass 1\\nℹ fail 0\\nℹ cancelled 0\\nℹ skipped 0\\nℹ todo 0\\nℹ duration_ms 156.5571\\n\"}}"
+        },
+        {
+          "type": "input_text",
+          "text": "{\"status\":\"fulfilled\",\"value\":{\"name\":\"typecheck\",\"chunk_id\":\"c41920\",\"wall_time_seconds\":2.6668323000000003,\"exit_code\":0,\"original_token_count\":10,\"output\":\"\\n> codex-ts-demo@0.1.0 typecheck\\n> tsc\\n\\n\"}}"
+        },
+        {
+          "type": "input_text",
+          "text": "{\"status\":\"fulfilled\",\"value\":{\"name\":\"start\",\"chunk_id\":\"7998cf\",\"wall_time_seconds\":1.249256,\"exit_code\":0,\"original_token_count\":24,\"output\":\"\\n> codex-ts-demo@0.1.0 start\\n> node src/index.ts\\n\\n单价：10 元\\n数量：3\\n总价：30 元\\n\"}}"
+        }
+      ]
+    }
+  ],
+  "tool_choice": "auto",
+  "parallel_tool_calls": false,
+  "reasoning": {
+    "effort": "xhigh",
+    "summary": "detailed",
+    "context": "all_turns"
+  },
+  "store": false,
+  "stream": true,
+  "include": [
+    "reasoning.encrypted_content"
+  ],
+  "service_tier": "priority",
+  "prompt_cache_key": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+  "text": {
+    "verbosity": "low"
+  },
+  "client_metadata": {
+    "session_id": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+    "x-codex-turn-metadata": "{\"installation_id\":\"<REDACTED>\",\"session_id\":\"01a0edfd-0bdc-7042-985c-5c6a957c6895\",\"thread_id\":\"01a0edfd-0bdc-7042-985c-5c6a957c6895\",\"agent_name\":\"/root\",\"turn_id\":\"01a0ee08-4c19-72b0-9345-676981bd6d8e\",\"window_id\":\"01a0edfd-0bdc-7042-985c-5c6a957c6895:0\",\"window_number\":0,\"context_window_id\":\"01a0edfd-0bdc-7042-985c-5c7ecd005716\",\"request_kind\":\"turn\",\"root_turn_id\":\"01a0ee08-4c19-72b0-9345-676981bd6d8e\",\"thread_source\":\"user\",\"turn_trigger\":\"composer\",\"sandbox\":\"none\",\"sandbox_mode\":\"danger-full-access\",\"auto_review_enabled\":false,\"node_repl_auto_review_required\":true,\"node_repl_disabled\":false,\"turn_started_at_unix_ms\":1790699916372,\"analytics_enabled\":true,\"model\":\"gpt-6-astra\",\"reasoning_effort\":\"xhigh\",\"workspace_kind\":\"project\"}",
+    "ws_request_header_x_openai_internal_codex_responses_lite": "true",
+    "x-codex-ws-stream-request-start-ms": "1790700049419",
+    "thread_id": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+    "x-codex-window-id": "01a0edfd-0bdc-7042-985c-5c6a957c6895:0",
+    "turn_id": "01a0ee08-4c19-72b0-9345-676981bd6d8e",
+    "x-codex-installation-id": "<REDACTED>",
+    "root_turn_id": "01a0ee08-4c19-72b0-9345-676981bd6d8e"
+  }
+}

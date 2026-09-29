@@ -1,0 +1,46 @@
+{
+  "type": "response.create",
+  "model": "gpt-6-astra",
+  "previous_response_id": "resp_0061bd7340416e34016abbe2e34ca087d0837653309fadd6d8",
+  "input": [
+    {
+      "type": "message",
+      "id": "msg_01a0edef-789a-7791-bbf2-ae64367984df",
+      "role": "user",
+      "content": [
+        {
+          "type": "input_text",
+          "text": "请运行 npm run typecheck 和 npm test，分别报告退出码和测试结果。不要修改文件，也不要修复错误。\n"
+        }
+      ]
+    }
+  ],
+  "tool_choice": "auto",
+  "parallel_tool_calls": false,
+  "reasoning": {
+    "effort": "xhigh",
+    "summary": "detailed",
+    "context": "all_turns"
+  },
+  "store": false,
+  "stream": true,
+  "include": [
+    "reasoning.encrypted_content"
+  ],
+  "service_tier": "priority",
+  "prompt_cache_key": "01a0eded-ff1b-7e82-ac47-067861c26ea8",
+  "text": {
+    "verbosity": "low"
+  },
+  "client_metadata": {
+    "root_turn_id": "01a0edef-774d-7de3-aeee-e56cb9817f2b",
+    "thread_id": "01a0eded-ff1b-7e82-ac47-067861c26ea8",
+    "turn_id": "01a0edef-774d-7de3-aeee-e56cb9817f2b",
+    "ws_request_header_x_openai_internal_codex_responses_lite": "true",
+    "x-codex-turn-metadata": "{\"installation_id\":\"<REDACTED>\",\"session_id\":\"01a0eded-ff1b-7e82-ac47-067861c26ea8\",\"thread_id\":\"01a0eded-ff1b-7e82-ac47-067861c26ea8\",\"agent_name\":\"/root\",\"turn_id\":\"01a0edef-774d-7de3-aeee-e56cb9817f2b\",\"window_id\":\"01a0eded-ff1b-7e82-ac47-067861c26ea8:0\",\"window_number\":0,\"context_window_id\":\"01a0eded-ff1b-7e82-ac47-068ef12a5afc\",\"request_kind\":\"turn\",\"root_turn_id\":\"01a0edef-774d-7de3-aeee-e56cb9817f2b\",\"thread_source\":\"user\",\"turn_trigger\":\"composer\",\"sandbox\":\"none\",\"sandbox_mode\":\"danger-full-access\",\"auto_review_enabled\":false,\"node_repl_auto_review_required\":true,\"node_repl_disabled\":false,\"turn_started_at_unix_ms\":1790698289031,\"analytics_enabled\":true,\"model\":\"gpt-6-astra\",\"reasoning_effort\":\"xhigh\",\"workspace_kind\":\"project\"}",
+    "x-codex-ws-stream-request-start-ms": "1790698289338",
+    "x-codex-installation-id": "<REDACTED>",
+    "x-codex-window-id": "01a0eded-ff1b-7e82-ac47-067861c26ea8:0",
+    "session_id": "01a0eded-ff1b-7e82-ac47-067861c26ea8"
+  }
+}

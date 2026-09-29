@@ -1,0 +1,191 @@
+{
+  "provenance": "Selected exact turn_context fields from one local rollout. collaboration_mode is limited to its mode subfield. Other runtime context is omitted; Windows user-home paths are redacted.",
+  "sourceFile": "<USER_HOME>/.codex/sessions/2026/09/30/rollout-2026-09-30T00-26-18-01a0edfd-0bdc-7042-985c-5c6a957c6895.jsonl",
+  "records": [
+    {
+      "experimentId": "14-plan",
+      "sourceLine": 53,
+      "timestamp": "2026-09-29T16:38:36.470Z",
+      "type": "turn_context",
+      "payload": {
+        "turn_id": "01a0ee08-4c19-72b0-9345-676981bd6d8e",
+        "cwd": "E:\\Develop\\github\\codex-ts-demo",
+        "workspace_roots": [
+          "E:\\Develop\\github\\codex-ts-demo",
+          "<USER_HOME>\\.codex\\visualizations\\2026\\09\\29\\01a0edfd-0bdc-7042-985c-5c6a957c6895"
+        ],
+        "approval_policy": "never",
+        "approvals_reviewer": "user",
+        "sandbox_policy": {
+          "type": "danger-full-access"
+        },
+        "permission_profile": {
+          "type": "disabled"
+        },
+        "active_permission_profile": {
+          "id": ":danger-full-access"
+        },
+        "collaboration_mode": {
+          "mode": "plan"
+        }
+      }
+    },
+    {
+      "experimentId": "14-plan-implement",
+      "sourceLine": 105,
+      "timestamp": "2026-09-29T16:42:14.537Z",
+      "type": "turn_context",
+      "payload": {
+        "turn_id": "01a0ee0b-9fe6-7bb2-8a02-dd8c1b54a513",
+        "cwd": "E:\\Develop\\github\\codex-ts-demo",
+        "workspace_roots": [
+          "E:\\Develop\\github\\codex-ts-demo",
+          "<USER_HOME>\\.codex\\visualizations\\2026\\09\\29\\01a0edfd-0bdc-7042-985c-5c6a957c6895"
+        ],
+        "approval_policy": "never",
+        "approvals_reviewer": "user",
+        "sandbox_policy": {
+          "type": "danger-full-access"
+        },
+        "permission_profile": {
+          "type": "disabled"
+        },
+        "active_permission_profile": {
+          "id": ":danger-full-access"
+        },
+        "collaboration_mode": {
+          "mode": "default"
+        }
+      }
+    },
+    {
+      "experimentId": "15-permissions",
+      "sourceLine": 145,
+      "timestamp": "2026-09-29T16:45:33.905Z",
+      "type": "turn_context",
+      "payload": {
+        "turn_id": "01a0ee0e-a997-7570-b627-f8e7ff302f83",
+        "cwd": "E:\\Develop\\github\\codex-ts-demo",
+        "workspace_roots": [
+          "E:\\Develop\\github\\codex-ts-demo",
+          "<USER_HOME>\\.codex\\visualizations\\2026\\09\\29\\01a0edfd-0bdc-7042-985c-5c6a957c6895"
+        ],
+        "approval_policy": "on-request",
+        "approvals_reviewer": "user",
+        "sandbox_policy": {
+          "type": "workspace-write",
+          "writable_roots": [
+            "<USER_HOME>\\.codex\\visualizations\\2026\\09\\29\\01a0edfd-0bdc-7042-985c-5c6a957c6895"
+          ],
+          "network_access": false,
+          "exclude_tmpdir_env_var": false,
+          "exclude_slash_tmp": false
+        },
+        "permission_profile": {
+          "type": "managed",
+          "file_system": {
+            "type": "restricted",
+            "entries": [
+              {
+                "path": {
+                  "type": "special",
+                  "value": {
+                    "kind": "root"
+                  }
+                },
+                "access": "read"
+              },
+              {
+                "path": {
+                  "type": "path",
+                  "path": "E:\\Develop\\github\\codex-ts-demo"
+                },
+                "access": "write"
+              },
+              {
+                "path": {
+                  "type": "path",
+                  "path": "<USER_HOME>\\.codex\\visualizations\\2026\\09\\29\\01a0edfd-0bdc-7042-985c-5c6a957c6895"
+                },
+                "access": "write"
+              },
+              {
+                "path": {
+                  "type": "special",
+                  "value": {
+                    "kind": "slash_tmp"
+                  }
+                },
+                "access": "write"
+              },
+              {
+                "path": {
+                  "type": "special",
+                  "value": {
+                    "kind": "tmpdir"
+                  }
+                },
+                "access": "write"
+              },
+              {
+                "path": {
+                  "type": "path",
+                  "path": "E:\\Develop\\github\\codex-ts-demo\\.git"
+                },
+                "access": "read",
+                "missing_path_behavior": "skip"
+              },
+              {
+                "path": {
+                  "type": "path",
+                  "path": "<USER_HOME>\\.codex\\visualizations\\2026\\09\\29\\01a0edfd-0bdc-7042-985c-5c6a957c6895\\.git"
+                },
+                "access": "read",
+                "missing_path_behavior": "skip"
+              },
+              {
+                "path": {
+                  "type": "path",
+                  "path": "E:\\Develop\\github\\codex-ts-demo\\.agents"
+                },
+                "access": "read",
+                "missing_path_behavior": "skip"
+              },
+              {
+                "path": {
+                  "type": "path",
+                  "path": "<USER_HOME>\\.codex\\visualizations\\2026\\09\\29\\01a0edfd-0bdc-7042-985c-5c6a957c6895\\.agents"
+                },
+                "access": "read",
+                "missing_path_behavior": "skip"
+              },
+              {
+                "path": {
+                  "type": "path",
+                  "path": "E:\\Develop\\github\\codex-ts-demo\\.codex"
+                },
+                "access": "read",
+                "missing_path_behavior": "skip"
+              },
+              {
+                "path": {
+                  "type": "path",
+                  "path": "<USER_HOME>\\.codex\\visualizations\\2026\\09\\29\\01a0edfd-0bdc-7042-985c-5c6a957c6895\\.codex"
+                },
+                "access": "read",
+                "missing_path_behavior": "skip"
+              }
+            ]
+          },
+          "network": "restricted"
+        },
+        "active_permission_profile": {
+          "id": ":workspace"
+        },
+        "collaboration_mode": {
+          "mode": "default"
+        }
+      }
+    }
+  ]
+}

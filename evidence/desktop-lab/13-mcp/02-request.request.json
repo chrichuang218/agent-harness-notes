@@ -1,0 +1,54 @@
+{
+  "type": "response.create",
+  "model": "gpt-6-astra",
+  "previous_response_id": "resp_0d30a0e4ba796638016abbe900df6087d0834ce2c92c11a96d",
+  "input": [
+    {
+      "type": "custom_tool_call_output",
+      "id": "ctco_01a0ee06-3c09-7cf3-a2ef-fc9d246de300",
+      "call_id": "call_p7bdY59aNNKkV0ISyHbxziJ8",
+      "output": [
+        {
+          "type": "input_text",
+          "text": "Script completed\nWall time 1.0 seconds\nOutput:\n"
+        },
+        {
+          "type": "input_text",
+          "text": "{\"content\":[{\"type\":\"text\",\"text\":\"{\\\"sku\\\":\\\"NOTEBOOK\\\",\\\"unitPrice\\\":12,\\\"currency\\\":\\\"CNY\\\"}\"}],\"structuredContent\":{\"sku\":\"NOTEBOOK\",\"unitPrice\":12,\"currency\":\"CNY\"}}"
+        },
+        {
+          "type": "input_text",
+          "text": "{\"chunk_id\":\"0a03a8\",\"wall_time_seconds\":0.4708818,\"exit_code\":0,\"original_token_count\":29,\"output\":\"export function calculateTotal(unitPrice: number, quantity: number): number {\\n  return unitPrice * quantity;\\n}\\n\\r\\n\"}"
+        }
+      ]
+    }
+  ],
+  "tool_choice": "auto",
+  "parallel_tool_calls": false,
+  "reasoning": {
+    "effort": "xhigh",
+    "summary": "detailed",
+    "context": "all_turns"
+  },
+  "store": false,
+  "stream": true,
+  "include": [
+    "reasoning.encrypted_content"
+  ],
+  "service_tier": "priority",
+  "prompt_cache_key": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+  "text": {
+    "verbosity": "low"
+  },
+  "client_metadata": {
+    "x-codex-window-id": "01a0edfd-0bdc-7042-985c-5c6a957c6895:0",
+    "root_turn_id": "01a0ee05-ff7e-7003-bc0e-e04ba5c9f926",
+    "thread_id": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+    "x-codex-installation-id": "<REDACTED>",
+    "ws_request_header_x_openai_internal_codex_responses_lite": "true",
+    "x-codex-turn-metadata": "{\"installation_id\":\"<REDACTED>\",\"session_id\":\"01a0edfd-0bdc-7042-985c-5c6a957c6895\",\"thread_id\":\"01a0edfd-0bdc-7042-985c-5c6a957c6895\",\"agent_name\":\"/root\",\"turn_id\":\"01a0ee05-ff7e-7003-bc0e-e04ba5c9f926\",\"window_id\":\"01a0edfd-0bdc-7042-985c-5c6a957c6895:0\",\"window_number\":0,\"context_window_id\":\"01a0edfd-0bdc-7042-985c-5c7ecd005716\",\"request_kind\":\"turn\",\"root_turn_id\":\"01a0ee05-ff7e-7003-bc0e-e04ba5c9f926\",\"thread_source\":\"user\",\"turn_trigger\":\"composer\",\"sandbox\":\"none\",\"sandbox_mode\":\"danger-full-access\",\"auto_review_enabled\":false,\"node_repl_auto_review_required\":true,\"node_repl_disabled\":false,\"turn_started_at_unix_ms\":1790699765689,\"analytics_enabled\":true,\"model\":\"gpt-6-astra\",\"reasoning_effort\":\"xhigh\",\"workspace_kind\":\"project\"}",
+    "x-codex-ws-stream-request-start-ms": "1790699781367",
+    "turn_id": "01a0ee05-ff7e-7003-bc0e-e04ba5c9f926",
+    "session_id": "01a0edfd-0bdc-7042-985c-5c6a957c6895"
+  }
+}

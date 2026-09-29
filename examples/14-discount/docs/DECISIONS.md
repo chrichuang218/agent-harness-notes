@@ -1,0 +1,5 @@
+- 商品总价使用元，支持可选参数 `discountPercent`，表示减免百分比。
+- 折扣默认值为 0；省略参数或传入 `undefined` 均不减免，兼容原有两个参数调用。
+- 折扣仅接受 0～100 的整数；10 表示减免 10%，100 表示全部减免。
+- 非法折扣抛出 `RangeError`，消息为 `discountPercent must be an integer between 0 and 100`，不自动转换或截断输入。
+- 总价按 `(unitPrice * quantity) * ((100 - discountPercent) / 100)` 计算，保留 JavaScript `number` 数值精度，不额外四舍五入；单价和数量沿用原有行为。

@@ -1,0 +1,50 @@
+{
+  "type": "response.create",
+  "model": "gpt-6-astra",
+  "previous_response_id": "resp_0d30a0e4ba796638016abbecef5b3487d08bab20b357e6c82a",
+  "input": [
+    {
+      "type": "custom_tool_call_output",
+      "id": "ctco_01a0ee15-9692-7eb1-87e7-21820b05b353",
+      "call_id": "call_9adxlZ72XMirM6u2RhviR3ja",
+      "output": [
+        {
+          "type": "input_text",
+          "text": "Script completed\nWall time 0.0 seconds\nOutput:\n"
+        },
+        {
+          "type": "input_text",
+          "text": "{\"goal\":{\"threadId\":\"01a0edfd-0bdc-7042-985c-5c6a957c6895\",\"objective\":\"检查当前总价实现是否满足 README 的折扣约定，运行 npm run typecheck 和 npm test，每项至多一次。两项通过且给出退出码与结论后完成目标；不修改文件，不创建子智能体，不扩展任务。若失败就报告具体失败。\",\"status\":\"complete\",\"tokensUsed\":4640,\"timeUsedSeconds\":25,\"createdAt\":1790700761,\"updatedAt\":1790700787},\"remainingTokens\":null,\"completionBudgetReport\":\"Goal achieved. Report final usage from this tool result's structured goal fields. If `goal.tokenBudget` is present, include token usage from `goal.tokensUsed` and `goal.tokenBudget`. If `goal.timeUsedSeconds` is greater than 0, summarize elapsed time in a concise, human-friendly form appropriate to the response language.\"}"
+        }
+      ]
+    }
+  ],
+  "tool_choice": "auto",
+  "parallel_tool_calls": false,
+  "reasoning": {
+    "effort": "xhigh",
+    "summary": "detailed",
+    "context": "all_turns"
+  },
+  "store": false,
+  "stream": true,
+  "include": [
+    "reasoning.encrypted_content"
+  ],
+  "service_tier": "priority",
+  "prompt_cache_key": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+  "text": {
+    "verbosity": "low"
+  },
+  "client_metadata": {
+    "x-codex-window-id": "01a0edfd-0bdc-7042-985c-5c6a957c6895:0",
+    "root_turn_id": "01a0ee15-3137-7322-94f4-cb76d65df790",
+    "thread_id": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+    "turn_id": "01a0ee15-3137-7322-94f4-cb76d65df790",
+    "x-codex-turn-metadata": "{\"installation_id\":\"<REDACTED>\",\"session_id\":\"01a0edfd-0bdc-7042-985c-5c6a957c6895\",\"thread_id\":\"01a0edfd-0bdc-7042-985c-5c6a957c6895\",\"agent_name\":\"/root\",\"turn_id\":\"01a0ee15-3137-7322-94f4-cb76d65df790\",\"window_id\":\"01a0edfd-0bdc-7042-985c-5c6a957c6895:0\",\"window_number\":0,\"context_window_id\":\"01a0edfd-0bdc-7042-985c-5c7ecd005716\",\"request_kind\":\"turn\",\"root_turn_id\":\"01a0ee15-3137-7322-94f4-cb76d65df790\",\"thread_source\":\"user\",\"turn_trigger\":\"goal\",\"sandbox\":\"none\",\"sandbox_mode\":\"danger-full-access\",\"auto_review_enabled\":false,\"node_repl_auto_review_required\":true,\"node_repl_disabled\":false,\"turn_started_at_unix_ms\":1790700761445,\"analytics_enabled\":true,\"model\":\"gpt-6-astra\",\"reasoning_effort\":\"xhigh\"}",
+    "x-codex-ws-stream-request-start-ms": "1790700787380",
+    "session_id": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+    "x-codex-installation-id": "<REDACTED>",
+    "ws_request_header_x_openai_internal_codex_responses_lite": "true"
+  }
+}

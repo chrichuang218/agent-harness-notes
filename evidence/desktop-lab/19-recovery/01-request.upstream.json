@@ -1,0 +1,50 @@
+{
+  "type": "response.create",
+  "model": "gpt-6-astra",
+  "previous_response_id": "resp_0d30a0e4ba796638016abbed673a7c87d098f8cf6ca34207fd",
+  "input": [
+    {
+      "type": "custom_tool_call_output",
+      "id": "ctco_01a0ee17-6af4-7820-90b4-7b8af420f34c",
+      "call_id": "call_Mlqrto9sxxi6WgYe0n7tE2ty",
+      "output": [
+        {
+          "type": "input_text",
+          "text": "Script completed\nWall time 1.7 seconds\nOutput:\n"
+        },
+        {
+          "type": "input_text",
+          "text": "{\"chunk_id\":\"dc1beb\",\"wall_time_seconds\":1.4817339,\"exit_code\":1,\"original_token_count\":82,\"output\":\"npm error Missing script: \\\"lint\\\"\\nnpm error\\nnpm error Did you mean this?\\nnpm error   npm link # Symlink a package folder\\nnpm error\\nnpm error To see a list of scripts, run:\\nnpm error   npm run\\nnpm error A complete log of this run can be found in: <USER_HOME>\\\\AppData\\\\Local\\\\npm-cache\\\\_logs\\\\2026-09-29T16_55_06_464Z-debug-0.log\\n\"}"
+        }
+      ]
+    }
+  ],
+  "tool_choice": "auto",
+  "parallel_tool_calls": false,
+  "reasoning": {
+    "effort": "xhigh",
+    "summary": "detailed",
+    "context": "all_turns"
+  },
+  "store": false,
+  "stream": true,
+  "include": [
+    "reasoning.encrypted_content"
+  ],
+  "service_tier": "priority",
+  "prompt_cache_key": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+  "text": {
+    "verbosity": "low"
+  },
+  "client_metadata": {
+    "session_id": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+    "ws_request_header_x_openai_internal_codex_responses_lite": "true",
+    "x-codex-ws-stream-request-start-ms": "1790700907288",
+    "thread_id": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+    "turn_id": "01a0ee17-5231-77e0-a48c-b81ad0102aab",
+    "x-codex-installation-id": "<REDACTED>",
+    "root_turn_id": "01a0ee17-5231-77e0-a48c-b81ad0102aab",
+    "x-codex-turn-metadata": "{\"installation_id\":\"<REDACTED>\",\"session_id\":\"01a0edfd-0bdc-7042-985c-5c6a957c6895\",\"thread_id\":\"01a0edfd-0bdc-7042-985c-5c6a957c6895\",\"agent_name\":\"/root\",\"turn_id\":\"01a0ee17-5231-77e0-a48c-b81ad0102aab\",\"window_id\":\"01a0edfd-0bdc-7042-985c-5c6a957c6895:0\",\"window_number\":0,\"context_window_id\":\"01a0edfd-0bdc-7042-985c-5c7ecd005716\",\"request_kind\":\"turn\",\"root_turn_id\":\"01a0ee17-5231-77e0-a48c-b81ad0102aab\",\"thread_source\":\"user\",\"turn_trigger\":\"composer\",\"sandbox\":\"none\",\"sandbox_mode\":\"danger-full-access\",\"auto_review_enabled\":false,\"node_repl_auto_review_required\":true,\"node_repl_disabled\":false,\"turn_started_at_unix_ms\":1790700900970,\"analytics_enabled\":true,\"model\":\"gpt-6-astra\",\"reasoning_effort\":\"xhigh\",\"workspace_kind\":\"project\"}",
+    "x-codex-window-id": "01a0edfd-0bdc-7042-985c-5c6a957c6895:0"
+  }
+}

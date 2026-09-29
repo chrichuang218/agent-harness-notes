@@ -1,0 +1,20 @@
+{
+  "provenance": "Derived by collecting response.output_item.done.item in event order; response.completed is unchanged.",
+  "items": [
+    {
+      "id": "ctc_0061bd7340416e34016abbe380d80c87d081f6807135ded670",
+      "type": "custom_tool_call",
+      "status": "completed",
+      "call_id": "call_6YUxjdksnb3eIeh5ySJjO2p8",
+      "input": "const results = await Promise.allSettled([\n  tools.exec_command({cmd:\"npm run typecheck\",workdir:\"E:\\\\Develop\\\\github\\\\codex-ts-demo\",max_output_tokens:3000}),\n  tools.exec_command({cmd:\"npm test\",workdir:\"E:\\\\Develop\\\\github\\\\codex-ts-demo\",max_output_tokens:4000}),\n  tools.exec_command({cmd:\"npm start\",workdir:\"E:\\\\Develop\\\\github\\\\codex-ts-demo\",max_output_tokens:3000}),\n  tools.exec_command({cmd:\"Get-Content -LiteralPath 'src/price.ts','README.md' -Raw\",workdir:\"E:\\\\Develop\\\\github\\\\codex-ts-demo\",max_output_tokens:3000})\n]);\nfor(let i=0;i<results.length;i++) text({check:[\"npm run typecheck\",\"npm test\",\"npm start\",\"changed files\"][i],...results[i]});\n",
+      "internal_chat_message_metadata_passthrough": {
+        "create_time": 1790698367.726497,
+        "turn_id": "01a0edf0-47eb-7873-9476-2ea1d0d21769"
+      },
+      "name": "exec",
+      "metadata": {
+        "turn_id": "01a0edf0-47eb-7873-9476-2ea1d0d21769"
+      }
+    }
+  ]
+}

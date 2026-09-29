@@ -1,0 +1,42 @@
+{
+  "provenance": "Derived by collecting response.output_item.done.item in event order; response.completed is unchanged.",
+  "items": [
+    {
+      "id": "rs_0cb21cb38d58289c016abbebf24f9c87d08e41f76431b66c7a",
+      "type": "reasoning",
+      "content": [],
+      "encrypted_content": "<REDACTED>",
+      "internal_chat_message_metadata_passthrough": {
+        "turn_id": "01a0ee11-5c16-7ea3-827f-17f2b38c2496"
+      },
+      "summary": [
+        {
+          "type": "summary_text",
+          "text": "**Running boundary assertions**"
+        },
+        {
+          "type": "summary_text",
+          "text": "**Setting up test script**"
+        }
+      ],
+      "metadata": {
+        "turn_id": "01a0ee11-5c16-7ea3-827f-17f2b38c2496"
+      }
+    },
+    {
+      "id": "ctc_0cb21cb38d58289c016abbebf8904087d088abac94517551ae",
+      "type": "custom_tool_call",
+      "status": "completed",
+      "call_id": "call_yYBjRK6HKsXIJzhnTO9cIr67",
+      "input": "text(await tools.exec_command({cmd:\"@'\\nimport assert from 'node:assert/strict';\\nimport { calculateTotal } from './src/price.ts';\\nconst valid = [\\n  ['omitted', [10, 3], 30],\\n  ['undefined', [10, 3, undefined], 30],\\n  ['zero', [10, 3, 0], 30],\\n  ['ten', [10, 3, 10], 27],\\n  ['hundred', [10, 3, 100], 0],\\n  ['twenty-five', [10, 3, 25], 22.5],\\n];\\nfor (const [name, args, expected] of valid) {\\n  const result = calculateTotal(...args);\\n  assert.equal(result, expected);\\n  console.log(`${name}: ${result}`);\\n}\\nconst invalid = [-1, 101, 1.5, NaN, Infinity, -Infinity, '10', null, true];\\nfor (const value of invalid) {\\n  assert.throws(() => calculateTotal(10, 3, value), { name: 'RangeError', message: 'discountPercent must be an integer between 0 and 100' });\\n}\\nconsole.log(`invalid values: ${invalid.length} rejected with exact RangeError message`);\\nconsole.log(`floating-point example: ${calculateTotal(0.1, 3, 10)}`);\\nconsole.log(`existing non-finite input behavior: ${calculateTotal(Infinity, 3)}`);\\nconsole.log(`100% with non-finite input: ${calculateTotal(Infinity, 3, 100)}`);\\n'@ | node --input-type=module\",workdir:\"E:/Develop/github/codex-ts-demo\",max_output_tokens:2000}))\n",
+      "internal_chat_message_metadata_passthrough": {
+        "create_time": 1790700529.460495,
+        "turn_id": "01a0ee11-5c16-7ea3-827f-17f2b38c2496"
+      },
+      "name": "exec",
+      "metadata": {
+        "turn_id": "01a0ee11-5c16-7ea3-827f-17f2b38c2496"
+      }
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "type": "response.create",
+  "model": "gpt-6-astra",
+  "previous_response_id": "resp_0d30a0e4ba796638016abbece6b52087d0a511090f59c9e99c",
+  "input": [
+    {
+      "type": "custom_tool_call_output",
+      "id": "ctco_01a0ee15-7e88-79b1-8ce1-e1913678580d",
+      "call_id": "call_YsmXkQ20OnP2aXJvYXjopZxm",
+      "output": [
+        {
+          "type": "input_text",
+          "text": "Script completed\nWall time 2.9 seconds\nOutput:\n"
+        },
+        {
+          "type": "input_text",
+          "text": "{\"command\":\"npm run typecheck\",\"status\":\"fulfilled\",\"value\":{\"chunk_id\":\"4ee924\",\"wall_time_seconds\":2.6747824,\"exit_code\":0,\"original_token_count\":10,\"output\":\"\\n> codex-ts-demo@0.1.0 typecheck\\n> tsc\\n\\n\"}}"
+        },
+        {
+          "type": "input_text",
+          "text": "{\"command\":\"npm test\",\"status\":\"fulfilled\",\"value\":{\"chunk_id\":\"f7cf13\",\"wall_time_seconds\":1.391963,\"exit_code\":0,\"original_token_count\":204,\"output\":\"\\n> codex-ts-demo@0.1.0 test\\n> node --test tests/price.test.ts\\n\\n✔ 单价 10 元、数量 3 时，总价应为 30 元 (1.2189ms)\\n✔ 折扣为 undefined 或 0 时，总价应为 30 元 (0.1373ms)\\n✔ 减免 10% 时，总价应为 27 元 (0.1199ms)\\n✔ 减免 100% 时，总价应为 0 元 (0.1219ms)\\n✔ 减免 25% 时，总价应为 22.5 元 (0.1259ms)\\n✔ 折扣为 -1 时，应抛出 RangeError (0.7318ms)\\n✔ 折扣为 101 时，应抛出 RangeError (0.1274ms)\\n✔ 折扣为 1.5 时，应抛出 RangeError (0.0954ms)\\n✔ 折扣为 NaN 时，应抛出 RangeError (0.1246ms)\\n✔ 折扣为 Infinity 时，应抛出 RangeError (0.1803ms)\\n✔ 折扣为 -Infinity 时，应抛出 RangeError (0.104ms)\\nℹ tests 11\\nℹ suites 0\\nℹ pass 11\\nℹ fail 0\\nℹ cancelled 0\\nℹ skipped 0\\nℹ todo 0\\nℹ duration_ms 179.1458\\n\"}}"
+        }
+      ]
+    }
+  ],
+  "tool_choice": "auto",
+  "parallel_tool_calls": false,
+  "reasoning": {
+    "effort": "xhigh",
+    "summary": "detailed",
+    "context": "all_turns"
+  },
+  "store": false,
+  "stream": true,
+  "include": [
+    "reasoning.encrypted_content"
+  ],
+  "service_tier": "priority",
+  "prompt_cache_key": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+  "text": {
+    "verbosity": "low"
+  },
+  "client_metadata": {
+    "thread_id": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+    "session_id": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+    "x-codex-window-id": "01a0edfd-0bdc-7042-985c-5c6a957c6895:0",
+    "ws_request_header_x_openai_internal_codex_responses_lite": "true",
+    "root_turn_id": "01a0ee15-3137-7322-94f4-cb76d65df790",
+    "turn_id": "01a0ee15-3137-7322-94f4-cb76d65df790",
+    "x-codex-installation-id": "<REDACTED>",
+    "x-codex-turn-metadata": "{\"installation_id\":\"<REDACTED>\",\"session_id\":\"01a0edfd-0bdc-7042-985c-5c6a957c6895\",\"thread_id\":\"01a0edfd-0bdc-7042-985c-5c6a957c6895\",\"agent_name\":\"/root\",\"turn_id\":\"01a0ee15-3137-7322-94f4-cb76d65df790\",\"window_id\":\"01a0edfd-0bdc-7042-985c-5c6a957c6895:0\",\"window_number\":0,\"context_window_id\":\"01a0edfd-0bdc-7042-985c-5c7ecd005716\",\"request_kind\":\"turn\",\"root_turn_id\":\"01a0ee15-3137-7322-94f4-cb76d65df790\",\"thread_source\":\"user\",\"turn_trigger\":\"goal\",\"sandbox\":\"none\",\"sandbox_mode\":\"danger-full-access\",\"auto_review_enabled\":false,\"node_repl_auto_review_required\":true,\"node_repl_disabled\":false,\"turn_started_at_unix_ms\":1790700761445,\"analytics_enabled\":true,\"model\":\"gpt-6-astra\",\"reasoning_effort\":\"xhigh\"}",
+    "x-codex-ws-stream-request-start-ms": "1790700781228"
+  }
+}

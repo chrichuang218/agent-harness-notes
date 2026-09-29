@@ -1,0 +1,62 @@
+{
+  "type": "response.create",
+  "model": "gpt-6-astra",
+  "previous_response_id": "resp_0061bd7340416e34016abbe37f911087d0833167280989557b",
+  "input": [
+    {
+      "type": "custom_tool_call_output",
+      "id": "ctco_01a0edf0-bd80-7d71-a3c9-7cb70cdec4c6",
+      "call_id": "call_6YUxjdksnb3eIeh5ySJjO2p8",
+      "output": [
+        {
+          "type": "input_text",
+          "text": "Script completed\nWall time 2.2 seconds\nOutput:\n"
+        },
+        {
+          "type": "input_text",
+          "text": "{\"check\":\"npm run typecheck\",\"status\":\"fulfilled\",\"value\":{\"chunk_id\":\"4a892c\",\"wall_time_seconds\":1.8573518999999998,\"exit_code\":0,\"original_token_count\":10,\"output\":\"\\n> codex-ts-demo@0.1.0 typecheck\\n> tsc\\n\\n\"}}"
+        },
+        {
+          "type": "input_text",
+          "text": "{\"check\":\"npm test\",\"status\":\"fulfilled\",\"value\":{\"chunk_id\":\"0d0b1b\",\"wall_time_seconds\":1.372712,\"exit_code\":0,\"original_token_count\":61,\"output\":\"\\n> codex-ts-demo@0.1.0 test\\n> node --test tests/price.test.ts\\n\\n✔ 单价 10 元、数量 3 时，总价应为 30 元 (0.8942ms)\\nℹ tests 1\\nℹ suites 0\\nℹ pass 1\\nℹ fail 0\\nℹ cancelled 0\\nℹ skipped 0\\nℹ todo 0\\nℹ duration_ms 173.9707\\n\"}}"
+        },
+        {
+          "type": "input_text",
+          "text": "{\"check\":\"npm start\",\"status\":\"fulfilled\",\"value\":{\"chunk_id\":\"de7306\",\"wall_time_seconds\":1.4292197,\"exit_code\":0,\"original_token_count\":24,\"output\":\"\\n> codex-ts-demo@0.1.0 start\\n> node src/index.ts\\n\\n单价：10 元\\n数量：3\\n总价：30 元\\n\"}}"
+        },
+        {
+          "type": "input_text",
+          "text": "{\"check\":\"changed files\",\"status\":\"fulfilled\",\"value\":{\"chunk_id\":\"f04181\",\"wall_time_seconds\":0.6104659,\"exit_code\":0,\"original_token_count\":289,\"output\":\"export function calculateTotal(unitPrice: number, quantity: number): number {\\n  return unitPrice * quantity;\\n}\\n\\r\\n# Codex TS Demo\\n\\n一个计算商品总价的极简 TypeScript 项目，用于在 Codex Desktop 中测试文件读取、代码修改和测试执行，并通过 CPA 日志观察过程。\\n\\n## 环境\\n\\n需要 Node.js 24 或更高版本。直接运行 TypeScript，使用 Node.js 内置测试工具；TypeScript 编译器用于类型检查。\\n\\n```powershell\\nnpm install\\nnpm start\\nnpm run typecheck\\nnpm test\\n```\\n\\n## 功能与当前状态\\n\\n总价应等于单价乘以数量。本例仅使用整数单价和数量。\\n\\n当前测试场景：单价为 10 元、数量为 3，预期总价为 30 元，程序实际输出 30 元。\\n\\n已修复总价计算误用加法的问题，现按单价乘以数量计算。类型检查和行为测试均通过，示例程序输出总价 30 元。\\n\\n## 文件\\n\\n- [src/index.ts](src/index.ts)：示例运行入口。\\n- [src/price.ts](src/price.ts)：总价计算函数。\\n- [tests/price.test.ts](tests/price.test.ts)：验证预期行为的测试。\\n\\n在 Codex Desktop 中打开本项目目录，即可开始实验。\\n\\r\\n\"}}"
+        }
+      ]
+    }
+  ],
+  "tool_choice": "auto",
+  "parallel_tool_calls": false,
+  "reasoning": {
+    "effort": "xhigh",
+    "summary": "detailed",
+    "context": "all_turns"
+  },
+  "store": false,
+  "stream": true,
+  "include": [
+    "reasoning.encrypted_content"
+  ],
+  "service_tier": "priority",
+  "prompt_cache_key": "01a0eded-ff1b-7e82-ac47-067861c26ea8",
+  "text": {
+    "verbosity": "low"
+  },
+  "client_metadata": {
+    "x-codex-installation-id": "<REDACTED>",
+    "x-codex-turn-metadata": "{\"installation_id\":\"<REDACTED>\",\"session_id\":\"01a0eded-ff1b-7e82-ac47-067861c26ea8\",\"thread_id\":\"01a0eded-ff1b-7e82-ac47-067861c26ea8\",\"agent_name\":\"/root\",\"turn_id\":\"01a0edf0-47eb-7873-9476-2ea1d0d21769\",\"window_id\":\"01a0eded-ff1b-7e82-ac47-067861c26ea8:0\",\"window_number\":0,\"context_window_id\":\"01a0eded-ff1b-7e82-ac47-068ef12a5afc\",\"request_kind\":\"turn\",\"root_turn_id\":\"01a0edf0-47eb-7873-9476-2ea1d0d21769\",\"thread_source\":\"user\",\"turn_trigger\":\"composer\",\"sandbox\":\"none\",\"sandbox_mode\":\"danger-full-access\",\"auto_review_enabled\":false,\"node_repl_auto_review_required\":true,\"node_repl_disabled\":false,\"turn_started_at_unix_ms\":1790698342439,\"analytics_enabled\":true,\"model\":\"gpt-6-astra\",\"reasoning_effort\":\"xhigh\",\"workspace_kind\":\"project\"}",
+    "turn_id": "01a0edf0-47eb-7873-9476-2ea1d0d21769",
+    "root_turn_id": "01a0edf0-47eb-7873-9476-2ea1d0d21769",
+    "ws_request_header_x_openai_internal_codex_responses_lite": "true",
+    "x-codex-ws-stream-request-start-ms": "1790698372516",
+    "x-codex-window-id": "01a0eded-ff1b-7e82-ac47-067861c26ea8:0",
+    "thread_id": "01a0eded-ff1b-7e82-ac47-067861c26ea8",
+    "session_id": "01a0eded-ff1b-7e82-ac47-067861c26ea8"
+  }
+}

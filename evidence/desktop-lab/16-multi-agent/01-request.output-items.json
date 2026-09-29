@@ -1,0 +1,21 @@
+{
+  "provenance": "Derived by collecting response.output_item.done.item in event order; response.completed is unchanged.",
+  "items": [
+    {
+      "id": "fc_0d30a0e4ba796638016abbebe1ba4c87d0b1b0246515091b12",
+      "type": "function_call",
+      "status": "completed",
+      "arguments": "{\"task_name\":\"b_test_coverage\",\"fork_turns\":\"all\",\"message\":\"<REDACTED>\"}",
+      "call_id": "call_lqMYVjdzyqvjlvxmUOa4APmr",
+      "internal_chat_message_metadata_passthrough": {
+        "create_time": 1790700512.510498,
+        "turn_id": "01a0ee11-38aa-76f1-b4b2-0bc5d34086c1"
+      },
+      "name": "spawn_agent",
+      "namespace": "collaboration",
+      "metadata": {
+        "turn_id": "01a0ee11-38aa-76f1-b4b2-0bc5d34086c1"
+      }
+    }
+  ]
+}

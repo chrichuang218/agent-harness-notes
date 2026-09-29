@@ -1,0 +1,53 @@
+{
+  "type": "response.create",
+  "model": "gpt-6-astra",
+  "previous_response_id": "resp_0cb21cb38d58289c016abbebe4778487d0bc2679ceaada019b",
+  "input": [
+    {
+      "type": "custom_tool_call_output",
+      "id": "ctco_01a0ee11-8488-7e31-9826-c4b9bf727be0",
+      "call_id": "call_7aqhsqkF0fannD6Ht0C2TaAQ",
+      "output": [
+        {
+          "type": "input_text",
+          "text": "Script completed\nWall time 0.8 seconds\nOutput:\n"
+        },
+        {
+          "type": "input_text",
+          "text": "   1: export function calculateTotal(\r\n   2:   unitPrice: number,\r\n   3:   quantity: number,\r\n   4:   discountPercent: number = 0\r\n   5: ): number {\r\n   6:   if (!Number.isInteger(discountPercent) || discountPercent < 0 || discountPercent > 100) {\r\n   7:     throw new RangeError('discountPercent must be an integer between 0 and 100');\r\n   8:   }\r\n   9: \r\n  10:   return (unitPrice * quantity) * ((100 - discountPercent) / 100);\r\n  11: }\r\n"
+        }
+      ]
+    }
+  ],
+  "tool_choice": "auto",
+  "parallel_tool_calls": false,
+  "reasoning": {
+    "effort": "xhigh",
+    "summary": "detailed",
+    "context": "all_turns"
+  },
+  "store": false,
+  "stream": true,
+  "include": [
+    "reasoning.encrypted_content"
+  ],
+  "service_tier": "priority",
+  "prompt_cache_key": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+  "text": {
+    "verbosity": "low"
+  },
+  "client_metadata": {
+    "turn_id": "01a0ee11-5c16-7ea3-827f-17f2b38c2496",
+    "x-codex-parent-thread-id": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+    "ws_request_header_x_openai_internal_codex_responses_lite": "true",
+    "x-codex-ws-stream-request-start-ms": "1790700520808",
+    "root_turn_id": "01a0ee11-38aa-76f1-b4b2-0bc5d34086c1",
+    "x-openai-subagent": "collab_spawn",
+    "x-codex-installation-id": "<REDACTED>",
+    "thread_id": "01a0ee11-5b79-7942-ab2f-24dc8a0e0d2a",
+    "x-codex-window-id": "01a0ee11-5b79-7942-ab2f-24dc8a0e0d2a:0",
+    "parent_turn_id": "01a0ee11-38aa-76f1-b4b2-0bc5d34086c1",
+    "session_id": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+    "x-codex-turn-metadata": "{\"installation_id\":\"<REDACTED>\",\"session_id\":\"01a0edfd-0bdc-7042-985c-5c6a957c6895\",\"thread_id\":\"01a0ee11-5b79-7942-ab2f-24dc8a0e0d2a\",\"agent_name\":\"/root/a_price_boundaries\",\"turn_id\":\"01a0ee11-5c16-7ea3-827f-17f2b38c2496\",\"window_id\":\"01a0ee11-5b79-7942-ab2f-24dc8a0e0d2a:0\",\"window_number\":0,\"context_window_id\":\"01a0edfd-0bdc-7042-985c-5c7ecd005716\",\"request_kind\":\"turn\",\"parent_thread_id\":\"01a0edfd-0bdc-7042-985c-5c6a957c6895\",\"parent_turn_id\":\"01a0ee11-38aa-76f1-b4b2-0bc5d34086c1\",\"root_turn_id\":\"01a0ee11-38aa-76f1-b4b2-0bc5d34086c1\",\"subagent_kind\":\"thread_spawn\",\"thread_source\":\"subagent\",\"turn_trigger\":\"composer\",\"sandbox\":\"none\",\"sandbox_mode\":\"danger-full-access\",\"auto_review_enabled\":false,\"node_repl_auto_review_required\":true,\"node_repl_disabled\":false,\"turn_started_at_unix_ms\":1790700510289,\"analytics_enabled\":true,\"model\":\"gpt-6-astra\",\"reasoning_effort\":\"xhigh\"}"
+  }
+}

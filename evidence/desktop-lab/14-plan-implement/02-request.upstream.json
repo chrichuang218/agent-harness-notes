@@ -1,0 +1,50 @@
+{
+  "type": "response.create",
+  "model": "gpt-6-astra",
+  "previous_response_id": "resp_0d30a0e4ba796638016abbea741d4887d090f004b5d94538d9",
+  "input": [
+    {
+      "type": "custom_tool_call_output",
+      "id": "ctco_01a0ee0c-28d2-7353-94ee-ff50b7af1075",
+      "call_id": "call_Ue4cxKEsijLtuP26fWIE8q9L",
+      "output": [
+        {
+          "type": "input_text",
+          "text": "Script completed\nWall time 0.0 seconds\nOutput:\n"
+        },
+        {
+          "type": "input_text",
+          "text": "{}"
+        }
+      ]
+    }
+  ],
+  "tool_choice": "auto",
+  "parallel_tool_calls": false,
+  "reasoning": {
+    "effort": "xhigh",
+    "summary": "detailed",
+    "context": "all_turns"
+  },
+  "store": false,
+  "stream": true,
+  "include": [
+    "reasoning.encrypted_content"
+  ],
+  "service_tier": "priority",
+  "prompt_cache_key": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+  "text": {
+    "verbosity": "low"
+  },
+  "client_metadata": {
+    "x-codex-window-id": "01a0edfd-0bdc-7042-985c-5c6a957c6895:0",
+    "session_id": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+    "turn_id": "01a0ee0b-9fe6-7bb2-8a02-dd8c1b54a513",
+    "root_turn_id": "01a0ee0b-9fe6-7bb2-8a02-dd8c1b54a513",
+    "x-codex-turn-metadata": "{\"installation_id\":\"<REDACTED>\",\"session_id\":\"01a0edfd-0bdc-7042-985c-5c6a957c6895\",\"thread_id\":\"01a0edfd-0bdc-7042-985c-5c6a957c6895\",\"agent_name\":\"/root\",\"turn_id\":\"01a0ee0b-9fe6-7bb2-8a02-dd8c1b54a513\",\"window_id\":\"01a0edfd-0bdc-7042-985c-5c6a957c6895:0\",\"window_number\":0,\"context_window_id\":\"01a0edfd-0bdc-7042-985c-5c7ecd005716\",\"request_kind\":\"turn\",\"root_turn_id\":\"01a0ee0b-9fe6-7bb2-8a02-dd8c1b54a513\",\"thread_source\":\"user\",\"turn_trigger\":\"plan_implementation\",\"sandbox\":\"none\",\"sandbox_mode\":\"danger-full-access\",\"auto_review_enabled\":false,\"node_repl_auto_review_required\":true,\"node_repl_disabled\":false,\"turn_started_at_unix_ms\":1790700134432,\"analytics_enabled\":true,\"model\":\"gpt-6-astra\",\"reasoning_effort\":\"xhigh\",\"workspace_kind\":\"project\"}",
+    "thread_id": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+    "ws_request_header_x_openai_internal_codex_responses_lite": "true",
+    "x-codex-installation-id": "<REDACTED>",
+    "x-codex-ws-stream-request-start-ms": "1790700169461"
+  }
+}

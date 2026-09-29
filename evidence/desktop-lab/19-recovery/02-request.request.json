@@ -1,0 +1,50 @@
+{
+  "type": "response.create",
+  "model": "gpt-6-astra",
+  "previous_response_id": "resp_0d30a0e4ba796638016abbed6d3f5087d0822545219a77c8a4",
+  "input": [
+    {
+      "type": "custom_tool_call_output",
+      "id": "ctco_01a0ee17-78ac-76e0-9c90-7c8834ef8d81",
+      "call_id": "call_OchDQ0cGzHrbt3ceSdbM1CI1",
+      "output": [
+        {
+          "type": "input_text",
+          "text": "Script completed\nWall time 0.9 seconds\nOutput:\n"
+        },
+        {
+          "type": "input_text",
+          "text": "{\"chunk_id\":\"d03af6\",\"wall_time_seconds\":0.499701,\"exit_code\":0,\"original_token_count\":203,\"output\":\"{\\n  \\\"name\\\": \\\"codex-ts-demo\\\",\\n  \\\"version\\\": \\\"0.1.0\\\",\\n  \\\"private\\\": true,\\n  \\\"type\\\": \\\"module\\\",\\n  \\\"description\\\": \\\"A minimal TypeScript order total project for Codex Desktop experiments.\\\",\\n  \\\"engines\\\": {\\n    \\\"node\\\": \\\">=24\\\"\\n  },\\n  \\\"scripts\\\": {\\n    \\\"start\\\": \\\"node src/index.ts\\\",\\n    \\\"test\\\": \\\"node --test tests/price.test.ts\\\",\\n    \\\"typecheck\\\": \\\"tsc\\\",\\n    \\\"mcp:check\\\": \\\"node mcp/check-catalog.ts\\\"\\n  },\\n  \\\"devDependencies\\\": {\\n    \\\"@types/node\\\": \\\"24.19.0\\\",\\n    \\\"typescript\\\": \\\"7.0.2\\\"\\n  },\\n  \\\"dependencies\\\": {\\n    \\\"@modelcontextprotocol/sdk\\\": \\\"1.31.0\\\",\\n    \\\"zod\\\": \\\"4.6.5\\\"\\n  }\\n}\\n\\r\\n{\\n  \\\"compilerOptions\\\": {\\n    \\\"target\\\": \\\"ES2022\\\",\\n    \\\"module\\\": \\\"NodeNext\\\",\\n    \\\"strict\\\": true,\\n    \\\"noEmit\\\": true,\\n    \\\"allowImportingTsExtensions\\\": true,\\n    \\\"types\\\": [\\\"node\\\"]\\n  },\\n  \\\"include\\\": [\\\"src/**/*.ts\\\", \\\"tests/**/*.ts\\\", \\\"mcp/**/*.ts\\\"]\\n}\\n\\r\\n\"}"
+        }
+      ]
+    }
+  ],
+  "tool_choice": "auto",
+  "parallel_tool_calls": false,
+  "reasoning": {
+    "effort": "xhigh",
+    "summary": "detailed",
+    "context": "all_turns"
+  },
+  "store": false,
+  "stream": true,
+  "include": [
+    "reasoning.encrypted_content"
+  ],
+  "service_tier": "priority",
+  "prompt_cache_key": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+  "text": {
+    "verbosity": "low"
+  },
+  "client_metadata": {
+    "thread_id": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+    "turn_id": "01a0ee17-5231-77e0-a48c-b81ad0102aab",
+    "x-codex-ws-stream-request-start-ms": "1790700910802",
+    "x-codex-turn-metadata": "{\"installation_id\":\"<REDACTED>\",\"session_id\":\"01a0edfd-0bdc-7042-985c-5c6a957c6895\",\"thread_id\":\"01a0edfd-0bdc-7042-985c-5c6a957c6895\",\"agent_name\":\"/root\",\"turn_id\":\"01a0ee17-5231-77e0-a48c-b81ad0102aab\",\"window_id\":\"01a0edfd-0bdc-7042-985c-5c6a957c6895:0\",\"window_number\":0,\"context_window_id\":\"01a0edfd-0bdc-7042-985c-5c7ecd005716\",\"request_kind\":\"turn\",\"root_turn_id\":\"01a0ee17-5231-77e0-a48c-b81ad0102aab\",\"thread_source\":\"user\",\"turn_trigger\":\"composer\",\"sandbox\":\"none\",\"sandbox_mode\":\"danger-full-access\",\"auto_review_enabled\":false,\"node_repl_auto_review_required\":true,\"node_repl_disabled\":false,\"turn_started_at_unix_ms\":1790700900970,\"analytics_enabled\":true,\"model\":\"gpt-6-astra\",\"reasoning_effort\":\"xhigh\",\"workspace_kind\":\"project\"}",
+    "ws_request_header_x_openai_internal_codex_responses_lite": "true",
+    "session_id": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+    "x-codex-window-id": "01a0edfd-0bdc-7042-985c-5c6a957c6895:0",
+    "root_turn_id": "01a0ee17-5231-77e0-a48c-b81ad0102aab",
+    "x-codex-installation-id": "<REDACTED>"
+  }
+}
