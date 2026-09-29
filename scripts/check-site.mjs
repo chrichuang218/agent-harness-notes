@@ -58,6 +58,8 @@ try {
     assert.equal(await page.locator('.lesson-header h1').innerText(), lesson.title);
     assert.ok((await page.locator('.prose').innerText()).length > 100, lesson.id + ' missing content');
     assert.equal(await page.locator('.experiment').count(), lesson.evidenceIds.length);
+    const sourceHrefs = await page.locator('.prose a.source-link').evaluateAll(links => links.map(link => link.href));
+    assert.ok(sourceHrefs.every(href => href.startsWith('https://github.com/chrichuang218/agent-harness-notes/blob/main/')), lesson.id + ' source link has no shareable fallback');
     await noOverflow();
   }
   await openLesson(catalog.lessons[0]);

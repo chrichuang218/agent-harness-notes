@@ -107,7 +107,14 @@ function decorateMarkdown(container, lesson) {
     const next = catalog.lessons.find(item => item.file === path);
     if (next) link.href = href(next.id);
     else if (path === 'README.md') link.href = '#/';
-    else if (files['../' + path]) { link.classList.add('source-link'); link.onclick = event => { event.preventDefault(); openFile(path); }; }
+    else if (files['../' + path]) {
+      link.classList.add('source-link');
+      link.href = repo + '/blob/main/' + path;
+      link.onclick = event => {
+        if (event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+        event.preventDefault(); openFile(path);
+      };
+    }
     else if (path && !original.startsWith('mailto:')) link.href = repo + '/blob/main/' + path;
   });
   container.querySelectorAll('pre').forEach(pre => {
