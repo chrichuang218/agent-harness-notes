@@ -28,7 +28,7 @@
 | 在新任务追问 | 7 | 未携带该字段 | 不知道。 |
 | 回原任务再次追问 | 1 | 引用设置代号时的响应 | PRICE-A7 |
 
-分别查看[设置代号](../evidence/desktop-lab/08-session-seed/00-request.request.json)、[新任务提问](../evidence/desktop-lab/08-session-new/00-request.request.json)和[原任务追问](../evidence/desktop-lab/08-session-resume/00-request.request.json)。两个任务的 `client_metadata.thread_id` 不同，原任务的设置与追问则共享同一个 ID。
+分别查看[设置代号](../../evidence/desktop-lab/08-session-seed/00-request.request.json)、[新任务提问](../../evidence/desktop-lab/08-session-new/00-request.request.json)和[原任务追问](../../evidence/desktop-lab/08-session-resume/00-request.request.json)。两个任务的 `client_metadata.thread_id` 不同，原任务的设置与追问则共享同一个 ID。
 
 设置代号请求中的这条消息如下。这里省略消息 `id`，保留内容结构：
 
@@ -49,7 +49,7 @@
 
 ## 用真正的响应 ID 把“记得”拆开
 
-先打开[设置代号的完成事件](../evidence/desktop-lab/08-session-seed/00-request.response.json)，它的 `response.id` 是：
+先打开[设置代号的完成事件](../../evidence/desktop-lab/08-session-seed/00-request.response.json)，它的 `response.id` 是：
 
 ```text
 resp_0061bd7340416e34016abbe3f61b1887d085792e6d9fb02f1d
@@ -73,9 +73,9 @@ resp_0061bd7340416e34016abbe3f61b1887d085792e6d9fb02f1d
 }
 ```
 
-上面省略了消息 `id`，没有用代号替换响应 ID。模型这次新收到的是问题，先前的代号则位于被引用的响应链中。最后在[输出项](../evidence/desktop-lab/08-session-resume/00-request.output-items.json)看到普通 assistant 消息 `PRICE-A7`，没有读取磁盘或检索其他任务的工具调用。这里的接续路径是“引用历史后生成回答”。
+上面省略了消息 `id`，没有用代号替换响应 ID。模型这次新收到的是问题，先前的代号则位于被引用的响应链中。最后在[输出项](../../evidence/desktop-lab/08-session-resume/00-request.output-items.json)看到普通 assistant 消息 `PRICE-A7`，没有读取磁盘或检索其他任务的工具调用。这里的接续路径是“引用历史后生成回答”。
 
-新任务走的是另一条路径：[首请求](../evidence/desktop-lab/08-session-new/00-request.request.json)重新组装 7 项输入。`input[0]` 是工具定义，`input[1]` 至 `input[4]` 是 developer 消息，`input[5]` 附加项目规则和环境，`input[6]` 才是相同的追问。它没有引用设置代号的响应，也没有把那条旧消息放入 `input`；[输出项](../evidence/desktop-lab/08-session-new/00-request.output-items.json)于是回答“不知道”。项目路径相同，并没有把另一任务的消息自动添加到这份请求中。
+新任务走的是另一条路径：[首请求](../../evidence/desktop-lab/08-session-new/00-request.request.json)重新组装 7 项输入。`input[0]` 是工具定义，`input[1]` 至 `input[4]` 是 developer 消息，`input[5]` 附加项目规则和环境，`input[6]` 才是相同的追问。它没有引用设置代号的响应，也没有把那条旧消息放入 `input`；[输出项](../../evidence/desktop-lab/08-session-new/00-request.output-items.json)于是回答“不知道”。项目路径相同，并没有把另一任务的消息自动添加到这份请求中。
 
 下面用 `S`、`N`、`R` 作为三次请求的阅读代号，不是协议字段：
 

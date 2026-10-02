@@ -4,7 +4,7 @@
 
 ## 给出两个可以分开的检查任务
 
-使用[第 14 章折扣项目](../examples/14-discount/README.md)，在 Desktop 输入：
+使用[第 14 章折扣项目](../../examples/14-discount/README.md)，在 Desktop 输入：
 
 ```text
 创建两个只读子智能体并等待两者完成：A 检查 src/price.ts 的折扣参数与边界行为；B 检查 tests/price.test.ts 的覆盖范围。都不要修改文件，也不要运行长任务。最后分别标明各自发现并汇总。
@@ -19,7 +19,7 @@
 }
 ```
 
-它来自[父任务第一阶段输出](../evidence/desktop-lab/16-multi-agent/00-request.output-items.json)中的 `function_call.arguments`，先解析该 JSON 字符串即可核对。公开证据对密文做了脱敏，没有把密文解释成可读的任务正文。
+它来自[父任务第一阶段输出](../../evidence/desktop-lab/16-multi-agent/00-request.output-items.json)中的 `function_call.arguments`，先解析该 JSON 字符串即可核对。公开证据对密文做了脱敏，没有把密文解释成可读的任务正文。
 
 ## 父任务先委派，返回的还不是检查结论
 
@@ -27,21 +27,21 @@
 
 | 阶段 | 本次新获得什么 | 输出动作 |
 | --- | --- | --- |
-| [00](../evidence/desktop-lab/16-multi-agent/00-request.output-items.json) | 当前权限/环境更新和用户分工要求 | `spawn_agent` 创建 A |
-| [01](../evidence/desktop-lab/16-multi-agent/01-request.output-items.json) | A 的任务路径 | `spawn_agent` 创建 B |
-| [02](../evidence/desktop-lab/16-multi-agent/02-request.output-items.json) | B 的任务路径 | 读取项目决定和 README |
-| [03](../evidence/desktop-lab/16-multi-agent/03-request.output-items.json) | 项目文档正文 | `wait_agent` 等待结果 |
-| [04](../evidence/desktop-lab/16-multi-agent/04-request.output-items.json) | 等待结果、子任务消息和重组后的历史 | 分别汇总 A、B 的发现 |
+| [00](../../evidence/desktop-lab/16-multi-agent/00-request.output-items.json) | 当前权限/环境更新和用户分工要求 | `spawn_agent` 创建 A |
+| [01](../../evidence/desktop-lab/16-multi-agent/01-request.output-items.json) | A 的任务路径 | `spawn_agent` 创建 B |
+| [02](../../evidence/desktop-lab/16-multi-agent/02-request.output-items.json) | B 的任务路径 | 读取项目决定和 README |
+| [03](../../evidence/desktop-lab/16-multi-agent/03-request.output-items.json) | 项目文档正文 | `wait_agent` 等待结果 |
+| [04](../../evidence/desktop-lab/16-multi-agent/04-request.output-items.json) | 等待结果、子任务消息和重组后的历史 | 分别汇总 A、B 的发现 |
 
 阶段 01 请求的工具返回原文是 `{"task_name":"/root/a_price_boundaries"}`，通过 `call_LleINkkheKDASZQRQPmQ4KgN` 对应第一次委派。它证明任务已建立并给出地址，不代表 A 已经完成审阅。B 的创建返回同理。A 可以在父任务准备 B 时继续运行，所以委派动作先后发生与后续执行区间重叠并不矛盾。
 
 ## 它们确实是不同任务
 
-[协作记录](../evidence/desktop-lab/16-multi-agent/collaboration.json)连接了父子任务 ID、原始 rollout 行号、开始与结束事件及最终汇总。A、B 各有独立的 `threadId`、当前 `turnId` 和模型响应链。
+[协作记录](../../evidence/desktop-lab/16-multi-agent/collaboration.json)连接了父子任务 ID、原始 rollout 行号、开始与结束事件及最终汇总。A、B 各有独立的 `threadId`、当前 `turnId` 和模型响应链。
 
 两个子任务的首个正式请求各包含 22 项输入，能看到先前的项目决定、折扣计划、实施结果和当前检查要求。这里使用了 `fork_turns: "all"`，实际表现是继承已有对话材料，随后在不同任务中继续生成；不是两个完全没有上下文的空白模型。
 
-两份首个正式请求还携带各自的 `previous_response_id`，分别接到子任务自己的预热响应。可对照 [A 预热请求](../evidence/desktop-lab/16-agent-a/00-prewarm.request.json)、[A 预热完成事件](../evidence/desktop-lab/16-agent-a/00-prewarm.response.json)，以及 [B 预热请求](../evidence/desktop-lab/16-agent-b/00-prewarm.request.json)、[B 预热完成事件](../evidence/desktop-lab/16-agent-b/00-prewarm.response.json)：预热各有 2 项输入、`generate: false`、没有生成输出；首个正式请求是在该响应基础上提交 22 项新增内容。
+两份首个正式请求还携带各自的 `previous_response_id`，分别接到子任务自己的预热响应。可对照 [A 预热请求](../../evidence/desktop-lab/16-agent-a/00-prewarm.request.json)、[A 预热完成事件](../../evidence/desktop-lab/16-agent-a/00-prewarm.response.json)，以及 [B 预热请求](../../evidence/desktop-lab/16-agent-b/00-prewarm.request.json)、[B 预热完成事件](../../evidence/desktop-lab/16-agent-b/00-prewarm.response.json)：预热各有 2 项输入、`generate: false`、没有生成输出；首个正式请求是在该响应基础上提交 22 项新增内容。
 
 因此 22 不是完整有效上下文的总项数。读取一份正式请求时，仍然必须查看它引用的响应。两次预热也不是两个子任务已经完成了检查，不能计入下面的正式推理与工具动作数量。
 
@@ -53,13 +53,13 @@
 
 | 子任务阶段 | 当前请求收到什么 | 本次模型输出 |
 | --- | --- | --- |
-| [A 00](../evidence/desktop-lab/16-agent-a/00-request.output-items.json) | 22 项继承与委派上下文 | 读取并给 `src/price.ts` 加行号 |
-| [A 01](../evidence/desktop-lab/16-agent-a/01-request.output-items.json) | 函数源码 | 读取项目规则、package 和本机 Skill |
-| [A 02](../evidence/desktop-lab/16-agent-a/02-request.output-items.json) | 上述读取结果 | 运行短 Node 探针 |
-| [A 03](../evidence/desktop-lab/16-agent-a/03-request.output-items.json) | 探针输出与退出码 0 | 提交实现边界结论 |
-| [B 00](../evidence/desktop-lab/16-agent-b/00-request.output-items.json) | 22 项继承与委派上下文 | 读取规则、测试、源码和 package |
-| [B 01](../evidence/desktop-lab/16-agent-b/01-request.output-items.json) | 文件正文 | 读取本机 Skill |
-| [B 02](../evidence/desktop-lab/16-agent-b/02-request.output-items.json) | 技能正文 | 提交静态覆盖分析 |
+| [A 00](../../evidence/desktop-lab/16-agent-a/00-request.output-items.json) | 22 项继承与委派上下文 | 读取并给 `src/price.ts` 加行号 |
+| [A 01](../../evidence/desktop-lab/16-agent-a/01-request.output-items.json) | 函数源码 | 读取项目规则、package 和本机 Skill |
+| [A 02](../../evidence/desktop-lab/16-agent-a/02-request.output-items.json) | 上述读取结果 | 运行短 Node 探针 |
+| [A 03](../../evidence/desktop-lab/16-agent-a/03-request.output-items.json) | 探针输出与退出码 0 | 提交实现边界结论 |
+| [B 00](../../evidence/desktop-lab/16-agent-b/00-request.output-items.json) | 22 项继承与委派上下文 | 读取规则、测试、源码和 package |
+| [B 01](../../evidence/desktop-lab/16-agent-b/01-request.output-items.json) | 文件正文 | 读取本机 Skill |
+| [B 02](../../evidence/desktop-lab/16-agent-b/02-request.output-items.json) | 技能正文 | 提交静态覆盖分析 |
 
 它们的工具结果分别进入各自下一请求；父任务没有在这期间代替 A 执行探针，也没有凭创建成功返回就知道 B 的覆盖判断。两个子任务都读了本机 `ponytail` Skill，这是当前环境的影响，不是多 Agent 协议必需环节。
 
@@ -78,7 +78,7 @@
 
 ## 结论怎样回到父模型？
 
-[父任务第 04 请求](../evidence/desktop-lab/16-multi-agent/04-request.request.json)值得完整展开：它有 75 项输入，没有 `previous_response_id`。它重新携带历史，并增加子任务消息；不能把这一阶段画成“只发送一个等待结果”的普通增量请求。当前证据能描述这种重组方式，没有证明内部为何在此时切换。
+[父任务第 04 请求](../../evidence/desktop-lab/16-multi-agent/04-request.request.json)值得完整展开：它有 75 项输入，没有 `previous_response_id`。它重新携带历史，并增加子任务消息；不能把这一阶段画成“只发送一个等待结果”的普通增量请求。当前证据能描述这种重组方式，没有证明内部为何在此时切换。
 
 末尾几个位置各司其职：
 
@@ -99,13 +99,13 @@
 
 **B 只做静态检查。** 它逐项核对测试源代码，统计 11 项测试，认为已批准方案的必需场景都有覆盖。它建议可补充 `(0.125, 1, 50) → 0.0625`，更明确防止未来意外加入两位小数舍入；本次没有运行测试，也没有添加用例。
 
-可分别查看 [A 的最终输出](../evidence/desktop-lab/16-agent-a/03-request.output-items.json)和 [B 的最终输出](../evidence/desktop-lab/16-agent-b/02-request.output-items.json)。A 的运行结果和 B 的静态判断应该保留各自标签，不能在汇总中统一写成“两者均已运行验证”。
+可分别查看 [A 的最终输出](../../evidence/desktop-lab/16-agent-a/03-request.output-items.json)和 [B 的最终输出](../../evidence/desktop-lab/16-agent-b/02-request.output-items.json)。A 的运行结果和 B 的静态判断应该保留各自标签，不能在汇总中统一写成“两者均已运行验证”。
 
 ## 独立任务，不等于独立工作区
 
 本地会话元数据表明，父任务与两个子任务使用同一个 demo 目录。独立响应链只证明它们有各自的执行上下文，无法据此证明文件系统隔离。
 
-本例采用只读分工。[文件状态核对](../evidence/desktop-lab/16-multi-agent/file-state.json)将实施后的快照与子任务完成后的 13 个项目文件逐项比较，哈希均相同。这支持“这 13 个文件未变”，不扩大为整个系统从未发生写入。
+本例采用只读分工。[文件状态核对](../../evidence/desktop-lab/16-multi-agent/file-state.json)将实施后的快照与子任务完成后的 13 个项目文件逐项比较，哈希均相同。这支持“这 13 个文件未变”，不扩大为整个系统从未发生写入。
 
 以后若把可写任务交给多个 Agent，就需要明确各自修改范围及汇总方式。共享目录中的两个任务可能读写同一文件，“有两个 Agent”本身不会解决冲突。
 

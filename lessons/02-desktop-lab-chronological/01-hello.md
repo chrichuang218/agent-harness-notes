@@ -2,7 +2,7 @@
 
 输入框里只有一句“你好”，实际请求却已经带上工具定义、开发者指令、技能目录、规则和环境。本章沿着这一次交互，从 Desktop 的输入输出一直拆到请求里的每一项，先建立阅读后续工具循环所需的坐标。
 
-你可以直接阅读本章的公开证据，也可以将[初始 TS 项目](../examples/01-baseline/README.md)作为独立项目加入 Codex Desktop，在新任务中复现。先保留项目里的计算错误；本章不读代码、不运行测试。
+你可以直接阅读本章的公开证据，也可以将[初始 TS 项目](../../examples/01-baseline/README.md)作为独立项目加入 Codex Desktop，在新任务中复现。先保留项目里的计算错误；本章不读代码、不运行测试。
 
 ## 一次最小操作
 
@@ -14,7 +14,7 @@
 
 本次输入由 Computer Use 操作输入框完成。它进入请求时是普通 `user` 消息；另一个任务通过委派工具传入的内容可能有不同包装，不能混作这个样本。
 
-![用户提供的真实 Codex Desktop 截图：问候、接续对话与读取 README](../docs/images/desktop-hello-readme.png)
+![用户提供的真实 Codex Desktop 截图：问候、接续对话与读取 README](../../docs/images/desktop-hello-readme.png)
 
 这是用户提供的真实 Desktop 截图，包含本教程前三轮：问候、追问上一句话、读取 README。截图说明界面展示了什么；下面用 CPA 记录确定每轮实际发送了什么。第三轮在界面中出现读取动作，对应第 3 章的工具调用与回传，不能据截图把前三轮都算成“每轮只有一个模型请求”。
 
@@ -44,12 +44,12 @@ CPA 记录了 1 次预热和 1 次正式请求，没有模型主动发起的工�
 
 | 阶段 | 请求内容 | 模型输出 | 调用与结果的位置 |
 | --- | --- | --- | --- |
-| `00-prewarm` | 2 项：工具定义与基础开发者指令，`generate: false` | 没有生成输出项 | 没有 `call_id`，也没有工具回传；[请求](../evidence/desktop-lab/01-hello/00-prewarm.request.json)、[完成事件](../evidence/desktop-lab/01-hello/00-prewarm.response.json) |
-| `01-request` | 完整初始上下文，共 7 项，最后是“你好” | 一项最终助手消息 | 无工具调用；正文来自[输出项完成事件的汇集](../evidence/desktop-lab/01-hello/01-request.output-items.json)，原始顺序见[事件](../evidence/desktop-lab/01-hello/01-request.events.json) |
+| `00-prewarm` | 2 项：工具定义与基础开发者指令，`generate: false` | 没有生成输出项 | 没有 `call_id`，也没有工具回传；[请求](../../evidence/desktop-lab/01-hello/00-prewarm.request.json)、[完成事件](../../evidence/desktop-lab/01-hello/00-prewarm.response.json) |
+| `01-request` | 完整初始上下文，共 7 项，最后是“你好” | 一项最终助手消息 | 无工具调用；正文来自[输出项完成事件的汇集](../../evidence/desktop-lab/01-hello/01-request.output-items.json)，原始顺序见[事件](../../evidence/desktop-lab/01-hello/01-request.events.json) |
 
 两阶段的 `input[0]` 和 `input[1]` 深比较相同。正式请求再补上本次应用、规则、环境与用户输入，不是把预热请求当成一次用户问候。预热完成事件也报告 18,673 输入 token、0 输出 token，所以“没有生成文本”不等于“用量一定为零”。
 
-预热[事件序列](../evidence/desktop-lab/01-hello/00-prewarm.events.json)只有 `response.created`、`response.in_progress`、`response.completed` 三项；正式问候的事件序列才出现消息与文本增量。这是区分两阶段的另一份直接证据。
+预热[事件序列](../../evidence/desktop-lab/01-hello/00-prewarm.events.json)只有 `response.created`、`response.in_progress`、`response.completed` 三项；正式问候的事件序列才出现消息与文本增量。这是区分两阶段的另一份直接证据。
 
 | 本次正式请求 | 数值 |
 | --- | --- |
@@ -62,7 +62,7 @@ CPA 记录了 1 次预热和 1 次正式请求，没有模型主动发起的工�
 
 ## 先看外层：请求配置与消息内容分开放
 
-[正式请求](../evidence/desktop-lab/01-hello/01-request.request.json)最外层有下面这些实际字段。这里按原值节选，省略 `input`、元数据等其他字段：
+[正式请求](../../evidence/desktop-lab/01-hello/01-request.request.json)最外层有下面这些实际字段。这里按原值节选，省略 `input`、元数据等其他字段：
 
 ```json
 {
@@ -140,7 +140,7 @@ You are Codex, an agent based on GPT-6. You and the user share one workspace, an
 
 ## 在请求中找到“你好”
 
-打开[正式请求](../evidence/desktop-lab/01-hello/01-request.request.json)，定位 `input[6]`。下面节选这一项的类型、角色和内容，省略消息 `id` 及其他请求项：
+打开[正式请求](../../evidence/desktop-lab/01-hello/01-request.request.json)，定位 `input[6]`。下面节选这一项的类型、角色和内容，省略消息 `id` 及其他请求项：
 
 ```json
 {
@@ -161,7 +161,7 @@ You are Codex, an agent based on GPT-6. You and the user share one workspace, an
 
 ## 回复在哪里？
 
-在[流式事件](../evidence/desktop-lab/01-hello/01-request.events.json)中搜索 `response.output_item.done`，可以找到那句问候。事件按顺序描述输出怎样形成；它们并非多轮独立回答。
+在[流式事件](../../evidence/desktop-lab/01-hello/01-request.events.json)中搜索 `response.output_item.done`，可以找到那句问候。事件按顺序描述输出怎样形成；它们并非多轮独立回答。
 
 该事件的 `item` 中，下面这些字段把“角色、阶段、文本”连接起来。这里节选原字段，省略内部元数据与文本块中的附加字段：
 
@@ -181,7 +181,7 @@ You are Codex, an agent based on GPT-6. You and the user share one workspace, an
 
 用户输入使用 `input_text`，模型输出使用 `output_text`；它们共同属于消息内容块，但方向不同。`phase: "final_answer"` 表示这条助手消息在本次记录中是最终回答。后面还会看到 `commentary` 进度消息，以及不是消息文本的工具调用项。
 
-这次[完成事件](../evidence/desktop-lab/01-hello/01-request.response.json)的 `response.output` 是空数组。它不表示没有回答，因为消息已出现在前面的输出事件里。为了便于阅读，我们另存了[输出项汇集](../evidence/desktop-lab/01-hello/01-request.output-items.json)，明确标注从事件提取；没有把推导内容补回原始完成事件。
+这次[完成事件](../../evidence/desktop-lab/01-hello/01-request.response.json)的 `response.output` 是空数组。它不表示没有回答，因为消息已出现在前面的输出事件里。为了便于阅读，我们另存了[输出项汇集](../../evidence/desktop-lab/01-hello/01-request.output-items.json)，明确标注从事件提取；没有把推导内容补回原始完成事件。
 
 ## CPA 两侧和几种文件，怎样对应？
 
@@ -194,13 +194,13 @@ You are Codex, an agent based on GPT-6. You and the user share one workspace, an
 | `output-items.json` | 从 `response.output_item.done` 收集的输出项 | 这是标注来源的衍生汇集，不冒充原始响应 |
 | `manifest.json` | 线程、轮次、响应 ID、原文件行号及脱敏说明 | 它的统计和统一展示字段不是网络请求新增字段 |
 
-对本章[客户端正式请求](../evidence/desktop-lab/01-hello/01-request.request.json)与[上游正文](../evidence/desktop-lab/01-hello/01-request.upstream.json)按 JSON 值比较，字段及内容相同；预热两侧也相同。这是本样本的结果，不沿用其他版本里“代理新增某个字段”的旧结论。两侧各记录一次转发，也不能把正式请求数从 1 算成 2。
+对本章[客户端正式请求](../../evidence/desktop-lab/01-hello/01-request.request.json)与[上游正文](../../evidence/desktop-lab/01-hello/01-request.upstream.json)按 JSON 值比较，字段及内容相同；预热两侧也相同。这是本样本的结果，不沿用其他版本里“代理新增某个字段”的旧结论。两侧各记录一次转发，也不能把正式请求数从 1 算成 2。
 
 ## 现在能得出什么结论
 
 已经观察到：Desktop 组织了一份带有额外上下文的请求，模型返回了文本。本章没有工具调用；工具定义出现在请求中，不代表工具已经执行。类似地，技能目录出现了，也不代表读取过每个技能正文。
 
-CPA 展示经过代理的请求与响应，本地操作是否真的发生，后续还需要文件和执行结果佐证。公开 JSON 保留结构，移除了认证头，并对个人目录、凭据和部分标识脱敏；[实验清单](../evidence/desktop-lab/01-hello/manifest.json)记录了来源和处理方式。
+CPA 展示经过代理的请求与响应，本地操作是否真的发生，后续还需要文件和执行结果佐证。公开 JSON 保留结构，移除了认证头，并对个人目录、凭据和部分标识脱敏；[实验清单](../../evidence/desktop-lab/01-hello/manifest.json)记录了来源和处理方式。
 
 阅读时先找到一个具体字段，再提出解释。截图适合确认界面行为，日志适合核对请求结构；两份材料回答的问题不同，可以相互补充。
 
@@ -215,4 +215,4 @@ CPA 展示经过代理的请求与响应，本地操作是否真的发生，后�
 
 </details>
 
-[回到首页](../README.md) · [下一章：再说一句话，怎样接着聊？](02-context.md)
+[回到首页](../../README.md) · [下一章：再说一句话，怎样接着聊？](02-context.md)

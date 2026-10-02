@@ -30,7 +30,7 @@ $price-project-check 请对当前项目做一次只读概览检查。
 | 显式使用的技能正文 | 附加的 `<skill>` 块 | 同请求 `input[7]` |
 | README 与源码内容 | 工具执行结果 | 第 5 章第二请求 `input[0].output` |
 
-可分别打开[第 4 章请求](../evidence/desktop-lab/04-agents/00-request.request.json)、[第 5 章首请求](../evidence/desktop-lab/05-skills/00-request.request.json)和[文件结果请求](../evidence/desktop-lab/05-skills/01-request.request.json)核对。
+可分别打开[第 4 章请求](../../evidence/desktop-lab/04-agents/00-request.request.json)、[第 5 章首请求](../../evidence/desktop-lab/05-skills/00-request.request.json)和[文件结果请求](../../evidence/desktop-lab/05-skills/01-request.request.json)核对。
 
 这些来源有时共享 `role: "user"`，但不是同一来源。客户端附加的规则和技能正文，不等于人在聊天框里逐字输入了那些内容。
 
@@ -40,18 +40,18 @@ $price-project-check 请对当前项目做一次只读概览检查。
 
 | 实验与阶段 | 本次请求装入什么 | 模型接下来输出什么 | 结果何时进入模型 |
 | --- | --- | --- | --- |
-| 读 README `00` | 13 项：已有对话、当前任务等 | `exec` 内调用 `Get-Content README.md` | [读 README `01`](../evidence/desktop-lab/03-readme/01-request.request.json) 的工具结果 |
+| 读 README `00` | 13 项：已有对话、当前任务等 | `exec` 内调用 `Get-Content README.md` | [读 README `01`](../../evidence/desktop-lab/03-readme/01-request.request.json) 的工具结果 |
 | 读 README `01` | 1 项结果，并引用上一响应 | 三句项目介绍 | 此轮结束，无新工具结果 |
-| 加规则 `00` | 7 项：其中规则块已出现“项目观察：”要求 | 再读 README | [加规则 `01`](../evidence/desktop-lab/04-agents/01-request.request.json) 的工具结果 |
+| 加规则 `00` | 7 项：其中规则块已出现“项目观察：”要求 | 再读 README | [加规则 `01`](../../evidence/desktop-lab/04-agents/01-request.request.json) 的工具结果 |
 | 加规则 `01` | 1 项结果，并引用上一响应 | 遵循项目规则的介绍 | 此轮结束 |
-| 显式 Skill `00` | 8 项：技能目录、用户点名和附加正文 | 一次 `exec` 内安排技能及三个项目文件的读取 | [Skill `01`](../evidence/desktop-lab/05-skills/01-request.request.json) 的结果数组 |
+| 显式 Skill `00` | 8 项：技能目录、用户点名和附加正文 | 一次 `exec` 内安排技能及三个项目文件的读取 | [Skill `01`](../../evidence/desktop-lab/05-skills/01-request.request.json) 的结果数组 |
 | 显式 Skill `01` | 1 项结果，内含多个文件内容块 | 用途、命令、实现与需求的差异 | 此轮结束 |
 
-对应模型提出的动作保存在[第 3 章 `00` 输出](../evidence/desktop-lab/03-readme/00-request.output-items.json)、[第 4 章 `00` 输出](../evidence/desktop-lab/04-agents/00-request.output-items.json)、[第 5 章 `00` 输出](../evidence/desktop-lab/05-skills/00-request.output-items.json)。请求里列了可用工具，和响应里真的提出读取，是两个时刻；读取结果又要到下一次请求才进入模型。
+对应模型提出的动作保存在[第 3 章 `00` 输出](../../evidence/desktop-lab/03-readme/00-request.output-items.json)、[第 4 章 `00` 输出](../../evidence/desktop-lab/04-agents/00-request.output-items.json)、[第 5 章 `00` 输出](../../evidence/desktop-lab/05-skills/00-request.output-items.json)。请求里列了可用工具，和响应里真的提出读取，是两个时刻；读取结果又要到下一次请求才进入模型。
 
 例如第 3 章调用的 `call_id` 是 `call_a288dLl8tyNv8JFlTJgNdtfK`。下一请求中的 `custom_tool_call_output.call_id` 与它相同，结果里才有 README 正文。客户端还将 `previous_response_id` 指向产生调用的那次响应，使模型同时知道“我刚才为什么读它”和“实际读到了什么”。
 
-本次六份客户端请求与对应上游请求的 `input`、`previous_response_id` 一致。比较入口如 [Skill 首次上游请求](../evidence/desktop-lab/05-skills/00-request.upstream.json)与[后续上游请求](../evidence/desktop-lab/05-skills/01-request.upstream.json)。因此，在 CPA 这段链路上没有证据表明代理额外替模型读取了 README。它转发包含文件结果的模型请求，文件读取本身由本地工具完成。
+本次六份客户端请求与对应上游请求的 `input`、`previous_response_id` 一致。比较入口如 [Skill 首次上游请求](../../evidence/desktop-lab/05-skills/00-request.upstream.json)与[后续上游请求](../../evidence/desktop-lab/05-skills/01-request.upstream.json)。因此，在 CPA 这段链路上没有证据表明代理额外替模型读取了 README。它转发包含文件结果的模型请求，文件读取本身由本地工具完成。
 
 ## 文件存在，不代表正文已经送入模型
 

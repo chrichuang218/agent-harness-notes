@@ -9,8 +9,10 @@ const catalog = JSON.parse(await readFile('course/catalog.json', 'utf8'));
 const { experiments } = JSON.parse(await readFile('evidence/desktop-lab/index.json', 'utf8'));
 const captureReadme = process.argv.includes('--capture-readme');
 const stages = experiments.flatMap(experiment => experiment.stages.map((stage, index) => ({ experiment, stage, index })));
-assert.equal(catalog.lessons.length, 20);
+assert.equal(catalog.lessons.length, 15);
 assert.equal(catalog.groups.length, 4);
+assert.equal(experiments.length, 26);
+assert.equal(stages.length, 74);
 const types = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.png': 'image/png', '.svg': 'image/svg+xml' };
 const server = createServer(async (request, response) => {
   try {
@@ -73,10 +75,10 @@ try {
   assert.equal(await page.locator('#main > .error-state').count(), 0, await page.locator('#main').innerText());
   assert.equal(await page.locator('.introduction h1').innerText(), 'Codex 的一次完整运行');
   assert.ok((await page.locator('.introduction h1').boundingBox()).y >= (await page.locator('.site-header').boundingBox()).height, 'Fixed header must not cover the opening title.');
-  assert.equal(await page.locator('.chapter').count(), 20);
+  assert.equal(await page.locator('.chapter').count(), 15);
   assert.equal(await page.locator('.course-stage').count(), 4);
   assert.equal(await page.locator('dialog,.hero').count(), 0, 'Reading/evidence must not depend on dialogs or a marketing hero.');
-  assert.ok(await page.locator('.mermaid svg').count(), 'Introduction diagram did not render.');
+  assert.ok(await page.locator('.mermaid svg').count(), 'Course diagram did not render.');
   assert.ok(await page.locator('.mermaid svg').first().evaluate(svg => svg.getBoundingClientRect().width >= svg.viewBox.baseVal.width - 1), 'Diagram text must not be scaled down to fit the article.');
   await noOverflow('Desktop introduction');
   assert.equal(await page.locator('.prose').first().evaluate(element => getComputedStyle(element).fontSize), '15px');
@@ -91,6 +93,59 @@ try {
   assert.equal(await screenshot.locator('..').getAttribute('target'), '_blank');
   assert.equal(await screenshot.locator('..').getAttribute('href'), new URL(asset, url).href);
   assert.ok((await screenshot.locator('..').innerText()).includes('点击查看原图'));
+
+  await page.goto(url + '#/lesson/02-tools');
+  await page.reload();
+  await page.locator('#main[aria-busy="false"]').waitFor();
+  await page.waitForLoadState('networkidle');
+  const toolsTop = (await page.locator('#chapter-02-tools').boundingBox()).y;
+  assert.ok(toolsTop >= 60 && toolsTop < 200, 'A direct chapter link must stay at the chapter after neighbouring evidence loads.');
+
+  const legacyRoutes = {
+    '01-hello': '01-request', '02-context': '04-session', '03-readme': '02-tools',
+    '04-agents': '06-agents', '05-skills': '07-skills', '06-tests': '03-agent-loop',
+    '07-fix': '03-agent-loop', '08-session': '04-session', '09-context': '05-context',
+    '10-compaction': '05-context', '11-cache': '05-context', '12-memory': '08-memory',
+    '13-mcp': '09-mcp', '14-plan': '11-plan', '15-permissions': '10-permissions',
+    '16-multi-agent': '12-multi-agent', '17-goal': '13-autonomy', '18-streaming': '14-streaming',
+    '19-recovery': '13-autonomy', '20-interruption': '13-autonomy',
+  };
+  assert.deepEqual(catalog.legacyRoutes, legacyRoutes, 'Previous chapter destinations must match the topic reorganization.');
+  for (const [previous, current] of Object.entries(legacyRoutes)) {
+    await page.goto(url + '#/lesson/' + previous + '?section=' + previous + '-section-0');
+    await page.waitForFunction(id => location.hash === '#/lesson/' + id, current);
+    assert.ok((await page.title()).startsWith(catalog.lessons.find(lesson => lesson.id === current).title));
+    assert.ok((await page.locator('#chapter-' + current).boundingBox()).y < 200, previous + ': old heading must land at its new chapter');
+  }
+  // The context chapter once linked to experiments now taught elsewhere.
+  // Existing bookmarks must retain their source, stage and view after moving.
+  await page.goto(url + '#/lesson/09-context?experiment=03-readme&stage=1&view=raw&kind=responseFile');
+  await page.waitForFunction(() => {
+    const host = document.querySelector('[data-workbench="02-tools"]');
+    return host.dataset.experiment === '03-readme' && host.dataset.stage === '1' && host.dataset.view === 'raw' && host.getAttribute('aria-busy') === 'false' && host.dataset.ready === 'true';
+  });
+  assert.equal(new URLSearchParams(new URL(page.url()).hash.split('?')[1]).get('experiment'), '03-readme');
+  assert.equal(await page.locator('[data-workbench="02-tools"] .stage-select').inputValue(), '1');
+  assert.equal(await page.locator('[data-workbench="02-tools"] .raw-select').inputValue(), 'responseFile');
+  assert.ok(await page.locator('[data-workbench="02-tools"] [data-raw-content]').textContent() === await readFile(experiments.find(item => item.id === '03-readme').stages[1].responseFile, 'utf8'));
+
+  const foldedHeadings = await page.locator('.chapter .prose details h2,.chapter .prose details h3,.chapter .prose details h4,.chapter .prose details h5,.chapter .prose details h6,.chapter .prose details > summary[id]').evaluateAll(headings => headings.map(heading => ({ id: heading.id, lesson: heading.closest('.chapter').dataset.lesson })));
+  assert.equal(await page.locator('.chapter-outline a').filter({ hasText: /核对答案|参考解释|核对思路/ }).count(), 0, 'Exercise answers should stay out of the chapter outline.');
+  assert.ok(foldedHeadings.length, 'In-depth sections should be reachable through actual folded content headings.');
+  for (const { id, lesson } of foldedHeadings) {
+    await page.evaluate(() => document.querySelectorAll('.prose details').forEach(details => details.open = false));
+    await page.goto(url + '#/lesson/' + lesson + '?section=' + id);
+    await page.waitForFunction(id => {
+      const heading = document.getElementById(id);
+      for (let node = heading?.parentElement; node; node = node.parentElement) if (node.tagName === 'DETAILS' && !node.open) return false;
+      return Boolean(heading?.getClientRects().length);
+    }, id);
+  }
+  const repeatedTarget = foldedHeadings.at(-1);
+  await page.evaluate(() => document.querySelectorAll('.prose details').forEach(details => details.open = false));
+  await page.locator(`[data-nav-lesson="${repeatedTarget.lesson}"] [data-section="${repeatedTarget.id}"]`).click();
+  assert.ok(await page.locator(`[id="${repeatedTarget.id}"]`).evaluate(element => element.closest('details').open), 'Following the current link again must reopen its folded content.');
+  await page.evaluate(() => document.querySelectorAll('.prose details').forEach(details => details.open = false));
 
   // Every recorded stage, including prewarms, is selectable. Compare all input
   // items, roles, content blocks and original objects against public sources.
@@ -142,8 +197,8 @@ try {
   const share = await page.evaluate(() => navigator.clipboard.readText());
   assert.ok(share.includes('experiment=01-hello') && share.includes('stage=1'));
   await page.reload(); await page.locator('#main[aria-busy="false"]').waitFor();
-  await page.waitForFunction(() => document.querySelector('[data-workbench="01-hello"]').dataset.ready === 'true');
-  assert.equal(await page.locator('[data-workbench="01-hello"] .stage-select').inputValue(), '1');
+  await page.waitForFunction(() => document.querySelector('[data-workbench="01-request"]').dataset.ready === 'true');
+  assert.equal(await page.locator('[data-workbench="01-request"] .stage-select').inputValue(), '1');
 
   const readme = experiments.find(item => item.id === '03-readme');
   host = await openWorkbench(readme, 0, 'calls');
@@ -165,8 +220,12 @@ try {
   const child = experiments.find(item => item.id === '16-agent-a');
   host = await openWorkbench(child, 0, 'request');
   assert.ok((await host.locator('.experiment-summary').innerText()).includes('由父任务委派'));
+  const goal = experiments.find(item => item.id === '17-goal');
+  host = await openWorkbench(goal, 0, 'request');
+  assert.ok((await host.locator('.experiment-summary').innerText()).includes('通过原生 Goal 入口设置目标'));
+  assert.ok(!(await host.locator('.experiment-summary').innerText()).includes('由父任务委派'), 'A native Goal input must not be labelled as child-agent delegation.');
 
-  for (const [lessonId, path] of [['introduction', 'evidence/desktop-lab/index.json'], ['15-permissions', 'evidence/desktop-lab/15-permissions/runtime-context.json'], ['16-multi-agent', 'evidence/desktop-lab/16-multi-agent/collaboration.json'], ['17-goal', 'evidence/desktop-lab/17-goal/goal-state.json']]) {
+  for (const [lessonId, path] of [['introduction', 'evidence/desktop-lab/index.json'], ['10-permissions', 'evidence/desktop-lab/15-permissions/runtime-context.json'], ['12-multi-agent', 'evidence/desktop-lab/16-multi-agent/collaboration.json'], ['13-autonomy', 'evidence/desktop-lab/17-goal/goal-state.json']]) {
     await page.goto(url + '#/lesson/' + lessonId + '?file=' + encodeURIComponent(path));
     const supplement = page.locator('#supplement-' + lessonId);
     await supplement.locator('[data-supplement-content]').waitFor({ state: 'visible' });
@@ -202,5 +261,5 @@ try {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await openWorkbench(hello, 1, 'request'); await page.screenshot({ path: 'work/site-workbench-desktop.png', fullPage: false, animations: 'disabled' });
   assert.deepEqual(errors, [], 'Browser errors must not be swallowed.');
-  console.log(`Site checks passed: continuous 20-section reader; all ${stages.length} stages; full-text copy/share; cross-experiment call/response links; native records; real image asset; 3 widths; no page or console errors.`);
+  console.log(`Site checks passed: continuous 15-topic reader; all 20 legacy routes; ${foldedHeadings.length} folded headings; all ${stages.length} stages; full-text copy/share; cross-experiment call/response links; native records; real image asset; 3 widths; no page or console errors.`);
 } finally { await browser?.close(); server.close(); }

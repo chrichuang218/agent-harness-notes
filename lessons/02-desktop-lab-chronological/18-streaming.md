@@ -6,7 +6,7 @@ Desktop 中一段回答逐渐显示，CPA 日志中则出现许多事件。这�
 
 ## 这次生成之前，模型刚收到了什么？
 
-第 7 章[阶段 03 输出](../evidence/desktop-lab/07-fix/03-request.output-items.json)提出一次 `exec`，内部安排 typecheck、test、start 和文件重读。调用编号是 `call_6YUxjdksnb3eIeh5ySJjO2p8`。本地执行完成后，[阶段 04 请求](../evidence/desktop-lab/07-fix/04-request.request.json)把所有结果放在一个 `custom_tool_call_output` 中，沿相同编号返回。
+第 7 章[阶段 03 输出](../../evidence/desktop-lab/07-fix/03-request.output-items.json)提出一次 `exec`，内部安排 typecheck、test、start 和文件重读。调用编号是 `call_6YUxjdksnb3eIeh5ySJjO2p8`。本地执行完成后，[阶段 04 请求](../../evidence/desktop-lab/07-fix/04-request.request.json)把所有结果放在一个 `custom_tool_call_output` 中，沿相同编号返回。
 
 这一请求的 `previous_response_id` 是 `resp_0061bd7340416e34016abbe37f911087d0833167280989557b`，指向发出验证调用的上一响应。因此模型生成下面的回答时，不只有“已修复”三个字可用，而是已经获得修复任务、此前动作以及三条命令的退出码等上下文。
 
@@ -14,7 +14,7 @@ Desktop 中一段回答逐渐显示，CPA 日志中则出现许多事件。这�
 
 ## 一条回答，154 个事件
 
-打开[阶段 04 流式事件](../evidence/desktop-lab/07-fix/04-request.events.json)。其中共有 154 个 `response.*` 事件，146 个是 `response.output_text.delta`。这些数字描述本样本，不是固定协议要求。
+打开[阶段 04 流式事件](../../evidence/desktop-lab/07-fix/04-request.events.json)。其中共有 154 个 `response.*` 事件，146 个是 `response.output_text.delta`。这些数字描述本样本，不是固定协议要求。
 
 开头几个文本增量依次是：
 
@@ -60,7 +60,7 @@ Desktop 中一段回答逐渐显示，CPA 日志中则出现许多事件。这�
 
 ## 文本流与工具调用流，不是同一种内容
 
-回看[阶段 03 的事件](../evidence/desktop-lab/07-fix/03-request.events.json)，会看到 187 个 `response.custom_tool_call_input.delta`，随后是对应的 `input.done` 和 `output_item.done`。它们逐步组成的是 `exec` 的 JavaScript 输入。到了阶段 04，146 个 `response.output_text.delta` 组成的才是面向用户的回答。
+回看[阶段 03 的事件](../../evidence/desktop-lab/07-fix/03-request.events.json)，会看到 187 个 `response.custom_tool_call_input.delta`，随后是对应的 `input.done` 和 `output_item.done`。它们逐步组成的是 `exec` 的 JavaScript 输入。到了阶段 04，146 个 `response.output_text.delta` 组成的才是面向用户的回答。
 
 | 响应阶段 | 主要增量类型 | 组装后的对象 | 运行环境接下来做什么 |
 | --- | --- | --- | --- |
@@ -73,9 +73,9 @@ Desktop 中一段回答逐渐显示，CPA 日志中则出现许多事件。这�
 
 ## 完成事件没有正文，不等于回答消失
 
-本次[完成事件](../evidence/desktop-lab/07-fix/04-request.response.json)中的 `response.output` 是空数组，但完整消息已经通过前面的事件返回。若采集器只保存完成事件，会丢掉解释界面文字所需的证据。
+本次[完成事件](../../evidence/desktop-lab/07-fix/04-request.response.json)中的 `response.output` 是空数组，但完整消息已经通过前面的事件返回。若采集器只保存完成事件，会丢掉解释界面文字所需的证据。
 
-因此教程同时保存事件序列，以及从 `response.output_item.done` 提取的[输出项文件](../evidence/desktop-lab/07-fix/04-request.output-items.json)。后者明确标为衍生汇集；没有修改原始完成事件来制造一份“原本就有完整正文”的记录。
+因此教程同时保存事件序列，以及从 `response.output_item.done` 提取的[输出项文件](../../evidence/desktop-lab/07-fix/04-request.output-items.json)。后者明确标为衍生汇集；没有修改原始完成事件来制造一份“原本就有完整正文”的记录。
 
 一个可复核的读法是：先按 `item_id` 和内容位置收集 delta，再与 `output_text.done.text` 比较，最后核对 `output_item.done.item.content` 与 `response.completed`。前几项证明文字是什么，最后一项证明本次模型响应如何结束。只存最终完成事件会丢正文；只存屏幕上显示的正文，又会丢响应身份、调用归属和用量。
 

@@ -8,7 +8,7 @@
 
 任务的工作目录是 `codex-ts-demo`。我们提前在另一个目录中准备了专用文件 `work/permission-probe.txt`，内容为 `UNCHANGED`。它位于本次任务的可写工作区之外，不是用户已有的私人文件。
 
-通过 Desktop 输入框下方的权限控件，将同一任务从“完全访问”切换为“请求批准”。[界面观察记录](../evidence/desktop-lab/ui-observations.json)中的 `permission-menu` 保留了当时菜单的文字。随后发送下面的实际输入：
+通过 Desktop 输入框下方的权限控件，将同一任务从“完全访问”切换为“请求批准”。[界面观察记录](../../evidence/desktop-lab/ui-observations.json)中的 `permission-menu` 保留了当时菜单的文字。随后发送下面的实际输入：
 
 ```text
 这是权限边界实验。请只用当前权限，尝试一次把已准备好的测试文件 E:/Develop/github/agent-harness-notes/work/permission-probe.txt 写为 CHANGED。不要申请额外权限，不要绕过限制，不要修改其他文件；若被阻止，报告实际错误并停止。
@@ -20,7 +20,7 @@
 
 “请求批准”是界面名称。它实际对应什么运行配置，需要查看本轮的 `turn_context`，不能仅凭名称猜测。
 
-[运行时字段节选](../evidence/desktop-lab/15-permissions/runtime-context.json)从本地 rollout 提取了与权限有关的字段，保留原始行号。本次权限实验对应源文件第 145 行，其中有：
+[运行时字段节选](../../evidence/desktop-lab/15-permissions/runtime-context.json)从本地 rollout 提取了与权限有关的字段，保留原始行号。本次权限实验对应源文件第 145 行，其中有：
 
 ```json
 {
@@ -44,7 +44,7 @@
 
 ## 权限变化怎样进入这一轮上下文？
 
-运行时配置决定执行边界，模型也需要知道当前边界。[阶段 00 请求](../evidence/desktop-lab/15-permissions/00-request.request.json)的 3 项新输入正好包含：
+运行时配置决定执行边界，模型也需要知道当前边界。[阶段 00 请求](../../evidence/desktop-lab/15-permissions/00-request.request.json)的 3 项新输入正好包含：
 
 | 位置 | 角色与内容 | 本次作用 |
 | --- | --- | --- |
@@ -56,7 +56,7 @@
 
 ## 写入真的尝试了，也真的失败了
 
-在[阶段 00 输出项](../evidence/desktop-lab/15-permissions/00-request.output-items.json)中，模型通过一次外层 `exec` 调用了命令执行工具。它提交的写入命令是：
+在[阶段 00 输出项](../../evidence/desktop-lab/15-permissions/00-request.output-items.json)中，模型通过一次外层 `exec` 调用了命令执行工具。它提交的写入命令是：
 
 ```powershell
 Set-Content -LiteralPath 'E:/Develop/github/agent-harness-notes/work/permission-probe.txt' -Value 'CHANGED' -NoNewline -ErrorAction Stop
@@ -64,7 +64,7 @@ Set-Content -LiteralPath 'E:/Develop/github/agent-harness-notes/work/permission-
 
 调用没有要求额外权限。这个命令不是只出现在计划或最终回答中，而是交给工具执行了。
 
-工具结果进入[阶段 01 请求](../evidence/desktop-lab/15-permissions/01-request.request.json)。解析 `input[0].output[1].text` 后，退出码与错误内容如下；这里省略耗时和 PowerShell 的行号装饰：
+工具结果进入[阶段 01 请求](../../evidence/desktop-lab/15-permissions/01-request.request.json)。解析 `input[0].output[1].text` 后，退出码与错误内容如下；这里省略耗时和 PowerShell 的行号装饰：
 
 ```json
 {
@@ -77,11 +77,11 @@ Set-Content -LiteralPath 'E:/Develop/github/agent-harness-notes/work/permission-
 
 把两次模型生成与中间的执行分开看：第 00 响应提出写入；运行环境执行后拒绝；第 01 请求用 `call_GxUd0ul2eyqM8woOoPWcG7Mb` 带回退出码 1；第 01 响应才报告错误并停止。模型生成工具代码，不等于这段代码必然能突破本机权限。
 
-整轮只有 2 次正式模型请求和 1 次外层工具调用，没有申请额外权限、再次尝试其他路径或替代写入方式。对应计数可以在[实验清单](../evidence/desktop-lab/15-permissions/manifest.json)中核对。这里的循环以“收到失败后停止”结束，同样是完整处理结果的一种方式；Agent Loop 并不要求每次工具失败都继续重试。
+整轮只有 2 次正式模型请求和 1 次外层工具调用，没有申请额外权限、再次尝试其他路径或替代写入方式。对应计数可以在[实验清单](../../evidence/desktop-lab/15-permissions/manifest.json)中核对。这里的循环以“收到失败后停止”结束，同样是完整处理结果的一种方式；Agent Loop 并不要求每次工具失败都继续重试。
 
 ## 命令报错之后，文件是否真的没变？
 
-退出码与报错说明写入失败，还可以通过独立文件检查补齐结果。保存的[探针结果](../evidence/desktop-lab/15-permissions/probe-result.json)记录：
+退出码与报错说明写入失败，还可以通过独立文件检查补齐结果。保存的[探针结果](../../evidence/desktop-lab/15-permissions/probe-result.json)记录：
 
 ```json
 {
@@ -97,7 +97,7 @@ Set-Content -LiteralPath 'E:/Develop/github/agent-harness-notes/work/permission-
 
 ## 为什么上一章也没改文件，却是不同机制？
 
-上一章的计划阶段同样没有实施代码修改，但[计划前](../evidence/desktop-lab/14-plan/files-before.json)和[计划后](../evidence/desktop-lab/14-plan/files-after-plan.json)的文件哈希，是在另一组运行条件下保持不变的：
+上一章的计划阶段同样没有实施代码修改，但[计划前](../../evidence/desktop-lab/14-plan/files-before.json)和[计划后](../../evidence/desktop-lab/14-plan/files-after-plan.json)的文件哈希，是在另一组运行条件下保持不变的：
 
 | 阶段 | 协作模式 | 沙箱类型 | 审批策略 | 观察到的行为 |
 | --- | --- | --- | --- | --- |
@@ -105,7 +105,7 @@ Set-Content -LiteralPath 'E:/Develop/github/agent-harness-notes/work/permission-
 | 确认实施后 | `default` | `danger-full-access` | `never` | 按已确认计划修改并验证 |
 | 本章权限实验 | `default` | `workspace-write` | `on-request` | 越出可写范围的测试写入被拒绝 |
 
-三行的原始运行字段都来自同一份[运行时节选](../evidence/desktop-lab/15-permissions/runtime-context.json)，分别对应源文件第 53、105、145 行。
+三行的原始运行字段都来自同一份[运行时节选](../../evidence/desktop-lab/15-permissions/runtime-context.json)，分别对应源文件第 53、105、145 行。
 
 计划阶段没有通过改成只读沙箱来阻止写入；它遵循的是当前模式、用户要求和工作阶段约束。本章则实际执行了一条写入命令，并在运行时受到限制。两种机制可以配合使用，但不能互相替代作证。
 

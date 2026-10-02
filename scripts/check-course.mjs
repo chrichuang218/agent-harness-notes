@@ -60,14 +60,22 @@ if (catalog && index) {
   const lessons = Array.isArray(catalog.lessons) ? catalog.lessons : [];
   const groups = Array.isArray(catalog.groups) ? catalog.groups : [];
   const experiments = Array.isArray(index.experiments) ? index.experiments : [];
-  check(lessons.length === 20, `Expected 20 lessons; found ${lessons.length}.`);
+  check(lessons.length === 15, `Expected 15 topic chapters; found ${lessons.length}.`);
   check(groups.length === 4, `Expected 4 groups; found ${groups.length}.`);
+  check(experiments.length === 26, `Expected all 26 preserved experiments; found ${experiments.length}.`);
+  check(experiments.reduce((count, item) => count + (item.stages || []).length, 0) === 74, 'All 74 evidence stages must remain available.');
   check(new Set(lessons.map(item => item.id)).size === lessons.length, 'Lesson ids must be unique.');
   check(new Set(lessons.map(item => item.file)).size === lessons.length, 'Lesson files must be unique.');
   check(new Set(groups.map(item => item.id)).size === groups.length, 'Group ids must be unique.');
   check(new Set(experiments.map(item => item.id)).size === experiments.length, 'Experiment ids must be unique.');
   for (const group of groups) check(lessons.some(lesson => lesson.group === group.id), `Empty course group: ${group.id}`);
   const experimentIds = new Set(experiments.map(item => item.id));
+  const legacyRoutes = Object.entries(catalog.legacyRoutes || {});
+  check(legacyRoutes.length === 20, 'All 20 previous chapter URLs need an explicit destination.');
+  for (const [previous, current] of legacyRoutes) {
+    check(!lessons.some(lesson => lesson.id === previous), `Legacy URL conflicts with a current chapter: ${previous}`);
+    check(lessons.some(lesson => lesson.id === current), `Legacy URL ${previous} has no current destination: ${current}`);
+  }
   for (let position = 0; position < lessons.length; position++) {
     const lesson = lessons[position];
     check(typeof lesson.id === 'string' && lesson.id.startsWith(String(position + 1).padStart(2, '0') + '-'), `Lesson sequence mismatch at ${position + 1}: ${lesson.id}`);
@@ -83,13 +91,14 @@ if (catalog && index) {
     check(Array.isArray(lesson.evidenceIds) && lesson.evidenceIds.length > 0, `${lesson.id}: evidenceIds must reference at least one experiment.`);
     for (const id of lesson.evidenceIds || []) check(experimentIds.has(id), `${lesson.id}: unknown evidence id ${id}`);
     if (lesson.status === 'partial') check(/未验证|未实测|尚未|没有.{0,30}(?:实测|证据)/.test(text), `${lesson.file}: partial status requires an explicit unverified boundary.`);
-    if (lesson.id === '12-memory') {
-      check(lesson.status === 'partial', '12-memory must remain partial until native generation and recall are actually tested.');
-      check(text.includes('生成') && text.includes('召回') && /(?:生成|召回)[^\n]{0,60}(?:未实测|没有|未验证)/.test(text), '12-memory must explain that native memory generation/recall is not yet verified.');
+    if (lesson.id === '08-memory') {
+      check(lesson.status === 'partial', '08-memory must remain partial until native generation and recall are actually tested.');
+      check(text.includes('生成') && text.includes('召回') && /(?:生成|召回)[^\n]{0,60}(?:未实测|没有|未验证)/.test(text), '08-memory must explain that native memory generation/recall is not yet verified.');
     }
   }
-  check(lessons.some(lesson => lesson.id === '12-memory'), 'The memory chapter and its evidence boundary must be present.');
+  check(lessons.some(lesson => lesson.id === '08-memory'), 'The memory chapter and its evidence boundary must be present.');
   for (const file of ['README.md', 'PROGRESS.md', 'GLOSSARY.md', 'CHANGELOG.md', 'course/introduction.md']) await documentLinks(file);
+  for (const file of await readdir('lessons/02-desktop-lab-chronological')) if (file.endsWith('.md')) await documentLinks(`lessons/02-desktop-lab-chronological/${file}`);
   const coveredExperiments = new Set(lessons.flatMap(lesson => lesson.evidenceIds || []));
   for (const experiment of experiments) check(coveredExperiments.has(experiment.id), `Experiment missing from the reader: ${experiment.id}`);
 
@@ -134,5 +143,5 @@ if (failures.length) {
   console.error(`Course checks failed (${failures.length}):\n` + failures.map(message => '- ' + message).join('\n'));
   process.exitCode = 1;
 } else {
-  console.log(`Course checks passed: 20 chapters / 4 groups; ${linksChecked} local links; ${jsonChecked} JSON files; 4 complete example snapshots. Runtime checks: intentional baseline failure, 1 fixed test, 11 discount tests. Memory remains explicitly partial.`);
+  console.log(`Course checks passed: 15 chapters / 4 groups; 20 legacy chapter routes; all 26 experiments / 74 stages; ${linksChecked} local links; ${jsonChecked} JSON files; 4 complete example snapshots. Runtime checks: intentional baseline failure, 1 fixed test, 11 discount tests. Memory remains explicitly partial.`);
 }

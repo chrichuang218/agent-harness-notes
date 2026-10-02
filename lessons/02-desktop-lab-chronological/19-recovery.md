@@ -18,10 +18,10 @@
 
 | 阶段 | 本次请求新增的信息 | 模型产生的调用或回答 |
 | --- | --- | --- |
-| [00](../evidence/desktop-lab/19-recovery/00-request.output-items.json) | 用户要求先试 lint，并限定失败处理范围 | 执行 `npm run lint` |
-| [01](../evidence/desktop-lab/19-recovery/01-request.output-items.json) | 退出码 1、Missing script 错误 | 读取 `package.json` 和 `tsconfig.json` |
-| [02](../evidence/desktop-lab/19-recovery/02-request.output-items.json) | 真实脚本定义和类型检查配置 | 执行已有 typecheck 与 test |
-| [03](../evidence/desktop-lab/19-recovery/03-request.output-items.json) | 两项检查结果 | 同时报告最初失败与后续成功 |
+| [00](../../evidence/desktop-lab/19-recovery/00-request.output-items.json) | 用户要求先试 lint，并限定失败处理范围 | 执行 `npm run lint` |
+| [01](../../evidence/desktop-lab/19-recovery/01-request.output-items.json) | 退出码 1、Missing script 错误 | 读取 `package.json` 和 `tsconfig.json` |
+| [02](../../evidence/desktop-lab/19-recovery/02-request.output-items.json) | 真实脚本定义和类型检查配置 | 执行已有 typecheck 与 test |
+| [03](../../evidence/desktop-lab/19-recovery/03-request.output-items.json) | 两项检查结果 | 同时报告最初失败与后续成功 |
 
 四份请求都只有一个新增 `input` 项，并通过 `previous_response_id` 接上前一响应：00 的新增项是用户消息，01—03 是工具结果。请求体很短并不表示模型每次都忘了用户的“不新增脚本”约束。
 
@@ -33,7 +33,7 @@ Codex 实际执行 `npm run lint`，退出码为 1。日志包含：
 npm error Missing script: "lint"
 ```
 
-可以在[阶段 01 请求](../evidence/desktop-lab/19-recovery/01-request.request.json)的工具结果中核对。它说明 `package.json` 没有可运行的 `lint` 脚本，不表示 TypeScript 源码已经被 lint 检出错误。
+可以在[阶段 01 请求](../../evidence/desktop-lab/19-recovery/01-request.request.json)的工具结果中核对。它说明 `package.json` 没有可运行的 `lint` 脚本，不表示 TypeScript 源码已经被 lint 检出错误。
 
 这条调用的编号是 `call_Mlqrto9sxxi6WgYe0n7tE2ty`。下一请求的 `custom_tool_call_output.call_id` 与它相同，内容块里包含序列化的执行结果；解析后才得到 `exit_code: 1` 和错误字符串。外层 `Script completed` 表示 JavaScript 编排已返回，不能据此把内部 npm 命令判为成功。
 
@@ -41,7 +41,7 @@ npm error Missing script: "lint"
 
 ## 读取配置，选择已有路径
 
-收到错误之后，模型读取了 `package.json` 与 `tsconfig.json`。这次调用的编号是 `call_OchDQ0cGzHrbt3ceSdbM1CI1`，其结果进入[阶段 02 请求](../evidence/desktop-lab/19-recovery/02-request.request.json)。实际脚本配置中包含 `typecheck: "tsc"` 和 `test: "node --test tests/price.test.ts"`。读取这份文件把“猜一个可能可用的命令”变成“依据当前项目定义选择命令”。
+收到错误之后，模型读取了 `package.json` 与 `tsconfig.json`。这次调用的编号是 `call_OchDQ0cGzHrbt3ceSdbM1CI1`，其结果进入[阶段 02 请求](../../evidence/desktop-lab/19-recovery/02-request.request.json)。实际脚本配置中包含 `typecheck: "tsc"` 和 `test: "node --test tests/price.test.ts"`。读取这份文件把“猜一个可能可用的命令”变成“依据当前项目定义选择命令”。
 
 随后运行了这两个已有命令。下表同时保留最初失败和后续成功，避免把整个过程压成一句含糊的“检查通过”：
 
@@ -52,7 +52,7 @@ npm error Missing script: "lint"
 | `npm run typecheck` | 0 | 类型检查通过 |
 | `npm test` | 0 | 11 项测试通过，0 失败 |
 
-后两项结果见[阶段 03 请求](../evidence/desktop-lab/19-recovery/03-request.request.json)。下面是其中类型检查内容块的 JSON 字符串解析后的字段节选：
+后两项结果见[阶段 03 请求](../../evidence/desktop-lab/19-recovery/03-request.request.json)。下面是其中类型检查内容块的 JSON 字符串解析后的字段节选：
 
 ```json
 {

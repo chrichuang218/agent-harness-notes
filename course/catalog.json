@@ -1,84 +1,235 @@
 {
   "title": "Codex 的一次完整运行",
-  "description": "在真实 TypeScript 小项目里，逐项拆解 Codex Desktop 的上下文组装、模型输出与工具执行。",
+  "description": "从一次请求、一次文件读取到完整修复，在 TypeScript 项目和 CPA 日志中逐步理解 Agent。",
   "groups": [
     {
       "id": "basic",
-      "title": "从一句话到一次修复",
-      "description": "认识请求、工具、项目规则与技能，完成第一次代码修复。"
+      "title": "看懂一次运行",
+      "description": "先读懂模型收到什么，再跟踪工具调用和完整修复。"
     },
     {
       "id": "context",
-      "title": "上下文与记忆",
-      "description": "追查信息来源，区分会话历史、上下文管理和记忆。"
+      "title": "信息从哪里来",
+      "description": "沿会话、上下文、项目规则、技能和笔记追查信息来源。"
     },
     {
       "id": "extensions",
-      "title": "能力与协作",
-      "description": "通过 MCP、规划、权限和多 Agent 扩展项目工作。"
+      "title": "扩展能力与控制执行",
+      "description": "在熟悉的项目里接入 MCP，观察权限、规划和多个 Agent 的工作。"
     },
     {
       "id": "reliability",
-      "title": "可靠性与完成条件",
-      "description": "理解流式事件、失败反馈、中断恢复与任务停止。"
+      "title": "完成复杂任务与复盘",
+      "description": "检查停止与恢复条件，再回看流式协议和整套运行架构。"
     }
   ],
   "lessons": [
     {
-      "id": "01-hello",
-      "title": "只说一句你好，实际发送了什么？",
-      "description": "从一条普通输入里认出消息、上下文和响应。",
+      "id": "01-request",
+      "title": "一次请求与提示词组装",
+      "subtitle": "我只输入“你好”，模型为什么收到了这么多内容？",
       "group": "basic",
-      "file": "course/01-hello.md",
+      "file": "course/01-request.md",
       "status": "verified",
       "evidenceIds": [
         "01-hello"
-      ],
-      "minutes": 8,
-      "subtitle": "从一条普通输入里认出消息、上下文和响应。"
+      ]
     },
     {
-      "id": "02-context",
-      "title": "再说一句话，怎样接着聊？",
-      "description": "沿着第二次请求找到被重新发送的对话历史。",
+      "id": "02-tools",
+      "title": "工具系统",
+      "subtitle": "让它读 README，究竟是谁打开了文件？",
       "group": "basic",
-      "file": "course/02-context.md",
-      "status": "verified",
-      "evidenceIds": [
-        "02-context"
-      ],
-      "minutes": 8,
-      "subtitle": "沿着第二次请求找到被重新发送的对话历史。"
-    },
-    {
-      "id": "03-readme",
-      "title": "请它读 README，谁执行了操作？",
-      "description": "用 call_id 串起文件读取，再看响应引用怎样接续。",
-      "group": "basic",
-      "file": "course/03-readme.md",
+      "file": "course/02-tools.md",
       "status": "verified",
       "evidenceIds": [
         "03-readme"
-      ],
-      "minutes": 10,
-      "subtitle": "用 call_id 串起文件读取，再看响应引用怎样接续。"
+      ]
     },
-    {"id":"04-agents","title":"给项目加一条规则，会发生什么？","subtitle":"定位 AGENTS.md 的注入，再核对真实回答。","group":"basic","file":"course/04-agents.md","status":"verified","evidenceIds":["04-agents"],"minutes":8},
-    {"id":"05-skills","title":"项目 Skill 怎样被用上？","subtitle":"区分技能目录、显式附加正文和工具读取。","group":"basic","file":"course/05-skills.md","status":"verified","evidenceIds":["05-skills"],"minutes":10},
-    {"id":"06-tests","title":"测试失败了，Codex 怎样知道？","subtitle":"类型检查成功，为什么行为测试仍然失败？","group":"basic","file":"course/06-tests.md","status":"verified","evidenceIds":["06-tests"],"minutes":8},
-    {"id":"07-fix","title":"总价算错了，它怎样完成修复？","subtitle":"五次模型请求，串起修改与验证的完整过程。","group":"basic","file":"course/07-fix.md","status":"verified","evidenceIds":["07-fix"],"minutes":12},
-    {"id":"08-session","title":"返回旧任务和新建任务，有什么不同？","subtitle":"用一个未写入文件的代号，检查信息的边界。","group":"context","file":"course/08-session.md","status":"verified","evidenceIds":["08-session-seed","08-session-new","08-session-resume"],"minutes":9},
-    {"id":"09-context","title":"信息存在于磁盘，就在上下文里吗？","subtitle":"沿规则、技能与工具结果追查信息的来源。","group":"context","file":"course/09-context.md","status":"verified","evidenceIds":["03-readme","04-agents","05-skills"],"minutes":9},
-    {"id":"10-compaction","title":"压缩之后，之前的工作还在吗？","subtitle":"从 Desktop 菜单到替换历史，再验证压缩后的回答。","group":"context","file":"course/10-compaction.md","status":"verified","evidenceIds":["10-compaction","10-compaction-check"],"minutes":10},
-    {"id":"11-cache","title":"缓存命中了，等于记住了吗？","subtitle":"读懂输入、缓存和输出 token 的统计边界。","group":"context","file":"course/11-cache.md","status":"verified","evidenceIds":["01-hello","02-context","07-fix"],"minutes":8},
-    {"id":"12-memory","title":"新任务里的信息，真的是记忆吗？","subtitle":"区分显式项目笔记与原生 Memories，追查恢复来源。","group":"context","file":"course/12-memory.md","status":"partial","evidenceIds":["12-memory-write","12-memory-read"],"minutes":10},
-    {"id":"13-mcp","title":"接入商品目录，怎样调用外部工具？","subtitle":"从本地 MCP 服务到一次真实的价格查询。","group":"extensions","file":"course/13-mcp.md","status":"verified","evidenceIds":["13-mcp"],"minutes":12},
-    {"id":"14-plan","title":"先计划，再实施：阶段边界在哪里？","subtitle":"原生计划模式、澄清选择和实施后的验证。","group":"extensions","file":"course/14-plan.md","status":"verified","evidenceIds":["14-plan","14-plan-implement"],"minutes":12},
-    {"id":"15-permissions","title":"提示约束和执行权限有什么不同？","subtitle":"一次受限写入，核对菜单、运行策略与实际结果。","group":"extensions","file":"course/15-permissions.md","status":"verified","evidenceIds":["15-permissions"],"minutes":10},
-    {"id":"16-multi-agent","title":"把检查拆给两个 Agent，会发生什么？","subtitle":"追踪父子任务、运行区间与各自的结论来源。","group":"extensions","file":"course/16-multi-agent.md","status":"verified","evidenceIds":["16-multi-agent","16-agent-a","16-agent-b"],"minutes":12},
-    {"id":"17-goal","title":"怎样定义完成，而不是一直继续？","subtitle":"让原生目标围绕可核验的结果停止。","group":"reliability","file":"course/17-goal.md","status":"verified","evidenceIds":["17-goal"],"minutes":9},
-    {"id":"18-streaming","title":"逐渐出现的文字，怎样组成响应？","subtitle":"逐项拼接流式事件，核对最终输出。","group":"reliability","file":"course/18-streaming.md","status":"verified","evidenceIds":["07-fix"],"minutes":8},
-    {"id":"19-recovery","title":"命令失败后，怎样修正下一步？","subtitle":"保留最初错误，验证后续检查的真实结果。","group":"reliability","file":"course/19-recovery.md","status":"verified","evidenceIds":["19-recovery"],"minutes":9},
-    {"id":"20-interruption","title":"中断之后，应该从哪里继续？","subtitle":"区分已完成、已取消和未执行，再恢复剩余动作。","group":"reliability","file":"course/20-interruption.md","status":"verified","evidenceIds":["20-uninterrupted-control","20-interrupted","20-resume"],"minutes":10}
-  ]
+    {
+      "id": "03-agent-loop",
+      "title": "Agent Loop",
+      "subtitle": "让它修一个 bug，为什么会产生多次请求？",
+      "group": "basic",
+      "file": "course/03-agent-loop.md",
+      "status": "verified",
+      "evidenceIds": [
+        "07-fix",
+        "06-tests"
+      ]
+    },
+    {
+      "id": "04-session",
+      "title": "任务与会话",
+      "subtitle": "下一句话怎样接上之前的工作？新任务为什么不知道旧代号？",
+      "group": "context",
+      "file": "course/04-session.md",
+      "status": "verified",
+      "evidenceIds": [
+        "02-context",
+        "08-session-seed",
+        "08-session-new",
+        "08-session-resume"
+      ]
+    },
+    {
+      "id": "05-context",
+      "title": "上下文管理",
+      "subtitle": "历史越来越长怎么办？引用、重发、压缩和缓存有什么区别？",
+      "group": "context",
+      "file": "course/05-context.md",
+      "status": "verified",
+      "evidenceIds": [
+        "10-compaction",
+        "10-compaction-check",
+        "02-context",
+        "07-fix"
+      ]
+    },
+    {
+      "id": "06-agents",
+      "title": "AGENTS.md：项目规则",
+      "subtitle": "项目约定在哪里进入请求？怎样核对它对回答的影响？",
+      "group": "context",
+      "file": "course/06-agents.md",
+      "status": "verified",
+      "evidenceIds": [
+        "04-agents",
+        "03-readme"
+      ]
+    },
+    {
+      "id": "07-skills",
+      "title": "Skills：可复用的工作方法",
+      "subtitle": "除了告诉它规则，能不能给它一套检查流程？",
+      "group": "context",
+      "file": "course/07-skills.md",
+      "status": "verified",
+      "evidenceIds": [
+        "05-skills",
+        "07-fix"
+      ]
+    },
+    {
+      "id": "08-memory",
+      "title": "记忆与持久信息",
+      "subtitle": "任务结束之后，哪些信息还能留给下一次工作？",
+      "group": "context",
+      "file": "course/08-memory.md",
+      "status": "partial",
+      "evidenceIds": [
+        "12-memory-write",
+        "12-memory-read"
+      ]
+    },
+    {
+      "id": "09-mcp",
+      "title": "MCP：接入外部能力",
+      "subtitle": "本地文件里没有商品价格，它怎样通过服务查询？",
+      "group": "extensions",
+      "file": "course/09-mcp.md",
+      "status": "verified",
+      "evidenceIds": [
+        "13-mcp"
+      ]
+    },
+    {
+      "id": "10-permissions",
+      "title": "权限与安全",
+      "subtitle": "模型提出一个操作，是否就一定能执行？",
+      "group": "extensions",
+      "file": "course/10-permissions.md",
+      "status": "verified",
+      "evidenceIds": [
+        "15-permissions"
+      ]
+    },
+    {
+      "id": "11-plan",
+      "title": "Plan Mode",
+      "subtitle": "需求复杂起来后，怎样先调查、澄清、定方案，再实施？",
+      "group": "extensions",
+      "file": "course/11-plan.md",
+      "status": "verified",
+      "evidenceIds": [
+        "14-plan",
+        "14-plan-implement"
+      ]
+    },
+    {
+      "id": "12-multi-agent",
+      "title": "多 Agent",
+      "subtitle": "检查任务怎样委派？各自知道什么，结果怎样汇总？",
+      "group": "extensions",
+      "file": "course/12-multi-agent.md",
+      "status": "verified",
+      "evidenceIds": [
+        "16-multi-agent",
+        "16-agent-a",
+        "16-agent-b"
+      ]
+    },
+    {
+      "id": "13-autonomy",
+      "title": "目标、停止条件与续跑",
+      "subtitle": "怎样判断完成？失败或中断后，从哪里继续？",
+      "group": "reliability",
+      "file": "course/13-autonomy.md",
+      "status": "verified",
+      "evidenceIds": [
+        "17-goal",
+        "19-recovery",
+        "20-uninterrupted-control",
+        "20-interrupted",
+        "20-resume"
+      ]
+    },
+    {
+      "id": "14-streaming",
+      "title": "流式输出与协议细节",
+      "subtitle": "文字和工具调用，在网络上怎样逐步返回？",
+      "group": "reliability",
+      "file": "course/14-streaming.md",
+      "status": "verified",
+      "evidenceIds": [
+        "07-fix"
+      ]
+    },
+    {
+      "id": "15-architecture",
+      "title": "完整复盘：架构与验证",
+      "subtitle": "各部分分别负责什么？哪些结论已经有证据？",
+      "group": "reliability",
+      "file": "course/15-architecture.md",
+      "status": "verified",
+      "evidenceIds": [
+        "07-fix",
+        "13-mcp",
+        "15-permissions",
+        "16-multi-agent"
+      ]
+    }
+  ],
+  "legacyRoutes": {
+    "01-hello": "01-request",
+    "02-context": "04-session",
+    "03-readme": "02-tools",
+    "04-agents": "06-agents",
+    "05-skills": "07-skills",
+    "06-tests": "03-agent-loop",
+    "07-fix": "03-agent-loop",
+    "08-session": "04-session",
+    "09-context": "05-context",
+    "10-compaction": "05-context",
+    "11-cache": "05-context",
+    "12-memory": "08-memory",
+    "13-mcp": "09-mcp",
+    "14-plan": "11-plan",
+    "15-permissions": "10-permissions",
+    "16-multi-agent": "12-multi-agent",
+    "17-goal": "13-autonomy",
+    "18-streaming": "14-streaming",
+    "19-recovery": "13-autonomy",
+    "20-interruption": "13-autonomy"
+  }
 }

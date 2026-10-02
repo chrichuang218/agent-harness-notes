@@ -16,12 +16,12 @@
 
 | 阶段 | 请求内容 | 模型输出 | 工具回传去向 |
 | --- | --- | --- | --- |
-| `00-request` | 一条用户消息 + 上一轮响应引用 | 进度说明与一次 `exec` 调用，`call_4WQ06tMXNBdMizNTpdUKgRAl` | 批量执行两条检查命令；[请求](../evidence/desktop-lab/06-tests/00-request.request.json)、[输出项](../evidence/desktop-lab/06-tests/00-request.output-items.json) |
-| `01-request` | 一条 `custom_tool_call_output`，引用第一响应 `resp_0061bd7340416e34016abbe333571887d0a121cf3b28a26801` | 最终表格，分别报告退出码 0 和 1 | 没有修复调用；[请求](../evidence/desktop-lab/06-tests/01-request.request.json)、[输出项](../evidence/desktop-lab/06-tests/01-request.output-items.json) |
+| `00-request` | 一条用户消息 + 上一轮响应引用 | 进度说明与一次 `exec` 调用，`call_4WQ06tMXNBdMizNTpdUKgRAl` | 批量执行两条检查命令；[请求](../../evidence/desktop-lab/06-tests/00-request.request.json)、[输出项](../../evidence/desktop-lab/06-tests/00-request.output-items.json) |
+| `01-request` | 一条 `custom_tool_call_output`，引用第一响应 `resp_0061bd7340416e34016abbe333571887d0a121cf3b28a26801` | 最终表格，分别报告退出码 0 和 1 | 没有修复调用；[请求](../../evidence/desktop-lab/06-tests/01-request.request.json)、[输出项](../../evidence/desktop-lab/06-tests/01-request.output-items.json) |
 
 第一项输出的实际代码使用 `Promise.allSettled` 包含两次 `tools.exec_command`，命令分别是 `npm run typecheck` 与 `npm test`。因此这次是一次模型提出的外层调用，运行层执行两条命令，然后用一个 `call_id` 返回两份结果。它不是“模型先看到类型检查通过，再决定运行测试”的两次独立决策。
 
-流式层的顺序保留在[第一阶段事件](../evidence/desktop-lab/06-tests/00-request.events.json)与[第二阶段事件](../evidence/desktop-lab/06-tests/01-request.events.json)中。第一份产生进度消息和调用，第二份产生最终报告；失败发生在它们之间的工具执行，而不是一次失败的模型生成。
+流式层的顺序保留在[第一阶段事件](../../evidence/desktop-lab/06-tests/00-request.events.json)与[第二阶段事件](../../evidence/desktop-lab/06-tests/01-request.events.json)中。第一份产生进度消息和调用，第二份产生最终报告；失败发生在它们之间的工具执行，而不是一次失败的模型生成。
 
 ## 两条命令给出不同结果
 
@@ -30,7 +30,7 @@
 | `npm run typecheck` | `0` | `tsc` 完成，没有报告类型错误 |
 | `npm test` | `1` | 1 个测试，0 通过、1 失败；实际 13，预期 30 |
 
-打开[第二阶段请求](../evidence/desktop-lab/06-tests/01-request.request.json)，这两份结果位于 `input[0].output` 中。测试输出包含：
+打开[第二阶段请求](../../evidence/desktop-lab/06-tests/01-request.request.json)，这两份结果位于 `input[0].output` 中。测试输出包含：
 
 ```text
 AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
@@ -42,7 +42,7 @@ AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
 
 ## 为什么类型检查通过，程序仍然算错？
 
-看看[初始计算函数](../examples/01-baseline/src/price.ts)：
+看看[初始计算函数](../../examples/01-baseline/src/price.ts)：
 
 ```typescript
 export function calculateTotal(unitPrice: number, quantity: number): number {
@@ -52,7 +52,7 @@ export function calculateTotal(unitPrice: number, quantity: number): number {
 
 两项输入和返回值都符合 `number` 类型，`+` 也允许用于数字运算。TypeScript 能检查这些类型关系，却无法仅凭这些声明得知商品总价必须使用乘法。
 
-项目的 [package.json](../examples/01-baseline/package.json) 把 `typecheck` 绑定到 `tsc`，把 `test` 绑定到 `node --test tests/price.test.ts`；[tsconfig.json](../examples/01-baseline/tsconfig.json) 设置 `noEmit: true`。这帮助我们区分类型分析与运行断言，它们是两个入口，不是同一个检查的两种显示方式。
+项目的 [package.json](../../examples/01-baseline/package.json) 把 `typecheck` 绑定到 `tsc`，把 `test` 绑定到 `node --test tests/price.test.ts`；[tsconfig.json](../../examples/01-baseline/tsconfig.json) 设置 `noEmit: true`。这帮助我们区分类型分析与运行断言，它们是两个入口，不是同一个检查的两种显示方式。
 
 测试中的关键断言原样是：
 
@@ -62,7 +62,7 @@ assert.equal(calculateTotal(10, 3), 30);
 
 这里把业务预期“30”写成可执行判断。当前函数返回 13，`assert.equal` 因此抛出 `AssertionError`，Node 测试运行器记录一个失败用例，并让进程以 1 退出。我们能够从要求一路追到失败原因，而不只是看到一个红色图标。
 
-[行为测试](../examples/01-baseline/tests/price.test.ts)把具体业务要求写成断言：输入 10 和 3，结果应为 30。这次失败揭示了类型检查没有覆盖的行为错误。两项检查回答的问题不同，需要分别报告。
+[行为测试](../../examples/01-baseline/tests/price.test.ts)把具体业务要求写成断言：输入 10 和 3，结果应为 30。这次失败揭示了类型检查没有覆盖的行为错误。两项检查回答的问题不同，需要分别报告。
 
 ## “fulfilled”不是“测试通过”
 
@@ -101,7 +101,7 @@ assert.equal(calculateTotal(10, 3), 30);
 
 第一阶段的模型输出包含 `custom_tool_call`，其 `call_id` 是 `call_4WQ06tMXNBdMizNTpdUKgRAl`。第二阶段请求中的 `custom_tool_call_output` 携带相同编号，把成功的类型检查和失败的测试一并交回模型。
 
-[最终回答](../evidence/desktop-lab/06-tests/01-request.output-items.json)据此分别报告退出码 0 和 1。错误没有被吞掉，也没有被当成会话必须立即结束的异常；它成为后续判断可以使用的信息。本轮用户要求不修复，因此模型报告结果后结束。
+[最终回答](../../evidence/desktop-lab/06-tests/01-request.output-items.json)据此分别报告退出码 0 和 1。错误没有被吞掉，也没有被当成会话必须立即结束的异常；它成为后续判断可以使用的信息。本轮用户要求不修复，因此模型报告结果后结束。
 
 ```mermaid
 flowchart LR

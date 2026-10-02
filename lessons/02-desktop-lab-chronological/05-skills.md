@@ -33,16 +33,16 @@ $price-project-check 请对当前项目做一次只读概览检查。
 
 | 阶段 | 本次请求中的内容 | 模型输出 | 工具结果与下一步 |
 | --- | --- | --- | --- |
-| `00-request` | 8 项输入；已有规则和技能目录，`input[6]` 是显式调用，`input[7]` 是附加技能正文 | 进度消息 + 一次 `exec` 调用，`call_liyjTQFrR1JWvixVysn2Xm73` | 一批读取 4 个文件；[请求](../evidence/desktop-lab/05-skills/00-request.request.json)、[输出项](../evidence/desktop-lab/05-skills/00-request.output-items.json) |
-| `01-request` | 1 项 `custom_tool_call_output`，其 `output` 有 5 个内容块；引用前一响应 `resp_0061bd7340416e34016abbe2dbb46487d0af4b34ab5dd4d0a3` | reasoning 项与最终检查说明，没有新的工具调用 | 4 份文件内容支撑三个检查部分；[请求](../evidence/desktop-lab/05-skills/01-request.request.json)、[输出项](../evidence/desktop-lab/05-skills/01-request.output-items.json) |
+| `00-request` | 8 项输入；已有规则和技能目录，`input[6]` 是显式调用，`input[7]` 是附加技能正文 | 进度消息 + 一次 `exec` 调用，`call_liyjTQFrR1JWvixVysn2Xm73` | 一批读取 4 个文件；[请求](../../evidence/desktop-lab/05-skills/00-request.request.json)、[输出项](../../evidence/desktop-lab/05-skills/00-request.output-items.json) |
+| `01-request` | 1 项 `custom_tool_call_output`，其 `output` 有 5 个内容块；引用前一响应 `resp_0061bd7340416e34016abbe2dbb46487d0af4b34ab5dd4d0a3` | reasoning 项与最终检查说明，没有新的工具调用 | 4 份文件内容支撑三个检查部分；[请求](../../evidence/desktop-lab/05-skills/01-request.request.json)、[输出项](../../evidence/desktop-lab/05-skills/01-request.output-items.json) |
 
 和第 4 章的 7 项初始输入相比，这次额外出现一条技能正文消息。与此同时，技能目录本身也已包含新技能条目；不是只把输入框里的 `$` 当成一个没有其他上下文作用的普通字符。
 
-逐事件核对可看[首阶段事件](../evidence/desktop-lab/05-skills/00-request.events.json)与[第二阶段事件](../evidence/desktop-lab/05-skills/01-request.events.json)。表中的输出项来自各自 `response.output_item.done`，不是从空的 `response.completed.output` 中猜出来的。
+逐事件核对可看[首阶段事件](../../evidence/desktop-lab/05-skills/00-request.events.json)与[第二阶段事件](../../evidence/desktop-lab/05-skills/01-request.events.json)。表中的输出项来自各自 `response.output_item.done`，不是从空的 `response.completed.output` 中猜出来的。
 
 ## 正文在工具调用之前就出现了
 
-打开[第一阶段请求](../evidence/desktop-lab/05-skills/00-request.request.json)，可以找到三个不同位置：
+打开[第一阶段请求](../../evidence/desktop-lab/05-skills/00-request.request.json)，可以找到三个不同位置：
 
 | 位置 | 实际内容 |
 | --- | --- |
@@ -78,7 +78,7 @@ $price-project-check 请对当前项目做一次只读概览检查。
 
 ## 四条命令，为什么只算一次工具调用？
 
-模型返回一个 `custom_tool_call`。下面节选[输出项](../evidence/desktop-lab/05-skills/00-request.output-items.json)的三个原始字段，其余字段省略：
+模型返回一个 `custom_tool_call`。下面节选[输出项](../../evidence/desktop-lab/05-skills/00-request.output-items.json)的三个原始字段，其余字段省略：
 
 ```json
 {
@@ -118,7 +118,7 @@ flowchart TD
 
 ## 流程怎样影响输出
 
-最终回答按“用途、可用命令、实现与需求的差异”组织，并明确写出“未运行测试”。它指出代码把 `unitPrice` 与 `quantity` 相加，而 README 要求相乘。你可以在[最终输出项](../evidence/desktop-lab/05-skills/01-request.output-items.json)逐项核对。
+最终回答按“用途、可用命令、实现与需求的差异”组织，并明确写出“未运行测试”。它指出代码把 `unitPrice` 与 `quantity` 相加，而 README 要求相乘。你可以在[最终输出项](../../evidence/desktop-lab/05-skills/01-request.output-items.json)逐项核对。
 
 这里的 `10 + 3 = 13` 是依据源码进行静态推算，不是本轮运行程序或测试得到的结果。技能要求“不执行 npm 命令”，实际工具结果也只包含文件读取。下一章再专门观察测试执行。
 

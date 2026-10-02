@@ -22,14 +22,14 @@ Codex 能回答“你刚才说了什么”，不等于它拥有一份独立于�
 
 | 用户轮次 / 网络阶段 | 实际发给模型的内容 | 输出在哪里 | 工具调用与回传 |
 | --- | --- | --- | --- |
-| 第 1 轮 `01-hello / 01-request` | 7 项初始输入，末项“你好” | [一条最终问候](../evidence/desktop-lab/01-hello/01-request.output-items.json) | 无 `call_id`，无工具结果 |
-| 第 2 轮 `02-context / 00-request` | 10 项输入：保留前 7 项，再加入上次回答、环境更新和新问题 | [一条最终回答](../evidence/desktop-lab/02-context/00-request.output-items.json) | 同样没有工具调用；[流式事件](../evidence/desktop-lab/02-context/00-request.events.json)属于这一次响应 |
+| 第 1 轮 `01-hello / 01-request` | 7 项初始输入，末项“你好” | [一条最终问候](../../evidence/desktop-lab/01-hello/01-request.output-items.json) | 无 `call_id`，无工具结果 |
+| 第 2 轮 `02-context / 00-request` | 10 项输入：保留前 7 项，再加入上次回答、环境更新和新问题 | [一条最终回答](../../evidence/desktop-lab/02-context/00-request.output-items.json) | 同样没有工具调用；[流式事件](../../evidence/desktop-lab/02-context/00-request.events.json)属于这一次响应 |
 
 第一章的预热是另一个网络阶段，不是第三次用户输入。这里先建立最简单的对应：两个用户轮次各有一次正式模型请求。第 3 章一旦引入工具，同样“一次用户输入”就会展开成两次模型请求。
 
 ## 请求带回了历史
 
-打开[第二轮请求](../evidence/desktop-lab/02-context/00-request.request.json)。`input` 从上一轮的 7 项增加到 10 项。与其只看数量，不如找到新增和重发的具体内容：
+打开[第二轮请求](../../evidence/desktop-lab/02-context/00-request.request.json)。`input` 从上一轮的 7 项增加到 10 项。与其只看数量，不如找到新增和重发的具体内容：
 
 | 位置 | 内容 |
 | --- | --- |
@@ -85,7 +85,7 @@ flowchart LR
 
 图只描述本轮。这里没有经过 `previous_response_id` 这条边；如果把引用接续画进来，就会把一个常见机制冒充成本样本的实际路径。
 
-第二轮[上游请求](../evidence/desktop-lab/02-context/00-request.upstream.json)与客户端正文按值相同，重发的历史没有被 CPA 改成另一种输入形式。至于上游怎样组织内部计算状态，这些正文没有直接展示。
+第二轮[上游请求](../../evidence/desktop-lab/02-context/00-request.upstream.json)与客户端正文按值相同，重发的历史没有被 CPA 改成另一种输入形式。至于上游怎样组织内部计算状态，这些正文没有直接展示。
 
 在本章，“模型看到了上轮问候”有直接证据；“模型依靠跨任务长期记忆回答”没有证据。新建任务、恢复旧任务和持久记忆，需要分别设计实验，不能由一次答对推导出来。
 
@@ -95,7 +95,7 @@ flowchart LR
 
 本轮实际报告 `cached_tokens: 13568`。因此“历史重新出现在 JSON 里”与“服务报告部分输入被缓存”可以同时成立。缓存不等于删除上下文，也不等于本次没有传输那段文字；完整的用量拆解在第 11 章。
 
-本章统计来自[完成事件](../evidence/desktop-lab/02-context/00-request.response.json)，排除预热。以后遇到多次正式请求时，教程会按响应求和；重复出现的上下文也可能反复进入统计，不能把求和结果理解为“独有知识量”。
+本章统计来自[完成事件](../../evidence/desktop-lab/02-context/00-request.response.json)，排除预热。以后遇到多次正式请求时，教程会按响应求和；重复出现的上下文也可能反复进入统计，不能把求和结果理解为“独有知识量”。
 
 ## 换一种结果，你会怎样判断？
 

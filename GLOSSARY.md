@@ -1,6 +1,6 @@
 # 术语与实例
 
-[教程首页](README.md) · [在线阅读](https://chrichuang218.github.io/agent-harness-notes/) · [第一章](course/01-hello.md)
+[教程首页](README.md) · [在线阅读](https://chrichuang218.github.io/agent-harness-notes/) · [第一章](course/01-request.md)
 
 先找到正在遇到的问题，再回到对应章节核对实测。下列解释用于阅读本教程；具体行为以样本中的版本、配置和记录为准。
 
@@ -8,62 +8,62 @@
 
 | 术语 | 在本教程中的含义 | 实测位置 |
 | --- | --- | --- |
-| Agent | 模型根据任务与反馈选择下一步动作，并通过工具影响外部环境的工作系统。 | [07 · 修复总价错误](course/07-fix.md) |
-| Harness | 模型之外负责组织上下文、调度工具、维护状态和限制执行的程序。 | [07 · 请求、执行、反馈的闭环](course/07-fix.md) |
-| Agent loop | 发送上下文、接收模型输出、执行工具、回传结果，再次请求模型的循环。最终回复、失败或中断会改变后续流程。 | [03 · 第一次工具闭环](course/03-readme.md)、[07 · 五次请求的完整修复](course/07-fix.md) |
-| Codex Desktop | 发起任务、展示过程并组织项目工作的桌面入口。界面中的一次任务可产生多次模型请求。 | [01 · 输入框与实际请求](course/01-hello.md) |
-| CPA | 本实验中位于 Codex 与上游服务之间的代理，用于转发并记录模型请求与响应。 | [01 · CPA 能看到什么](course/01-hello.md) |
-| 任务 / 会话 | 一段可继续工作的对话与相关状态。新建任务和继续原任务的信息来源可能不同。 | [08 · 同一任务与新任务](course/08-session.md) |
-| Turn / 轮次 | 一次用户发起的工作轮次，内部可能包含多次模型响应和工具执行；原生操作也可能有专门轮次。 | [07 · 一轮修复中的多次请求](course/07-fix.md) |
-| `response.create` | 本实验所用 Responses 链路中发起一次模型响应的请求事件。 | [01 · 正式问候请求](course/01-hello.md) |
-| 预热 / `generate: false` | 为后续请求做准备的一类请求；本例没有生成普通聊天回答，统计时单独列出。 | [01 · 预热与正式请求](course/01-hello.md) |
-| rollout | Codex 本地会话记录，用来关联任务、轮次、模型响应及本地状态变化。 | [10 · 网络响应与本地压缩事件](course/10-compaction.md) |
+| Agent | 模型根据任务与反馈选择下一步动作，并通过工具影响外部环境的工作系统。 | [03 · 修复总价错误](course/03-agent-loop.md) |
+| Harness | 模型之外负责组织上下文、调度工具、维护状态和限制执行的程序。 | [03 · 请求、执行、反馈的闭环](course/03-agent-loop.md) |
+| Agent loop | 发送上下文、接收模型输出、执行工具、回传结果，再次请求模型的循环。最终回复、失败或中断会改变后续流程。 | [02 · 第一次工具闭环](course/02-tools.md)、[03 · 五次请求的完整修复](course/03-agent-loop.md) |
+| Codex Desktop | 发起任务、展示过程并组织项目工作的桌面入口。界面中的一次任务可产生多次模型请求。 | [01 · 输入框与实际请求](course/01-request.md) |
+| CPA | 本实验中位于 Codex 与上游服务之间的代理，用于转发并记录模型请求与响应。 | [01 · CPA 能看到什么](course/01-request.md) |
+| 任务 / 会话 | 一段可继续工作的对话与相关状态。新建任务和继续原任务的信息来源可能不同。 | [04 · 同一任务与新任务](course/04-session.md) |
+| Turn / 轮次 | 一次用户发起的工作轮次，内部可能包含多次模型响应和工具执行；原生操作也可能有专门轮次。 | [03 · 一轮修复中的多次请求](course/03-agent-loop.md) |
+| `response.create` | 本实验所用 Responses 链路中发起一次模型响应的请求事件。 | [01 · 正式问候请求](course/01-request.md) |
+| 预热 / `generate: false` | 为后续请求做准备的一类请求；本例没有生成普通聊天回答，统计时单独列出。 | [01 · 预热与正式请求](course/01-request.md) |
+| rollout | Codex 本地会话记录，用来关联任务、轮次、模型响应及本地状态变化。 | [05 · 网络响应与本地压缩事件](course/05-context.md) |
 
 ## 模型收到了什么
 
 | 术语 | 在本教程中的含义 | 实测位置 |
 | --- | --- | --- |
-| `input` | 某次请求携带的输入项目数组，可能包含初始上下文、历史消息、当前输入或工具结果。 | [02 · 历史重新放入输入](course/02-context.md) |
-| `role` | 消息角色标签。`user` 不足以单独证明文字是人在输入框里逐字输入的。 | [09 · 按来源辨认上下文](course/09-context.md) |
-| 系统／应用指令 | 描述工作方式和约束的指令内容；讲解时需区分来源与实际字段。本次初始请求没有 `role: system`，应用指令主要以 `developer` 消息出现，不能据此推断上游内部全部提示。 | [01 · 七个输入项的组装](course/01-hello.md) |
-| `content` | 消息里的内容块数组。一个消息可能包含多块文字，必须保留块的顺序和边界才能说明组装。 | [01 · 输入项与内容块](course/01-hello.md)、[04 · 全局与项目规则](course/04-agents.md) |
-| 上下文 | 模型生成本次响应时可用的信息，包括当前问题及由客户端组织或接续的其他内容。 | [09 · 规则、技能、文件的不同入口](course/09-context.md) |
-| `AGENTS.md` | 项目工作约定文件。本例的规则由 Desktop 附加到请求中。 | [04 · 规则注入与回答变化](course/04-agents.md) |
-| Skill | 可被发现和使用的一组工作方法。目录描述、技能正文、模型读取和实际执行需要分别核对。 | [05 · 显式使用项目 Skill](course/05-skills.md) |
-| `previous_response_id` | 引用已有响应以接续上下文的标识。未出现它不等于没有历史，客户端也可能重发历史。 | [03 · 工具结果后的响应引用](course/03-readme.md) |
-| 压缩 / Compaction | 把较长历史转为可继续工作的上下文。本例通过 Desktop 原生菜单触发，并记录真实历史替换。 | [10 · 原生压缩与压缩后追问](course/10-compaction.md) |
-| `replacement_history` | 本地压缩事件记录的替换历史，可与压缩后的请求输入逐项核对。 | [10 · 6 项替换历史](course/10-compaction.md) |
-| Token | 模型处理文字等内容时使用的计量单位，不等同于汉字数或消息数。 | [11 · 输入、输出与总用量](course/11-cache.md) |
-| `cached_tokens` | 服务报告的缓存输入计数，属于输入用量详情，不是在输入 token 之外再加一份。 | [11 · 重发历史与缓存命中](course/11-cache.md) |
-| 记忆 | 跨轮次或跨任务保存、检索并使用信息的机制。必须追查来源，不能仅凭回答准确断言“有长期记忆”。 | [12 · 新任务中的信息来源](course/12-memory.md) |
+| `input` | 某次请求携带的输入项目数组，可能包含初始上下文、历史消息、当前输入或工具结果。 | [04 · 历史重新放入输入](course/04-session.md) |
+| `role` | 消息角色标签。`user` 不足以单独证明文字是人在输入框里逐字输入的。 | [05 · 按来源辨认上下文](course/05-context.md) |
+| 系统／应用指令 | 描述工作方式和约束的指令内容；讲解时需区分来源与实际字段。本次初始请求没有 `role: system`，应用指令主要以 `developer` 消息出现，不能据此推断上游内部全部提示。 | [01 · 七个输入项的组装](course/01-request.md) |
+| `content` | 消息里的内容块数组。一个消息可能包含多块文字，必须保留块的顺序和边界才能说明组装。 | [01 · 输入项与内容块](course/01-request.md)、[06 · 全局与项目规则](course/06-agents.md) |
+| 上下文 | 模型生成本次响应时可用的信息，包括当前问题及由客户端组织或接续的其他内容。 | [05 · 规则、技能、文件的不同入口](course/05-context.md) |
+| `AGENTS.md` | 项目工作约定文件。本例的规则由 Desktop 附加到请求中。 | [06 · 规则注入与回答变化](course/06-agents.md) |
+| Skill | 可被发现和使用的一组工作方法。目录描述、技能正文、模型读取和实际执行需要分别核对。 | [07 · 显式使用项目 Skill](course/07-skills.md) |
+| `previous_response_id` | 引用已有响应以接续上下文的标识。未出现它不等于没有历史，客户端也可能重发历史。 | [02 · 工具结果后的响应引用](course/02-tools.md) |
+| 压缩 / Compaction | 把较长历史转为可继续工作的上下文。本例通过 Desktop 原生菜单触发，并记录真实历史替换。 | [05 · 原生压缩与压缩后追问](course/05-context.md) |
+| `replacement_history` | 本地压缩事件记录的替换历史，可与压缩后的请求输入逐项核对。 | [05 · 6 项替换历史](course/05-context.md) |
+| Token | 模型处理文字等内容时使用的计量单位，不等同于汉字数或消息数。 | [05 · 输入、输出与总用量](course/05-context.md) |
+| `cached_tokens` | 服务报告的缓存输入计数，属于输入用量详情，不是在输入 token 之外再加一份。 | [05 · 重发历史与缓存命中](course/05-context.md) |
+| 记忆 | 跨轮次或跨任务保存、检索并使用信息的机制。必须追查来源，不能仅凭回答准确断言“有长期记忆”。 | [08 · 新任务中的信息来源](course/08-memory.md) |
 
 ## 谁执行了动作
 
 | 术语 | 在本教程中的含义 | 实测位置 |
 | --- | --- | --- |
-| 工具定义 | 描述可用工具、参数和使用方式的内容；出现在请求里，不代表该工具已经执行。 | [03 · 定义、调用与执行](course/03-readme.md) |
-| `additional_tools` | 本次初始请求中承载工具定义的输入项类型，位于 `input[0]`；工具命名空间在它的 `tools` 中。 | [01 · 工具定义的位置](course/01-hello.md) |
-| 工具调用 | 模型提出的结构化执行请求。宿主执行后再把结果交回后续模型请求。 | [03 · 谁打开了 README](course/03-readme.md) |
-| `call_id` | 对应一次调用与返回结果的标识，用来串起执行链条。 | [03 · 调用和结果配对](course/03-readme.md) |
-| `custom_tool_call` / `custom_tool_call_output` | 本次 `exec` 的实际调用和回传类型。调用的 `input` 是要执行的代码，回传的 `output` 是执行结果；它们通过相同的 `call_id` 对应。 | [03 · 读取 README 的完整往返](course/03-readme.md) |
-| `function_call_output` | 回传函数工具结果的一类输入项目；与本例 `exec` 使用的 `custom_tool_call_output` 保留实际类型区别。 | [14 · 澄清问题的回答回传](course/14-plan.md)、[20 · 等待工具的取消结果](course/20-interruption.md) |
-| 退出码 / Exit code | 外部进程报告的结束状态。本项目检查成功为 `0`，失败测试返回非零。 | [06 · 类型检查通过，测试失败](course/06-tests.md) |
-| 行为验证 | 检查实际结果是否满足需求。模型的完成说明还需与测试及文件结果核对。 | [07 · 修复后运行三项检查](course/07-fix.md) |
-| MCP | Model Context Protocol，用于让客户端发现并调用外部服务提供的能力。 | [13 · 外部商品信息工具](course/13-mcp.md) |
-| 规划 / Plan | 对任务步骤、约束和完成条件的安排。计划文本与实际执行状态分别核对。 | [14 · 计划与执行](course/14-plan.md) |
-| 权限 / Sandbox | 执行环境对操作能力与批准条件的限制，区别于仅写在文字里的行为约定。 | [15 · 规则与实际执行边界](course/15-permissions.md) |
-| 多 Agent | 把部分工作交给具有自身上下文的其他 Agent，再收集结果。需要核对委派、独立执行与汇总。 | [16 · 分工与汇总](course/16-multi-agent.md) |
-| 目标与停止条件 | 用于判断是否继续工作的任务要求、验证条件及限制；不能只由“已完成”三个字证明。 | [17 · 何时继续，何时停止](course/17-goal.md) |
+| 工具定义 | 描述可用工具、参数和使用方式的内容；出现在请求里，不代表该工具已经执行。 | [02 · 定义、调用与执行](course/02-tools.md) |
+| `additional_tools` | 本次初始请求中承载工具定义的输入项类型，位于 `input[0]`；工具命名空间在它的 `tools` 中。 | [01 · 工具定义的位置](course/01-request.md) |
+| 工具调用 | 模型提出的结构化执行请求。宿主执行后再把结果交回后续模型请求。 | [02 · 谁打开了 README](course/02-tools.md) |
+| `call_id` | 对应一次调用与返回结果的标识，用来串起执行链条。 | [02 · 调用和结果配对](course/02-tools.md) |
+| `custom_tool_call` / `custom_tool_call_output` | 本次 `exec` 的实际调用和回传类型。调用的 `input` 是要执行的代码，回传的 `output` 是执行结果；它们通过相同的 `call_id` 对应。 | [02 · 读取 README 的完整往返](course/02-tools.md) |
+| `function_call_output` | 回传函数工具结果的一类输入项目；与本例 `exec` 使用的 `custom_tool_call_output` 保留实际类型区别。 | [11 · 澄清问题的回答回传](course/11-plan.md)、[13 · 等待工具的取消结果](course/13-autonomy.md) |
+| 退出码 / Exit code | 外部进程报告的结束状态。本项目检查成功为 `0`，失败测试返回非零。 | [03 · 类型检查通过，测试失败](course/03-agent-loop.md) |
+| 行为验证 | 检查实际结果是否满足需求。模型的完成说明还需与测试及文件结果核对。 | [03 · 修复后运行三项检查](course/03-agent-loop.md) |
+| MCP | Model Context Protocol，用于让客户端发现并调用外部服务提供的能力。 | [09 · 外部商品信息工具](course/09-mcp.md) |
+| 规划 / Plan | 对任务步骤、约束和完成条件的安排。计划文本与实际执行状态分别核对。 | [11 · 计划与执行](course/11-plan.md) |
+| 权限 / Sandbox | 执行环境对操作能力与批准条件的限制，区别于仅写在文字里的行为约定。 | [10 · 规则与实际执行边界](course/10-permissions.md) |
+| 多 Agent | 把部分工作交给具有自身上下文的其他 Agent，再收集结果。需要核对委派、独立执行与汇总。 | [12 · 分工与汇总](course/12-multi-agent.md) |
+| 目标与停止条件 | 用于判断是否继续工作的任务要求、验证条件及限制；不能只由“已完成”三个字证明。 | [13 · 何时继续，何时停止](course/13-autonomy.md) |
 
 ## 响应、恢复与证据
 
 | 术语 | 在本教程中的含义 | 实测位置 |
 | --- | --- | --- |
-| 流式事件 / Streaming event | 一次响应逐步生成时发出的事件；多段文本增量通常不是多次独立回答。 | [18 · 片段怎样组成回答](course/18-streaming.md) |
-| `response.output_text.delta` | 一段新增的输出文本，用于按顺序组装内容。 | [18 · 一条文本增量](course/18-streaming.md) |
-| `response.output_item.done` | 某个输出项目已经生成完成的事件，可据此提取完整输出项。 | [18 · 输出项与结束事件](course/18-streaming.md) |
-| `response.completed` | 一次模型响应的完成事件。本样本中的 `response.output` 可能为空，不能据此断言没有输出。 | [01 · 回复在哪里](course/01-hello.md) |
-| `output-items.json` | 从记录的流式事件中提取的输出项，是明确标注的衍生文件；未回填原完成事件。 | [18 · 原始事件与衍生输出](course/18-streaming.md) |
-| 重试与恢复 | 使用失败信息决定下一步，或在中断后继续工作；重新执行前应确认已经完成的动作。 | [19 · 错误反馈](course/19-recovery.md)、[20 · 中断与继续](course/20-interruption.md) |
-| 脱敏快照 | 为公开而替换敏感内容、同时保留 JSON 结构的记录。处理路径与来源保存在实验说明中。 | [01 · 公开证据的边界](course/01-hello.md) |
-| 观察 / 推断 / 未验证 | 直接可核对的事实、由事实得出的解释，以及当前记录尚不能证明的内容。 | [10 · 压缩实验能证明什么](course/10-compaction.md) |
+| 流式事件 / Streaming event | 一次响应逐步生成时发出的事件；多段文本增量通常不是多次独立回答。 | [14 · 片段怎样组成回答](course/14-streaming.md) |
+| `response.output_text.delta` | 一段新增的输出文本，用于按顺序组装内容。 | [14 · 一条文本增量](course/14-streaming.md) |
+| `response.output_item.done` | 某个输出项目已经生成完成的事件，可据此提取完整输出项。 | [14 · 输出项与结束事件](course/14-streaming.md) |
+| `response.completed` | 一次模型响应的完成事件。本样本中的 `response.output` 可能为空，不能据此断言没有输出。 | [01 · 回复在哪里](course/01-request.md) |
+| `output-items.json` | 从记录的流式事件中提取的输出项，是明确标注的衍生文件；未回填原完成事件。 | [14 · 原始事件与衍生输出](course/14-streaming.md) |
+| 重试与恢复 | 使用失败信息决定下一步，或在中断后继续工作；重新执行前应确认已经完成的动作。 | [13 · 错误反馈](course/13-autonomy.md)、[13 · 中断与继续](course/13-autonomy.md) |
+| 脱敏快照 | 为公开而替换敏感内容、同时保留 JSON 结构的记录。处理路径与来源保存在实验说明中。 | [01 · 公开证据的边界](course/01-request.md) |
+| 观察 / 推断 / 未验证 | 直接可核对的事实、由事实得出的解释，以及当前记录尚不能证明的内容。 | [05 · 压缩实验能证明什么](course/05-context.md) |

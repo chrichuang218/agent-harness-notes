@@ -2,7 +2,7 @@
 
 前六章分别看过请求、上下文、规则、技能和工具结果。现在把它们连成一次完整工作：从已复现的故障出发，修改代码，运行验证，再用证据判断任务是否完成。
 
-本章保留了[修复前项目](../examples/01-baseline/README.md)与[修复后项目](../examples/07-fixed/README.md)。可先阅读全部记录，再复制初始项目自行复现；不要用已修好的版本重新证明原始故障。
+本章保留了[修复前项目](../../examples/01-baseline/README.md)与[修复后项目](../../examples/07-fixed/README.md)。可先阅读全部记录，再复制初始项目自行复现；不要用已修好的版本重新证明原始故障。
 
 ## 给出现象、预期与完成条件
 
@@ -26,7 +26,7 @@
 | `03` | 修改工具结果 | 运行三项验证，并重新读取修改后的文件 |
 | `04` | 验证与文件内容 | 汇报完成及三条命令的结果 |
 
-这张表是依据真实事件整理的导读，各阶段的请求与响应可从[实验清单](../evidence/desktop-lab/07-fix/manifest.json)进入。接下来不跳过中间步骤，逐一看模型在每次请求中新增了什么信息，再决定了什么动作。
+这张表是依据真实事件整理的导读，各阶段的请求与响应可从[实验清单](../../evidence/desktop-lab/07-fix/manifest.json)进入。接下来不跳过中间步骤，逐一看模型在每次请求中新增了什么信息，再决定了什么动作。
 
 四次外层调用不等于四条命令。例如最后一次 `exec` 内部就安排了三条验证命令和一次文件读取。区分模型请求、外层工具调用与内部命令，才能正确计数。
 
@@ -43,7 +43,7 @@
 
 每一次回传的类型都是 `custom_tool_call_output`。同时，R1～R4 的请求分别用 `previous_response_id` 引用 R0～R3。前一套编号解决“这份执行结果属于哪次调用”，后一套解决“这次模型生成继续哪段上下文”。两条线一起读，才能把整轮串起来。
 
-各阶段原始事件：[R0](../evidence/desktop-lab/07-fix/00-request.events.json)、[R1](../evidence/desktop-lab/07-fix/01-request.events.json)、[R2](../evidence/desktop-lab/07-fix/02-request.events.json)、[R3](../evidence/desktop-lab/07-fix/03-request.events.json)、[R4](../evidence/desktop-lab/07-fix/04-request.events.json)。已经逐阶段核对：输出项汇集与 `response.output_item.done` 一致；五份完成事件的 `output` 仍均为空，所以不能把空数组当成没有调用的依据。
+各阶段原始事件：[R0](../../evidence/desktop-lab/07-fix/00-request.events.json)、[R1](../../evidence/desktop-lab/07-fix/01-request.events.json)、[R2](../../evidence/desktop-lab/07-fix/02-request.events.json)、[R3](../../evidence/desktop-lab/07-fix/03-request.events.json)、[R4](../../evidence/desktop-lab/07-fix/04-request.events.json)。已经逐阶段核对：输出项汇集与 `response.output_item.done` 一致；五份完成事件的 `output` 仍均为空，所以不能把空数组当成没有调用的依据。
 
 ```mermaid
 sequenceDiagram
@@ -74,9 +74,9 @@ sequenceDiagram
 
 ## R0：当前要求进入已有上下文
 
-[R0 请求](../evidence/desktop-lab/07-fix/00-request.request.json)的 `input` 只有一条新用户消息，`previous_response_id` 引用第六章最终响应。最初的项目规则、技能目录、已经读过的文件和失败测试，没有在这个 JSON 中全部重写，但会话接续仍然需要这些信息。
+[R0 请求](../../evidence/desktop-lab/07-fix/00-request.request.json)的 `input` 只有一条新用户消息，`previous_response_id` 引用第六章最终响应。最初的项目规则、技能目录、已经读过的文件和失败测试，没有在这个 JSON 中全部重写，但会话接续仍然需要这些信息。
 
-[R0 输出](../evidence/desktop-lab/07-fix/00-request.output-items.json)先说明将使用本机 `ponytail` 技能并做最小修复，随后生成 C1。C1 内部安排了三组读取：
+[R0 输出](../../evidence/desktop-lab/07-fix/00-request.output-items.json)先说明将使用本机 `ponytail` 技能并做最小修复，随后生成 C1。C1 内部安排了三组读取：
 
 | 内部动作 | 用途 | R1 中的返回位置 |
 | --- | --- | --- |
@@ -90,13 +90,13 @@ sequenceDiagram
 
 ## R1：读取结果进入模型，先查调用位置
 
-[R1 请求](../evidence/desktop-lab/07-fix/01-request.request.json)只新增 C1 的回传结果。它同时包含正常文件内容，以及 `git status` 因目录没有 Git 仓库而返回的退出码 1。模型没有把所有结果笼统当成失败，也没有把失败条目隐藏起来。
+[R1 请求](../../evidence/desktop-lab/07-fix/01-request.request.json)只新增 C1 的回传结果。它同时包含正常文件内容，以及 `git status` 因目录没有 Git 仓库而返回的退出码 1。模型没有把所有结果笼统当成失败，也没有把失败条目隐藏起来。
 
-[R1 输出](../evidence/desktop-lab/07-fix/01-request.output-items.json)生成 C2，用 `rg -n` 搜索 `calculateTotal` 并查找项目规则。这个步骤得到函数在实现、示例和测试中的位置，目的是确认修改共享计算函数会影响哪些调用，而不是只改当前终端显示的 13。
+[R1 输出](../../evidence/desktop-lab/07-fix/01-request.output-items.json)生成 C2，用 `rg -n` 搜索 `calculateTotal` 并查找项目规则。这个步骤得到函数在实现、示例和测试中的位置，目的是确认修改共享计算函数会影响哪些调用，而不是只改当前终端显示的 13。
 
 ## R2：用搜索结果定位修改
 
-[R2 请求](../evidence/desktop-lab/07-fix/02-request.request.json)带回 C2 的结果，包含这些实际命中：
+[R2 请求](../../evidence/desktop-lab/07-fix/02-request.request.json)带回 C2 的结果，包含这些实际命中：
 
 ```text
 .\src\price.ts:1:export function calculateTotal(unitPrice: number, quantity: number): number {
@@ -115,7 +115,7 @@ sequenceDiagram
  }
 ```
 
-实际修改通过外层 `exec` 内的 `tools.apply_patch` 完成，可在[阶段 02 输出项](../evidence/desktop-lab/07-fix/02-request.output-items.json)查看补丁。同时更新 README，把“实际输出 13”改为“实际输出 30”，并说明错误已修复。
+实际修改通过外层 `exec` 内的 `tools.apply_patch` 完成，可在[阶段 02 输出项](../../evidence/desktop-lab/07-fix/02-request.output-items.json)查看补丁。同时更新 README，把“实际输出 13”改为“实际输出 30”，并说明错误已修复。
 
 测试的预期值没有为了让检查变绿而降低。前后快照中的测试文件相同，仍要求 `calculateTotal(10, 3)` 等于 30；改变的是业务实现。
 
@@ -123,9 +123,9 @@ sequenceDiagram
 
 阶段 03 的请求收到修改工具结果，但那份工具返回很简短，只有 `{}`。单看它不够解释最终文件变成了什么。随后模型重新读取 `src/price.ts` 和 README，并运行三条命令，补齐了实际结果。
 
-具体地说，[R3 请求](../evidence/desktop-lab/07-fix/03-request.request.json)的 `input[0]` 对应 C3，`output[0]` 是执行包装，`output[1].text` 是字符串 `"{}"`。这与“工具返回了一份完整代码 diff”不是一回事，不能补造并不存在的文件内容。
+具体地说，[R3 请求](../../evidence/desktop-lab/07-fix/03-request.request.json)的 `input[0]` 对应 C3，`output[0]` 是执行包装，`output[1].text` 是字符串 `"{}"`。这与“工具返回了一份完整代码 diff”不是一回事，不能补造并不存在的文件内容。
 
-[R3 输出](../evidence/desktop-lab/07-fix/03-request.output-items.json)于是提出 C4，安排类型检查、测试、示例运行和修改文件重读。四项工作都在同一次外层代码中；模型在 R4 才一起看到它们的结果。
+[R3 输出](../../evidence/desktop-lab/07-fix/03-request.output-items.json)于是提出 C4，安排类型检查、测试、示例运行和修改文件重读。四项工作都在同一次外层代码中；模型在 R4 才一起看到它们的结果。
 
 | 验证 | 退出码 | 结果 |
 | --- | --- | --- |
@@ -133,7 +133,7 @@ sequenceDiagram
 | `npm test` | `0` | 1 个测试通过，0 失败 |
 | `npm start` | `0` | 示例输出“总价：30 元” |
 
-这些结果在[阶段 04 请求](../evidence/desktop-lab/07-fix/04-request.request.json)的 `input[0].output` 中。下面是解析测试结果内容块后得到的字段节选，省略完整输出与耗时：
+这些结果在[阶段 04 请求](../../evidence/desktop-lab/07-fix/04-request.request.json)的 `input[0].output` 中。下面是解析测试结果内容块后得到的字段节选，省略完整输出与耗时：
 
 ```json
 {
@@ -163,7 +163,7 @@ export function calculateTotal(unitPrice: number, quantity: number): number {
 }
 ```
 
-[R4 输出](../evidence/desktop-lab/07-fix/04-request.output-items.json)随后给出最终说明，没有再提出工具调用。最终回答中的三行检查表，分别能在刚才的工具结果中找到依据；“已修复”是对这些结果的归纳，不是仅凭模型写出了补丁就自动成立。
+[R4 输出](../../evidence/desktop-lab/07-fix/04-request.output-items.json)随后给出最终说明，没有再提出工具调用。最终回答中的三行检查表，分别能在刚才的工具结果中找到依据；“已修复”是对这些结果的归纳，不是仅凭模型写出了补丁就自动成立。
 
 结合工具输出中的 `pass 1`、`fail 0`，以及重读后的乘法实现，可以支持这个已定义场景修复完成。单个测试没有覆盖折扣、小数金额、负数或异常输入；本次也没有声称解决这些尚未提出的业务要求。
 

@@ -154,9 +154,11 @@ function navMarkup() {
 function resolveDocumentPath(path, base) { return new URL(path, 'https://local.invalid/' + base).pathname.slice(1); }
 function decorateMarkdown(container, lesson) {
   const headings = [];
-  container.querySelectorAll('h2,h3,h4').forEach((heading, index) => {
+  const sectionHeadings = [...container.querySelectorAll('h2,h3,h4,h5,h6,details > summary')].filter(heading => heading.tagName !== 'SUMMARY' || heading.textContent.trim().startsWith('深入'));
+  sectionHeadings.forEach((heading, index) => {
     const id = `${lesson.id}-section-${index}`;
     heading.id = id;
+    if (heading.tagName === 'SUMMARY') heading.style.scrollMarginTop = '88px';
     headings.push({ id, text: heading.textContent });
     const anchor = document.createElement('a'); anchor.className = 'heading-anchor'; anchor.href = href(lesson.id, { section: id }); anchor.textContent = '#'; anchor.setAttribute('aria-label', '链接到这一段'); heading.append(anchor);
   });
@@ -187,7 +189,7 @@ function decorateMarkdown(container, lesson) {
     else if (files['../' + path]) {
       link.classList.add('source-link'); link.dataset.sourcePath = path;
       const location = fileLocations.get(path);
-      const owner = location && (lesson.id === 'introduction' ? preferredLesson(location.experiment.id)?.id : lesson.id);
+      const owner = location && preferredLesson(location.experiment.id, lesson.id)?.id;
       link.href = location ? evidenceHref(owner, location.experiment.id, location.index, 'raw', { kind: location.kind }) : href(lesson.id, { file: path });
     } else if (images['../' + path]) link.href = images['../' + path];
     else if (path && !original.startsWith('mailto:')) link.href = repo + '/blob/main/' + path;
@@ -236,11 +238,14 @@ async function renderDocument() {
     });
   }
   document.querySelector('#main').setAttribute('aria-busy', 'false');
+  // Ignore workbenches hidden above the fixed header: expanding the preceding
+  // chapter after an anchor jump would push that destination down the page.
+  const headerHeight = Math.ceil(document.querySelector('.site-header').getBoundingClientRect().height);
   const observer = new IntersectionObserver(entries => entries.forEach(entry => {
     if (!entry.isIntersecting) return;
     const state = states.get(entry.target.dataset.workbench);
     if (!state.loaded) renderWorkbench(state, false);
-  }), { rootMargin: '150px 0px' });
+  }), { rootMargin: `-${headerHeight}px 0px 150px 0px` });
   document.querySelectorAll('[data-workbench]').forEach(host => observer.observe(host));
   await route();
 }
@@ -252,7 +257,10 @@ function updateWorkbenchChrome(state) {
   select.value = experiment.id;
   host.querySelector('.stage-select').innerHTML = experiment.stages.map((stage, index) => `<option value="${index}" ${index === state.stage ? 'selected' : ''}>${stageLabel(stage, experiment)}</option>`).join('');
   const interrupted = experiment.status === 'interrupted';
-  const inputMarkup = experiment.prompt?.trim() ? `<div><span>你</span><p>${esc(experiment.prompt)}</p></div>` : '<p class="delegation-note">由父任务委派，普通聊天输入为空。实际委派内容见请求中的 agent_message 及本章说明。</p>';
+  const inputNote = experiment.id === '17-goal' ? '通过原生 Goal 入口设置目标，具体目标见请求中的 goal 包装及本章记录。'
+    : ['16-agent-a', '16-agent-b'].includes(experiment.id) ? '由父任务委派，普通聊天输入为空。实际委派内容见请求中的 agent_message 及本章说明。'
+    : '本记录没有普通聊天输入，触发方式见本章说明与原始记录。';
+  const inputMarkup = experiment.prompt?.trim() ? `<div><span>你</span><p>${esc(experiment.prompt)}</p></div>` : `<p class="delegation-note">${inputNote}</p>`;
   const reply = interrupted && !experiment.reply ? '本轮已中断，没有最终回复。单次模型完成事件不代表整个任务成功完成。' : experiment.reply || '本记录没有普通最终回复，请查看逐阶段模型输出和本章原生事件。';
   host.querySelector('.experiment-summary').innerHTML = `<p class="experiment-count">${experiment.stats.requests} 次正式模型请求${experiment.stats.prewarms ? ` + ${experiment.stats.prewarms} 次预热` : ''} · ${experiment.stats.toolCalls} 次外层工具调用${interrupted ? '<strong class="interrupted-badge">已中断</strong>' : ''}</p>${experiment.requestKind === 'compaction' ? '<p class="evidence-notice">原生压缩操作，没有普通聊天输入与最终回复。原始记录中可查看本地压缩事件。</p>' : `<details class="conversation" open><summary>这次实验的输入与${interrupted ? '中断状态' : '回复'}</summary>${inputMarkup}<div><span>${interrupted || !experiment.reply ? '状态' : 'Codex'}</span><p>${esc(reply)}</p></div></details>`}`;
   host.querySelector('[data-stage-prev]').disabled = state.stage === 0;
@@ -347,10 +355,14 @@ async function openSupplement(lessonId, path) {
   host.hidden = false;
   releaseCopies(host);
   host.innerHTML = `<div class="supplement-heading"><h3>补充原始证据</h3><button data-close-source>收起</button></div><p class="source-path">${esc(path)}</p><div class="source-actions"><button data-download="${esc(path)}">下载文件 ↓</button>${copyButton(location.href, '复制此位置链接')}</div>${codePanel(text, '公开文件全文 · 保留原结构', 'data-supplement-content')}`;
-  host.setAttribute('aria-busy', 'false'); host.scrollIntoView({ block: 'start' });
+  host.setAttribute('aria-busy', 'false'); revealSection(host);
 }
 
 async function handleClick(event) {
+  const anchor = event.target.closest('a');
+  if (event.button === 0 && !event.ctrlKey && !event.metaKey && !event.shiftKey && !event.altKey && anchor?.getAttribute('href') === location.hash && location.hash.startsWith('#/')) {
+    event.preventDefault(); await route(); return;
+  }
   const copy = event.target.closest('[data-copy]');
   if (copy) { await copyText(textCopies.get(Number(copy.dataset.copy))); return; }
   const download = event.target.closest('[data-download]');
@@ -401,15 +413,27 @@ async function route() {
   const currentRoute = ++routeNumber;
   const [path, query = ''] = location.hash.replace(/^#\/?/, '').split('?');
   const params = new URLSearchParams(query);
-  const id = path.startsWith('lesson/') ? decodeURIComponent(path.slice(7)) : '';
-  const lesson = catalog.lessons.find(item => item.id === id);
+  const requestedId = path.startsWith('lesson/') ? decodeURIComponent(path.slice(7)) : '';
+  let id = has(catalog.legacyRoutes || {}, requestedId) ? catalog.legacyRoutes[requestedId] : requestedId;
+  let lesson = catalog.lessons.find(item => item.id === id);
+  // A saved evidence link can outlive the chapter that originally held it.
+  // Keep the exact experiment/stage/view and use a chapter that still owns it.
+  if (lesson && params.has('experiment')) {
+    lesson = preferredLesson(params.get('experiment'), id) || lesson;
+    id = lesson.id;
+  }
+  if (id !== requestedId) {
+    if (params.get('section') === 'workbench-' + requestedId) params.set('section', 'workbench-' + id);
+    else if (params.get('section')?.startsWith(requestedId + '-section-')) params.delete('section');
+    history.replaceState(null, '', href(id, Object.fromEntries(params)));
+  }
   if (id && !lesson && id !== 'introduction') { showToast('未找到该章节，已返回开篇。'); window.scrollTo(0, 0); return; }
   toggleMenu(false); setActive(lesson?.id || '');
   document.title = lesson ? lesson.title + ' · Agent Harness 学习笔记' : 'Codex 的一次完整运行 · Agent Harness 学习笔记';
   if (params.has('file') && (lesson || id === 'introduction')) { await openSupplement(lesson?.id || 'introduction', params.get('file')); return; }
   if (!lesson) {
     const heading = params.get('section') && document.getElementById(params.get('section'));
-    if (heading) heading.scrollIntoView({ block: 'start' });
+    if (heading) revealSection(heading);
     else window.scrollTo({ top: 0, behavior: 'instant' });
     return;
   }
@@ -426,19 +450,23 @@ async function route() {
     const host = document.querySelector(`[data-workbench="${lesson.id}"]`);
     if (params.has('input')) {
       const item = host.querySelector(`[data-item-path="input[${Number(params.get('input'))}]"]`);
-      if (item) { item.open = true; if (params.has('content')) { const block = item.querySelector(`[data-content-path="input[${Number(params.get('input'))}].content[${Number(params.get('content'))}]"]`); if (block) block.open = true; } item.scrollIntoView({ block: 'start' }); return; }
+      if (item) { item.open = true; if (params.has('content')) { const block = item.querySelector(`[data-content-path="input[${Number(params.get('input'))}].content[${Number(params.get('content'))}]"]`); if (block) block.open = true; } revealSection(item); return; }
     }
-    host.scrollIntoView({ block: 'start' }); return;
+    revealSection(host); return;
   }
-  (document.getElementById(params.get('section')) || document.querySelector('#chapter-' + lesson.id)).scrollIntoView({ block: 'start' });
+  revealSection(document.getElementById(params.get('section')) || document.querySelector('#chapter-' + lesson.id));
+}
+function revealSection(element) {
+  for (let ancestor = element.parentElement; ancestor; ancestor = ancestor.parentElement) if (ancestor.tagName === 'DETAILS') ancestor.open = true;
+  element.scrollIntoView({ block: 'start', behavior: 'instant' });
 }
 function showToast(text) { const toast = document.querySelector('.toast'); toast.textContent = text; toast.classList.add('visible'); clearTimeout(toastTimer); toastTimer = setTimeout(() => toast.classList.remove('visible'), 2200); }
 function scrollSpy() {
   document.querySelector('#back-top').classList.toggle('visible', scrollY > 400);
   const chapter = [...document.querySelectorAll('.chapter')].filter(node => node.getBoundingClientRect().top < 170).at(-1);
   if (chapter?.dataset.lesson !== activeLesson) setActive(chapter?.dataset.lesson || '');
-  const headings = chapter ? [...chapter.querySelectorAll('.prose h3,.prose h4,.workbench')] : [];
-  const current = headings.filter(node => node.getBoundingClientRect().top < 170).at(-1);
+  const headings = chapter ? [...chapter.querySelectorAll('.prose h3,.prose h4,.prose h5,.prose h6,.prose details > summary[id],.workbench')] : [];
+  const current = headings.filter(node => node.getClientRects().length && node.getBoundingClientRect().top < 170).at(-1);
   document.querySelectorAll('.chapter-outline a').forEach(link => link.classList.toggle('current', Boolean(current?.id) && link.dataset.section === current.id));
 }
 

@@ -10,13 +10,13 @@
 检查当前总价实现是否满足 README 的折扣约定，运行 npm run typecheck 和 npm test，每项至多一次。两项通过且给出退出码与结论后完成目标；不修改文件，不创建子智能体，不扩展任务。若失败就报告具体失败。
 ```
 
-[界面观察](../evidence/desktop-lab/ui-observations.json)的 `goal-compose` 项记录了入口。这次是 Goal 控件承载的目标，不是把一句普通聊天里的“目标”当作原生状态。
+[界面观察](../../evidence/desktop-lab/ui-observations.json)的 `goal-compose` 项记录了入口。这次是 Goal 控件承载的目标，不是把一句普通聊天里的“目标”当作原生状态。
 
 这里同时给出了检查对象、完成条件和范围：README 与实现一致，两条命令通过，报告退出码；不修改代码，不把工作再分给子智能体。没有设置 token 预算。
 
 ## Goal 入口怎样改变这次输入？
 
-[首请求](../evidence/desktop-lab/17-goal/00-request.request.json)通过 `previous_response_id` 接上此前任务，新 `input` 只有一个 user 消息。但它不是未经包装的短提示：正文以 `<codex_internal_context source="goal">` 开头，包含 `<objective>` 中的目标，以及目标继续、完成核查等运行说明。这里的用户角色与输入框中的裸文字仍然不是一一对应关系。
+[首请求](../../evidence/desktop-lab/17-goal/00-request.request.json)通过 `previous_response_id` 接上此前任务，新 `input` 只有一个 user 消息。但它不是未经包装的短提示：正文以 `<codex_internal_context source="goal">` 开头，包含 `<objective>` 中的目标，以及目标继续、完成核查等运行说明。这里的用户角色与输入框中的裸文字仍然不是一一对应关系。
 
 这份包装告诉模型“持续围绕什么目标工作，以及何时才可更新完成状态”。它不意味着模型已经完成目标，也不替代随后各项检查。目标文字进上下文和本地目标状态更新，是两个时刻。
 
@@ -35,19 +35,19 @@ Codex 先读取 README、计算函数、测试、`package.json`，再查看 `tsc
 
 | 阶段 | 本次模型获得的信息 | 输出动作 |
 | --- | --- | --- |
-| [00](../evidence/desktop-lab/17-goal/00-request.output-items.json) | Goal 包装、明确完成条件、此前历史引用 | 读取 README、实现、测试和 package |
-| [01](../evidence/desktop-lab/17-goal/01-request.output-items.json) | 文件正文 | 继续读取 `tsconfig.json` |
-| [02](../evidence/desktop-lab/17-goal/02-request.output-items.json) | 类型检查配置 | 一次 `exec` 安排 typecheck 与 test |
-| [03](../evidence/desktop-lab/17-goal/03-request.output-items.json) | 两项命令实际结果 | 说明检查结论，调用 `update_goal` |
-| [04](../evidence/desktop-lab/17-goal/04-request.output-items.json) | 更新目标工具的返回 | 最终汇报完成 |
+| [00](../../evidence/desktop-lab/17-goal/00-request.output-items.json) | Goal 包装、明确完成条件、此前历史引用 | 读取 README、实现、测试和 package |
+| [01](../../evidence/desktop-lab/17-goal/01-request.output-items.json) | 文件正文 | 继续读取 `tsconfig.json` |
+| [02](../../evidence/desktop-lab/17-goal/02-request.output-items.json) | 类型检查配置 | 一次 `exec` 安排 typecheck 与 test |
+| [03](../../evidence/desktop-lab/17-goal/03-request.output-items.json) | 两项命令实际结果 | 说明检查结论，调用 `update_goal` |
+| [04](../../evidence/desktop-lab/17-goal/04-request.output-items.json) | 更新目标工具的返回 | 最终汇报完成 |
 
-完整命令结果在[阶段 03 请求](../evidence/desktop-lab/17-goal/03-request.request.json)中。01—04 都以一个新的 `custom_tool_call_output` 和前一响应引用接续。前面的读取和验证与普通 Agent Loop 一样；Goal 额外引入的是持续目标及其状态，而不是用“目标模式”替代工具执行。
+完整命令结果在[阶段 03 请求](../../evidence/desktop-lab/17-goal/03-request.request.json)中。01—04 都以一个新的 `custom_tool_call_output` 和前一响应引用接续。前面的读取和验证与普通 Agent Loop 一样；Goal 额外引入的是持续目标及其状态，而不是用“目标模式”替代工具执行。
 
 没有新增修复、再次运行检查或创建子智能体的调用。目标中的“每项至多一次”限制了本次工作范围，但它不是操作系统锁，也不是硬性的 token 或费用预算。
 
 ## “说完成”与“状态完成”分别核对
 
-在获得检查结果之后，模型实际调用了目标状态工具。外层代码如下，来自[阶段 03 输出项](../evidence/desktop-lab/17-goal/03-request.output-items.json)：
+在获得检查结果之后，模型实际调用了目标状态工具。外层代码如下，来自[阶段 03 输出项](../../evidence/desktop-lab/17-goal/03-request.output-items.json)：
 
 ```javascript
 text(await tools.update_goal({status:"complete"}));
@@ -63,7 +63,7 @@ text(await tools.update_goal({status:"complete"}));
 }
 ```
 
-[目标状态证据](../evidence/desktop-lab/17-goal/goal-state.json)保留了解析后的精确结果、所属任务 ID、调用编号和源 JSON 位置。它证明这次目标工具返回了 `complete`，证据强于仅引用助手最终说的“目标已完成”。
+[目标状态证据](../../evidence/desktop-lab/17-goal/goal-state.json)保留了解析后的精确结果、所属任务 ID、调用编号和源 JSON 位置。它证明这次目标工具返回了 `complete`，证据强于仅引用助手最终说的“目标已完成”。
 
 本次没有观察到单独的 `get_goal` 调用，不为让流程更整齐而补写一个未发生的查询。状态以这次 `update_goal` 的真实返回为依据。
 

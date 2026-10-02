@@ -2,7 +2,7 @@
 
 模型怎样知道磁盘上写了什么？本章把一次文件读取拆成可核对的闭环：模型提出工具调用，运行环境执行命令，工具结果进入下一次请求，模型据此回答。
 
-仍在同一个 Desktop 任务中操作。项目保持[初始状态](../examples/01-baseline/README.md)，这次只读说明，不修复总价错误。
+仍在同一个 Desktop 任务中操作。项目保持[初始状态](../../examples/01-baseline/README.md)，这次只读说明，不修复总价错误。
 
 ## 精确限定任务
 
@@ -18,12 +18,12 @@ Codex 先说明将阅读 README，随后执行 PowerShell 的 `Get-Content`，�
 
 ## 先展开这一轮的两个请求
 
-第一章的[真实 Desktop 截图](../docs/images/desktop-hello-readme.png)中，“读取 README”的可见动作位于第三轮。下面按该轮已经关联的两个响应 ID 拆开，`R0`、`R1` 是阅读代号，不是新增协议字段。
+第一章的[真实 Desktop 截图](../../docs/images/desktop-hello-readme.png)中，“读取 README”的可见动作位于第三轮。下面按该轮已经关联的两个响应 ID 拆开，`R0`、`R1` 是阅读代号，不是新增协议字段。
 
 | 阶段 | 请求中的新输入 | 本次模型输出 | 执行结果到哪里 |
 | --- | --- | --- | --- |
-| R0：`00-request` | 13 项；工具/指令/规则、前两轮对话、本轮任务及一条助手进度文字；没有 `previous_response_id` | 一个 `custom_tool_call`，要求 `exec` 运行读取代码 | 实际结果进入 R1 的 `input[0]`；[R0 请求](../evidence/desktop-lab/03-readme/00-request.request.json)、[输出项](../evidence/desktop-lab/03-readme/00-request.output-items.json) |
-| R1：`01-request` | 1 项 `custom_tool_call_output`，引用 R0 响应 | 一条 `final_answer` 消息，三句话介绍项目 | 没有新的工具调用；[R1 请求](../evidence/desktop-lab/03-readme/01-request.request.json)、[输出项](../evidence/desktop-lab/03-readme/01-request.output-items.json) |
+| R0：`00-request` | 13 项；工具/指令/规则、前两轮对话、本轮任务及一条助手进度文字；没有 `previous_response_id` | 一个 `custom_tool_call`，要求 `exec` 运行读取代码 | 实际结果进入 R1 的 `input[0]`；[R0 请求](../../evidence/desktop-lab/03-readme/00-request.request.json)、[输出项](../../evidence/desktop-lab/03-readme/00-request.output-items.json) |
+| R1：`01-request` | 1 项 `custom_tool_call_output`，引用 R0 响应 | 一条 `final_answer` 消息，三句话介绍项目 | 没有新的工具调用；[R1 请求](../../evidence/desktop-lab/03-readme/01-request.request.json)、[输出项](../../evidence/desktop-lab/03-readme/01-request.output-items.json) |
 
 R0 的 `input[0..9]` 保留上章已有内容，`input[10]` 是上章最后回答，`input[11]` 是本轮问题，`input[12]` 已包含“我会只阅读……”的进度文字。这是该次实际请求的快照；不能因为它出现在 `input`，又把它当成本次 R0 新产生的一条输出。
 
@@ -47,7 +47,7 @@ sequenceDiagram
 
 ## 从调用找到结果
 
-第一次请求包含 13 项 `input`，包括前面的对话、本轮问题和助手进度文字。模型随后返回一个工具调用。下面节选[第一阶段输出项](../evidence/desktop-lab/03-readme/00-request.output-items.json)中的实际字段，省略了状态与内部元数据：
+第一次请求包含 13 项 `input`，包括前面的对话、本轮问题和助手进度文字。模型随后返回一个工具调用。下面节选[第一阶段输出项](../../evidence/desktop-lab/03-readme/00-request.output-items.json)中的实际字段，省略了状态与内部元数据：
 
 ```json
 {
@@ -98,7 +98,7 @@ text(await tools.exec_command({cmd:"Get-Content -LiteralPath 'E:\\Develop\\githu
 
 ## 为什么第二次请求只有一项？
 
-打开[第二次请求](../evidence/desktop-lab/03-readme/01-request.request.json)，其中这个字段原样记录为：
+打开[第二次请求](../../evidence/desktop-lab/03-readme/01-request.request.json)，其中这个字段原样记录为：
 
 ```json
 {
@@ -106,7 +106,7 @@ text(await tools.exec_command({cmd:"Get-Content -LiteralPath 'E:\\Develop\\githu
 }
 ```
 
-这是字段节选，不是完整请求。它恰好指向[第一次完成事件](../evidence/desktop-lab/03-readme/00-request.response.json)的 `response.id`。第二次 `input` 只有一项工具结果，历史通过响应引用接续。上一章观察到的是历史重发；这一次，同一任务的工具回传走了引用方式。
+这是字段节选，不是完整请求。它恰好指向[第一次完成事件](../../evidence/desktop-lab/03-readme/00-request.response.json)的 `response.id`。第二次 `input` 只有一项工具结果，历史通过响应引用接续。上一章观察到的是历史重发；这一次，同一任务的工具回传走了引用方式。
 
 这里有两条同时存在、但作用不同的连接：
 
@@ -117,7 +117,7 @@ text(await tools.exec_command({cmd:"Get-Content -LiteralPath 'E:\\Develop\\githu
 
 R0 输入用量为 33,015，R1 为 33,407。R1 虽然只传回一项，服务仍报告三万多输入 token，与它接续既有上下文相符，不代表一份 README 本身有三万多 token。
 
-最终三句话位于[第二阶段输出项](../evidence/desktop-lab/03-readme/01-request.output-items.json)。读到这里，可以完整连起来：
+最终三句话位于[第二阶段输出项](../../evidence/desktop-lab/03-readme/01-request.output-items.json)。读到这里，可以完整连起来：
 
 ```text
 第一次请求 → custom_tool_call
@@ -131,7 +131,7 @@ R0 输入用量为 33,015，R1 为 33,407。R1 虽然只传回一项，服务仍
 
 工具结果的 `exit_code` 为 0，并带回 README 内容，支持“读取成功”的判断。README 说测试应失败，仍只是文件中的说明；本轮没有运行测试，不能宣称已经重新验证过故障。
 
-本轮[首阶段事件](../evidence/desktop-lab/03-readme/00-request.events.json)产生调用，[第二阶段事件](../evidence/desktop-lab/03-readme/01-request.events.json)产生最终文字。两份 `response.completed` 的 `output` 都为空，正文与调用需要看 `response.output_item.done`；这沿用了第一章介绍的证据形态，不能只扫描完成事件的空数组就断言没有读取。
+本轮[首阶段事件](../../evidence/desktop-lab/03-readme/00-request.events.json)产生调用，[第二阶段事件](../../evidence/desktop-lab/03-readme/01-request.events.json)产生最终文字。两份 `response.completed` 的 `output` 都为空，正文与调用需要看 `response.output_item.done`；这沿用了第一章介绍的证据形态，不能只扫描完成事件的空数组就断言没有读取。
 
 两次正式响应合计输入 token 66,422、输出 token 185，排除预热。这个求和用于观察工作过程中的用量，不是费用，也不代表两份互不重复的上下文。
 

@@ -6,7 +6,7 @@
 
 在包含修复记录和 `PRICE-A7` 代号的原任务中，通过输入框的 `/` 菜单点击“压缩”。点击前，界面显示“压缩此聊天的上下文（已使用 5%）”；完成后显示“上下文已压缩”和“上下文用量：1%”。
 
-这些文字保存在[界面观察记录](../evidence/desktop-lab/ui-observations.json)中。这次是手动操作，不是等待自动达到阈值，也不是给模型发送一句“请帮我总结”来替代原生功能。
+这些文字保存在[界面观察记录](../../evidence/desktop-lab/ui-observations.json)中。这次是手动操作，不是等待自动达到阈值，也不是给模型发送一句“请帮我总结”来替代原生功能。
 
 5% 与 1% 是界面显示的取整比例，不能直接解释成精确节省了 80% 的模型输入 token。它们的统计范围也不应与某份 CPA 响应的用量混为一谈。
 
@@ -29,7 +29,7 @@ CPA 捕获到一份 `response.create` 请求，共 35 项 `input`。末尾是客
 }
 ```
 
-在[压缩请求](../evidence/desktop-lab/10-compaction/00-request.request.json)中可以原样核对。这次实现确实使用 Responses 请求，元数据明确标为压缩；没有假设所有压缩都必须走一个独立命名的 HTTP 接口。
+在[压缩请求](../../evidence/desktop-lab/10-compaction/00-request.request.json)中可以原样核对。这次实现确实使用 Responses 请求，元数据明确标为压缩；没有假设所有压缩都必须走一个独立命名的 HTTP 接口。
 
 ## 35 项输入不是 35 条新用户消息
 
@@ -46,11 +46,11 @@ CPA 捕获到一份 `response.create` 请求，共 35 项 `input`。末尾是客
 
 这里的区间是数组下标，不是新增消息条数。源请求包含真实 `custom_tool_call` 和 `custom_tool_call_output`，所以模型可以把“测试曾失败”和“修复后测试通过”区分开，而不仅依赖最后一段自述。
 
-压缩模型的[输出项](../evidence/desktop-lab/10-compaction/00-request.output-items.json)随后生成摘要，其中记录了加法改为乘法、测试未改、修复前后退出码，以及 `PRICE-A7`。这是一段对已发生事实的重新表示，不是再执行一次补丁或测试。本次输出里没有工具调用。
+压缩模型的[输出项](../../evidence/desktop-lab/10-compaction/00-request.output-items.json)随后生成摘要，其中记录了加法改为乘法、测试未改、修复前后退出码，以及 `PRICE-A7`。这是一段对已发生事实的重新表示，不是再执行一次补丁或测试。本次输出里没有工具调用。
 
 ## 摘要生成，不是全部证据
 
-仅看到模型写出摘要，还不足以证明应用替换了任务上下文。本次 rollout 随后记录了真正的 `compacted` 事件，保存于[本地压缩事件](../evidence/desktop-lab/10-compaction/compaction.json)。
+仅看到模型写出摘要，还不足以证明应用替换了任务上下文。本次 rollout 随后记录了真正的 `compacted` 事件，保存于[本地压缩事件](../../evidence/desktop-lab/10-compaction/compaction.json)。
 
 其中 `compaction_response_id` 与 CPA 完成事件的 `response.id` 精确相同，`window_number` 变为 1，`replacement_history` 包含 6 项：5 条原用户消息，以及带接续说明的摘要消息。后者长 1,349 个 JavaScript 字符串长度单位，包含任务完成状态、修改、验证、约束和临时代号。
 
@@ -66,7 +66,7 @@ CPA 捕获到一份 `response.create` 请求，共 35 项 `input`。末尾是客
 
 实际回答给出 `PRICE-A7`、`unitPrice * quantity`，以及 `npm run typecheck`、`npm test`、`npm start`，并指出退出码均为 0。没有工具调用。
 
-[追问请求](../evidence/desktop-lab/10-compaction-check/00-request.request.json)共有 13 项输入，未携带 `previous_response_id`。其中 `input[2]` 到 `input[7]` 对应保留的用户消息与摘要，后面还附加了当前应用指令、项目规则和新问题。
+[追问请求](../../evidence/desktop-lab/10-compaction-check/00-request.request.json)共有 13 项输入，未携带 `previous_response_id`。其中 `input[2]` 到 `input[7]` 对应保留的用户消息与摘要，后面还附加了当前应用指令、项目规则和新问题。
 
 进一步逐项对照：
 
@@ -80,7 +80,7 @@ CPA 捕获到一份 `response.create` 请求，共 35 项 `input`。末尾是客
 
 特别注意 `input[7].role` 是 `user`，内容以 `Another language model started...` 开头。这是本次运行环境包装进来的摘要消息，并不意味着用户在输入框里手写了这段英文与总结。字段角色和内容来源仍然要分开判断。
 
-随后[追问输出](../evidence/desktop-lab/10-compaction-check/00-request.output-items.json)回答三个问题，没有再读文件。把三份证据连起来，能得到具体变化：原请求中的详细工具记录 → 摘要响应 → 本地 `replacement_history` → 新请求中的六项接续材料。详细工具输出没有按原来的完整序列重新出现；本次是重建输入，不是仅换一个历史响应 ID。
+随后[追问输出](../../evidence/desktop-lab/10-compaction-check/00-request.output-items.json)回答三个问题，没有再读文件。把三份证据连起来，能得到具体变化：原请求中的详细工具记录 → 摘要响应 → 本地 `replacement_history` → 新请求中的六项接续材料。详细工具输出没有按原来的完整序列重新出现；本次是重建输入，不是仅换一个历史响应 ID。
 
 这种有损表示为什么有用？后续工作需要“实现已修好、哪些验证通过、哪些约束还有效”，未必需要每条 PowerShell 输出的装饰和每次搜索的所有行。代价是省略的细节不能靠摘要凭空恢复；若新任务需要核对当前源码或原始错误，就应该重新读取文件或查证据，而不是把摘要当完整数据库。
 

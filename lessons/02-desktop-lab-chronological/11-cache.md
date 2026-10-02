@@ -12,7 +12,7 @@
 | 第 2 章接续对话 | 32,930 | 13,568 | 12 |
 | 第 7 章最后阶段 | 39,982 | 38,912 | 151 |
 
-可在[问候完成事件](../evidence/desktop-lab/01-hello/01-request.response.json)、[接续完成事件](../evidence/desktop-lab/02-context/00-request.response.json)和[修复最后阶段](../evidence/desktop-lab/07-fix/04-request.response.json)核对。这些请求在同一次教程实验中也没有固定的缓存命中数量。
+可在[问候完成事件](../../evidence/desktop-lab/01-hello/01-request.response.json)、[接续完成事件](../../evidence/desktop-lab/02-context/00-request.response.json)和[修复最后阶段](../../evidence/desktop-lab/07-fix/04-request.response.json)核对。这些请求在同一次教程实验中也没有固定的缓存命中数量。
 
 ## 先找到真正的用量字段
 
@@ -48,11 +48,11 @@
 
 | 阶段 | 本次新增的 `input[0]` | 输入 token | 缓存输入 | 输出 token |
 | --- | --- | ---: | ---: | ---: |
-| [00](../evidence/desktop-lab/07-fix/00-request.response.json) | 用户修复要求 | 35,472 | 35,072 | 291 |
-| [01](../evidence/desktop-lab/07-fix/01-request.response.json) | 第一批读取结果 | 38,485 | 35,328 | 162 |
-| [02](../evidence/desktop-lab/07-fix/02-request.response.json) | 搜索结果 | 38,822 | 38,272 | 255 |
-| [03](../evidence/desktop-lab/07-fix/03-request.response.json) | 修改工具结果 | 39,101 | 38,656 | 197 |
-| [04](../evidence/desktop-lab/07-fix/04-request.response.json) | 三项验证与文件重读结果 | 39,982 | 38,912 | 151 |
+| [00](../../evidence/desktop-lab/07-fix/00-request.response.json) | 用户修复要求 | 35,472 | 35,072 | 291 |
+| [01](../../evidence/desktop-lab/07-fix/01-request.response.json) | 第一批读取结果 | 38,485 | 35,328 | 162 |
+| [02](../../evidence/desktop-lab/07-fix/02-request.response.json) | 搜索结果 | 38,822 | 38,272 | 255 |
+| [03](../../evidence/desktop-lab/07-fix/03-request.response.json) | 修改工具结果 | 39,101 | 38,656 | 197 |
+| [04](../../evidence/desktop-lab/07-fix/04-request.response.json) | 三项验证与文件重读结果 | 39,982 | 38,912 | 151 |
 
 这五次都使用响应引用，`input.length` 都为 1，但不是同一项内容，也不是五次只看一条消息的无状态推理。模型在 01 获得第一批文件内容，在 02 获得搜索结果，在 03 知道补丁工具已返回，在 04 才获得验证结果；每一步需要结合已有上下文决定下一步。
 

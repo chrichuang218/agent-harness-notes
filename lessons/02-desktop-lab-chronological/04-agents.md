@@ -27,16 +27,16 @@
 
 | 阶段 | 请求内容 | 输出与调用 | 结果回传位置 |
 | --- | --- | --- | --- |
-| `00-request` | 7 项初始上下文，已包含全局与项目规则，本轮问题在 `input[6]` | 进度消息 + 一个读取 README 的 `custom_tool_call`；`call_6ZAj4HZ4EYG6zE8yzenIHVk0` | 下一请求 `input[0]`；[请求](../evidence/desktop-lab/04-agents/00-request.request.json)、[输出项](../evidence/desktop-lab/04-agents/00-request.output-items.json) |
-| `01-request` | 1 项工具结果，引用第一响应 `resp_040c808d0f406bc6016abbe279625087d09292441722b15d2b` | 最终说明以“项目观察：”开头，没有新增工具调用 | [请求](../evidence/desktop-lab/04-agents/01-request.request.json)、[输出项](../evidence/desktop-lab/04-agents/01-request.output-items.json) |
+| `00-request` | 7 项初始上下文，已包含全局与项目规则，本轮问题在 `input[6]` | 进度消息 + 一个读取 README 的 `custom_tool_call`；`call_6ZAj4HZ4EYG6zE8yzenIHVk0` | 下一请求 `input[0]`；[请求](../../evidence/desktop-lab/04-agents/00-request.request.json)、[输出项](../../evidence/desktop-lab/04-agents/00-request.output-items.json) |
+| `01-request` | 1 项工具结果，引用第一响应 `resp_040c808d0f406bc6016abbe279625087d09292441722b15d2b` | 最终说明以“项目观察：”开头，没有新增工具调用 | [请求](../../evidence/desktop-lab/04-agents/01-request.request.json)、[输出项](../../evidence/desktop-lab/04-agents/01-request.output-items.json) |
 
 这仍然是“请求 → 读取 README → 结果回传 → 回答”的工具循环。新增项目规则并没有引入一次模型主动读取 `AGENTS.md` 的调用；规则在第一次模型生成前就已经可见。
 
-原始输出顺序见[首阶段事件](../evidence/desktop-lab/04-agents/00-request.events.json)与[第二阶段事件](../evidence/desktop-lab/04-agents/01-request.events.json)。第二阶段还含一个加密内容已脱敏的 `reasoning` 项；它不等于可读的完整内部思考，不能拿来替代文件和行为证据。
+原始输出顺序见[首阶段事件](../../evidence/desktop-lab/04-agents/00-request.events.json)与[第二阶段事件](../../evidence/desktop-lab/04-agents/01-request.events.json)。第二阶段还含一个加密内容已脱敏的 `reasoning` 项；它不等于可读的完整内部思考，不能拿来替代文件和行为证据。
 
 ## 输入框没写，实际请求里有
 
-在[第一次请求](../evidence/desktop-lab/04-agents/00-request.request.json)中，`input[5]` 仍是一条 `role: "user"` 的 `message`，包含三个 `input_text` 块：
+在[第一次请求](../../evidence/desktop-lab/04-agents/00-request.request.json)中，`input[5]` 仍是一条 `role: "user"` 的 `message`，包含三个 `input_text` 块：
 
 | 位置 | 包装与内容 | 和 AGENTS 的关系 |
 | --- | --- | --- |
@@ -69,7 +69,7 @@
 </INSTRUCTIONS>
 ```
 
-全局部分包含“沟通、指令与规则来源、自主执行与任务范围、澄清与批准、实现与调试、验证与清理、完成与阻塞”七个章节。去掉外层包装并统一换行后，这一部分与第一章的全局规则正文相同；新加入的是 `--- project-doc ---` 后的两条项目约定。历史项目文件可在[实验项目规则快照](../examples/07-fixed/AGENTS.md)中对照。
+全局部分包含“沟通、指令与规则来源、自主执行与任务范围、澄清与批准、实现与调试、验证与清理、完成与阻塞”七个章节。去掉外层包装并统一换行后，这一部分与第一章的全局规则正文相同；新加入的是 `--- project-doc ---` 后的两条项目约定。历史项目文件可在[实验项目规则快照](../../examples/07-fixed/AGENTS.md)中对照。
 
 因此本次证据说明：**项目规则在首次模型请求发出时已经进入上下文。** 这与模型之后主动调用工具读取文件，是不同的进入路径。
 
@@ -107,7 +107,7 @@ flowchart LR
 
 > 项目观察：这是一个计算商品总价的极简 TypeScript 项目，用于在 Codex Desktop 中测试文件读取、代码修改和测试执行，并通过 CPA 日志观察过程。
 
-可以在[第二阶段输出项](../evidence/desktop-lab/04-agents/01-request.output-items.json)核对。与[上一章输出](../evidence/desktop-lab/03-readme/01-request.output-items.json)相比，本次最终说明出现了约定的开头。
+可以在[第二阶段输出项](../../evidence/desktop-lab/04-agents/01-request.output-items.json)核对。与[上一章输出](../../evidence/desktop-lab/03-readme/01-request.output-items.json)相比，本次最终说明出现了约定的开头。
 
 还有一个细节值得保留：模型在读取前发出的进度文字以“我会只读取”开头，并没有加“项目观察：”。因此准确结论是“最终介绍遵循了开头约定”，不能扩大成“所有助手消息都遵循了同一格式”。
 
