@@ -8,16 +8,21 @@ const root = resolve('dist');
 const catalog = JSON.parse(await readFile('course/catalog.json', 'utf8'));
 const { experiments } = JSON.parse(await readFile('evidence/desktop-lab/index.json', 'utf8'));
 const captureReadme = process.argv.includes('--capture-readme');
+const basePath = '/agent-harness-notes/';
 const stages = experiments.flatMap(experiment => experiment.stages.map((stage, index) => ({ experiment, stage, index })));
 assert.equal(catalog.lessons.length, 15);
 assert.equal(catalog.groups.length, 4);
 assert.equal(experiments.length, 26);
 assert.equal(stages.length, 74);
-const types = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.png': 'image/png', '.svg': 'image/svg+xml' };
+const types = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.png': 'image/png', '.svg': 'image/svg+xml', '.txt': 'text/plain; charset=utf-8' };
 const server = createServer(async (request, response) => {
   try {
     const pathname = decodeURIComponent(new URL(request.url, 'http://localhost').pathname);
-    const file = resolve(root, '.' + (pathname === '/' ? '/index.html' : pathname));
+    // Serve the deployed Pages path without a root fallback. Absolute /assets
+    // or /licenses URLs must fail here instead of passing only on localhost.
+    if (!pathname.startsWith(basePath)) { response.writeHead(404).end(); return; }
+    const localPath = pathname.slice(basePath.length) || 'index.html';
+    const file = resolve(root, localPath);
     if (!file.startsWith(root + '/') && !file.startsWith(root + '\\')) { response.writeHead(403).end(); return; }
     response.setHeader('Content-Type', types[extname(file)] || 'application/octet-stream');
     response.end(await readFile(file));
@@ -30,22 +35,37 @@ try {
   const context = await browser.newContext({ viewport: { width: 1440, height: 1000 }, permissions: ['clipboard-read', 'clipboard-write'], reducedMotion: 'reduce' });
   const page = await context.newPage();
   const errors = [];
+  const badResources = [];
   page.on('pageerror', error => errors.push(error.message));
   page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
-  const url = `http://127.0.0.1:${server.address().port}/`;
+  page.on('response', response => { if (response.url().startsWith('http://127.0.0.1:') && response.status() >= 400) badResources.push(`${response.status()} ${response.url()}`); });
+  page.on('requestfailed', request => badResources.push(`${request.failure()?.errorText}: ${request.url()}`));
+  const url = `http://127.0.0.1:${server.address().port}${basePath}`;
   const readJson = async path => JSON.parse(await readFile(path, 'utf8'));
   const owner = experiment => catalog.lessons.find(lesson => lesson.evidenceIds.includes(experiment.id));
   const noOverflow = async label => assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, label + ': horizontal page overflow');
+  async function waitChapter(id) {
+    await page.waitForFunction(id => {
+      const visible = [...document.querySelectorAll('.chapter')].filter(chapter => chapter.getClientRects().length);
+      return document.querySelector('#main')?.getAttribute('aria-busy') === 'false' && visible.length === 1 && visible[0].dataset.lesson === id;
+    }, id);
+    assert.equal(await page.locator('.home-page:visible,.introduction:visible').count(), 0, id + ': another reading surface is visible');
+    assert.equal(await page.locator('.chapter:visible').count(), 1, id + ': only the current chapter may be visible');
+  }
+  async function waitWorkbench(id, experimentId, index, viewName) {
+    await waitChapter(id);
+    await page.waitForFunction(({ id, experimentId, index, viewName }) => {
+      const host = document.querySelector(`[data-workbench="${id}"]`);
+      return host?.getClientRects().length && host.dataset.experiment === experimentId && host.dataset.stage === String(index) && host.dataset.view === viewName && host.getAttribute('aria-busy') === 'false' && host.dataset.ready === 'true';
+    }, { id, experimentId, index, viewName });
+    return page.locator(`[data-workbench="${id}"]`);
+  }
   async function openWorkbench(experiment, stage, view, extra = {}) {
     const lesson = owner(experiment);
     assert.ok(lesson, 'Experiment is not reachable: ' + experiment.id);
     const query = new URLSearchParams({ experiment: experiment.id, stage: String(stage), view, ...extra });
     await page.goto(url + '#/lesson/' + lesson.id + '?' + query);
-    await page.waitForFunction(({ id, experimentId, index, viewName }) => {
-      const host = document.querySelector(`[data-workbench="${id}"]`);
-      return host?.dataset.experiment === experimentId && host.dataset.stage === String(index) && host.dataset.view === viewName && host.getAttribute('aria-busy') === 'false' && host.dataset.ready === 'true';
-    }, { id: lesson.id, experimentId: experiment.id, index: stage, viewName: view });
-    return page.locator(`[data-workbench="${lesson.id}"]`);
+    return waitWorkbench(lesson.id, experiment.id, stage, view);
   }
   async function verifyItems(host, expected, prefix, label) {
     const rendered = await host.locator('.workbench-content').evaluate((container, prefix) => [...container.querySelectorAll(`.trace-item[data-item-path^="${prefix}["]`)].map(item => ({
@@ -73,19 +93,55 @@ try {
   await page.goto(url);
   await page.locator('#main[aria-busy="false"]').waitFor();
   assert.equal(await page.locator('#main > .error-state').count(), 0, await page.locator('#main').innerText());
-  assert.equal(await page.locator('.introduction h1').innerText(), 'Codex 的一次完整运行');
-  assert.ok((await page.locator('.introduction h1').boundingBox()).y >= (await page.locator('.site-header').boundingBox()).height, 'Fixed header must not cover the opening title.');
-  assert.equal(await page.locator('.chapter').count(), 15);
-  assert.equal(await page.locator('.course-stage').count(), 4);
-  assert.equal(await page.locator('dialog,.hero').count(), 0, 'Reading/evidence must not depend on dialogs or a marketing hero.');
-  assert.ok(await page.locator('.mermaid svg').count(), 'Course diagram did not render.');
-  assert.ok(await page.locator('.mermaid svg').first().evaluate(svg => svg.getBoundingClientRect().width >= svg.viewBox.baseVal.width - 1), 'Diagram text must not be scaled down to fit the article.');
-  await noOverflow('Desktop introduction');
-  assert.equal(await page.locator('.prose').first().evaluate(element => getComputedStyle(element).fontSize), '15px');
-  assert.equal(await page.locator('.prose').first().evaluate(element => getComputedStyle(element).lineHeight), '25.5px');
+  assert.equal(await page.locator('.home-page h1').textContent(), '从一次修复，看懂 Agent');
+  assert.ok((await page.locator('.home-page h1').boundingBox()).y >= (await page.locator('.site-header').boundingBox()).height, 'Fixed header must not cover the opening title.');
+  assert.equal(await page.locator('.chapter:visible,.introduction:visible').count(), 0, 'The home page must not show the full course below its cards.');
+  assert.equal(await page.locator('.learning-path .phase-section').count(), 4);
+  assert.equal(await page.locator('.learning-path .lesson-card').count(), 15);
+  for (const [index, group] of catalog.groups.entries()) {
+    const phase = page.locator('.learning-path .phase-section').nth(index);
+    assert.ok((await phase.innerText()).includes(group.title));
+    const expected = catalog.lessons.filter(lesson => lesson.group === group.id).map(lesson => '#/lesson/' + lesson.id);
+    const actual = await phase.locator('a.lesson-card').evaluateAll(cards => cards.map(card => card.getAttribute('href')));
+    assert.deepEqual(actual, expected, group.id + ': cards must preserve the Chinese course order.');
+  }
+  assert.equal(await page.locator('dialog').count(), 0, 'Reading/evidence must not require a dialog.');
+  const license = page.locator('.site-footer a[href*="licenses/learn-claude-code.txt"]');
+  assert.equal(await license.count(), 1, 'Reference license link is missing.');
+  const licenseUrl = new URL(await license.getAttribute('href'), url).href;
+  assert.ok(licenseUrl.startsWith(url + 'licenses/'), 'License must resolve under the GitHub Pages base path.');
+  const licenseResponse = await context.request.get(licenseUrl);
+  assert.equal(licenseResponse.status(), 200);
+  assert.ok((await licenseResponse.text()).includes('MIT License'));
+  await noOverflow('Desktop homepage');
   await mkdir('work', { recursive: true });
   await page.screenshot({ path: 'work/site-reader-desktop.png', fullPage: false, animations: 'disabled' });
   if (captureReadme) { await mkdir('docs/images', { recursive: true }); await page.screenshot({ path: 'docs/images/site-preview.png', fullPage: false, animations: 'disabled' }); }
+
+  await page.locator('.home-example a').click();
+  await waitChapter('03-agent-loop');
+  assert.equal(new URLSearchParams(new URL(page.url()).hash.split('?')[1]).get('section'), 'agent-loop-timeline');
+  assert.ok(await page.locator('.page-toc [data-section="agent-loop-timeline"]').count(), 'The real repair timeline should have a chapter-outline entry.');
+  const timelineTop = (await page.locator('#agent-loop-timeline').boundingBox()).y;
+  assert.ok(timelineTop >= 60 && timelineTop < 200, 'The homepage repair link must land on the real request timeline.');
+  await page.goBack();
+  await page.locator('.home-page:visible').waitFor();
+
+  await page.locator('[data-start-learning]').click();
+  await waitChapter('01-request');
+  assert.ok((await page.locator('.breadcrumb').innerText()).includes('一次请求'));
+  await page.goBack();
+  await page.locator('.home-page:visible').waitFor();
+  assert.equal(await page.locator('.chapter:visible').count(), 0);
+  await page.locator('a[href="#/guide"]:visible').first().click();
+  await page.locator('.introduction:visible h1').waitFor();
+  assert.equal(await page.locator('.introduction h1').innerText(), 'Codex 的一次完整运行');
+  assert.equal(await page.locator('.chapter:visible,.home-page:visible').count(), 0);
+  assert.ok(await page.locator('.introduction').evaluate(element => parseFloat(getComputedStyle(element).fontSize)) >= 15, 'Long-form guide text must remain readable.');
+  await noOverflow('Desktop guide');
+
+  await page.goto(url + '#/lesson/01-request');
+  await waitChapter('01-request');
   const screenshot = page.locator('img[src*="desktop-hello-readme"]').first();
   assert.ok(await screenshot.count(), 'Real Desktop screenshot is missing.');
   const asset = await screenshot.getAttribute('src');
@@ -93,10 +149,24 @@ try {
   assert.equal(await screenshot.locator('..').getAttribute('target'), '_blank');
   assert.equal(await screenshot.locator('..').getAttribute('href'), new URL(asset, url).href);
   assert.ok((await screenshot.locator('..').innerText()).includes('点击查看原图'));
+  const imagePagePromise = context.waitForEvent('page');
+  await screenshot.locator('..').click();
+  const imagePage = await imagePagePromise;
+  await imagePage.waitForLoadState();
+  assert.equal(imagePage.url(), new URL(asset, url).href, 'Opening the original image should preserve its actual asset URL.');
+  await imagePage.close();
+
+  // Navigation is a real route change, not a scroll through hidden chapters.
+  await page.locator('.reader-page:visible .chapter-pagination a[data-direction="next"]').click();
+  await waitChapter('02-tools');
+  await page.locator('.reader-page:visible .chapter-pagination a[data-direction="previous"]').click();
+  await waitChapter('01-request');
+  await page.goBack();
+  await waitChapter('02-tools');
 
   await page.goto(url + '#/lesson/02-tools');
   await page.reload();
-  await page.locator('#main[aria-busy="false"]').waitFor();
+  await waitChapter('02-tools');
   await page.waitForLoadState('networkidle');
   const toolsTop = (await page.locator('#chapter-02-tools').boundingBox()).y;
   assert.ok(toolsTop >= 60 && toolsTop < 200, 'A direct chapter link must stay at the chapter after neighbouring evidence loads.');
@@ -114,27 +184,43 @@ try {
   for (const [previous, current] of Object.entries(legacyRoutes)) {
     await page.goto(url + '#/lesson/' + previous + '?section=' + previous + '-section-0');
     await page.waitForFunction(id => location.hash === '#/lesson/' + id, current);
+    await waitChapter(current);
     assert.ok((await page.title()).startsWith(catalog.lessons.find(lesson => lesson.id === current).title));
     assert.ok((await page.locator('#chapter-' + current).boundingBox()).y < 200, previous + ': old heading must land at its new chapter');
+  }
+  for (const previous of ['#/lesson/introduction', '#/lesson/0', '#/intro', '#/introduction']) {
+    await page.goto(url + previous);
+    await page.waitForFunction(() => location.hash === '#/guide');
+    await page.locator('.introduction:visible').waitFor();
+    assert.equal(await page.locator('.chapter:visible,.home-page:visible').count(), 0);
   }
   // The context chapter once linked to experiments now taught elsewhere.
   // Existing bookmarks must retain their source, stage and view after moving.
   await page.goto(url + '#/lesson/09-context?experiment=03-readme&stage=1&view=raw&kind=responseFile');
-  await page.waitForFunction(() => {
-    const host = document.querySelector('[data-workbench="02-tools"]');
-    return host.dataset.experiment === '03-readme' && host.dataset.stage === '1' && host.dataset.view === 'raw' && host.getAttribute('aria-busy') === 'false' && host.dataset.ready === 'true';
-  });
+  await waitWorkbench('02-tools', '03-readme', 1, 'raw');
   assert.equal(new URLSearchParams(new URL(page.url()).hash.split('?')[1]).get('experiment'), '03-readme');
   assert.equal(await page.locator('[data-workbench="02-tools"] .stage-select').inputValue(), '1');
   assert.equal(await page.locator('[data-workbench="02-tools"] .raw-select').inputValue(), 'responseFile');
   assert.ok(await page.locator('[data-workbench="02-tools"] [data-raw-content]').textContent() === await readFile(experiments.find(item => item.id === '03-readme').stages[1].responseFile, 'utf8'));
 
-  const foldedHeadings = await page.locator('.chapter .prose details h2,.chapter .prose details h3,.chapter .prose details h4,.chapter .prose details h5,.chapter .prose details h6,.chapter .prose details > summary[id]').evaluateAll(headings => headings.map(heading => ({ id: heading.id, lesson: heading.closest('.chapter').dataset.lesson })));
-  assert.equal(await page.locator('.chapter-outline a').filter({ hasText: /核对答案|参考解释|核对思路/ }).count(), 0, 'Exercise answers should stay out of the chapter outline.');
+  const foldedHeadings = [];
+  for (const lesson of catalog.lessons) {
+    await page.goto(url + '#/lesson/' + lesson.id);
+    await waitChapter(lesson.id);
+    const chapter = page.locator('#chapter-' + lesson.id);
+    foldedHeadings.push(...await chapter.locator('.prose details h2,.prose details h3,.prose details h4,.prose details h5,.prose details h6,.prose details > summary[id]').evaluateAll(headings => headings.map(heading => ({ id: heading.id, lesson: heading.closest('.chapter').dataset.lesson }))));
+    assert.equal(await page.locator('.page-toc a').filter({ hasText: /核对答案|参考解释|核对思路/ }).count(), 0, 'Exercise answers should stay out of the chapter outline.');
+    assert.equal(await page.locator('.page-toc details').getAttribute('open') === null, false, 'Desktop chapter outline must start expanded.');
+    const expectedPrevious = catalog.lessons.indexOf(lesson) > 0 ? catalog.lessons[catalog.lessons.indexOf(lesson) - 1].id : null;
+    const expectedNext = catalog.lessons[catalog.lessons.indexOf(lesson) + 1]?.id;
+    if (expectedPrevious) assert.equal(await page.locator('.reader-page:visible .chapter-pagination [data-direction="previous"]').getAttribute('href'), '#/lesson/' + expectedPrevious);
+    if (expectedNext) assert.equal(await page.locator('.reader-page:visible .chapter-pagination [data-direction="next"]').getAttribute('href'), '#/lesson/' + expectedNext);
+  }
   assert.ok(foldedHeadings.length, 'In-depth sections should be reachable through actual folded content headings.');
   for (const { id, lesson } of foldedHeadings) {
     await page.evaluate(() => document.querySelectorAll('.prose details').forEach(details => details.open = false));
     await page.goto(url + '#/lesson/' + lesson + '?section=' + id);
+    await waitChapter(lesson);
     await page.waitForFunction(id => {
       const heading = document.getElementById(id);
       for (let node = heading?.parentElement; node; node = node.parentElement) if (node.tagName === 'DETAILS' && !node.open) return false;
@@ -143,9 +229,30 @@ try {
   }
   const repeatedTarget = foldedHeadings.at(-1);
   await page.evaluate(() => document.querySelectorAll('.prose details').forEach(details => details.open = false));
-  await page.locator(`[data-nav-lesson="${repeatedTarget.lesson}"] [data-section="${repeatedTarget.id}"]`).click();
+  await page.locator(`.page-toc [data-section="${repeatedTarget.id}"]`).click();
   assert.ok(await page.locator(`[id="${repeatedTarget.id}"]`).evaluate(element => element.closest('details').open), 'Following the current link again must reopen its folded content.');
   await page.evaluate(() => document.querySelectorAll('.prose details').forEach(details => details.open = false));
+  await page.locator('.page-toc details > summary').click();
+  assert.equal(await page.locator('.page-toc details').getAttribute('open'), null, 'Chapter outline should collapse.');
+  await page.locator('.page-toc details > summary').click();
+  assert.notEqual(await page.locator('.page-toc details').getAttribute('open'), null, 'Chapter outline should reopen.');
+
+  // Make route requests overlap while a fresh document lazily loads chapters.
+  await page.goto(url + '#/');
+  await page.reload();
+  await page.locator('.home-page:visible').waitFor();
+  await page.evaluate(async () => {
+    location.hash = '#/lesson/15-architecture';
+    await new Promise(resolve => setTimeout(resolve, 0));
+    location.hash = '#/lesson/07-skills';
+    await new Promise(resolve => setTimeout(resolve, 0));
+    location.hash = '#/lesson/02-tools';
+  });
+  await waitChapter('02-tools');
+  await page.waitForLoadState('networkidle');
+  await waitChapter('02-tools');
+  assert.ok((await page.title()).startsWith(catalog.lessons[1].title), 'A stale lazy load replaced the last route title.');
+  assert.ok(await page.locator('.page-toc a[data-section]').evaluateAll(links => links.every(link => link.dataset.section.startsWith('02-tools-') || link.dataset.section === 'workbench-02-tools')), 'A stale lazy load replaced the active outline.');
 
   // Every recorded stage, including prewarms, is selectable. Compare all input
   // items, roles, content blocks and original objects against public sources.
@@ -160,10 +267,15 @@ try {
     assert.ok(JSON.stringify(JSON.parse(top)) === JSON.stringify(Object.fromEntries(Object.entries(request).filter(([key]) => key !== 'input'))), label + ': request-level fields changed');
     if (stage.prewarm) assert.ok((await host.locator('.stage-select option:checked').innerText()).includes('预热'));
     if (request.previous_response_id) {
-      const previousHref = await host.locator('.request-metadata dl > div').nth(2).locator('a').getAttribute('href');
+      const previousLink = host.locator('.request-metadata dl > div').nth(2).locator('a');
+      const previousHref = await previousLink.getAttribute('href');
       const target = new URLSearchParams(previousHref.split('?')[1]);
       const targetExperiment = experiments.find(item => item.id === target.get('experiment'));
       assert.equal(targetExperiment?.stages[Number(target.get('stage'))]?.responseId, request.previous_response_id, label + ': previous response points to wrong stage');
+      await previousLink.click();
+      const targetLesson = decodeURIComponent(previousHref.match(/^#\/lesson\/([^?]+)/)[1]);
+      const targetHost = await waitWorkbench(targetLesson, targetExperiment.id, Number(target.get('stage')), target.get('view'));
+      assert.ok((await targetHost.locator('.request-metadata').innerText()).includes(request.previous_response_id), label + ': following a response reference did not open its recorded stage');
       previousCount++;
     }
     host = await openWorkbench(experiment, index, 'output');
@@ -178,7 +290,68 @@ try {
     host = await openWorkbench(experiment, index, 'raw', { kind: 'eventsFile' });
     assert.ok(await host.locator('[data-raw-content]').textContent() === await readFile(stage.eventsFile, 'utf8'), label + ': streamed events differ from current public source');
   }
+  assert.equal(previousCount, 60, 'All recorded response references must remain navigable.');
   console.log(`Verified all ${experiments.length} experiments / ${stages.length} stages: complete inputs, roles, content blocks, tools, output objects, completion events, client/upstream snapshots; ${previousCount} response references.`);
+
+  const fix = experiments.find(item => item.id === '07-fix');
+  await page.goto(url + '#/lesson/03-agent-loop');
+  await waitChapter('03-agent-loop');
+  const timeline = page.locator('#agent-loop-timeline');
+  await timeline.waitFor({ state: 'visible' });
+  await page.waitForFunction(() => document.querySelector('#agent-loop-timeline')?.getAttribute('aria-busy') === 'false');
+  assert.equal(await timeline.locator('[data-loop-select]').count(), 5);
+  const fixRequests = await Promise.all(fix.stages.map(stage => readJson(stage.requestFile)));
+  const fixOutputs = await Promise.all(fix.stages.map(stage => readJson(stage.outputItemsFile)));
+  const userText = fixRequests[0].input.find(item => item.role === 'user').content.map(block => block.text || '').join('');
+  assert.equal(await timeline.locator('[data-loop-user-text]').textContent(), userText, 'Timeline user input must preserve the actual source.');
+  for (let index = 0; index < fix.stages.length; index++) {
+    await timeline.locator(`[data-loop-select="${index}"]`).click();
+    const panel = timeline.locator(`[data-loop-panel="${index}"]`);
+    await panel.waitFor({ state: 'visible' });
+    assert.equal(await timeline.locator('[data-loop-panel]:visible').count(), 1);
+    assert.equal(await timeline.locator(`[data-loop-select="${index}"]`).getAttribute('aria-selected'), 'true');
+    assert.equal(await panel.locator('[data-loop-input]').textContent(), JSON.stringify(fixRequests[index].input, null, 2), 'Timeline must preserve every original input item.');
+    const call = fixOutputs[index].items.find(item => item.call_id && /call$/.test(item.type));
+    if (call) {
+      assert.equal(await panel.locator('[data-loop-call-id]').getAttribute('data-loop-call-id'), call.call_id);
+      assert.equal(await panel.locator('[data-loop-call-input]').textContent(), call.input, 'Timeline call code was truncated or changed.');
+      const result = fixRequests[index + 1].input.find(item => item.call_id === call.call_id);
+      assert.ok(result, 'Timeline source must have a matching next-request result.');
+      assert.equal(await panel.locator('[data-loop-result-call-id]').getAttribute('data-loop-result-call-id'), result.call_id);
+      assert.equal(await panel.locator('[data-loop-result-call-id]').getAttribute('data-loop-result-stage'), String(index + 1));
+      assert.equal(await panel.locator('[data-loop-result-item]').textContent(), JSON.stringify(result, null, 2), 'Timeline return object was truncated or changed.');
+    } else assert.equal(await panel.locator('[data-loop-call-id]').count(), 0, 'The final answer must not invent an extra tool call.');
+    for (const view of ['request', 'output', 'calls', 'raw']) {
+      await panel.locator(`.loop-evidence-links [data-loop-view="${view}"][data-loop-stage="${index}"]`).click();
+      const selected = await waitWorkbench('03-agent-loop', fix.id, index, view);
+      if (view === 'request') await verifyItems(selected, fixRequests[index].input, 'input', `timeline ${index}: input link`);
+      if (view === 'output') await verifyItems(selected, fixOutputs[index].items, 'output', `timeline ${index}: output link`);
+      if (view === 'raw') assert.equal(await selected.locator('[data-raw-content]').textContent(), await readFile(fix.stages[index].requestFile, 'utf8'), 'Timeline raw link selected the wrong source.');
+      if (view === 'calls' && call) {
+        const pair = selected.locator('.call-pair').filter({ has: page.locator('h4').filter({ hasText: call.call_id }) });
+        const originals = (await pair.locator('[data-call-item]').allTextContents()).map(text => JSON.parse(text));
+        assert.ok(originals.some(item => JSON.stringify(item) === JSON.stringify(call)), 'Timeline call view omitted the actual model call.');
+        const result = fixRequests[index + 1].input.find(item => item.call_id === call.call_id);
+        assert.ok(originals.some(item => JSON.stringify(item) === JSON.stringify(result)), 'Timeline call view omitted its actual next-request result.');
+      }
+    }
+    if (call) {
+      await panel.locator('[data-loop-result-link]').click();
+      const selected = await waitWorkbench('03-agent-loop', fix.id, index + 1, 'request');
+      const result = selected.locator('.trace-item[data-item-path="input[0]"]');
+      assert.ok(await result.evaluate(element => element.open), 'Timeline return link must reveal the result input.');
+      assert.ok((await result.innerText()).includes(call.call_id));
+    }
+  }
+  const finalText = fixOutputs.at(-1).items.filter(item => item.type === 'message' && item.role === 'assistant').flatMap(item => item.content || []).map(block => block.text || '').join('');
+  assert.equal(await timeline.locator('[data-loop-final-text]').textContent(), finalText);
+  const checks = fixRequests.at(-1).input[0].output.slice(1).map(block => JSON.parse(block.text));
+  for (const command of ['npm run typecheck', 'npm test', 'npm start']) {
+    const expected = checks.find(check => check.check === command);
+    assert.equal(await timeline.locator(`[data-loop-check="${command}"]`).getAttribute('data-loop-exit-code'), String(expected.value.exit_code));
+  }
+  assert.equal(await timeline.locator('[data-loop-program-output]').textContent(), checks.find(check => check.check === 'npm start').value.output);
+  console.log('Verified five real Agent Loop stages, four call/result identities, every timeline view link, result jumps, original prompt/final text and three check outputs.');
 
   const hello = experiments.find(item => item.id === '01-hello');
   let host = await openWorkbench(hello, 1, 'request');
@@ -197,8 +370,14 @@ try {
   const share = await page.evaluate(() => navigator.clipboard.readText());
   assert.ok(share.includes('experiment=01-hello') && share.includes('stage=1'));
   await page.reload(); await page.locator('#main[aria-busy="false"]').waitFor();
-  await page.waitForFunction(() => document.querySelector('[data-workbench="01-request"]').dataset.ready === 'true');
+  await waitWorkbench('01-request', '01-hello', 1, 'request');
   assert.equal(await page.locator('[data-workbench="01-request"] .stage-select').inputValue(), '1');
+  host = await openWorkbench(hello, 1, 'request', { input: '5', content: '1' });
+  await page.reload();
+  host = await waitWorkbench('01-request', '01-hello', 1, 'request');
+  assert.ok(await host.locator('[data-item-path="input[5]"]').evaluate(element => element.open));
+  assert.ok(await host.locator('[data-content-path="input[5].content[1]"]').evaluate(element => element.open), 'A refreshed content bookmark must expand its exact block.');
+  assert.equal(await host.locator('[data-full-content="input[5].content[1]"]').textContent(), request.input[5].content[1].text);
 
   const readme = experiments.find(item => item.id === '03-readme');
   host = await openWorkbench(readme, 0, 'calls');
@@ -230,30 +409,53 @@ try {
     const supplement = page.locator('#supplement-' + lessonId);
     await supplement.locator('[data-supplement-content]').waitFor({ state: 'visible' });
     assert.ok(await supplement.locator('[data-supplement-content]').textContent() === await readFile(path, 'utf8'), path + ': supplemental source changed');
+    if (lessonId === 'introduction') assert.ok(page.url().includes('#/guide?file='), 'The previous introduction evidence link must migrate to the guide.');
+    else await waitChapter(lessonId);
   }
   await page.locator('#chapter-search').fill('call_id');
+  await page.waitForFunction(() => document.querySelectorAll('.nav-chapter[hidden]').length > 0 && document.querySelectorAll('.nav-chapter:not([hidden])').length > 0);
   assert.ok(await page.locator('.nav-chapter:not([hidden])').count() > 0);
   assert.ok(await page.locator('.nav-chapter[hidden]').count() > 0);
   await page.locator('#chapter-search').fill('');
-  await page.goto(url + '#/');
+  await page.waitForFunction(() => document.querySelectorAll('.nav-chapter[hidden]').length === 0);
+  await page.goto(url + '#/lesson/15-architecture');
+  await waitChapter('15-architecture');
+  const architectureDiagram = page.locator('#chapter-15-architecture .mermaid');
+  await architectureDiagram.locator('svg').waitFor({ state: 'visible' });
+  assert.ok(await architectureDiagram.locator('svg').evaluate(svg => svg.getBoundingClientRect().width >= svg.viewBox.baseVal.width - 1), 'Architecture diagram text must retain its intrinsic scale.');
   await page.getByRole('button', { name: '切换深浅主题' }).click();
   assert.ok(await page.locator('html').evaluate(element => element.classList.contains('dark')));
-  assert.equal(await page.locator('.mermaid').first().evaluate(element => getComputedStyle(element).backgroundColor), 'rgb(250, 250, 250)', 'Neutral diagram must retain a readable light background in dark mode.');
-  assert.ok(await page.locator('.mermaid').first().evaluate(element => [...element.querySelectorAll('.nodeLabel p,.edgeLabel p')].every(label => Math.max(...getComputedStyle(label).color.match(/\d+/g).slice(0, 3).map(Number)) < 140)), 'Diagram labels must remain dark on the light canvas after a theme toggle.');
+  assert.equal(await architectureDiagram.evaluate(element => getComputedStyle(element).backgroundColor), 'rgb(250, 250, 250)', 'Neutral diagram must retain a readable light background in dark mode.');
+  assert.ok(await architectureDiagram.evaluate(element => [...element.querySelectorAll('.nodeLabel p,.edgeLabel p')].every(label => Math.max(...getComputedStyle(label).color.match(/\d+/g).slice(0, 3).map(Number)) < 140)), 'Diagram labels must remain dark on the light canvas after a theme toggle.');
+  await noOverflow('Dark architecture chapter');
+  await page.goto(url + '#/');
+  await page.locator('.home-page:visible').waitFor();
   await page.screenshot({ path: 'work/site-reader-dark.png', fullPage: false });
   await page.getByRole('button', { name: '切换深浅主题' }).click();
   for (const width of [768, 390]) {
     await page.setViewportSize({ width, height: 844 });
-    for (const lesson of catalog.lessons) { await page.goto(url + '#/lesson/' + lesson.id); await noOverflow(`${width}px ${lesson.id}`); }
+    await page.goto(url + '#/'); await page.locator('.home-page:visible').waitFor(); await noOverflow(`${width}px homepage`);
+    await page.goto(url + '#/guide'); await page.locator('.introduction:visible').waitFor(); await noOverflow(`${width}px guide`);
+    for (const lesson of catalog.lessons) { await page.goto(url + '#/lesson/' + lesson.id); await waitChapter(lesson.id); await noOverflow(`${width}px ${lesson.id}`); }
     host = await openWorkbench(hello, 1, 'request'); await noOverflow(`${width}px structured input`);
     assert.ok(await host.locator('[data-full-content]').first().evaluate(element => parseFloat(getComputedStyle(element).fontSize)) >= 12, 'Mobile full-text source font is too small.');
+    assert.equal(await page.locator('.page-toc details').getAttribute('open'), null, 'The narrow-screen outline must start collapsed.');
+    await page.locator('.page-toc details > summary').click();
+    assert.notEqual(await page.locator('.page-toc details').getAttribute('open'), null);
+    await page.locator('.page-toc a[data-section]').first().click();
+    await waitChapter('01-request');
+    await noOverflow(`${width}px chapter heading jump`);
     if (width === 390) {
       await page.getByRole('button', { name: '展开学习目录' }).click();
       assert.equal(await page.locator('.menu-toggle').getAttribute('aria-expanded'), 'true');
-      await page.locator('.intro-link').click();
+      await page.locator('.course-sidebar a[href="#/guide"]').click();
+      await page.locator('.introduction:visible').waitFor();
       assert.equal(await page.locator('.menu-toggle').getAttribute('aria-expanded'), 'false');
-      assert.ok(await page.locator('.mermaid').first().evaluate(element => element.scrollWidth > element.clientWidth), 'Wide mobile diagram must scroll inside its frame.');
-      assert.ok(await page.locator('.mermaid svg').first().evaluate(svg => svg.getBoundingClientRect().width >= svg.viewBox.baseVal.width - 1), 'Mobile diagram must retain its intrinsic scale.');
+      await page.goto(url + '#/lesson/15-architecture'); await waitChapter('15-architecture');
+      assert.ok(await architectureDiagram.evaluate(element => element.scrollWidth > element.clientWidth), 'Wide mobile diagram must scroll inside its frame.');
+      assert.ok(await architectureDiagram.locator('svg').evaluate(svg => svg.getBoundingClientRect().width >= svg.viewBox.baseVal.width - 1), 'Mobile diagram must retain its intrinsic scale.');
+      await noOverflow('Mobile architecture diagram');
+      await page.goto(url + '#/'); await page.locator('.home-page:visible').waitFor();
       await page.screenshot({ path: 'work/site-reader-mobile.png', fullPage: false, animations: 'disabled' });
       await openWorkbench(hello, 1, 'request'); await page.screenshot({ path: 'work/site-workbench-mobile.png', fullPage: false, animations: 'disabled' });
     }
@@ -261,5 +463,13 @@ try {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await openWorkbench(hello, 1, 'request'); await page.screenshot({ path: 'work/site-workbench-desktop.png', fullPage: false, animations: 'disabled' });
   assert.deepEqual(errors, [], 'Browser errors must not be swallowed.');
-  console.log(`Site checks passed: continuous 15-topic reader; all 20 legacy routes; ${foldedHeadings.length} folded headings; all ${stages.length} stages; full-text copy/share; cross-experiment call/response links; native records; real image asset; 3 widths; no page or console errors.`);
+  assert.deepEqual(badResources, [], 'Deployed-path assets must all load without failed requests.');
+  console.log(`Site checks passed at ${basePath}: four-phase/15-card homepage, separate guide and one visible chapter; chapter navigation/history, lazy-load race, all 20 legacy routes and intro aliases; ${foldedHeadings.length} folded headings; five-stage real timeline; all ${stages.length} full-evidence stages and ${previousCount} response links; copy/share and input/content refresh; native records, original image and license; 3 widths and dark theme; no overflow, resource or console errors.`);
+} catch (error) {
+  const failedPage = browser?.contexts()[0]?.pages()[0];
+  if (failedPage && !failedPage.isClosed()) {
+    await mkdir('work', { recursive: true });
+    await failedPage.screenshot({ path: 'work/site-check-failure.png', fullPage: false, animations: 'disabled' }).catch(() => {});
+  }
+  throw error;
 } finally { await browser?.close(); server.close(); }

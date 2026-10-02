@@ -21,6 +21,10 @@ let fileLocations;
 let relations;
 let toastTimer;
 let routeNumber = 0;
+let searchNumber = 0;
+let evidenceObserver;
+const pageLoads = new Map();
+const outlines = new Map();
 
 function loadFile(path) {
   if (!files['../' + path]) return Promise.reject(new Error('未找到公开文件：' + path));
@@ -33,7 +37,7 @@ async function loadJson(path) {
 }
 function href(id, params = {}) {
   const query = new URLSearchParams(Object.entries(params).filter(([, value]) => value !== undefined && value !== null)).toString();
-  return '#/lesson/' + encodeURIComponent(id) + (query ? '?' + query : '');
+  return (id === 'introduction' ? '#/guide' : '#/lesson/' + encodeURIComponent(id)) + (query ? '?' + query : '');
 }
 function evidenceHref(lessonId, experimentId, stage, view = 'request', extra = {}) {
   return href(lessonId, { experiment: experimentId, stage, view, ...extra });
@@ -118,17 +122,21 @@ function responseLink(id, preferred, label = id) {
 function workbenchShell(lesson) {
   return `<section class="workbench" id="workbench-${lesson.id}" data-workbench="${lesson.id}" aria-busy="false"><h3>内嵌证据工作台</h3><p class="workbench-intro">先读结构，再展开全文。这里可以选择本章关联的全部实验与请求，包括预热。</p><div class="workbench-selectors"><label>实验 <select class="experiment-select" aria-label="选择实验">${lesson.evidenceIds.map(id => { const experiment = experiments.find(item => item.id === id); return `<option value="${esc(id)}">${esc(experiment?.title || id)}</option>`; }).join('')}</select></label><label>请求 <select class="stage-select" aria-label="选择请求"></select></label></div><div class="experiment-summary"></div><div class="request-controls"><button data-stage-prev>← 上一次请求</button><button data-stage-next>下一次请求 →</button><button data-share>复制此位置链接</button></div><div class="request-metadata"></div><div class="workbench-tabs" aria-label="工作台视图"><button data-view="request">输入与工具定义</button><button data-view="output">模型输出</button><button data-view="calls">工具调用与结果</button><button data-view="compare">客户端 / 上游</button><button data-view="raw">原始记录</button></div><div class="workbench-content"><button class="load-evidence">加载本次请求的真实证据</button></div></section><section class="supplement" id="supplement-${lesson.id}" hidden aria-label="补充原始证据"></section>`;
 }
+function homeMarkup() {
+  return `<section class="home-page" id="home-view"><header class="home-hero"><span class="eyebrow">CODEX DESKTOP · TYPESCRIPT · CPA</span><h1>从一次修复，<br class="hero-break">看懂 <span>Agent</span></h1><p>在真实 TypeScript 项目里使用 Codex Desktop，沿 CPA 请求与工具结果理解它怎样完成任务。</p><div class="hero-actions"><a class="primary-button" data-start-learning href="${href(catalog.lessons[0].id)}">开始学习 <span aria-hidden="true">→</span></a><a class="secondary-button" href="#/guide">阅读导读</a></div><div class="hero-meta">15 个主题 <span>·</span> 26 组真实实验 <span>·</span> 输入与输出可逐项核对</div></header><section class="home-example" aria-label="贯穿教程的修复案例"><div><span class="eyebrow">从这个错误开始</span><h2>10 × 3，为什么得到 13？</h2><p>读文件、定位错误、修改运算符，再运行测试。一次用户要求，对应五次模型请求。</p><a href="${href('03-agent-loop', { section: 'agent-loop-timeline' })}">跟踪这次修复 <span aria-hidden="true">→</span></a></div><div class="bug-example"><div><span>修复前</span><code>return unitPrice + quantity;</code><strong>13</strong></div><div><span>修复后</span><code>return unitPrice * quantity;</code><strong>30 <small>测试通过</small></strong></div></div></section><section class="learning-path" aria-labelledby="path-title"><div class="path-header"><span class="eyebrow">学习路线</span><h2 id="path-title">从一次请求，到完整运行</h2><p>先读懂输入和工具往返，再追查上下文、扩展能力与完成条件。</p></div>${catalog.groups.map((group, index) => `<section class="phase-section" data-phase="${group.id}"><header class="phase-header"><span class="phase-number">0${index + 1}</span><div><h3>${esc(group.title)}</h3><p>${esc(group.description)}</p></div></header><div class="lesson-grid">${catalog.lessons.filter(lesson => lesson.group === group.id).map(lesson => `<a class="lesson-card" href="${href(lesson.id)}" data-card-lesson="${lesson.id}"><div class="card-top"><span>${lessonNumber(lesson)}</span><span aria-hidden="true">↗</span></div><h4>${esc(lesson.title)}</h4><p>${esc(lesson.subtitle)}</p>${lesson.status === 'partial' ? '<small class="card-status">原生记忆含未实测范围</small>' : ''}</a>`).join('')}</div></section>`).join('')}</section></section>`;
+}
 function shell() {
-  document.querySelector('#app').innerHTML = `<a class="skip-link" href="#main">跳至正文</a><header class="site-header"><a class="brand" href="#/" aria-label="回到教程开篇"><span class="brand-icon"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M10 9h7a6 6 0 0 1 6 6v8M9 9v14h14" stroke="currentColor" stroke-width="2"/><rect x="5" y="5" width="8" height="8" rx="2" fill="var(--paper)" stroke="currentColor" stroke-width="2"/><rect x="19" y="19" width="8" height="8" rx="2" fill="var(--paper)" stroke="currentColor" stroke-width="2"/></svg></span><span>Agent Harness <span class="brand-light">学习笔记</span></span></a><div class="header-actions"><a href="${repo}" target="_blank" rel="noopener">GitHub ↗</a><button id="theme-toggle" aria-label="切换深浅主题">◐ 阅读主题</button><button class="menu-toggle" aria-label="展开学习目录" aria-expanded="false">☰</button></div></header><div class="mobile-shade" hidden></div><aside class="course-sidebar"><div class="directory-search"><span>⌕</span><input id="chapter-search" type="search" aria-label="搜索文档" placeholder="搜索文档…"></div><nav id="chapter-nav" aria-label="教程目录"></nav></aside><main id="main" tabindex="-1" aria-busy="true"><p>正在加载连续教程…</p></main><button id="back-top" aria-label="回到顶部">↑</button><div class="toast" role="status" aria-live="polite"></div>`;
+  document.querySelector('#app').innerHTML = `<a class="skip-link" href="#main">跳至正文</a><header class="site-header"><a class="brand" href="#/" aria-label="回到教程首页"><span class="brand-icon"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M10 9h7a6 6 0 0 1 6 6v8M9 9v14h14" stroke="currentColor" stroke-width="2"/><rect x="5" y="5" width="8" height="8" rx="2" fill="var(--paper)" stroke="currentColor" stroke-width="2"/><rect x="19" y="19" width="8" height="8" rx="2" fill="var(--paper)" stroke="currentColor" stroke-width="2"/></svg></span><span>Agent Harness <span class="brand-light">学习笔记</span></span></a><div class="header-actions"><a class="guide-link" href="#/guide">导读</a><a href="${repo}" target="_blank" rel="noopener">GitHub ↗</a><button class="search-toggle" aria-label="搜索课程">⌕ <span>搜索</span></button><button id="theme-toggle" aria-label="切换深浅主题">◐ <span>主题</span></button><button class="menu-toggle" aria-label="展开学习目录" aria-expanded="false">☰</button></div></header><div class="mobile-shade" hidden></div><aside class="course-sidebar"><div class="directory-search"><span>⌕</span><input id="chapter-search" type="search" aria-label="搜索文档" placeholder="搜索课程…"></div><nav id="chapter-nav" aria-label="教程目录">${navMarkup()}</nav></aside><main id="main" tabindex="-1" aria-busy="true">${homeMarkup()}<section class="reader-page" id="reader-view" hidden><nav class="breadcrumb" aria-label="当前位置"></nav><div class="reading-layout"><div class="reading-content"><div id="lesson-content"></div><nav class="chapter-pagination" aria-label="章节翻页"></nav></div><aside class="page-toc"><details open><summary>本章目录</summary><nav class="chapter-outline" aria-label="本章目录"></nav></details></aside></div></section></main><footer class="site-footer"><div><a href="#/">Agent Harness 学习笔记</a><span>Codex Desktop × TypeScript × CPA</span></div><p>界面参考 <a href="https://github.com/shareAI-lab/learn-claude-code" target="_blank" rel="noopener">Learn Claude Code</a> · <a href="${import.meta.env.BASE_URL}licenses/learn-claude-code.txt" target="_blank" rel="noopener">MIT</a>，本项目为独立教程。</p></footer><button id="back-top" aria-label="回到顶部">↑</button><div class="toast" role="status" aria-live="polite"></div>`;
   document.querySelector('#theme-toggle').onclick = () => {
     document.documentElement.classList.toggle('dark');
     try { localStorage.setItem('ah-theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light'); } catch { /* Theme remains usable without storage. */ }
   };
   document.querySelector('.menu-toggle').onclick = () => toggleMenu(!document.body.classList.contains('menu-open'));
+  document.querySelector('.search-toggle').onclick = () => { toggleMenu(true); document.querySelector('#chapter-search').focus(); };
   document.querySelector('.mobile-shade').onclick = () => toggleMenu(false);
   document.querySelector('.skip-link').onclick = event => { event.preventDefault(); document.querySelector('#main').focus(); document.querySelector('#main').scrollIntoView(); };
   document.querySelector('#back-top').onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
-  document.querySelector('#chapter-search').oninput = filterNavigation;
+  document.querySelector('#chapter-search').oninput = () => filterNavigation().catch(error => { console.error(error); showToast('搜索暂时不可用'); });
   document.addEventListener('click', handleClick);
   document.addEventListener('change', event => {
     const host = event.target.closest('[data-workbench]');
@@ -142,6 +150,14 @@ function shell() {
     if (event.key === 'Escape') toggleMenu(false);
     if ((event.key === '/' && !/INPUT|TEXTAREA|SELECT/.test(event.target.tagName)) || ((event.ctrlKey || event.metaKey) && event.key === 'k')) { event.preventDefault(); toggleMenu(true); document.querySelector('#chapter-search').focus(); }
   });
+  const narrow = matchMedia('(max-width: 1180px)');
+  const setTocLayout = () => document.querySelector('.page-toc details').open = !narrow.matches;
+  narrow.addEventListener('change', setTocLayout); setTocLayout();
+  evidenceObserver = new IntersectionObserver(entries => entries.forEach(entry => {
+    if (!entry.isIntersecting || entry.target.closest('[hidden]')) return;
+    const state = states.get(entry.target.dataset.workbench);
+    if (!state.loaded) renderWorkbench(state, false);
+  }), { rootMargin: '-64px 0px 150px 0px' });
 }
 function toggleMenu(open) {
   document.body.classList.toggle('menu-open', open);
@@ -149,7 +165,7 @@ function toggleMenu(open) {
   document.querySelector('.menu-toggle').setAttribute('aria-expanded', String(open));
 }
 function navMarkup() {
-  return `<a class="chapter-link intro-link" href="#/">Codex 的一次完整运行</a>${catalog.groups.map((group, index) => `<div class="nav-group"><h2>${index + 1}. ${esc(group.title)}</h2>${catalog.lessons.filter(lesson => lesson.group === group.id).map(lesson => `<div class="nav-chapter" data-nav-lesson="${lesson.id}"><a class="chapter-link" href="${href(lesson.id)}"><span>${lessonNumber(lesson)}</span>${esc(lesson.title)}</a><div class="chapter-outline" hidden></div></div>`).join('')}</div>`).join('')}`;
+  return `<a class="chapter-link home-link" href="#/">学习路线</a><a class="chapter-link intro-link" href="#/guide">导读与实验准备</a>${catalog.groups.map((group, index) => `<div class="nav-group"><h2><span class="nav-dot" aria-hidden="true"></span>0${index + 1} ${esc(group.title)}</h2>${catalog.lessons.filter(lesson => lesson.group === group.id).map(lesson => `<div class="nav-chapter" data-nav-lesson="${lesson.id}"><a class="chapter-link" href="${href(lesson.id)}"><span>${lessonNumber(lesson)}</span>${esc(lesson.title)}</a></div>`).join('')}</div>`).join('')}`;
 }
 function resolveDocumentPath(path, base) { return new URL(path, 'https://local.invalid/' + base).pathname.slice(1); }
 function decorateMarkdown(container, lesson) {
@@ -185,12 +201,14 @@ function decorateMarkdown(container, lesson) {
     const path = resolveDocumentPath(original.split('#')[0], lesson.file);
     const nextLesson = catalog.lessons.find(item => item.file === path);
     if (nextLesson) link.href = href(nextLesson.id);
-    else if (path === 'README.md' || path === 'course/introduction.md') link.href = '#/';
+    else if (path === 'README.md') link.href = '#/';
+    else if (path === 'course/introduction.md') link.href = '#/guide';
     else if (files['../' + path]) {
       link.classList.add('source-link'); link.dataset.sourcePath = path;
       const location = fileLocations.get(path);
       const owner = location && preferredLesson(location.experiment.id, lesson.id)?.id;
-      link.href = location ? evidenceHref(owner, location.experiment.id, location.index, 'raw', { kind: location.kind }) : href(lesson.id, { file: path });
+      const view = location && ({ requestFile: 'request', outputItemsFile: 'output', upstreamFile: 'compare' }[location.kind] || 'raw');
+      link.href = location ? evidenceHref(owner, location.experiment.id, location.index, view, view === 'raw' ? { kind: location.kind } : {}) : href(lesson.id, { file: path });
     } else if (images['../' + path]) link.href = images['../' + path];
     else if (path && !original.startsWith('mailto:')) link.href = repo + '/blob/main/' + path;
   });
@@ -203,51 +221,80 @@ function decorateMarkdown(container, lesson) {
     wrapper.append(toolbar, pre);
   });
   container.querySelectorAll('table').forEach(table => { const wrapper = document.createElement('div'); wrapper.className = 'table-scroll'; wrapper.tabIndex = 0; table.replaceWith(wrapper); wrapper.append(table); });
-  const outline = document.querySelector(`[data-nav-lesson="${lesson.id}"] .chapter-outline`);
-  if (outline) outline.innerHTML = headings.map(heading => `<a href="${href(lesson.id, { section: heading.id })}" data-section="${heading.id}">${esc(heading.text)}</a>`).join('') + `<a href="${href(lesson.id, { section: 'workbench-' + lesson.id })}" data-section="workbench-${lesson.id}">内嵌证据工作台</a>`;
+  outlines.set(lesson.id, headings);
 }
-async function renderDocument() {
-  const source = await Promise.all(catalog.lessons.map(lesson => loadFile(lesson.file)));
-  const intro = await loadFile('course/introduction.md');
-  document.querySelector('#chapter-nav').innerHTML = navMarkup();
-  document.querySelector('#main').innerHTML = `<article class="prose introduction" id="introduction">${DOMPurify.sanitize(marked.parse(intro))}</article><section class="supplement" id="supplement-introduction" hidden aria-label="开篇补充原始证据"></section>${catalog.groups.map((group, index) => `<section class="course-stage" id="stage-${group.id}"><div class="stage-heading"><span>阶段 ${index + 1}</span><h2>${esc(group.title)}</h2><p>${esc(group.description)}</p></div>${catalog.lessons.filter(lesson => lesson.group === group.id).map(lesson => {
-    const markdown = source[catalog.lessons.indexOf(lesson)].replace(/^# [^\n]+\n/, '').replace(/^(#{2,5}) /gm, '$1# ');
-    return `<section class="chapter" id="chapter-${lesson.id}" data-lesson="${lesson.id}"><header class="chapter-header"><h2>${lessonNumber(lesson)}. ${esc(lesson.title)}</h2><p>${esc(lesson.subtitle || '')}</p><div class="chapter-meta"><span>${lesson.status === 'partial' ? '含明确标注的未实测范围' : '真实实验与来源可核对'}</span><a href="${repo}/blob/main/${lesson.file}" target="_blank" rel="noopener">Markdown 原文 ↗</a><a href="${href(lesson.id)}">本节链接 #</a></div></header><article class="prose">${DOMPurify.sanitize(marked.parse(markdown))}</article>${workbenchShell(lesson)}</section>`;
-  }).join('')}</section>`).join('')}<footer class="reader-footer">Agent Harness 学习笔记 · Codex Desktop × TypeScript × CPA<br><a href="${repo}" target="_blank" rel="noopener">源码、实验证据与勘误 ↗</a></footer>`;
-  decorateMarkdown(document.querySelector('.introduction'), { id: 'introduction', file: 'course/introduction.md' });
-  for (const lesson of catalog.lessons) {
-    decorateMarkdown(document.querySelector(`#chapter-${lesson.id} .prose`), lesson);
-    const experiment = experiments.find(item => item.id === lesson.evidenceIds[0]);
-    const state = { lessonId: lesson.id, experimentId: experiment.id, stage: Math.max(0, experiment.stages.findIndex(stage => !stage.prewarm)), view: 'request', rawKind: 'requestFile', loaded: false, version: 0 };
-    states.set(lesson.id, state); updateWorkbenchChrome(state);
-  }
-  const diagrams = document.querySelectorAll('code.language-mermaid');
-  if (diagrams.length) {
-    const { default: mermaid } = await import('mermaid');
-    diagrams.forEach(code => { const div = document.createElement('div'); div.className = 'mermaid'; div.textContent = code.textContent; code.parentElement.replaceWith(div); });
-    mermaid.initialize({ startOnLoad: false, securityLevel: 'strict', theme: 'neutral', fontFamily: 'Arial, Microsoft YaHei, sans-serif' });
-    await mermaid.run({ nodes: document.querySelectorAll('.mermaid') });
-    document.querySelectorAll('.mermaid').forEach(diagram => {
-      const svg = diagram.querySelector('svg');
-      if (!svg) return;
-      const width = svg.viewBox.baseVal.width;
-      if (width > 0) { svg.style.width = Math.ceil(width) + 'px'; svg.style.maxWidth = 'none'; svg.style.height = 'auto'; }
-      const hint = document.createElement('p'); hint.className = 'diagram-hint'; hint.textContent = '图表保持原始字号，可在框内横向滚动。';
-      diagram.before(hint);
-      diagram.tabIndex = 0; diagram.setAttribute('role', 'region'); diagram.setAttribute('aria-label', '架构图，可横向滚动查看');
-    });
-  }
-  document.querySelector('#main').setAttribute('aria-busy', 'false');
-  // Ignore workbenches hidden above the fixed header: expanding the preceding
-  // chapter after an anchor jump would push that destination down the page.
-  const headerHeight = Math.ceil(document.querySelector('.site-header').getBoundingClientRect().height);
-  const observer = new IntersectionObserver(entries => entries.forEach(entry => {
-    if (!entry.isIntersecting) return;
-    const state = states.get(entry.target.dataset.workbench);
-    if (!state.loaded) renderWorkbench(state, false);
-  }), { rootMargin: `-${headerHeight}px 0px 150px 0px` });
-  document.querySelectorAll('[data-workbench]').forEach(host => observer.observe(host));
-  await route();
+async function ensurePage(lesson) {
+  if (pageLoads.has(lesson.id)) return pageLoads.get(lesson.id);
+  const pending = (async () => {
+    const text = await loadFile(lesson.file);
+    const page = document.createElement('section');
+    page.hidden = true; page.dataset.readerPage = lesson.id;
+    if (lesson.id === 'introduction') {
+      page.id = 'guide-page';
+      page.innerHTML = `<article class="prose introduction" id="introduction">${DOMPurify.sanitize(marked.parse(text))}</article><section class="supplement" id="supplement-introduction" hidden aria-label="导读补充原始证据"></section>`;
+    } else {
+      page.id = 'chapter-' + lesson.id; page.className = 'chapter'; page.dataset.lesson = lesson.id;
+      const markdown = text.replace(/^# [^\n]+\n/, '').replace(/^(#{2,5}) /gm, '$1# ');
+      page.innerHTML = `<header class="chapter-header"><div class="chapter-kicker"><span class="chapter-number">${lessonNumber(lesson)}</span><span>${esc(catalog.groups.find(group => group.id === lesson.group).title)}</span></div><h1>${esc(lesson.title)}</h1><p class="chapter-subtitle">${esc(lesson.subtitle || '')}</p><div class="chapter-meta"><span>${lesson.status === 'partial' ? '含明确标注的未实测范围' : '真实实验与来源可核对'}</span><a href="${repo}/blob/main/${lesson.file}" target="_blank" rel="noopener">Markdown 原文 ↗</a><a href="${href(lesson.id)}">本章链接 #</a></div></header><article class="prose">${DOMPurify.sanitize(marked.parse(markdown))}</article>${workbenchShell(lesson)}`;
+      // The Markdown navigation still works on GitHub; the site has a dedicated
+      // previous/next control below the workbench.
+      const last = page.querySelector('.prose > p:last-child');
+      if (last && /上一章|下一章/.test(last.textContent)) last.remove();
+    }
+    document.querySelector('#lesson-content').append(page);
+    decorateMarkdown(page.querySelector('.prose'), lesson);
+    if (lesson.id !== 'introduction') {
+      const experiment = experiments.find(item => item.id === lesson.evidenceIds[0]);
+      const state = { lessonId: lesson.id, experimentId: experiment.id, stage: Math.max(0, experiment.stages.findIndex(stage => !stage.prewarm)), view: 'request', rawKind: 'requestFile', loaded: false, version: 0 };
+      states.set(lesson.id, state); updateWorkbenchChrome(state);
+      evidenceObserver.observe(page.querySelector('[data-workbench]'));
+    }
+    if (lesson.id === '03-agent-loop') {
+      const timeline = document.createElement('section'); timeline.id = 'agent-loop-timeline'; timeline.className = 'agent-loop-timeline';
+      page.querySelector('.prose h3').before(timeline);
+      outlines.get(lesson.id).unshift({ id: timeline.id, text: '真实请求时间线' });
+      const { mountAgentLoopTimeline } = await import('./agent-loop-timeline.js');
+      await mountAgentLoopTimeline(timeline, { loadJson, evidenceHref, experiment: experiments.find(item => item.id === '07-fix'), copyButton });
+    }
+    return page;
+  })();
+  pageLoads.set(lesson.id, pending);
+  return pending;
+}
+async function renderDiagrams(page) {
+  const codes = page.querySelectorAll('code.language-mermaid');
+  if (!codes.length) return;
+  const { default: mermaid } = await import('mermaid');
+  codes.forEach(code => { const div = document.createElement('div'); div.className = 'mermaid'; div.textContent = code.textContent; code.parentElement.replaceWith(div); });
+  mermaid.initialize({ startOnLoad: false, securityLevel: 'strict', theme: 'neutral', fontFamily: 'Arial, Microsoft YaHei, sans-serif' });
+  await mermaid.run({ nodes: page.querySelectorAll('.mermaid') });
+  page.querySelectorAll('.mermaid').forEach(diagram => {
+    const svg = diagram.querySelector('svg');
+    if (!svg) return;
+    const width = svg.viewBox.baseVal.width;
+    if (width > 0) { svg.style.width = Math.ceil(width) + 'px'; svg.style.maxWidth = 'none'; svg.style.height = 'auto'; }
+    const hint = document.createElement('p'); hint.className = 'diagram-hint'; hint.textContent = '图表保持原始字号，可在框内横向滚动。';
+    diagram.before(hint); diagram.tabIndex = 0; diagram.setAttribute('role', 'region'); diagram.setAttribute('aria-label', '架构图，可横向滚动查看');
+  });
+}
+function showPage(page, lesson) {
+  const previousLesson = activeLesson;
+  document.body.dataset.view = page ? 'reader' : 'home';
+  document.querySelector('#home-view').hidden = Boolean(page);
+  document.querySelector('#reader-view').hidden = !page;
+  document.querySelectorAll('[data-reader-page]').forEach(node => node.hidden = node !== page);
+  setActive(lesson?.id || '');
+  if (!page) return;
+  if (previousLesson !== lesson.id) document.querySelector('.page-toc details').open = !matchMedia('(max-width: 1180px)').matches;
+  const group = catalog.groups.find(item => item.id === lesson.group);
+  document.querySelector('.breadcrumb').innerHTML = `<a href="#/">学习路线</a><span aria-hidden="true">/</span>${group ? `<span>${esc(group.title)}</span><span aria-hidden="true">/</span>` : ''}<span aria-current="page">${lesson.id === 'introduction' ? '导读' : esc(lesson.title)}</span>`;
+  const headings = outlines.get(lesson.id) || [];
+  document.querySelector('.page-toc .chapter-outline').innerHTML = headings.map(heading => `<a href="${href(lesson.id, { section: heading.id })}" data-section="${heading.id}">${esc(heading.text)}</a>`).join('') + (lesson.id === 'introduction' ? '' : `<a href="${href(lesson.id, { section: 'workbench-' + lesson.id })}" data-section="workbench-${lesson.id}">内嵌证据工作台</a>`);
+  const index = catalog.lessons.indexOf(lesson);
+  const previous = index > 0 ? catalog.lessons[index - 1] : null;
+  const next = lesson.id === 'introduction' ? catalog.lessons[0] : catalog.lessons[index + 1];
+  document.querySelector('.chapter-pagination').innerHTML = `${previous ? `<a data-direction="previous" href="${href(previous.id)}"><small>← 上一章</small><strong>${lessonNumber(previous)} ${esc(previous.title)}</strong></a>` : '<a data-direction="previous" href="#/guide"><small>← 阅读准备</small><strong>导读与实验准备</strong></a>'}${next ? `<a data-direction="next" href="${href(next.id)}"><small>下一章 →</small><strong>${lessonNumber(next)} ${esc(next.title)}</strong></a>` : '<a data-direction="next" href="#/"><small>回到学习路线 →</small><strong>复习各个主题</strong></a>'}`;
+  if (lesson.id === 'introduction') document.querySelector('.chapter-pagination [data-direction="previous"]').outerHTML = '<a data-direction="previous" href="#/"><small>← 回到首页</small><strong>学习路线</strong></a>';
 }
 function updateWorkbenchChrome(state) {
   const host = document.querySelector(`[data-workbench="${state.lessonId}"]`);
@@ -397,48 +444,56 @@ function setActive(id) {
   document.querySelectorAll('[data-nav-lesson]').forEach(node => {
     const active = node.dataset.navLesson === id;
     node.classList.toggle('active', active);
-    node.querySelector('.chapter-outline').hidden = !active && !document.querySelector('#chapter-search').value;
+    if (active) node.querySelector('a').setAttribute('aria-current', 'page'); else node.querySelector('a').removeAttribute('aria-current');
   });
+  document.querySelector('.intro-link').classList.toggle('active', id === 'introduction');
 }
-function filterNavigation() {
+async function filterNavigation() {
+  const version = ++searchNumber;
   const query = document.querySelector('#chapter-search').value.trim().toLowerCase();
-  for (const lesson of catalog.lessons) {
-    const node = document.querySelector(`[data-nav-lesson="${lesson.id}"]`);
-    node.hidden = Boolean(query) && !document.querySelector(`#chapter-${lesson.id} .prose`).textContent.toLowerCase().includes(query) && !lesson.title.toLowerCase().includes(query);
-    node.querySelector('.chapter-outline').hidden = Boolean(query) || lesson.id !== activeLesson;
-  }
+  const text = query ? await Promise.all(catalog.lessons.map(lesson => loadFile(lesson.file))) : [];
+  if (version !== searchNumber) return;
+  catalog.lessons.forEach((lesson, index) => {
+    document.querySelector(`[data-nav-lesson="${lesson.id}"]`).hidden = Boolean(query) && !(lesson.title + ' ' + (lesson.subtitle || '') + ' ' + text[index]).toLowerCase().includes(query);
+  });
   document.querySelectorAll('.nav-group').forEach(group => group.hidden = ![...group.querySelectorAll('.nav-chapter')].some(chapter => !chapter.hidden));
 }
 async function route() {
   const currentRoute = ++routeNumber;
   const [path, query = ''] = location.hash.replace(/^#\/?/, '').split('?');
   const params = new URLSearchParams(query);
-  const requestedId = path.startsWith('lesson/') ? decodeURIComponent(path.slice(7)) : '';
-  let id = has(catalog.legacyRoutes || {}, requestedId) ? catalog.legacyRoutes[requestedId] : requestedId;
+  const requestedId = path.startsWith('lesson/') ? decodeURIComponent(path.slice(7)) : ['guide', 'intro', 'introduction'].includes(path) ? 'introduction' : '';
+  let id = requestedId === '0' ? 'introduction' : has(catalog.legacyRoutes || {}, requestedId) ? catalog.legacyRoutes[requestedId] : requestedId;
   let lesson = catalog.lessons.find(item => item.id === id);
-  // A saved evidence link can outlive the chapter that originally held it.
-  // Keep the exact experiment/stage/view and use a chapter that still owns it.
   if (lesson && params.has('experiment')) {
     lesson = preferredLesson(params.get('experiment'), id) || lesson;
     id = lesson.id;
   }
-  if (id !== requestedId) {
+  if (id !== requestedId || (id === 'introduction' && path !== 'guide')) {
     if (params.get('section') === 'workbench-' + requestedId) params.set('section', 'workbench-' + id);
-    else if (params.get('section')?.startsWith(requestedId + '-section-')) params.delete('section');
+    else if (id !== requestedId && requestedId !== '0' && params.get('section')?.startsWith(requestedId + '-section-')) params.delete('section');
     history.replaceState(null, '', href(id, Object.fromEntries(params)));
   }
-  if (id && !lesson && id !== 'introduction') { showToast('未找到该章节，已返回开篇。'); window.scrollTo(0, 0); return; }
-  toggleMenu(false); setActive(lesson?.id || '');
-  document.title = lesson ? lesson.title + ' · Agent Harness 学习笔记' : 'Codex 的一次完整运行 · Agent Harness 学习笔记';
-  if (params.has('file') && (lesson || id === 'introduction')) { await openSupplement(lesson?.id || 'introduction', params.get('file')); return; }
-  if (!lesson) {
-    const heading = params.get('section') && document.getElementById(params.get('section'));
-    if (heading) revealSection(heading);
-    else window.scrollTo({ top: 0, behavior: 'instant' });
-    return;
+  toggleMenu(false);
+  const main = document.querySelector('#main');
+  if (!lesson && id !== 'introduction') {
+    if (id) showToast('未找到该章节，已返回学习路线。');
+    showPage(null); main.setAttribute('aria-busy', 'false');
+    document.title = '从一次修复，看懂 Agent · Agent Harness 学习笔记';
+    window.scrollTo({ top: 0, behavior: 'instant' }); return;
   }
-  if (params.has('experiment')) {
-    const state = states.get(lesson.id);
+  if (id === 'introduction') lesson = { id: 'introduction', file: 'course/introduction.md', title: '导读与实验准备' };
+  main.setAttribute('aria-busy', 'true');
+  const page = await ensurePage(lesson);
+  if (currentRoute !== routeNumber) return;
+  showPage(page, lesson);
+  document.title = lesson.title + ' · Agent Harness 学习笔记';
+  await renderDiagrams(page);
+  if (currentRoute !== routeNumber) return;
+  main.setAttribute('aria-busy', 'false');
+  if (params.has('file')) { await openSupplement(id, params.get('file')); return; }
+  if (params.has('experiment') && id !== 'introduction') {
+    const state = states.get(id);
     const experiment = experiments.find(item => item.id === params.get('experiment'));
     if (!experiment) { showToast('未找到该实验记录。'); return; }
     state.experimentId = experiment.id;
@@ -447,14 +502,16 @@ async function route() {
     state.rawKind = params.get('kind') || 'requestFile';
     await renderWorkbench(state, false);
     if (currentRoute !== routeNumber) return;
-    const host = document.querySelector(`[data-workbench="${lesson.id}"]`);
+    const host = document.querySelector(`[data-workbench="${id}"]`);
     if (params.has('input')) {
       const item = host.querySelector(`[data-item-path="input[${Number(params.get('input'))}]"]`);
       if (item) { item.open = true; if (params.has('content')) { const block = item.querySelector(`[data-content-path="input[${Number(params.get('input'))}].content[${Number(params.get('content'))}]"]`); if (block) block.open = true; } revealSection(item); return; }
     }
     revealSection(host); return;
   }
-  revealSection(document.getElementById(params.get('section')) || document.querySelector('#chapter-' + lesson.id));
+  const section = params.get('section') && document.getElementById(params.get('section'));
+  if (section && page.contains(section)) revealSection(section);
+  else window.scrollTo({ top: 0, behavior: 'instant' });
 }
 function revealSection(element) {
   for (let ancestor = element.parentElement; ancestor; ancestor = ancestor.parentElement) if (ancestor.tagName === 'DETAILS') ancestor.open = true;
@@ -463,11 +520,10 @@ function revealSection(element) {
 function showToast(text) { const toast = document.querySelector('.toast'); toast.textContent = text; toast.classList.add('visible'); clearTimeout(toastTimer); toastTimer = setTimeout(() => toast.classList.remove('visible'), 2200); }
 function scrollSpy() {
   document.querySelector('#back-top').classList.toggle('visible', scrollY > 400);
-  const chapter = [...document.querySelectorAll('.chapter')].filter(node => node.getBoundingClientRect().top < 170).at(-1);
-  if (chapter?.dataset.lesson !== activeLesson) setActive(chapter?.dataset.lesson || '');
-  const headings = chapter ? [...chapter.querySelectorAll('.prose h3,.prose h4,.prose h5,.prose h6,.prose details > summary[id],.workbench')] : [];
+  const page = document.querySelector('[data-reader-page]:not([hidden])');
+  const headings = page ? [...page.querySelectorAll('.prose h2[id],.prose h3[id],.prose h4[id],.prose h5[id],.prose h6[id],.prose details > summary[id],.agent-loop-timeline,.workbench')] : [];
   const current = headings.filter(node => node.getClientRects().length && node.getBoundingClientRect().top < 170).at(-1);
-  document.querySelectorAll('.chapter-outline a').forEach(link => link.classList.toggle('current', Boolean(current?.id) && link.dataset.section === current.id));
+  document.querySelectorAll('.page-toc [data-section]').forEach(link => link.classList.toggle('current', Boolean(current?.id) && link.dataset.section === current.id));
 }
 
 async function start() {
@@ -479,8 +535,8 @@ async function start() {
     for (const kind of ['requestFile', 'responseFile', 'eventsFile', 'upstreamFile', 'outputItemsFile']) if (stage[kind]) fileLocations.set(stage[kind], { experiment, index, kind });
   });
   shell();
-  await renderDocument();
   addEventListener('hashchange', () => route().catch(error => { console.error(error); showToast(error.message); }));
+  await route();
   let queued = false;
   addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(() => { scrollSpy(); queued = false; }); } }, { passive: true });
 }

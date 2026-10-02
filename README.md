@@ -2,7 +2,7 @@
 
 在一个真实 TypeScript 小项目里使用 Codex Desktop，沿 CPA 日志看清模型收到了什么、工具怎样执行，以及任务为什么能够完成。
 
-[在线阅读](https://chrichuang218.github.io/agent-harness-notes/) · [讲义导读](course/introduction.md) · [完整修复案例](https://chrichuang218.github.io/agent-harness-notes/#/lesson/03-agent-loop) · [实验起始项目](examples/01-baseline/README.md)
+[开始学习](https://chrichuang218.github.io/agent-harness-notes/) · [讲义导读](https://chrichuang218.github.io/agent-harness-notes/#/guide) · [真实修复时间线](https://chrichuang218.github.io/agent-harness-notes/#/lesson/03-agent-loop?section=agent-loop-timeline) · [实验起始项目](examples/01-baseline/README.md)
 
 [![教程首页预览](docs/images/site-preview.png)](https://chrichuang218.github.io/agent-harness-notes/)
 
@@ -12,7 +12,9 @@
 
 ## 阅读路线
 
-正文按 15 个主题连续展开。每章先解释一个实际现象，长编号、逐字段对照与统计放在可展开的“深入核对”中。内嵌工作台保留全部公开输入输出，方便继续追查。
+首页按四个阶段展示 15 个主题及每章的问题。进入章节后，可以沿主文阅读，通过本章目录定位，或展开“深入核对”查看长编号、字段对照和统计。内嵌工作台保留全部公开输入输出。
+
+第 3 章提供真实修复时间线。五次请求分别展示模型收到什么、提出什么调用，以及结果进入了哪一次请求；节点上的链接直接定位对应证据。时间线使用已保存的实验记录，完整原始日志仍可展开、复制和下载。
 
 | 阶段 | 章节 |
 | --- | --- |
@@ -62,6 +64,8 @@ npm run dev
 ```
 
 网站使用 Vite、Markdown 和按需加载的证据文件。[course/catalog.json](course/catalog.json)定义章节顺序，`course/` 保存正文，`evidence/desktop-lab/` 保存实验证据。原章节网址保留跳转，证据文件名和请求标识保持不变。
+
+首页与章节 UI 参考 [Learn Claude Code](https://learn.shareai.run/) 的 MIT 开源实现，继续使用本项目的紫色主题与教学内容。来源、版本和完整许可见[第三方声明](THIRD_PARTY_NOTICES.md)。
 
 欢迎补充另一个版本的复现结果，或指出某段解释与证据不符。提交问题时，请附章节、操作、实际结果及脱敏后的相关片段。
 
