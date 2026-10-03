@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
-import { readFile, mkdir } from 'node:fs/promises';
+import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { resolve, extname } from 'node:path';
 import { chromium } from '@playwright/test';
@@ -151,6 +151,88 @@ try {
   assert.ok(await page.locator('.introduction').evaluate(element => parseFloat(getComputedStyle(element).fontSize)) >= 15, 'Long-form guide text must remain readable.');
   await noOverflow('Desktop guide');
   assert.equal(await page.locator('.chapter-outline').evaluate(element => element.parentElement.dataset.navLesson), 'introduction');
+
+  // A chapter's disclosure state belongs to the reader, not the route/scroll renderer.
+  const navigationChecks = [];
+  for (const width of [1440, 390]) {
+    await page.setViewportSize({ width, height: width === 390 ? 844 : 1000 });
+    await page.goto(url + '#/lesson/03-agent-loop'); await page.reload(); await waitChapter('03-agent-loop');
+    await page.waitForLoadState('networkidle');
+    const mobile = width === 390;
+    const openMenu = async () => {
+      if (mobile && await page.locator('.menu-toggle').getAttribute('aria-expanded') !== 'true') await page.locator('.menu-toggle').click();
+    };
+    await openMenu();
+    const toggle = page.locator('[data-toggle-outline="03-agent-loop"]');
+    const outline = page.locator('#outline-03-agent-loop');
+    const nextLink = page.locator('[data-nav-lesson="02-tools"] .chapter-link');
+    const currentLink = page.locator('[data-nav-lesson="03-agent-loop"] .chapter-link');
+    assert.equal(await page.locator('.nav-group > h2 > .nav-phase-label').count(), 4, 'Every group needs a distinct phase label.');
+    assert.equal(await page.locator('.nav-group > h2 > .nav-group-title').count(), 4, 'Every phase needs its own heading.');
+    assert.equal(await toggle.getAttribute('aria-controls'), 'outline-03-agent-loop');
+    assert.equal(await page.locator('.chapter-toggle:not([hidden])').count(), 1, 'Only the current chapter exposes a disclosure button.');
+    assert.ok(await outline.locator('a').evaluateAll(links => links.every(link => Number.isInteger(Number(link.dataset.depth)) && Number(link.dataset.depth) >= 0 && link.style.getPropertyValue('--section-depth') !== '')), 'Section depth must be explicit for every outline entry.');
+    const sectionHref = await outline.locator('a[data-section]').nth(1).getAttribute('href');
+    const checkDisclosure = async expanded => {
+      assert.equal(await toggle.getAttribute('aria-expanded'), String(expanded), `${width}px: disclosure accessibility state`);
+      assert.equal(await outline.evaluate(element => element.hidden), !expanded, `${width}px: actual disclosure state`);
+      assert.equal(await page.locator('.chapter-outline').count(), 1, 'Collapsing must preserve a single current outline.');
+    };
+    await checkDisclosure(true);
+    await page.evaluate(() => window.scrollTo(0, 850));
+    await page.waitForFunction(() => scrollY === 850);
+    const before = { url: page.url(), scrollY: await page.evaluate(() => scrollY) };
+    await toggle.click(); await checkDisclosure(false);
+    assert.equal(page.url(), before.url, 'The disclosure button must not navigate.');
+    assert.equal(await page.evaluate(() => scrollY), before.scrollY, 'Collapsing must not move the article.');
+    assert.ok(await toggle.evaluate(element => document.activeElement === element), 'Collapsing must preserve button focus.');
+    if (mobile) assert.equal(await page.locator('.menu-toggle').getAttribute('aria-expanded'), 'true', 'A disclosure button must not close the mobile menu.');
+    await page.evaluate(() => window.scrollTo(0, 1100));
+    await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+    await checkDisclosure(false);
+    assert.equal(await page.evaluate(() => scrollY), 1100, 'Scroll tracking must not bounce back after collapse.');
+    await page.screenshot({ path: `work/site-navigation-${width}-collapsed.png`, animations: 'disabled' });
+    await toggle.press('Space'); await checkDisclosure(true);
+    await toggle.press('Enter'); await checkDisclosure(false);
+    await toggle.click(); await checkDisclosure(true);
+    assert.equal(page.url(), before.url);
+    assert.equal(await page.evaluate(() => scrollY), 1100, 'Mouse and keyboard disclosure must preserve article scroll.');
+    assert.ok(await toggle.evaluate(element => document.activeElement === element), 'Re-expanding must preserve button focus.');
+    if (mobile) assert.equal(await page.locator('.menu-toggle').getAttribute('aria-expanded'), 'true');
+    await page.screenshot({ path: `work/site-navigation-${width}-expanded.png`, animations: 'disabled' });
+    await toggle.click(); await checkDisclosure(false);
+    await page.evaluate(hash => { location.hash = hash; }, sectionHref);
+    await page.waitForFunction(hash => location.hash === hash && document.querySelector('#main').getAttribute('aria-busy') === 'false', sectionHref);
+    await checkDisclosure(false);
+    await openMenu();
+    await currentLink.click(); await waitChapter('03-agent-loop'); await checkDisclosure(false);
+    if (mobile) assert.equal(await page.locator('.menu-toggle').getAttribute('aria-expanded'), 'false', 'A chapter link must close the mobile menu.');
+    await openMenu();
+    await page.locator('#chapter-search').fill('call_id');
+    await page.waitForFunction(() => document.querySelectorAll('.nav-chapter[hidden]').length > 0 && document.querySelectorAll('.nav-chapter:not([hidden])').length > 0);
+    await page.locator('#chapter-search').fill('');
+    await page.waitForFunction(() => document.querySelectorAll('.nav-chapter[hidden]').length === 0);
+    await checkDisclosure(false);
+    await nextLink.click(); await waitChapter('02-tools');
+    assert.equal(await page.locator('[data-nav-lesson="02-tools"] .chapter-link').getAttribute('aria-current'), 'page');
+    assert.equal(await page.locator('[data-toggle-outline="02-tools"]').getAttribute('aria-expanded'), 'true', 'A newly visited chapter opens its outline.');
+    assert.equal(await page.locator('[data-nav-lesson="03-agent-loop"] .chapter-outline').count(), 0, 'Inactive chapters must not retain section DOM.');
+    if (mobile) assert.equal(await page.locator('.menu-toggle').getAttribute('aria-expanded'), 'false');
+    await openMenu(); await currentLink.click(); await waitChapter('03-agent-loop'); await checkDisclosure(false);
+    assert.equal(await currentLink.getAttribute('aria-current'), 'page');
+    assert.equal(await page.locator('.chapter-link[aria-current="page"]').count(), 1, 'Only the current chapter is highlighted.');
+    await page.reload(); await waitChapter('03-agent-loop'); await openMenu(); await checkDisclosure(true);
+    await outline.locator('a[data-section]').nth(1).click(); await waitChapter('03-agent-loop');
+    assert.equal(new URL(page.url()).hash, sectionHref, 'Expanded section links must still navigate.');
+    if (mobile) assert.equal(await page.locator('.menu-toggle').getAttribute('aria-expanded'), 'false', 'A section link must close the mobile menu.');
+    await noOverflow(`${width}px chapter disclosure`);
+    navigationChecks.push({ width, mouseAndKeyboard: true, scrollAndFocusPreserved: true, sameChapterRoutes: true, chapterState: true, search: true, reloadResets: true, mobileMenu: mobile ? 'verified' : 'not-applicable' });
+  }
+  await writeFile('work/site-navigation-checks.json', JSON.stringify(navigationChecks, null, 2) + '\n');
+  console.log('Verified reversible chapter disclosure at 1440px and 390px, mouse/keyboard, focus/scroll, same-chapter routes, chapter history, search and mobile menu.');
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  // The full evidence traversal below starts with fresh per-document disclosure state.
+  await page.reload(); await waitChapter('03-agent-loop');
 
   await page.goto(url + '#/lesson/01-request');
   await waitChapter('01-request');

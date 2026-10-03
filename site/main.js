@@ -25,6 +25,7 @@ let searchNumber = 0;
 let evidenceObserver;
 const pageLoads = new Map();
 const outlines = new Map();
+const collapsedOutlines = new Set();
 
 function loadFile(path) {
   if (!files['../' + path]) return Promise.reject(new Error('未找到公开文件：' + path));
@@ -162,7 +163,23 @@ function toggleMenu(open) {
   document.querySelector('.menu-toggle').setAttribute('aria-expanded', String(open));
 }
 function navMarkup() {
-  return `<a class="chapter-link home-link" href="#/">学习路线</a><div class="nav-chapter" data-nav-lesson="introduction"><a class="chapter-link intro-link" href="#/guide">导读与实验准备</a></div>${catalog.groups.map((group, index) => `<div class="nav-group"><h2><span class="nav-dot" aria-hidden="true"></span>0${index + 1} ${esc(group.title)}</h2>${catalog.lessons.filter(lesson => lesson.group === group.id).map(lesson => `<div class="nav-chapter" data-nav-lesson="${lesson.id}"><a class="chapter-link" href="${href(lesson.id)}"><span>${lessonNumber(lesson)}</span>${esc(lesson.title)}</a></div>`).join('')}</div>`).join('')}`;
+  return `<a class="chapter-link home-link" href="#/">学习路线</a>${chapterNavMarkup({ id: 'introduction', title: '导读与实验准备' })}${catalog.groups.map((group, index) => `<div class="nav-group"><h2><span class="nav-phase-label">阶段 ${index + 1}</span><span class="nav-group-title">${esc(group.title)}</span></h2>${catalog.lessons.filter(lesson => lesson.group === group.id).map(chapterNavMarkup).join('')}</div>`).join('')}`;
+}
+function chapterNavMarkup(lesson) {
+  const introduction = lesson.id === 'introduction';
+  return `<div class="nav-chapter" data-nav-lesson="${lesson.id}"><div class="chapter-row"><a class="chapter-link${introduction ? ' intro-link' : ''}" href="${href(lesson.id)}">${introduction ? '' : `<span class="nav-number">${lessonNumber(lesson)}</span>`}<span class="nav-title">${esc(lesson.title)}</span></a><button type="button" class="chapter-toggle" data-toggle-outline="${lesson.id}" aria-controls="outline-${lesson.id}" aria-expanded="false" aria-label="展开${esc(lesson.title)}的小节" hidden><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="m6 3 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div></div>`;
+}
+function syncOutlineVisibility(id) {
+  const chapter = document.querySelector(`[data-nav-lesson="${id}"]`);
+  const outline = chapter?.querySelector('.chapter-outline');
+  if (!outline) return;
+  const expanded = !collapsedOutlines.has(id);
+  outline.hidden = !expanded;
+  const button = chapter.querySelector('[data-toggle-outline]');
+  const title = id === 'introduction' ? '导读与实验准备' : catalog.lessons.find(lesson => lesson.id === id).title;
+  button.setAttribute('aria-expanded', String(expanded));
+  button.setAttribute('aria-label', `${expanded ? '收起' : '展开'}${title}的小节`);
+  button.title = button.getAttribute('aria-label');
 }
 function resolveDocumentPath(path, base) { return new URL(path, 'https://local.invalid/' + base).pathname.slice(1); }
 function decorateMarkdown(container, lesson) {
@@ -172,7 +189,8 @@ function decorateMarkdown(container, lesson) {
     const id = `${lesson.id}-section-${index}`;
     heading.id = id;
     if (heading.tagName === 'SUMMARY') heading.style.scrollMarginTop = '88px';
-    headings.push({ id, text: heading.textContent, nested: /^H[3-6]$/.test(heading.tagName) });
+    const depth = heading.tagName === 'SUMMARY' ? 1 : Number(heading.tagName.slice(1)) - 2;
+    headings.push({ id, text: heading.textContent, depth });
     const anchor = document.createElement('a'); anchor.className = 'heading-anchor'; anchor.href = href(lesson.id, { section: id }); anchor.textContent = '#'; anchor.setAttribute('aria-label', '链接到这一段'); heading.append(anchor);
   });
   container.querySelectorAll('img').forEach(image => {
@@ -284,20 +302,26 @@ function showPage(page, lesson) {
   document.querySelector('#reader-view').hidden = !page;
   document.querySelectorAll('[data-reader-page]').forEach(node => node.hidden = node !== page);
   setActive(lesson?.id || '');
-  document.querySelector('.chapter-outline')?.remove();
-  if (!page) return;
+  if (!page) { document.querySelector('.chapter-outline')?.remove(); return; }
   const group = catalog.groups.find(item => item.id === lesson.group);
   document.querySelector('.breadcrumb').innerHTML = `<a href="#/">学习路线</a><span aria-hidden="true">/</span>${group ? `<span>${esc(group.title)}</span><span aria-hidden="true">/</span>` : ''}<span aria-current="page">${lesson.id === 'introduction' ? '导读' : esc(lesson.title)}</span>`;
-  const headings = outlines.get(lesson.id) || [];
-  const outline = document.createElement('nav'); outline.className = 'chapter-outline'; outline.setAttribute('aria-label', '本章目录');
-  outline.innerHTML = headings.map(heading => `<a href="${href(lesson.id, { section: heading.id })}" data-section="${heading.id}"${heading.nested ? ' class="nested"' : ''}>${esc(heading.text)}</a>`).join('') + (lesson.id === 'introduction' ? '' : `<a href="${href(lesson.id, { section: 'workbench-' + lesson.id })}" data-section="workbench-${lesson.id}">证据工作台</a>`);
-  document.querySelector(`[data-nav-lesson="${lesson.id}"]`).append(outline);
+  const chapter = document.querySelector(`[data-nav-lesson="${lesson.id}"]`);
+  let outline = chapter.querySelector('.chapter-outline');
+  // Same-chapter routes keep the existing controls and their keyboard focus.
+  if (!outline) {
+    document.querySelector('.chapter-outline')?.remove();
+    const headings = outlines.get(lesson.id) || [];
+    outline = document.createElement('nav'); outline.className = 'chapter-outline'; outline.id = 'outline-' + lesson.id; outline.setAttribute('aria-label', '本章目录');
+    outline.innerHTML = headings.map(heading => `<a href="${href(lesson.id, { section: heading.id })}" data-section="${heading.id}" data-depth="${heading.depth || 0}" style="--section-depth:${heading.depth || 0}">${esc(heading.text)}</a>`).join('') + (lesson.id === 'introduction' ? '' : `<a href="${href(lesson.id, { section: 'workbench-' + lesson.id })}" data-section="workbench-${lesson.id}" data-depth="0" style="--section-depth:0">证据工作台</a>`);
+    chapter.append(outline);
+  }
+  syncOutlineVisibility(lesson.id);
   if (previousLesson !== lesson.id) {
     const sidebar = document.querySelector('.course-sidebar');
-    const chapterLink = outline.previousElementSibling;
+    const chapterLink = chapter.querySelector('.chapter-row');
     const top = chapterLink.getBoundingClientRect().top;
     const visibleTop = sidebar.getBoundingClientRect().top + document.querySelector('.directory-search').offsetHeight;
-    if (top < visibleTop || top > innerHeight - 120) sidebar.scrollTop += top - visibleTop - 12;
+    if (chapterLink.getClientRects().length && (top < visibleTop || top > innerHeight - 120)) sidebar.scrollTop += top - visibleTop - 12;
   }
   const index = catalog.lessons.indexOf(lesson);
   const previous = index > 0 ? catalog.lessons[index - 1] : null;
@@ -419,6 +443,16 @@ async function openSupplement(lessonId, path) {
 }
 
 async function handleClick(event) {
+  const outlineToggle = event.target.closest('[data-toggle-outline]');
+  if (outlineToggle) {
+    event.preventDefault();
+    const id = outlineToggle.dataset.toggleOutline;
+    if (id !== activeLesson) return;
+    if (collapsedOutlines.has(id)) collapsedOutlines.delete(id); else collapsedOutlines.add(id);
+    syncOutlineVisibility(id);
+    scrollSpy();
+    return;
+  }
   const anchor = event.target.closest('a');
   if (event.button === 0 && !event.ctrlKey && !event.metaKey && !event.shiftKey && !event.altKey && anchor?.getAttribute('href') === location.hash && location.hash.startsWith('#/')) {
     event.preventDefault(); await route(); return;
@@ -458,6 +492,9 @@ function setActive(id) {
     const active = node.dataset.navLesson === id;
     node.classList.toggle('active', active);
     if (active) node.querySelector('a').setAttribute('aria-current', 'page'); else node.querySelector('a').removeAttribute('aria-current');
+    const button = node.querySelector('[data-toggle-outline]');
+    button.hidden = !active;
+    if (!active) button.setAttribute('aria-expanded', 'false');
   });
   document.querySelector('.intro-link').classList.toggle('active', id === 'introduction');
 }
