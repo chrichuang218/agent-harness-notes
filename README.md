@@ -1,10 +1,12 @@
-# Codex 的一次完整运行
+# Codex 是如何工作的
 
-用 Codex Desktop 修复一个 TypeScript 小项目，沿 CPA 日志查看模型的输入、工具调用和检查结果。
+从一句“你好”到修复代码，通过真实对话与请求日志理解 Agent。
 
-[开始学习](https://chrichuang218.github.io/agent-harness-notes/) · [讲义导读](https://chrichuang218.github.io/agent-harness-notes/#/guide) · [真实修复时间线](https://chrichuang218.github.io/agent-harness-notes/#/lesson/03-agent-loop?section=agent-loop-timeline) · [Hooks 专章](https://chrichuang218.github.io/agent-harness-notes/#/lesson/10-hooks) · [实验起始项目](examples/01-baseline/README.md)
+一次修复为什么需要多次模型请求？这份教程用真实 Codex Desktop 实验、截图和请求日志，解释项目规则、工具结果怎样进入上下文，以及模型怎样根据返回结果继续工作。
 
-[![教程首页预览](docs/images/site-preview.png)](https://chrichuang218.github.io/agent-harness-notes/)
+[在线阅读](https://chrichuang218.github.io/how-codex-works/) · [完整修复案例](https://chrichuang218.github.io/how-codex-works/#/lesson/03-agent-loop?section=agent-loop-timeline)
+
+[![Codex 修复总价错误后运行类型检查、测试和示例](docs/images/desktop-lab/fix-result.png)](https://chrichuang218.github.io/how-codex-works/#/lesson/03-agent-loop?section=agent-loop-timeline)
 
 项目起初把单价 10 元和数量 3 相加，输出 13 元；测试要求得到 30 元。教程从一句“你好”开始，经过读取文件和修复错误，再在同一个项目里学习上下文、规则、技能、MCP、计划和协作。
 
@@ -70,3 +72,7 @@ npm run dev
 欢迎补充另一个版本的复现结果，或指出某段解释与证据不符。提交问题时，请附章节、操作、实际结果及脱敏后的相关片段。
 
 [发布记录](CHANGELOG.md) · [维护记录](PROGRESS.md)
+
+## 致谢
+
+🙏 感谢 [LINUX DO](https://linux.do/) 社区的支持与讨论。

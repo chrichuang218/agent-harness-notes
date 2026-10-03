@@ -12,10 +12,10 @@ const { experiments } = JSON.parse(await readFile('evidence/desktop-lab/index.js
 const screenshotIndex = JSON.parse(await readFile('docs/images/desktop-lab/index.json', 'utf8'));
 const permissionPictures = screenshotIndex.images.filter(image => image.chapters.includes('10-permissions') && image.experiments.some(experiment => experiment.id === '15-permissions'));
 assert.ok(permissionPictures.length, 'The permissions chapter needs its own screenshot of the sandbox experiment.');
-const sourceBase = 'https://github.com/chrichuang218/agent-harness-notes/blob/main/';
+const sourceBase = 'https://github.com/chrichuang218/how-codex-works/blob/main/';
 const sha = bytes => createHash('sha256').update(bytes).digest('hex');
 const captureReadme = process.argv.includes('--capture-readme');
-const basePath = '/agent-harness-notes/';
+const basePath = '/how-codex-works/';
 const stages = experiments.flatMap(experiment => experiment.stages.map((stage, index) => ({ experiment, stage, index })));
 assert.equal(catalog.lessons.length, 16);
 assert.equal(catalog.groups.length, 4);
@@ -102,7 +102,7 @@ try {
   await page.goto(url);
   await page.locator('#main[aria-busy="false"]').waitFor();
   assert.equal(await page.locator('#main > .error-state').count(), 0, await page.locator('#main').innerText());
-  assert.equal(await page.locator('.home-page h1').textContent(), '从一次修复，看懂 Agent');
+  assert.equal(await page.locator('.home-page h1').textContent(), 'Codex 是如何工作的');
   assert.ok((await page.locator('.home-page h1').boundingBox()).y >= (await page.locator('.site-header').boundingBox()).height, 'Fixed header must not cover the opening title.');
   assert.equal(await page.locator('.chapter:visible,.introduction:visible').count(), 0, 'The home page must not show the full course below its cards.');
   assert.equal(await page.locator('.learning-path .phase-section').count(), 4);
@@ -146,7 +146,7 @@ try {
   assert.equal(await page.locator('.chapter:visible').count(), 0);
   await page.locator('a[href="#/guide"]:visible').first().click();
   await page.locator('.introduction:visible h1').waitFor();
-  assert.equal(await page.locator('.introduction h1').innerText(), 'Codex 的一次完整运行');
+  assert.equal(await page.locator('.introduction h1').innerText(), 'Codex 是如何工作的');
   assert.equal(await page.locator('.chapter:visible,.home-page:visible').count(), 0);
   assert.ok(await page.locator('.introduction').evaluate(element => parseFloat(getComputedStyle(element).fontSize)) >= 15, 'Long-form guide text must remain readable.');
   await noOverflow('Desktop guide');

@@ -4,6 +4,14 @@
 
 当前主线：围绕 TypeScript 商品总价项目，通过 Codex Desktop 普通输入与 CPA 日志学习 Agent 机制。课程按四阶段、16 个主题编排，首页提供学习卡片，章节保留紫色主题与内嵌证据工作台。
 
+## 名称与网址迁移（2026-10-03）
+
+- 用户确认展示名「Codex 是如何工作的」与 How Codex Works，并授权将 GitHub 仓库名和 Pages 子路径改为 `how-codex-works`。本地目录不搬动，历史日志、截图和实验路径不改写。
+- README 开场突出真实 Desktop 实验、截图和请求日志，保留在线阅读与完整修复案例两个主要入口，使用现有修复截图，并加入用户指定的 LINUX DO 致谢原文。
+- 按用户最后的范围要求，只验证新地址，不创建旧名仓库或旧网址兼容设施。站内已有章节路由继续保留。
+- GitHub 仓库重命名前后 node ID 均为 `R_kgDOURiHOQ`，远程地址与仓库简介、主页链接已同步。Pages 仍使用现有 Actions 工作流，配置返回新子路径；相对资源配置无需改动。
+- 课程检查与构建通过，新子路径下全部 110 阶段、85 条响应引用、旧章节路由、导航折叠和三种屏宽检查通过。桌面与手机新标题无裁切或横向溢出，原始证据与截图未改。
+
 ## 读者文案校订（2026-10-03）
 
 - 按 humanizer 完整通读导读与 16 章，合并重复铺垫、图后复述和收尾说明，清理制作旁白。保留案例的操作与推导，未压缩成结论清单。
@@ -84,7 +92,7 @@
 - [真实 Desktop 截图](docs/images/desktop-hello-readme.png)与用户附件哈希一致，第一节将截图中的三轮消息与各自的 CPA 记录对应。
 - 当次实验中原生 Memories 在本机全局关闭；仅观察设置，没有改变开关。文件笔记已实测，原生自动生成及召回未实测，当前记忆章节保持“含待验证项”。
 
-发布通过 main 分支的 [GitHub Pages 工作流](https://github.com/chrichuang218/agent-harness-notes/actions/workflows/pages.yml) 执行。线上发布结果以对应提交的工作流记录为准。
+发布通过 main 分支的 [GitHub Pages 工作流](https://github.com/chrichuang218/how-codex-works/actions/workflows/pages.yml) 执行。线上发布结果以对应提交的工作流记录为准。
 
 ## 个人掌握记录
 

@@ -1,6 +1,6 @@
 # 术语与实例
 
-[教程首页](README.md) · [在线阅读](https://chrichuang218.github.io/agent-harness-notes/) · [第一章](course/01-request.md)
+[教程首页](README.md) · [在线阅读](https://chrichuang218.github.io/how-codex-works/) · [第一章](course/01-request.md)
 
 各术语都链接到具体章节，可以结合请求阅读。涉及产品行为的解释，以样本使用的版本和配置为准。
 

@@ -14,7 +14,7 @@
 
 ## 五次请求怎样接在一起？
 
-[时间线](https://chrichuang218.github.io/agent-harness-notes/#/lesson/03-agent-loop?section=agent-loop-timeline)用 R0 至 R4 标记五次正式模型请求，对应证据文件的 `00-request` 至 `04-request`。每个工具结果都会进入下一次请求，供模型决定下一步。四次工具往返之后，R4 给出完成说明，没有再提出调用。
+[时间线](https://chrichuang218.github.io/how-codex-works/#/lesson/03-agent-loop?section=agent-loop-timeline)用 R0 至 R4 标记五次正式模型请求，对应证据文件的 `00-request` 至 `04-request`。每个工具结果都会进入下一次请求，供模型决定下一步。四次工具往返之后，R4 给出完成说明，没有再提出调用。
 
 这次修复所在的任务已经加载了项目规则和技能，第一批读取也包含一份本机技能说明。它们的作用见第 6、7 章。
 
