@@ -2,7 +2,7 @@
 
 给 Codex 发送“你好”，就是这份教程的 Hello World。
 
-这份教程直接观察真实 Codex Desktop。已收录的模型请求、响应和请求中可见的完整上下文可以逐项展开，让你把界面里的操作与模型的输入输出对应起来。简单的 TypeScript 项目作为实验载体，用来观察文件读取、代码修复，以及 Skills、Hooks 和 MCP 的使用。
+这里用一个简单的 TypeScript 项目，在真实 Codex Desktop 中做实验。你可以逐项展开收录的请求、响应和请求中可见的完整上下文，把界面操作与模型的输入输出对应起来。文件读取、代码修复及 Skills、Hooks、MCP 的使用，都有相应记录可查。
 
 [在线阅读](https://chrichuang218.github.io/how-codex-works/) · [完整修复案例](https://chrichuang218.github.io/how-codex-works/#/lesson/03-agent-loop?section=agent-loop-timeline)
 
@@ -10,7 +10,7 @@
 
 [![Codex 修复总价错误后运行类型检查、测试和示例](docs/images/desktop-lab/fix-result.png)](https://chrichuang218.github.io/how-codex-works/#/lesson/03-agent-loop?section=agent-loop-timeline)
 
-项目起初把单价 10 元和数量 3 相加，输出 13 元；测试要求得到 30 元。教程从一句“你好”开始，经过读取文件和修复错误，再在同一个项目里学习上下文、规则、技能、MCP、计划和协作。
+项目起初把单价 10 元和数量 3 相加，输出 13 元；测试要求得到 30 元。后续章节沿同一个项目继续学习上下文、规则、技能、MCP、计划和协作。
 
 ## 阅读路线
 
@@ -52,7 +52,7 @@ Hooks、后台命令、补丁恢复和文字进度的脚本与测试见[运行�
 
 [实验索引](evidence/desktop-lab/index.json)关联 43 组实验、110 个请求阶段，其中 3 次为预热。每个阶段可以查看客户端请求、CPA 上游请求、流式事件、完成事件和输出项。
 
-公开记录是脱敏副本，敏感内容以占位符替换。这里的“完整上下文”限于所保存请求中可见的内容。
+公开记录已脱敏，敏感内容以占位符替换；“完整上下文”限于所保存请求中可见的内容。
 
 截图展示操作和结果，工作台可切换请求、输出、工具往返和完整文件。判断工具是否执行、文件是否改变，还需要核对本地事件、文件内容与退出码。
 
