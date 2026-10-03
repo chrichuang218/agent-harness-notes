@@ -1,0 +1,2 @@
+# Preserve the byte hashes recorded for the published native-memory evidence.
+evidence/desktop-lab/native-memory-*/*.json text eol=lf

@@ -3,10 +3,11 @@
   "capturedOn": "2026-10-03",
   "notes": [
     "图片来自真实 Codex 模式窗口，只做确定性裁剪，未重绘或改写消息、命令、报错与结果。",
-    "原始全窗口截图与可访问性文本保存在本地私有 work/desktop-captures，不随仓库发布。公开 PNG 为裁剪后的原尺寸图片。",
+    "原始全窗口截图与可访问性文本保存在本地私有 work/desktop-captures；原生记忆的三张新增图保存在 work/native-memory。不随仓库发布，公开 PNG 为裁剪后的原尺寸图片。",
     "savedAt 是保存文件的时间。reopened-history 表示重新打开旧对话拍摄，不代表原实验发生时间；实验时间以对应 manifest 和日志为准。",
     "plan-progress 来自执行中的保留画面，保存晚于观察；裁剪排除了上方含个人目录的命令行。",
-    "静态截图用于对照可见操作与结果，工具执行、流式过程和文件变化仍需结合 CPA、本地事件与文件观察核对。"
+    "静态截图用于对照可见操作与结果，工具执行、流式过程和文件变化仍需结合 CPA、本地事件与文件观察核对。",
+    "native-memory-controls 来自召回新聊天提交前的设置弹窗；native-memory-before-consolidation 与 native-memory-recall 来自各自当轮完成画面。capturedAt 取自对应原始可访问性快照。"
   ],
   "images": [
     {
@@ -817,6 +818,123 @@
             "01a0ee0e-a997-7570-b627-f8e7ff302f83"
           ],
           "manifestFile": "evidence/desktop-lab/15-permissions/manifest.json"
+        }
+      ]
+    },
+    {
+      "id": "native-memory-controls",
+      "file": "docs/images/desktop-lab/native-memory-controls.png",
+      "sha256": "0eb9b546d8dca9b9b613abaedf46445abe610dd890b0ec7326b2d0b32e122cda",
+      "width": 490,
+      "height": 478,
+      "chapters": [
+        "08-memory"
+      ],
+      "caption": "新聊天开启“使用记忆”，关闭“生成记忆”。",
+      "source": {
+        "captureMethod": "Computer Use / @oai/sky / Codex mode",
+        "originalStoredPrivately": true,
+        "originalFileName": "final-on-settings.png",
+        "privateDirectory": "work/native-memory",
+        "sha256": "9cb91faae6f6082fad56acda40747e94e921a78ece16795c3d841120efbbe395",
+        "width": 2560,
+        "height": 1392,
+        "capturedAt": "2026-10-03T11:24:01.146Z",
+        "displayState": "before-turn"
+      },
+      "crop": {
+        "x": 1036,
+        "y": 458,
+        "width": 490,
+        "height": 478
+      },
+      "redactions": [],
+      "experiments": [
+        {
+          "id": "native-memory-recall-consolidated",
+          "threadId": "01a10183-f694-76e2-b438-211a32bd1b05",
+          "turnIds": [
+            "01a10183-fade-7f21-a3e4-d81372dcdc93"
+          ],
+          "manifestFile": "evidence/desktop-lab/native-memory-recall-consolidated/manifest.json"
+        }
+      ]
+    },
+    {
+      "id": "native-memory-before-consolidation",
+      "file": "docs/images/desktop-lab/native-memory-before-consolidation.png",
+      "sha256": "0dccb3c54854fbaa3c5abf985d7500c99c8bcf9ebcb7d6066abf04141bd177af",
+      "width": 920,
+      "height": 295,
+      "chapters": [
+        "08-memory"
+      ],
+      "caption": "整合完成前，开启记忆的新聊天仍回答“不知道”。",
+      "source": {
+        "captureMethod": "Computer Use / @oai/sky / Codex mode",
+        "originalStoredPrivately": true,
+        "originalFileName": "recall-on-result.png",
+        "privateDirectory": "work/native-memory",
+        "sha256": "83246975da851ed85e692d416cd3df0aa33e2b15a1d5ef87a4e8d6d3b17ed248",
+        "width": 2560,
+        "height": 1392,
+        "capturedAt": "2026-10-03T11:05:04.973Z",
+        "displayState": "after-turn"
+      },
+      "crop": {
+        "x": 1025,
+        "y": 150,
+        "width": 920,
+        "height": 295
+      },
+      "redactions": [],
+      "experiments": [
+        {
+          "id": "native-memory-recall-on",
+          "threadId": "01a1016f-d571-7e72-9b9d-9b421fbae2d1",
+          "turnIds": [
+            "01a1016f-d9ce-7261-a43c-66de551afdfb"
+          ],
+          "manifestFile": "evidence/desktop-lab/native-memory-recall-on/manifest.json"
+        }
+      ]
+    },
+    {
+      "id": "native-memory-recall",
+      "file": "docs/images/desktop-lab/native-memory-recall.png",
+      "sha256": "fdde7e683f527e87881857bc040d765d64fa555bc19723ebec6b5bb54f16d5d1",
+      "width": 920,
+      "height": 390,
+      "chapters": [
+        "08-memory"
+      ],
+      "caption": "整合完成后，相同问题得到固定标题和金额顺序。",
+      "source": {
+        "captureMethod": "Computer Use / @oai/sky / Codex mode",
+        "originalStoredPrivately": true,
+        "originalFileName": "final-on-result.png",
+        "privateDirectory": "work/native-memory",
+        "sha256": "f136cfb4b834b0a2b165d13a6466f1ef3105150dc181091bb8b4343aa24623ee",
+        "width": 2560,
+        "height": 1392,
+        "capturedAt": "2026-10-03T11:26:52.272Z",
+        "displayState": "after-turn"
+      },
+      "crop": {
+        "x": 1025,
+        "y": 145,
+        "width": 920,
+        "height": 390
+      },
+      "redactions": [],
+      "experiments": [
+        {
+          "id": "native-memory-recall-consolidated",
+          "threadId": "01a10183-f694-76e2-b438-211a32bd1b05",
+          "turnIds": [
+            "01a10183-fade-7f21-a3e4-d81372dcdc93"
+          ],
+          "manifestFile": "evidence/desktop-lab/native-memory-recall-consolidated/manifest.json"
         }
       ]
     }

@@ -1,0 +1,135 @@
+{
+  "id": "native-memory-recall-consolidated",
+  "title": "原生记忆整合后召回",
+  "threadId": "01a10183-f694-76e2-b438-211a32bd1b05",
+  "turnIds": [
+    "01a10183-fade-7f21-a3e4-d81372dcdc93"
+  ],
+  "prompt": "在 codex-ts-demo 中，我希望总价说明使用什么固定回执标题、按什么顺序列出金额？可以使用本聊天自动获得的原生记忆；若没有相关信息，就回答“不知道”，不要猜。不要读取普通项目文件、搜索其他聊天或联网，也不要写文件。\n",
+  "reply": "根据本聊天自动获得的原生记忆，固定回执标题是“松果回执”，金额顺序为：\n\n1. 实付金额\n2. 原价合计\n3. 减免金额",
+  "stats": {
+    "requests": 1,
+    "toolCalls": 0,
+    "inputTokens": 38626,
+    "outputTokens": 95,
+    "prewarms": 0
+  },
+  "stages": [
+    {
+      "id": "00-request",
+      "requestFile": "evidence/desktop-lab/native-memory-recall-consolidated/00-request.request.json",
+      "responseFile": "evidence/desktop-lab/native-memory-recall-consolidated/00-request.response.json",
+      "eventsFile": "evidence/desktop-lab/native-memory-recall-consolidated/00-request.events.json",
+      "upstreamFile": "evidence/desktop-lab/native-memory-recall-consolidated/00-request.upstream.json",
+      "outputItemsFile": "evidence/desktop-lab/native-memory-recall-consolidated/00-request.output-items.json",
+      "requestTimestamp": "2026-10-03T19:26:32.9178491+08:00",
+      "responseId": "resp_011aa72f13651fe6016ac0e669429c87d082ba2593466d5ef6",
+      "previousResponseId": null,
+      "inputCount": 11,
+      "prewarm": false,
+      "source": {
+        "request": {
+          "file": "request-log-parts-websocket-timeline-475302584/request-306433177.tmp",
+          "line": 3,
+          "timestamp": "2026-10-03T19:26:32.9178491+08:00"
+        },
+        "completed": {
+          "file": "request-log-parts-websocket-timeline-475302584/request-306433177.tmp",
+          "line": 251,
+          "timestamp": "2026-10-03T19:26:40.2130497+08:00"
+        },
+        "upstream": {
+          "file": "request-log-parts-api-websocket-timeline-3907972811/part-2777134904.tmp",
+          "line": 19,
+          "timestamp": "2026-10-03T19:26:32.9273919+08:00"
+        }
+      }
+    }
+  ],
+  "notes": [
+    "Matched exact response event ids against rollout token_usage_record.response_id; text mentions are not matches.",
+    "response.json preserves the recorded response.completed event. Its output may be empty; output-items.json is a separately labelled derivation.",
+    "Only JSON request bodies and response.* events are exported. HTTP headers and transport header events are omitted.",
+    "Counts exclude prewarm stages. Token usage is the sum of formal model responses, not unique context size.",
+    "Native-memory publication redactions and original CPA/private/public SHA-256 values are documented in privacy.json. This public copy does not contain unrelated personal memory text."
+  ],
+  "sanitization": {
+    "mode": "structure-preserving-redaction",
+    "replacements": [
+      "Windows user home → <USER_HOME>",
+      "Credential values, encrypted content, installation and safety ids → <REDACTED>",
+      "Unrelated native-memory content → explicit publication-redaction marker; target lines are retained verbatim"
+    ],
+    "changedPaths": [
+      "00-request.events.json[0].data.response.safety_identifier",
+      "00-request.events.json[10].data.obfuscation",
+      "00-request.events.json[11].data.obfuscation",
+      "00-request.events.json[12].data.obfuscation",
+      "00-request.events.json[13].data.obfuscation",
+      "00-request.events.json[14].data.obfuscation",
+      "00-request.events.json[15].data.obfuscation",
+      "00-request.events.json[16].data.obfuscation",
+      "00-request.events.json[17].data.obfuscation",
+      "00-request.events.json[18].data.obfuscation",
+      "00-request.events.json[19].data.obfuscation",
+      "00-request.events.json[1].data.response.safety_identifier",
+      "00-request.events.json[20].data.obfuscation",
+      "00-request.events.json[21].data.obfuscation",
+      "00-request.events.json[22].data.obfuscation",
+      "00-request.events.json[23].data.obfuscation",
+      "00-request.events.json[24].data.obfuscation",
+      "00-request.events.json[25].data.obfuscation",
+      "00-request.events.json[26].data.obfuscation",
+      "00-request.events.json[27].data.obfuscation",
+      "00-request.events.json[28].data.obfuscation",
+      "00-request.events.json[29].data.obfuscation",
+      "00-request.events.json[2].data.item.encrypted_content",
+      "00-request.events.json[30].data.obfuscation",
+      "00-request.events.json[31].data.obfuscation",
+      "00-request.events.json[32].data.obfuscation",
+      "00-request.events.json[33].data.obfuscation",
+      "00-request.events.json[34].data.obfuscation",
+      "00-request.events.json[35].data.obfuscation",
+      "00-request.events.json[36].data.obfuscation",
+      "00-request.events.json[37].data.obfuscation",
+      "00-request.events.json[38].data.obfuscation",
+      "00-request.events.json[39].data.obfuscation",
+      "00-request.events.json[40].data.obfuscation",
+      "00-request.events.json[41].data.obfuscation",
+      "00-request.events.json[42].data.obfuscation",
+      "00-request.events.json[43].data.obfuscation",
+      "00-request.events.json[44].data.obfuscation",
+      "00-request.events.json[45].data.obfuscation",
+      "00-request.events.json[46].data.obfuscation",
+      "00-request.events.json[47].data.obfuscation",
+      "00-request.events.json[48].data.obfuscation",
+      "00-request.events.json[49].data.obfuscation",
+      "00-request.events.json[4].data.obfuscation",
+      "00-request.events.json[50].data.obfuscation",
+      "00-request.events.json[51].data.obfuscation",
+      "00-request.events.json[52].data.obfuscation",
+      "00-request.events.json[53].data.obfuscation",
+      "00-request.events.json[54].data.obfuscation",
+      "00-request.events.json[58].data.response.safety_identifier",
+      "00-request.events.json[7].data.item.encrypted_content",
+      "00-request.output-items.json.items[0].encrypted_content",
+      "00-request.request.json.client_metadata.x-codex-installation-id",
+      "00-request.request.json.client_metadata.x-codex-turn-metadata.installation_id",
+      "00-request.request.json.input[2].content[1].text",
+      "00-request.request.json.input[2].content[2].text",
+      "00-request.request.json.input[5].content[1].text",
+      "00-request.response.json.response.safety_identifier",
+      "00-request.upstream.json.client_metadata.x-codex-installation-id",
+      "00-request.upstream.json.client_metadata.x-codex-turn-metadata.installation_id",
+      "00-request.upstream.json.input[2].content[1].text",
+      "00-request.upstream.json.input[2].content[2].text",
+      "00-request.upstream.json.input[5].content[1].text",
+      "00-request.request.json:$.input[2].content[1].text",
+      "00-request.upstream.json:$.input[2].content[1].text"
+    ]
+  },
+  "rolloutSource": "<USER_HOME>/.codex/sessions/2026/10/03/rollout-2026-10-03T19-26-27-01a10183-f694-76e2-b438-211a32bd1b05.jsonl",
+  "collectedAt": "2026-10-03T11:28:34.026Z",
+  "privacyFile": "evidence/desktop-lab/native-memory-recall-consolidated/privacy.json",
+  "auditFile": "evidence/desktop-lab/native-memory-recall-consolidated/audit.json"
+}

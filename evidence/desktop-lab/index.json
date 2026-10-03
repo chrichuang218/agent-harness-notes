@@ -4112,6 +4112,490 @@
       "manifestFile": "evidence/desktop-lab/hook-pre-tool/manifest.json"
     },
     {
+      "id": "native-memory-baseline",
+      "title": "原生记忆前置对照",
+      "threadId": "01a1002d-0329-7433-a5d4-3892effa67b4",
+      "turnIds": [
+        "01a1002d-0783-7153-ab79-0dc3ec521d0d"
+      ],
+      "prompt": "在 codex-ts-demo 中，我希望总价说明使用什么固定回执标题、按什么顺序列出金额？可以使用本聊天自动获得的原生记忆；若没有相关信息，就回答“不知道”，不要猜。不要读取普通项目文件、搜索其他聊天或联网，也不要写文件。\n",
+      "reply": "不知道。",
+      "stats": {
+        "requests": 1,
+        "toolCalls": 0,
+        "inputTokens": 35887,
+        "outputTokens": 21,
+        "prewarms": 0
+      },
+      "stages": [
+        {
+          "id": "00-request",
+          "requestFile": "evidence/desktop-lab/native-memory-baseline/00-request.request.json",
+          "responseFile": "evidence/desktop-lab/native-memory-baseline/00-request.response.json",
+          "eventsFile": "evidence/desktop-lab/native-memory-baseline/00-request.events.json",
+          "upstreamFile": "evidence/desktop-lab/native-memory-baseline/00-request.upstream.json",
+          "outputItemsFile": "evidence/desktop-lab/native-memory-baseline/00-request.output-items.json",
+          "requestTimestamp": "2026-10-03T13:11:57.3918692+08:00",
+          "responseId": "resp_06a60ed6762365b4016ac08e9dcbb087d08b0cc09d82dab03f",
+          "previousResponseId": null,
+          "inputCount": 11,
+          "prewarm": false,
+          "source": {
+            "request": {
+              "file": "v1-responses-2026-10-03T131700-bdb731a1.log",
+              "line": 60,
+              "timestamp": "2026-10-03T13:11:57.3918692+08:00"
+            },
+            "completed": {
+              "file": "v1-responses-2026-10-03T131700-bdb731a1.log",
+              "line": 120,
+              "timestamp": "2026-10-03T13:12:00.6716822+08:00"
+            },
+            "upstream": {
+              "file": "v1-responses-2026-10-03T131700-bdb731a1.log",
+              "line": 214,
+              "timestamp": "2026-10-03T13:11:57.4036517+08:00"
+            }
+          }
+        }
+      ],
+      "notes": [
+        "Matched exact response event ids against rollout token_usage_record.response_id; text mentions are not matches.",
+        "response.json preserves the recorded response.completed event. Its output may be empty; output-items.json is a separately labelled derivation.",
+        "Only JSON request bodies and response.* events are exported. HTTP headers and transport header events are omitted.",
+        "Counts exclude prewarm stages. Token usage is the sum of formal model responses, not unique context size.",
+        "Native-memory publication redactions and original CPA/private/public SHA-256 values are documented in privacy.json. This public copy does not contain unrelated personal memory text."
+      ],
+      "sanitization": {
+        "mode": "structure-preserving-redaction",
+        "replacements": [
+          "Windows user home → <USER_HOME>",
+          "Credential values, encrypted content, installation and safety ids → <REDACTED>",
+          "Unrelated native-memory content → explicit publication-redaction marker; target lines are retained verbatim"
+        ],
+        "changedPathCount": 17
+      },
+      "rolloutSource": "<USER_HOME>/.codex/sessions/2026/10/03/rollout-2026-10-03T13-11-52-01a1002d-0329-7433-a5d4-3892effa67b4.jsonl",
+      "collectedAt": "2026-10-03T11:26:47.969Z",
+      "privacyFile": "evidence/desktop-lab/native-memory-baseline/privacy.json",
+      "manifestFile": "evidence/desktop-lab/native-memory-baseline/manifest.json"
+    },
+    {
+      "id": "native-memory-recall-consolidated",
+      "title": "原生记忆整合后召回",
+      "threadId": "01a10183-f694-76e2-b438-211a32bd1b05",
+      "turnIds": [
+        "01a10183-fade-7f21-a3e4-d81372dcdc93"
+      ],
+      "prompt": "在 codex-ts-demo 中，我希望总价说明使用什么固定回执标题、按什么顺序列出金额？可以使用本聊天自动获得的原生记忆；若没有相关信息，就回答“不知道”，不要猜。不要读取普通项目文件、搜索其他聊天或联网，也不要写文件。\n",
+      "reply": "根据本聊天自动获得的原生记忆，固定回执标题是“松果回执”，金额顺序为：\n\n1. 实付金额\n2. 原价合计\n3. 减免金额",
+      "stats": {
+        "requests": 1,
+        "toolCalls": 0,
+        "inputTokens": 38626,
+        "outputTokens": 95,
+        "prewarms": 0
+      },
+      "stages": [
+        {
+          "id": "00-request",
+          "requestFile": "evidence/desktop-lab/native-memory-recall-consolidated/00-request.request.json",
+          "responseFile": "evidence/desktop-lab/native-memory-recall-consolidated/00-request.response.json",
+          "eventsFile": "evidence/desktop-lab/native-memory-recall-consolidated/00-request.events.json",
+          "upstreamFile": "evidence/desktop-lab/native-memory-recall-consolidated/00-request.upstream.json",
+          "outputItemsFile": "evidence/desktop-lab/native-memory-recall-consolidated/00-request.output-items.json",
+          "requestTimestamp": "2026-10-03T19:26:32.9178491+08:00",
+          "responseId": "resp_011aa72f13651fe6016ac0e669429c87d082ba2593466d5ef6",
+          "previousResponseId": null,
+          "inputCount": 11,
+          "prewarm": false,
+          "source": {
+            "request": {
+              "file": "request-log-parts-websocket-timeline-475302584/request-306433177.tmp",
+              "line": 3,
+              "timestamp": "2026-10-03T19:26:32.9178491+08:00"
+            },
+            "completed": {
+              "file": "request-log-parts-websocket-timeline-475302584/request-306433177.tmp",
+              "line": 251,
+              "timestamp": "2026-10-03T19:26:40.2130497+08:00"
+            },
+            "upstream": {
+              "file": "request-log-parts-api-websocket-timeline-3907972811/part-2777134904.tmp",
+              "line": 19,
+              "timestamp": "2026-10-03T19:26:32.9273919+08:00"
+            }
+          }
+        }
+      ],
+      "notes": [
+        "Matched exact response event ids against rollout token_usage_record.response_id; text mentions are not matches.",
+        "response.json preserves the recorded response.completed event. Its output may be empty; output-items.json is a separately labelled derivation.",
+        "Only JSON request bodies and response.* events are exported. HTTP headers and transport header events are omitted.",
+        "Counts exclude prewarm stages. Token usage is the sum of formal model responses, not unique context size.",
+        "Native-memory publication redactions and original CPA/private/public SHA-256 values are documented in privacy.json. This public copy does not contain unrelated personal memory text."
+      ],
+      "sanitization": {
+        "mode": "structure-preserving-redaction",
+        "replacements": [
+          "Windows user home → <USER_HOME>",
+          "Credential values, encrypted content, installation and safety ids → <REDACTED>",
+          "Unrelated native-memory content → explicit publication-redaction marker; target lines are retained verbatim"
+        ],
+        "changedPathCount": 65
+      },
+      "rolloutSource": "<USER_HOME>/.codex/sessions/2026/10/03/rollout-2026-10-03T19-26-27-01a10183-f694-76e2-b438-211a32bd1b05.jsonl",
+      "collectedAt": "2026-10-03T11:28:34.026Z",
+      "privacyFile": "evidence/desktop-lab/native-memory-recall-consolidated/privacy.json",
+      "manifestFile": "evidence/desktop-lab/native-memory-recall-consolidated/manifest.json",
+      "auditFile": "evidence/desktop-lab/native-memory-recall-consolidated/audit.json"
+    },
+    {
+      "id": "native-memory-recall-consolidated-off",
+      "title": "整合后关闭原生记忆对照",
+      "threadId": "01a10185-aacb-7600-9215-fd4d4455f555",
+      "turnIds": [
+        "01a10185-ae8b-71d0-9b7e-f9d6d1836a27"
+      ],
+      "prompt": "在 codex-ts-demo 中，我希望总价说明使用什么固定回执标题、按什么顺序列出金额？可以使用本聊天自动获得的原生记忆；若没有相关信息，就回答“不知道”，不要猜。不要读取普通项目文件、搜索其他聊天或联网，也不要写文件。\n",
+      "reply": "不知道。",
+      "stats": {
+        "requests": 1,
+        "toolCalls": 0,
+        "inputTokens": 35937,
+        "outputTokens": 21,
+        "prewarms": 0
+      },
+      "stages": [
+        {
+          "id": "00-request",
+          "requestFile": "evidence/desktop-lab/native-memory-recall-consolidated-off/00-request.request.json",
+          "responseFile": "evidence/desktop-lab/native-memory-recall-consolidated-off/00-request.response.json",
+          "eventsFile": "evidence/desktop-lab/native-memory-recall-consolidated-off/00-request.events.json",
+          "upstreamFile": "evidence/desktop-lab/native-memory-recall-consolidated-off/00-request.upstream.json",
+          "outputItemsFile": "evidence/desktop-lab/native-memory-recall-consolidated-off/00-request.output-items.json",
+          "requestTimestamp": "2026-10-03T19:28:24.5153874+08:00",
+          "responseId": "resp_0afb4b5e317a507d016ac0e6d90e0087d098b2cf7977aea07e",
+          "previousResponseId": null,
+          "inputCount": 11,
+          "prewarm": false,
+          "source": {
+            "request": {
+              "file": "request-log-parts-websocket-timeline-3217515133/request-3252393197.tmp",
+              "line": 3,
+              "timestamp": "2026-10-03T19:28:24.5153874+08:00"
+            },
+            "completed": {
+              "file": "request-log-parts-websocket-timeline-3217515133/request-3252393197.tmp",
+              "line": 63,
+              "timestamp": "2026-10-03T19:28:28.3161897+08:00"
+            },
+            "upstream": {
+              "file": "request-log-parts-api-websocket-timeline-1111245052/part-3681995135.tmp",
+              "line": 19,
+              "timestamp": "2026-10-03T19:28:24.5274118+08:00"
+            }
+          }
+        }
+      ],
+      "notes": [
+        "Matched exact response event ids against rollout token_usage_record.response_id; text mentions are not matches.",
+        "response.json preserves the recorded response.completed event. Its output may be empty; output-items.json is a separately labelled derivation.",
+        "Only JSON request bodies and response.* events are exported. HTTP headers and transport header events are omitted.",
+        "Counts exclude prewarm stages. Token usage is the sum of formal model responses, not unique context size.",
+        "Native-memory publication redactions and original CPA/private/public SHA-256 values are documented in privacy.json. This public copy does not contain unrelated personal memory text."
+      ],
+      "sanitization": {
+        "mode": "structure-preserving-redaction",
+        "replacements": [
+          "Windows user home → <USER_HOME>",
+          "Credential values, encrypted content, installation and safety ids → <REDACTED>",
+          "Unrelated native-memory content → explicit publication-redaction marker; target lines are retained verbatim"
+        ],
+        "changedPathCount": 17
+      },
+      "rolloutSource": "<USER_HOME>/.codex/sessions/2026/10/03/rollout-2026-10-03T19-28-19-01a10185-aacb-7600-9215-fd4d4455f555.jsonl",
+      "collectedAt": "2026-10-03T11:29:05.723Z",
+      "privacyFile": "evidence/desktop-lab/native-memory-recall-consolidated-off/privacy.json",
+      "manifestFile": "evidence/desktop-lab/native-memory-recall-consolidated-off/manifest.json"
+    },
+    {
+      "id": "native-memory-recall-off",
+      "title": "新任务B：关闭原生记忆对照",
+      "threadId": "01a1016e-0cc8-7c13-8756-ab8f9df7afd2",
+      "turnIds": [
+        "01a1016e-10cc-71c3-a644-3f9223597254"
+      ],
+      "prompt": "在 codex-ts-demo 中，我希望总价说明使用什么固定回执标题、按什么顺序列出金额？可以使用本聊天自动获得的原生记忆；若没有相关信息，就回答“不知道”，不要猜。不要读取普通项目文件、搜索其他聊天或联网，也不要写文件。\n",
+      "reply": "不知道",
+      "stats": {
+        "requests": 1,
+        "toolCalls": 0,
+        "inputTokens": 35937,
+        "outputTokens": 18,
+        "prewarms": 0
+      },
+      "stages": [
+        {
+          "id": "00-request",
+          "requestFile": "evidence/desktop-lab/native-memory-recall-off/00-request.request.json",
+          "responseFile": "evidence/desktop-lab/native-memory-recall-off/00-request.response.json",
+          "eventsFile": "evidence/desktop-lab/native-memory-recall-off/00-request.events.json",
+          "upstreamFile": "evidence/desktop-lab/native-memory-recall-off/00-request.upstream.json",
+          "outputItemsFile": "evidence/desktop-lab/native-memory-recall-off/00-request.output-items.json",
+          "requestTimestamp": "2026-10-03T19:02:38.605705+08:00",
+          "responseId": "resp_0ffd84741836ab3a016ac0e0cf078c87d08eded8c0ebeee3ef",
+          "previousResponseId": null,
+          "inputCount": 11,
+          "prewarm": false,
+          "source": {
+            "request": {
+              "file": "v1-responses-2026-10-03T190742-f4061f4d.log",
+              "line": 60,
+              "timestamp": "2026-10-03T19:02:38.605705+08:00"
+            },
+            "completed": {
+              "file": "v1-responses-2026-10-03T190742-f4061f4d.log",
+              "line": 116,
+              "timestamp": "2026-10-03T19:02:42.6148593+08:00"
+            },
+            "upstream": {
+              "file": "v1-responses-2026-10-03T190742-f4061f4d.log",
+              "line": 210,
+              "timestamp": "2026-10-03T19:02:38.6164504+08:00"
+            }
+          }
+        }
+      ],
+      "notes": [
+        "Matched exact response event ids against rollout token_usage_record.response_id; text mentions are not matches.",
+        "response.json preserves the recorded response.completed event. Its output may be empty; output-items.json is a separately labelled derivation.",
+        "Only JSON request bodies and response.* events are exported. HTTP headers and transport header events are omitted.",
+        "Counts exclude prewarm stages. Token usage is the sum of formal model responses, not unique context size.",
+        "Native-memory publication redactions and original CPA/private/public SHA-256 values are documented in privacy.json. This public copy does not contain unrelated personal memory text."
+      ],
+      "sanitization": {
+        "mode": "structure-preserving-redaction",
+        "replacements": [
+          "Windows user home → <USER_HOME>",
+          "Credential values, encrypted content, installation and safety ids → <REDACTED>",
+          "Unrelated native-memory content → explicit publication-redaction marker; target lines are retained verbatim"
+        ],
+        "changedPathCount": 16
+      },
+      "rolloutSource": "<USER_HOME>/.codex/sessions/2026/10/03/rollout-2026-10-03T19-02-31-01a1016e-0cc8-7c13-8756-ab8f9df7afd2.jsonl",
+      "collectedAt": "2026-10-03T11:26:48.272Z",
+      "privacyFile": "evidence/desktop-lab/native-memory-recall-off/privacy.json",
+      "manifestFile": "evidence/desktop-lab/native-memory-recall-off/manifest.json"
+    },
+    {
+      "id": "native-memory-recall-on",
+      "title": "新任务C：开启原生记忆对照",
+      "threadId": "01a1016f-d571-7e72-9b9d-9b421fbae2d1",
+      "turnIds": [
+        "01a1016f-d9ce-7261-a43c-66de551afdfb"
+      ],
+      "prompt": "在 codex-ts-demo 中，我希望总价说明使用什么固定回执标题、按什么顺序列出金额？可以使用本聊天自动获得的原生记忆；若没有相关信息，就回答“不知道”，不要猜。不要读取普通项目文件、搜索其他聊天或联网，也不要写文件。\n",
+      "reply": "不知道",
+      "stats": {
+        "requests": 1,
+        "toolCalls": 0,
+        "inputTokens": 38166,
+        "outputTokens": 39,
+        "prewarms": 0
+      },
+      "stages": [
+        {
+          "id": "00-request",
+          "requestFile": "evidence/desktop-lab/native-memory-recall-on/00-request.request.json",
+          "responseFile": "evidence/desktop-lab/native-memory-recall-on/00-request.response.json",
+          "eventsFile": "evidence/desktop-lab/native-memory-recall-on/00-request.events.json",
+          "upstreamFile": "evidence/desktop-lab/native-memory-recall-on/00-request.upstream.json",
+          "outputItemsFile": "evidence/desktop-lab/native-memory-recall-on/00-request.output-items.json",
+          "requestTimestamp": "2026-10-03T19:04:33.5354801+08:00",
+          "responseId": "resp_04b73493b4d82c21016ac0e141d29087d088fd2d9b21465713",
+          "previousResponseId": null,
+          "inputCount": 11,
+          "prewarm": false,
+          "source": {
+            "request": {
+              "file": "v1-responses-2026-10-03T190939-8d1932e6.log",
+              "line": 60,
+              "timestamp": "2026-10-03T19:04:33.5354801+08:00"
+            },
+            "completed": {
+              "file": "v1-responses-2026-10-03T190939-8d1932e6.log",
+              "line": 132,
+              "timestamp": "2026-10-03T19:04:39.3572249+08:00"
+            },
+            "upstream": {
+              "file": "v1-responses-2026-10-03T190939-8d1932e6.log",
+              "line": 226,
+              "timestamp": "2026-10-03T19:04:33.5456885+08:00"
+            }
+          }
+        }
+      ],
+      "notes": [
+        "Matched exact response event ids against rollout token_usage_record.response_id; text mentions are not matches.",
+        "response.json preserves the recorded response.completed event. Its output may be empty; output-items.json is a separately labelled derivation.",
+        "Only JSON request bodies and response.* events are exported. HTTP headers and transport header events are omitted.",
+        "Counts exclude prewarm stages. Token usage is the sum of formal model responses, not unique context size.",
+        "Native-memory publication redactions and original CPA/private/public SHA-256 values are documented in privacy.json. This public copy does not contain unrelated personal memory text."
+      ],
+      "sanitization": {
+        "mode": "structure-preserving-redaction",
+        "replacements": [
+          "Windows user home → <USER_HOME>",
+          "Credential values, encrypted content, installation and safety ids → <REDACTED>",
+          "Unrelated native-memory content → explicit publication-redaction marker; target lines are retained verbatim"
+        ],
+        "changedPathCount": 21
+      },
+      "rolloutSource": "<USER_HOME>/.codex/sessions/2026/10/03/rollout-2026-10-03T19-04-28-01a1016f-d571-7e72-9b9d-9b421fbae2d1.jsonl",
+      "collectedAt": "2026-10-03T11:26:48.558Z",
+      "privacyFile": "evidence/desktop-lab/native-memory-recall-on/privacy.json",
+      "manifestFile": "evidence/desktop-lab/native-memory-recall-on/manifest.json"
+    },
+    {
+      "id": "native-memory-source",
+      "title": "原生记忆来源任务A",
+      "threadId": "01a10034-1814-77d3-9563-3ca5e239f795",
+      "turnIds": [
+        "01a10034-1c6b-7c73-8d40-071614615784"
+      ],
+      "prompt": "在 codex-ts-demo 项目里，我有一条长期展示偏好：总价说明的固定标题用“松果回执”，金额按“实付金额 → 原价合计 → 减免金额”的顺序列出。这条偏好以后继续这个项目时也适用，允许原生记忆在后台提取。现在请只在聊天里确认，并用单价 10 元、数量 3、减免 10% 给一个符合偏好的示例。不要调用工具，不要修改普通项目文件，也不要手动编辑记忆文件。\n",
+      "reply": "已确认：此项目的总价说明固定标题为“松果回执”，金额按“实付金额 → 原价合计 → 减免金额”排列，后续继续本项目时也适用；允许原生记忆在后台提取。\n\n### 松果回执\n\n单价 10 元 × 数量 3，减免 10%。\n\n- 实付金额：27 元\n- 原价合计：30 元\n- 减免金额：3 元",
+      "stats": {
+        "requests": 1,
+        "toolCalls": 0,
+        "inputTokens": 35942,
+        "outputTokens": 108,
+        "prewarms": 0
+      },
+      "stages": [
+        {
+          "id": "00-request",
+          "requestFile": "evidence/desktop-lab/native-memory-source/00-request.request.json",
+          "responseFile": "evidence/desktop-lab/native-memory-source/00-request.response.json",
+          "eventsFile": "evidence/desktop-lab/native-memory-source/00-request.events.json",
+          "upstreamFile": "evidence/desktop-lab/native-memory-source/00-request.upstream.json",
+          "outputItemsFile": "evidence/desktop-lab/native-memory-source/00-request.output-items.json",
+          "requestTimestamp": "2026-10-03T13:19:41.0949692+08:00",
+          "responseId": "resp_0a153a55d50b5e1f016ac0906d86ec87d088b71940c50db34a",
+          "previousResponseId": null,
+          "inputCount": 11,
+          "prewarm": false,
+          "source": {
+            "request": {
+              "file": "v1-responses-2026-10-03T132445-2ca84ea6.log",
+              "line": 60,
+              "timestamp": "2026-10-03T13:19:41.0949692+08:00"
+            },
+            "completed": {
+              "file": "v1-responses-2026-10-03T132445-2ca84ea6.log",
+              "line": 512,
+              "timestamp": "2026-10-03T13:19:45.2831687+08:00"
+            },
+            "upstream": {
+              "file": "v1-responses-2026-10-03T132445-2ca84ea6.log",
+              "line": 606,
+              "timestamp": "2026-10-03T13:19:41.106916+08:00"
+            }
+          }
+        }
+      ],
+      "notes": [
+        "Matched exact response event ids against rollout token_usage_record.response_id; text mentions are not matches.",
+        "response.json preserves the recorded response.completed event. Its output may be empty; output-items.json is a separately labelled derivation.",
+        "Only JSON request bodies and response.* events are exported. HTTP headers and transport header events are omitted.",
+        "Counts exclude prewarm stages. Token usage is the sum of formal model responses, not unique context size.",
+        "Native-memory publication redactions and original CPA/private/public SHA-256 values are documented in privacy.json. This public copy does not contain unrelated personal memory text."
+      ],
+      "sanitization": {
+        "mode": "structure-preserving-redaction",
+        "replacements": [
+          "Windows user home → <USER_HOME>",
+          "Credential values, encrypted content, installation and safety ids → <REDACTED>",
+          "Unrelated native-memory content → explicit publication-redaction marker; target lines are retained verbatim"
+        ],
+        "changedPathCount": 114
+      },
+      "rolloutSource": "<USER_HOME>/.codex/sessions/2026/10/03/rollout-2026-10-03T13-19-36-01a10034-1814-77d3-9563-3ca5e239f795.jsonl",
+      "collectedAt": "2026-10-03T11:26:49.117Z",
+      "privacyFile": "evidence/desktop-lab/native-memory-source/privacy.json",
+      "manifestFile": "evidence/desktop-lab/native-memory-source/manifest.json"
+    },
+    {
+      "id": "native-memory-source-context",
+      "title": "来源任务A的同会话上下文对照",
+      "threadId": "01a10034-1814-77d3-9563-3ca5e239f795",
+      "turnIds": [
+        "01a10039-714c-7981-bacb-0f4ab588628b"
+      ],
+      "prompt": "再用单价 12 元、数量 3、减免 25% 给一份同样格式的说明。不读取文件、不调用工具，也不写文件。这个展示偏好继续适用于以后的项目问答。\n",
+      "reply": "### 松果回执\n\n单价 12 元 × 数量 3，减免 25%。\n\n- 实付金额：27 元\n- 原价合计：36 元\n- 减免金额：9 元\n\n此展示偏好继续适用于以后的本项目问答。",
+      "stats": {
+        "requests": 1,
+        "toolCalls": 0,
+        "inputTokens": 36154,
+        "outputTokens": 66,
+        "prewarms": 0
+      },
+      "stages": [
+        {
+          "id": "00-request",
+          "requestFile": "evidence/desktop-lab/native-memory-source-context/00-request.request.json",
+          "responseFile": "evidence/desktop-lab/native-memory-source-context/00-request.response.json",
+          "eventsFile": "evidence/desktop-lab/native-memory-source-context/00-request.events.json",
+          "upstreamFile": "evidence/desktop-lab/native-memory-source-context/00-request.upstream.json",
+          "outputItemsFile": "evidence/desktop-lab/native-memory-source-context/00-request.output-items.json",
+          "requestTimestamp": "2026-10-03T13:25:28.0135061+08:00",
+          "responseId": "resp_0a153a55d50b5e1f016ac091c9c07487d08f411b4b9fb524d8",
+          "previousResponseId": null,
+          "inputCount": 14,
+          "prewarm": false,
+          "source": {
+            "request": {
+              "file": "v1-responses-2026-10-03T133032-fff7c030.log",
+              "line": 32,
+              "timestamp": "2026-10-03T13:25:28.0135061+08:00"
+            },
+            "completed": {
+              "file": "v1-responses-2026-10-03T133032-fff7c030.log",
+              "line": 320,
+              "timestamp": "2026-10-03T13:25:32.1554978+08:00"
+            },
+            "upstream": {
+              "file": "v1-responses-2026-10-03T133032-fff7c030.log",
+              "line": 346,
+              "timestamp": "2026-10-03T13:25:28.0241415+08:00"
+            }
+          }
+        }
+      ],
+      "notes": [
+        "Matched exact response event ids against rollout token_usage_record.response_id; text mentions are not matches.",
+        "response.json preserves the recorded response.completed event. Its output may be empty; output-items.json is a separately labelled derivation.",
+        "Only JSON request bodies and response.* events are exported. HTTP headers and transport header events are omitted.",
+        "Counts exclude prewarm stages. Token usage is the sum of formal model responses, not unique context size.",
+        "Native-memory publication redactions and original CPA/private/public SHA-256 values are documented in privacy.json. This public copy does not contain unrelated personal memory text."
+      ],
+      "sanitization": {
+        "mode": "structure-preserving-redaction",
+        "replacements": [
+          "Windows user home → <USER_HOME>",
+          "Credential values, encrypted content, installation and safety ids → <REDACTED>",
+          "Unrelated native-memory content → explicit publication-redaction marker; target lines are retained verbatim"
+        ],
+        "changedPathCount": 73
+      },
+      "rolloutSource": "<USER_HOME>/.codex/sessions/2026/10/03/rollout-2026-10-03T13-19-36-01a10034-1814-77d3-9563-3ca5e239f795.jsonl",
+      "collectedAt": "2026-10-03T11:26:49.627Z",
+      "privacyFile": "evidence/desktop-lab/native-memory-source-context/privacy.json",
+      "manifestFile": "evidence/desktop-lab/native-memory-source-context/manifest.json"
+    },
+    {
       "id": "patch-recovery",
       "title": "补丁上下文不匹配后的读取与恢复",
       "threadId": "01a0ff9a-4c81-7900-b401-e149f5ef7cbe",

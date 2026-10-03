@@ -1,0 +1,80 @@
+{
+  "mode": "structure-preserving-redaction",
+  "recordedAt": "2026-10-03T11:29:09.107125+00:00",
+  "policy": "All unrelated native-memory prose is omitted. Original request/response JSON object and array structure remains intact; altered text fields contain explicit publication-redaction markers. Complete private exports are retained locally. No whole memory file or DB is published.",
+  "files": [
+    {
+      "file": "evidence/desktop-lab/native-memory-recall-on/00-request.events.json",
+      "privateCollectedExportSha256": "8b2685980c0b57b5d0e66228dfe234568634d6c8000e14e94cbc33bd4f0b489a",
+      "publicFileSha256": "8b2685980c0b57b5d0e66228dfe234568634d6c8000e14e94cbc33bd4f0b489a",
+      "memoryTextRedactionCount": 0
+    },
+    {
+      "file": "evidence/desktop-lab/native-memory-recall-on/00-request.output-items.json",
+      "privateCollectedExportSha256": "2898ed8973df955e04020cbc1faa81e3ee6839b34e2a33a51cd45b87b5b83aa9",
+      "publicFileSha256": "2898ed8973df955e04020cbc1faa81e3ee6839b34e2a33a51cd45b87b5b83aa9",
+      "memoryTextRedactionCount": 0
+    },
+    {
+      "file": "evidence/desktop-lab/native-memory-recall-on/00-request.request.json",
+      "privateCollectedExportSha256": "0e48e3ed26ded313819a270cdb8d6615ac15043d62dc2a3638cdf6ddab8b769b",
+      "publicFileSha256": "fcd6b521067174aaa3794fcf40ae3ce359887f40bd1880471ffc8e80fd4773cc",
+      "memoryTextRedactionCount": 1,
+      "originalCpaJsonLineSha256": "b4aa08e3b3a8bd0a0ae49f1da54fa83b3652b284c1fbbe8b62a2659fce782d80",
+      "originalCpaHashScope": "UTF-8 bytes of the recorded CPA JSON line, excluding line ending",
+      "source": {
+        "file": "v1-responses-2026-10-03T190939-8d1932e6.log",
+        "line": 60,
+        "timestamp": "2026-10-03T19:04:33.5354801+08:00"
+      }
+    },
+    {
+      "file": "evidence/desktop-lab/native-memory-recall-on/00-request.response.json",
+      "privateCollectedExportSha256": "ed946b89f506ad12761195ccefb1c320feae72ae9193303acc75879d2799870a",
+      "publicFileSha256": "ed946b89f506ad12761195ccefb1c320feae72ae9193303acc75879d2799870a",
+      "memoryTextRedactionCount": 0,
+      "originalCpaJsonLineSha256": "4475aeb2a0df2550cbe8ebf8eb4f49ee16b4caae38bc258d905dfc6ce5dcae54",
+      "originalCpaHashScope": "UTF-8 bytes of the recorded CPA JSON line, excluding line ending",
+      "source": {
+        "file": "v1-responses-2026-10-03T190939-8d1932e6.log",
+        "line": 132,
+        "timestamp": "2026-10-03T19:04:39.3572249+08:00"
+      }
+    },
+    {
+      "file": "evidence/desktop-lab/native-memory-recall-on/00-request.upstream.json",
+      "privateCollectedExportSha256": "0e48e3ed26ded313819a270cdb8d6615ac15043d62dc2a3638cdf6ddab8b769b",
+      "publicFileSha256": "fcd6b521067174aaa3794fcf40ae3ce359887f40bd1880471ffc8e80fd4773cc",
+      "memoryTextRedactionCount": 1,
+      "originalCpaJsonLineSha256": "b4aa08e3b3a8bd0a0ae49f1da54fa83b3652b284c1fbbe8b62a2659fce782d80",
+      "originalCpaHashScope": "UTF-8 bytes of the recorded CPA JSON line, excluding line ending",
+      "source": {
+        "file": "v1-responses-2026-10-03T190939-8d1932e6.log",
+        "line": 226,
+        "timestamp": "2026-10-03T19:04:33.5456885+08:00"
+      }
+    }
+  ],
+  "memoryTextRedactions": [
+    {
+      "file": "00-request.request.json",
+      "path": "$.input[2].content[1].text",
+      "originalPrivateExportCharacters": 9422,
+      "originalPrivateExportTextSha256": "bd18ae65c82ddd186f752557e14507e362ab237056d0e34b67abf69dca00ffd3",
+      "publicTextSha256": "277ab0d918d306aa460b85610541a9ff9a2d615fe910bdd75c6a9d4af9584cc5",
+      "retainedLines": [],
+      "originalCpaTextSha256": "9241af60d74363e668b8b2a3b94e64a800ae75546a301afc611c9dbb77b67330",
+      "originalCpaCharacters": 9455
+    },
+    {
+      "file": "00-request.upstream.json",
+      "path": "$.input[2].content[1].text",
+      "originalPrivateExportCharacters": 9422,
+      "originalPrivateExportTextSha256": "bd18ae65c82ddd186f752557e14507e362ab237056d0e34b67abf69dca00ffd3",
+      "publicTextSha256": "277ab0d918d306aa460b85610541a9ff9a2d615fe910bdd75c6a9d4af9584cc5",
+      "retainedLines": [],
+      "originalCpaTextSha256": "9241af60d74363e668b8b2a3b94e64a800ae75546a301afc611c9dbb77b67330",
+      "originalCpaCharacters": 9455
+    }
+  ]
+}

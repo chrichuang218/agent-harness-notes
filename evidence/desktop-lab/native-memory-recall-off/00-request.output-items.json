@@ -1,0 +1,40 @@
+{
+  "provenance": "Derived by collecting response.output_item.done.item in event order; response.completed is unchanged.",
+  "items": [
+    {
+      "id": "rs_0ffd84741836ab3a016ac0e0d09a1487d09d85a4aced8914b4",
+      "type": "reasoning",
+      "content": [],
+      "encrypted_content": "<REDACTED>",
+      "internal_chat_message_metadata_passthrough": {
+        "turn_id": "01a1016e-10cc-71c3-a644-3f9223597254"
+      },
+      "summary": [],
+      "metadata": {
+        "turn_id": "01a1016e-10cc-71c3-a644-3f9223597254"
+      }
+    },
+    {
+      "id": "msg_0ffd84741836ab3a016ac0e0d23b5887d09e5ae11e53f9df46",
+      "type": "message",
+      "status": "completed",
+      "content": [
+        {
+          "type": "output_text",
+          "annotations": [],
+          "logprobs": [],
+          "text": "不知道"
+        }
+      ],
+      "internal_chat_message_metadata_passthrough": {
+        "create_time": 1791025359.354636,
+        "turn_id": "01a1016e-10cc-71c3-a644-3f9223597254"
+      },
+      "phase": "final_answer",
+      "role": "assistant",
+      "metadata": {
+        "turn_id": "01a1016e-10cc-71c3-a644-3f9223597254"
+      }
+    }
+  ]
+}

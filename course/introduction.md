@@ -44,7 +44,7 @@ Desktop 对话说明用户提出了什么任务、看到了什么结果。CPA �
 <details>
 <summary>请求与执行记录</summary>
 
-[实验索引](../evidence/desktop-lab/index.json)列出 36 组实验、103 个请求阶段，其中 3 次预热单独标记。
+[实验索引](../evidence/desktop-lab/index.json)列出 43 组实验、110 个请求阶段，其中 3 次预热单独标记。
 
 CPA 记录模型请求与响应。本地工具和 MCP 服务的执行状态需要结合对应的工具结果、进程记录与文件检查，不能只看代理日志。
 

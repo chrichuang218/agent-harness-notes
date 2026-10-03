@@ -1,0 +1,142 @@
+{
+  "id": "native-memory-source-context",
+  "title": "来源任务A的同会话上下文对照",
+  "threadId": "01a10034-1814-77d3-9563-3ca5e239f795",
+  "turnIds": [
+    "01a10039-714c-7981-bacb-0f4ab588628b"
+  ],
+  "prompt": "再用单价 12 元、数量 3、减免 25% 给一份同样格式的说明。不读取文件、不调用工具，也不写文件。这个展示偏好继续适用于以后的项目问答。\n",
+  "reply": "### 松果回执\n\n单价 12 元 × 数量 3，减免 25%。\n\n- 实付金额：27 元\n- 原价合计：36 元\n- 减免金额：9 元\n\n此展示偏好继续适用于以后的本项目问答。",
+  "stats": {
+    "requests": 1,
+    "toolCalls": 0,
+    "inputTokens": 36154,
+    "outputTokens": 66,
+    "prewarms": 0
+  },
+  "stages": [
+    {
+      "id": "00-request",
+      "requestFile": "evidence/desktop-lab/native-memory-source-context/00-request.request.json",
+      "responseFile": "evidence/desktop-lab/native-memory-source-context/00-request.response.json",
+      "eventsFile": "evidence/desktop-lab/native-memory-source-context/00-request.events.json",
+      "upstreamFile": "evidence/desktop-lab/native-memory-source-context/00-request.upstream.json",
+      "outputItemsFile": "evidence/desktop-lab/native-memory-source-context/00-request.output-items.json",
+      "requestTimestamp": "2026-10-03T13:25:28.0135061+08:00",
+      "responseId": "resp_0a153a55d50b5e1f016ac091c9c07487d08f411b4b9fb524d8",
+      "previousResponseId": null,
+      "inputCount": 14,
+      "prewarm": false,
+      "source": {
+        "request": {
+          "file": "v1-responses-2026-10-03T133032-fff7c030.log",
+          "line": 32,
+          "timestamp": "2026-10-03T13:25:28.0135061+08:00"
+        },
+        "completed": {
+          "file": "v1-responses-2026-10-03T133032-fff7c030.log",
+          "line": 320,
+          "timestamp": "2026-10-03T13:25:32.1554978+08:00"
+        },
+        "upstream": {
+          "file": "v1-responses-2026-10-03T133032-fff7c030.log",
+          "line": 346,
+          "timestamp": "2026-10-03T13:25:28.0241415+08:00"
+        }
+      }
+    }
+  ],
+  "notes": [
+    "Matched exact response event ids against rollout token_usage_record.response_id; text mentions are not matches.",
+    "response.json preserves the recorded response.completed event. Its output may be empty; output-items.json is a separately labelled derivation.",
+    "Only JSON request bodies and response.* events are exported. HTTP headers and transport header events are omitted.",
+    "Counts exclude prewarm stages. Token usage is the sum of formal model responses, not unique context size.",
+    "Native-memory publication redactions and original CPA/private/public SHA-256 values are documented in privacy.json. This public copy does not contain unrelated personal memory text."
+  ],
+  "sanitization": {
+    "mode": "structure-preserving-redaction",
+    "replacements": [
+      "Windows user home → <USER_HOME>",
+      "Credential values, encrypted content, installation and safety ids → <REDACTED>",
+      "Unrelated native-memory content → explicit publication-redaction marker; target lines are retained verbatim"
+    ],
+    "changedPaths": [
+      "00-request.events.json[0].data.response.safety_identifier",
+      "00-request.events.json[10].data.obfuscation",
+      "00-request.events.json[11].data.obfuscation",
+      "00-request.events.json[12].data.obfuscation",
+      "00-request.events.json[13].data.obfuscation",
+      "00-request.events.json[14].data.obfuscation",
+      "00-request.events.json[15].data.obfuscation",
+      "00-request.events.json[16].data.obfuscation",
+      "00-request.events.json[17].data.obfuscation",
+      "00-request.events.json[18].data.obfuscation",
+      "00-request.events.json[19].data.obfuscation",
+      "00-request.events.json[1].data.response.safety_identifier",
+      "00-request.events.json[20].data.obfuscation",
+      "00-request.events.json[21].data.obfuscation",
+      "00-request.events.json[22].data.obfuscation",
+      "00-request.events.json[23].data.obfuscation",
+      "00-request.events.json[24].data.obfuscation",
+      "00-request.events.json[25].data.obfuscation",
+      "00-request.events.json[26].data.obfuscation",
+      "00-request.events.json[27].data.obfuscation",
+      "00-request.events.json[28].data.obfuscation",
+      "00-request.events.json[29].data.obfuscation",
+      "00-request.events.json[30].data.obfuscation",
+      "00-request.events.json[31].data.obfuscation",
+      "00-request.events.json[32].data.obfuscation",
+      "00-request.events.json[33].data.obfuscation",
+      "00-request.events.json[34].data.obfuscation",
+      "00-request.events.json[35].data.obfuscation",
+      "00-request.events.json[36].data.obfuscation",
+      "00-request.events.json[37].data.obfuscation",
+      "00-request.events.json[38].data.obfuscation",
+      "00-request.events.json[39].data.obfuscation",
+      "00-request.events.json[40].data.obfuscation",
+      "00-request.events.json[41].data.obfuscation",
+      "00-request.events.json[42].data.obfuscation",
+      "00-request.events.json[43].data.obfuscation",
+      "00-request.events.json[44].data.obfuscation",
+      "00-request.events.json[45].data.obfuscation",
+      "00-request.events.json[46].data.obfuscation",
+      "00-request.events.json[47].data.obfuscation",
+      "00-request.events.json[48].data.obfuscation",
+      "00-request.events.json[49].data.obfuscation",
+      "00-request.events.json[4].data.obfuscation",
+      "00-request.events.json[50].data.obfuscation",
+      "00-request.events.json[51].data.obfuscation",
+      "00-request.events.json[52].data.obfuscation",
+      "00-request.events.json[53].data.obfuscation",
+      "00-request.events.json[54].data.obfuscation",
+      "00-request.events.json[55].data.obfuscation",
+      "00-request.events.json[56].data.obfuscation",
+      "00-request.events.json[57].data.obfuscation",
+      "00-request.events.json[58].data.obfuscation",
+      "00-request.events.json[59].data.obfuscation",
+      "00-request.events.json[5].data.obfuscation",
+      "00-request.events.json[60].data.obfuscation",
+      "00-request.events.json[61].data.obfuscation",
+      "00-request.events.json[62].data.obfuscation",
+      "00-request.events.json[63].data.obfuscation",
+      "00-request.events.json[64].data.obfuscation",
+      "00-request.events.json[68].data.response.safety_identifier",
+      "00-request.events.json[6].data.obfuscation",
+      "00-request.events.json[7].data.obfuscation",
+      "00-request.events.json[8].data.obfuscation",
+      "00-request.events.json[9].data.obfuscation",
+      "00-request.request.json.client_metadata.x-codex-installation-id",
+      "00-request.request.json.client_metadata.x-codex-turn-metadata.installation_id",
+      "00-request.request.json.input[2].content[1].text",
+      "00-request.request.json.input[5].content[1].text",
+      "00-request.response.json.response.safety_identifier",
+      "00-request.upstream.json.client_metadata.x-codex-installation-id",
+      "00-request.upstream.json.client_metadata.x-codex-turn-metadata.installation_id",
+      "00-request.upstream.json.input[2].content[1].text",
+      "00-request.upstream.json.input[5].content[1].text"
+    ]
+  },
+  "rolloutSource": "<USER_HOME>/.codex/sessions/2026/10/03/rollout-2026-10-03T13-19-36-01a10034-1814-77d3-9563-3ca5e239f795.jsonl",
+  "collectedAt": "2026-10-03T11:26:49.627Z",
+  "privacyFile": "evidence/desktop-lab/native-memory-source-context/privacy.json"
+}

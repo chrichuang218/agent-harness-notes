@@ -1,0 +1,27 @@
+{
+  "provenance": "Derived by collecting response.output_item.done.item in event order; response.completed is unchanged.",
+  "items": [
+    {
+      "id": "msg_0a153a55d50b5e1f016ac0906f627887d0981fff8e7efa898d",
+      "type": "message",
+      "status": "completed",
+      "content": [
+        {
+          "type": "output_text",
+          "annotations": [],
+          "logprobs": [],
+          "text": "已确认：此项目的总价说明固定标题为“松果回执”，金额按“实付金额 → 原价合计 → 减免金额”排列，后续继续本项目时也适用；允许原生记忆在后台提取。\n\n### 松果回执\n\n单价 10 元 × 数量 3，减免 10%。\n\n- 实付金额：27 元\n- 原价合计：30 元\n- 减免金额：3 元"
+        }
+      ],
+      "internal_chat_message_metadata_passthrough": {
+        "create_time": 1791004782.177022,
+        "turn_id": "01a10034-1c6b-7c73-8d40-071614615784"
+      },
+      "phase": "final_answer",
+      "role": "assistant",
+      "metadata": {
+        "turn_id": "01a10034-1c6b-7c73-8d40-071614615784"
+      }
+    }
+  ]
+}

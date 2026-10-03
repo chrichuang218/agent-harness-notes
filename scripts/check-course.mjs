@@ -207,8 +207,35 @@ if (catalog && index) {
     for (const id of lesson.evidenceIds || []) check(experimentIds.has(id), `${lesson.id}: unknown evidence id ${id}`);
     if (lesson.status === 'partial') check(/未验证|未实测|尚未|没有.{0,30}(?:实测|证据)/.test(text), `${lesson.file}: partial status requires an explicit unverified boundary.`);
     if (lesson.id === '08-memory') {
-      check(lesson.status === 'partial', '08-memory must remain partial until native generation and recall are actually tested.');
-      check(text.includes('生成') && text.includes('召回') && /(?:生成|召回)[^\n]{0,60}(?:未实测|没有|未验证)/.test(text), '08-memory must explain that native memory generation/recall is not yet verified.');
+      const audit = await readJson('evidence/desktop-lab/native-memory-recall-consolidated/audit.json');
+      check(lesson.status === 'verified' && audit?.outcome === 'native_memory_recalled', '08-memory requires the recorded native-memory recall result.');
+      check(audit?.generation?.stage1?.status === 'done'
+        && audit?.generation?.consolidation?.status === 'done'
+        && audit?.generation?.consolidation?.sourceSelectedForPhase2 === true, 'Native recall must trace to completed extraction and consolidation of its source.');
+      const on = experiments.find(item => item.id === 'native-memory-recall-consolidated');
+      const off = experiments.find(item => item.id === 'native-memory-recall-consolidated-off');
+      const source = experiments.find(item => item.id === 'native-memory-source');
+      check(audit?.generation?.sourceThreadId === source?.threadId
+        && audit?.recall?.on?.threadId === on?.threadId && audit?.recall?.off?.threadId === off?.threadId,
+      'Native memory audit must reference the actual source and recall chats.');
+      check(on && off && on.threadId !== off.threadId && on.threadId !== source?.threadId
+        && off.threadId !== source?.threadId && on.prompt === off.prompt, 'Recall controls must use independent chats and identical prompts.');
+      check(on && !on.prompt.includes('松果回执') && /不知道/.test(off?.reply || ''), 'Recall prompts must not supply the answer; the memory-off control must record its unknown answer.');
+      if (on && off) {
+        const onRequest = await readJson(on.stages[0].requestFile);
+        const offRequest = await readJson(off.stages[0].requestFile);
+        const memory = onRequest?.input?.[2]?.content?.[1]?.text || '';
+        const summary = audit?.generation?.artifacts?.find(item => item.path === 'memory_summary.md');
+        const targetLine = summary?.excerpt?.find(item => item.text.includes('实付金额 → 原价合计 → 减免金额'))?.text;
+        check(Boolean(targetLine) && memory.includes(targetLine), 'Recall input must contain the exact target line from the generated memory summary.');
+        check(!JSON.stringify(offRequest?.input || []).includes('松果回执'), 'The memory-off input must not contain the target answer.');
+        check(!onRequest?.previous_response_id && !offRequest?.previous_response_id
+          && [onRequest, offRequest].every(request => !(request?.input || []).some(item => item.role === 'assistant')),
+        'Recall controls must not inherit earlier responses or replay assistant history.');
+        check(on.stats.toolCalls === 0 && off.stats.toolCalls === 0, 'This recorded recall case must preserve its zero-tool observation.');
+        check(Date.parse(audit?.generation?.consolidation?.finishedAt) < Date.parse(on.stages[0].requestTimestamp), 'Consolidation must precede the successful recall request.');
+      }
+      check(text.includes('自动注入') && text.includes('未测试'), 'Memory chapter must retain the boundary between automatic injection and untested retrieval paths.');
     }
   }
   for (const image of screenshotIndex?.images || []) {
@@ -250,6 +277,14 @@ if (catalog && index) {
       check(await exists(path), `${experiment.id}: missing evidence file ${path}`);
     }
     if (experiment.status === 'interrupted') check(Boolean(experiment.interruptionFile), `${experiment.id}: interrupted experiment needs interruptionFile.`);
+    if (experiment.id.startsWith('native-memory-')) {
+      const privacy = await readJson(`evidence/desktop-lab/${experiment.id}/privacy.json`);
+      for (const file of privacy?.files || []) {
+        check(file.file.startsWith(`evidence/desktop-lab/${experiment.id}/`), `${experiment.id}: privacy file reference must stay within the experiment.`);
+        if (await exists(file.file)) check(createHash('sha256').update(await readFile(file.file)).digest('hex') === file.publicFileSha256, `${file.file}: public evidence differs from its privacy record.`);
+        else check(false, `${file.file}: privacy record points to a missing file.`);
+      }
+    }
   }
 }
 
@@ -281,5 +316,5 @@ if (failures.length) {
   console.error(`Course checks failed (${failures.length}):\n` + failures.map(message => '- ' + message).join('\n'));
   process.exitCode = 1;
 } else {
-  console.log(`Course checks passed: 16 chapters / 4 groups; original 15 chapter ids and 20 legacy routes preserved; ${experimentCount} experiments / ${stageCount} stages including all original 26 / 74; ${screenshotCount} screenshots mapped to ${screenshotChapterCount} chapters; ${linksChecked} local links; ${jsonChecked} JSON files; 4 complete example snapshots. Runtime checks: intentional baseline failure, 1 fixed test, 11 discount tests. Memory remains explicitly partial.`);
+  console.log(`Course checks passed: 16 chapters / 4 groups; original 15 chapter ids and 20 legacy routes preserved; ${experimentCount} experiments / ${stageCount} stages including all original 26 / 74; ${screenshotCount} screenshots mapped to ${screenshotChapterCount} chapters; ${linksChecked} local links; ${jsonChecked} JSON files; 4 complete example snapshots. Runtime checks: intentional baseline failure, 1 fixed test, 11 discount tests. Native memory injection chain and public evidence hashes checked.`);
 }

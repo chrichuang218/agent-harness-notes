@@ -1,0 +1,98 @@
+{
+  "mode": "structure-preserving-redaction",
+  "recordedAt": "2026-10-03T11:29:09.148446+00:00",
+  "policy": "All unrelated native-memory prose is omitted. Original request/response JSON object and array structure remains intact; altered text fields contain explicit publication-redaction markers. Complete private exports are retained locally. No whole memory file or DB is published.",
+  "files": [
+    {
+      "file": "evidence/desktop-lab/native-memory-recall-consolidated/00-request.events.json",
+      "privateCollectedExportSha256": "e788adcfe050c64866ad18a3fa5496a05914fd9d7a211b124d2b8ea5ace0db48",
+      "publicFileSha256": "e788adcfe050c64866ad18a3fa5496a05914fd9d7a211b124d2b8ea5ace0db48",
+      "memoryTextRedactionCount": 0
+    },
+    {
+      "file": "evidence/desktop-lab/native-memory-recall-consolidated/00-request.output-items.json",
+      "privateCollectedExportSha256": "1c99fd05f699df8dcccf462da308179357b8d6a0250f76f04eee553936168e42",
+      "publicFileSha256": "1c99fd05f699df8dcccf462da308179357b8d6a0250f76f04eee553936168e42",
+      "memoryTextRedactionCount": 0
+    },
+    {
+      "file": "evidence/desktop-lab/native-memory-recall-consolidated/00-request.request.json",
+      "privateCollectedExportSha256": "e90cbf762a8da61d3ebb48c9612e9411382cea79c0e7c35cdd46a749055e1afe",
+      "publicFileSha256": "82f101380230cf065c06e667ef603d51a62a7c848b802aa0198dad50740d2894",
+      "memoryTextRedactionCount": 1,
+      "originalCpaJsonLineSha256": "b3ba208195e836d54722928108e20bb9235ebfce7b0306f68ec1fa8d17b2dca4",
+      "originalCpaHashScope": "UTF-8 bytes of the recorded CPA JSON line, excluding line ending",
+      "source": {
+        "file": "request-log-parts-websocket-timeline-475302584/request-306433177.tmp",
+        "line": 3,
+        "timestamp": "2026-10-03T19:26:32.9178491+08:00"
+      }
+    },
+    {
+      "file": "evidence/desktop-lab/native-memory-recall-consolidated/00-request.response.json",
+      "privateCollectedExportSha256": "09166f5ce213807c3b170de62efc18d3a3e6e2914944c9d9b4c32d48e3386dc6",
+      "publicFileSha256": "09166f5ce213807c3b170de62efc18d3a3e6e2914944c9d9b4c32d48e3386dc6",
+      "memoryTextRedactionCount": 0,
+      "originalCpaJsonLineSha256": "81195801a68857f05ce12b3ce9979616fe080753d477bac10e155c40ec4a3654",
+      "originalCpaHashScope": "UTF-8 bytes of the recorded CPA JSON line, excluding line ending",
+      "source": {
+        "file": "request-log-parts-websocket-timeline-475302584/request-306433177.tmp",
+        "line": 251,
+        "timestamp": "2026-10-03T19:26:40.2130497+08:00"
+      }
+    },
+    {
+      "file": "evidence/desktop-lab/native-memory-recall-consolidated/00-request.upstream.json",
+      "privateCollectedExportSha256": "e90cbf762a8da61d3ebb48c9612e9411382cea79c0e7c35cdd46a749055e1afe",
+      "publicFileSha256": "82f101380230cf065c06e667ef603d51a62a7c848b802aa0198dad50740d2894",
+      "memoryTextRedactionCount": 1,
+      "originalCpaJsonLineSha256": "b3ba208195e836d54722928108e20bb9235ebfce7b0306f68ec1fa8d17b2dca4",
+      "originalCpaHashScope": "UTF-8 bytes of the recorded CPA JSON line, excluding line ending",
+      "source": {
+        "file": "request-log-parts-api-websocket-timeline-3907972811/part-2777134904.tmp",
+        "line": 19,
+        "timestamp": "2026-10-03T19:26:32.9273919+08:00"
+      }
+    }
+  ],
+  "memoryTextRedactions": [
+    {
+      "file": "00-request.request.json",
+      "path": "$.input[2].content[1].text",
+      "originalPrivateExportCharacters": 11141,
+      "originalPrivateExportTextSha256": "48ba0a9a98fb4c61cd97291c9fa22e8d9d8a4519f1e19c5e677e70ca871349d0",
+      "publicTextSha256": "498fc3da7bcf1272f4bbd5ff44dcdd13d5919736bfdf66b36e1ce4ae855632fd",
+      "retainedLines": [
+        {
+          "sourceLine": 138,
+          "text": "- codex-ts-demo price explanations use 松果回执: 实付金额 → 原价合计 → 减免金额."
+        },
+        {
+          "sourceLine": 157,
+          "text": "- 松果回执 pricing display and TypeScript calculator: 松果回执, calculateTotal, discountPercent, RangeError, README.md, context-only"
+        }
+      ],
+      "originalCpaTextSha256": "25c4bcf7d0b42fbf449e62cc73454515a0a7985fda5090d6a6b3f9e0a0017551",
+      "originalCpaCharacters": 11186
+    },
+    {
+      "file": "00-request.upstream.json",
+      "path": "$.input[2].content[1].text",
+      "originalPrivateExportCharacters": 11141,
+      "originalPrivateExportTextSha256": "48ba0a9a98fb4c61cd97291c9fa22e8d9d8a4519f1e19c5e677e70ca871349d0",
+      "publicTextSha256": "498fc3da7bcf1272f4bbd5ff44dcdd13d5919736bfdf66b36e1ce4ae855632fd",
+      "retainedLines": [
+        {
+          "sourceLine": 138,
+          "text": "- codex-ts-demo price explanations use 松果回执: 实付金额 → 原价合计 → 减免金额."
+        },
+        {
+          "sourceLine": 157,
+          "text": "- 松果回执 pricing display and TypeScript calculator: 松果回执, calculateTotal, discountPercent, RangeError, README.md, context-only"
+        }
+      ],
+      "originalCpaTextSha256": "25c4bcf7d0b42fbf449e62cc73454515a0a7985fda5090d6a6b3f9e0a0017551",
+      "originalCpaCharacters": 11186
+    }
+  ]
+}

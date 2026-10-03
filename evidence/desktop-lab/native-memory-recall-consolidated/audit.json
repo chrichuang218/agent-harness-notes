@@ -1,0 +1,432 @@
+{
+  "auditedAt": "2026-10-03T11:29:57.228732+00:00",
+  "outcome": "native_memory_recalled",
+  "scope": "同一项目内的独立新聊天：原生提取、整合产物、请求中自动注入的记忆和最终回答组成可追溯证据链。",
+  "generation": {
+    "sourceThreadId": "01a10034-1814-77d3-9563-3ca5e239f795",
+    "sourceTurnIds": [
+      "01a10034-1c6b-7c73-8d40-071614615784",
+      "01a10039-714c-7981-bacb-0f4ab588628b"
+    ],
+    "sourceExperimentIds": [
+      "native-memory-source",
+      "native-memory-source-context"
+    ],
+    "sourceUseMemories": false,
+    "sourceGenerateMemories": true,
+    "stage1": {
+      "status": "done",
+      "startedAt": "2026-10-03T18:53:27+08:00",
+      "finishedAt": "2026-10-03T18:53:34+08:00",
+      "sourceUpdatedAt": "2026-10-03T13:25:32+08:00",
+      "rawMemorySha256": "89187bce6de1536cadc11a0fe5c5ad67001d04f266b4aed5b4d5696a02fc0263",
+      "rawMemoryExcerpt": [
+        {
+          "line": 7,
+          "text": " keywords: 松果回执, 实付金额, 原价合计, 减免金额, pricing format, user preference"
+        },
+        {
+          "line": 17,
+          "text": "- 用户指定“总价说明的固定标题用‘松果回执’，金额按‘实付金额 → 原价合计 → 减免金额’的顺序列出” -> 后续类似项目问答应默认使用该标题和顺序。"
+        },
+        {
+          "line": 28,
+          "text": "- 固定标题：`松果回执`"
+        },
+        {
+          "line": 29,
+          "text": "- 固定金额顺序：`实付金额 → 原价合计 → 减免金额`"
+        }
+      ],
+      "rolloutSummarySha256": "21b59ca20c65450cceca3c9d06cd5393148a237b9b49eb1348de6104fb9c6872"
+    },
+    "consolidation": {
+      "status": "done",
+      "startedAt": "2026-10-03T19:19:24+08:00",
+      "finishedAt": "2026-10-03T19:24:40+08:00",
+      "lastErrorPresent": false,
+      "inputWatermark": 1791005138,
+      "lastSuccessWatermark": 1791005138,
+      "sourceSelectedForPhase2": true,
+      "selectedSourceUpdatedAt": "2026-10-03T13:25:32+08:00"
+    },
+    "artifacts": [
+      {
+        "path": "MEMORY.md",
+        "fullFileSha256": "f9b8eee01b1bcd620c30079a0bd2562419201b138a847a5edd58e96e51f4aff5",
+        "modifiedAt": "2026-10-03T11:24:24.456037+00:00",
+        "excerpt": [
+          {
+            "line": 15,
+            "text": "## Task 2: Fixed 松果回执 pricing receipt presentation, confirmed"
+          },
+          {
+            "line": 19,
+            "text": "- rollout_summaries/2026-10-03T05-19-36-RjRr-songguo_receipt_pricing_display_preference.md (cwd=E:\\Develop\\github\\codex-ts-demo, rollout_path=\\\\?\\<USER_HOME>\\.codex\\sessions\\2026\\10\\03\\rollout-2026-10-03T13-19-36-01a10034-1814-77d3-9563-3ca5e239f795.jsonl, updated_at=2026-10-03T05:25:32+00:00, thread_id=01a10034-1814-77d3-9563-3ca5e239f795, success)"
+          },
+          {
+            "line": 23,
+            "text": "- 松果回执, 实付金额, 原价合计, 减免金额, discountPercent, price display, no-tool"
+          },
+          {
+            "line": 63,
+            "text": "- for this project and explicitly extended project questions, price explanation uses 松果回执 and 实付金额 → 原价合计 → 减免金额. [Task 2]"
+          }
+        ],
+        "selection": "Only exact target title, source thread id, or source artifact slug lines. Other memory lines are excluded."
+      },
+      {
+        "path": "memory_summary.md",
+        "fullFileSha256": "039edd344dad36f58586d49389ccc230205cfcbf2974f049662b8f7a16fd1de8",
+        "modifiedAt": "2026-10-03T11:24:24.458047+00:00",
+        "excerpt": [
+          {
+            "line": 13,
+            "text": "- codex-ts-demo price explanations use 松果回执: 实付金额 → 原价合计 → 减免金额."
+          },
+          {
+            "line": 32,
+            "text": "- 松果回执 pricing display and TypeScript calculator: 松果回执, calculateTotal, discountPercent, RangeError, README.md, context-only"
+          }
+        ],
+        "selection": "Only exact target title, source thread id, or source artifact slug lines. Other memory lines are excluded."
+      }
+    ],
+    "sourceArtifact": {
+      "path": "rollout_summaries/2026-10-03T05-19-36-RjRr-songguo_receipt_pricing_display_preference.md",
+      "bytes": 1891,
+      "sha256": "a08175cc3196c3ed9e53d6c2ce544aba16851b326eb8dc8a513dfa6732871c0c",
+      "modifiedAt": "2026-10-03T11:19:24.914172+00:00",
+      "containsSourceId": true,
+      "containsTargetTitle": true
+    },
+    "nativeStateReadMethod": "Stable main+WAL copies (before/after size and mtime match), read-only SQLite on retained copies, quick_check=ok. Unrelated memory bodies are neither displayed nor exported.",
+    "privateSnapshotHashes": [
+      {
+        "name": "memories_1.sqlite",
+        "bytes": 94208,
+        "sha256": "163a9d930367d023f139cbfcb79c6cca4c80147d052ee00c9ae74a777af677d1"
+      },
+      {
+        "name": "memories_1.sqlite-wal",
+        "bytes": 556232,
+        "sha256": "96acc4c5b98b2fdfcf849603a645335538192d664345dc776bd782701d75bdce"
+      },
+      {
+        "name": "state_5.sqlite",
+        "bytes": 2170880,
+        "sha256": "79bcc1b862795cc7e0a0fb5133de831eb89683ab55b09c3d289345352a494970"
+      },
+      {
+        "name": "state_5.sqlite-wal",
+        "bytes": 4165352,
+        "sha256": "7b7be0e24f4f65d3893321a77443f11b32d23df1eac368c0812920c567620b82"
+      }
+    ]
+  },
+  "recall": {
+    "on": {
+      "experimentId": "native-memory-recall-consolidated",
+      "threadId": "01a10183-f694-76e2-b438-211a32bd1b05",
+      "turnIds": [
+        "01a10183-fade-7f21-a3e4-d81372dcdc93"
+      ],
+      "useMemories": true,
+      "generateMemories": false,
+      "prompt": "在 codex-ts-demo 中，我希望总价说明使用什么固定回执标题、按什么顺序列出金额？可以使用本聊天自动获得的原生记忆；若没有相关信息，就回答“不知道”，不要猜。不要读取普通项目文件、搜索其他聊天或联网，也不要写文件。\n",
+      "reply": "根据本聊天自动获得的原生记忆，固定回执标题是“松果回执”，金额顺序为：\n\n1. 实付金额\n2. 原价合计\n3. 减免金额",
+      "stats": {
+        "requests": 1,
+        "toolCalls": 0,
+        "inputTokens": 38626,
+        "outputTokens": 95,
+        "prewarms": 0
+      },
+      "requestFile": "evidence/desktop-lab/native-memory-recall-consolidated/00-request.request.json",
+      "outputItemsFile": "evidence/desktop-lab/native-memory-recall-consolidated/00-request.output-items.json",
+      "responseId": "resp_011aa72f13651fe6016ac0e669429c87d082ba2593466d5ef6",
+      "requestTimestamp": "2026-10-03T19:26:32.9178491+08:00",
+      "previousResponseId": null,
+      "inputAssistantMessages": 0,
+      "submission": {
+        "request_kind": "turn",
+        "thread_source": "user",
+        "turn_trigger": "composer",
+        "client_type": "desktop_app",
+        "model": "gpt-6-astra",
+        "source": "codex"
+      },
+      "memoryBlocks": [
+        {
+          "path": "input[2].content[1].text",
+          "privateExportCharacters": 11141,
+          "privateExportTextSha256": "48ba0a9a98fb4c61cd97291c9fa22e8d9d8a4519f1e19c5e677e70ca871349d0",
+          "targetPresent": true,
+          "amountOrderPresent": true,
+          "targetLines": [
+            {
+              "line": 138,
+              "text": "- codex-ts-demo price explanations use 松果回执: 实付金额 → 原价合计 → 减免金额."
+            },
+            {
+              "line": 157,
+              "text": "- 松果回执 pricing display and TypeScript calculator: 松果回执, calculateTotal, discountPercent, RangeError, README.md, context-only"
+            }
+          ]
+        }
+      ],
+      "targetInNonMemoryInputPaths": [],
+      "promptContainsAnswer": false,
+      "rollout": {
+        "source": "<USER_HOME>/.codex/sessions/2026/10/03/rollout-2026-10-03T19-26-27-01a10183-f694-76e2-b438-211a32bd1b05.jsonl",
+        "sha256": "0ee8f2664e27109f93bbec7825d369ec06142b1689b68f8998daac68caa202f7",
+        "sessionSource": "vscode",
+        "forkedFromId": null,
+        "firstTaskStartedAt": "2026-10-03T11:26:29.155Z",
+        "taskCompleteCount": 1,
+        "functionCallCount": 0
+      },
+      "settingsScreenshot": "docs/images/desktop-lab/native-memory-controls.png",
+      "resultScreenshot": "docs/images/desktop-lab/native-memory-recall.png"
+    },
+    "off": {
+      "experimentId": "native-memory-recall-consolidated-off",
+      "threadId": "01a10185-aacb-7600-9215-fd4d4455f555",
+      "turnIds": [
+        "01a10185-ae8b-71d0-9b7e-f9d6d1836a27"
+      ],
+      "useMemories": false,
+      "generateMemories": false,
+      "prompt": "在 codex-ts-demo 中，我希望总价说明使用什么固定回执标题、按什么顺序列出金额？可以使用本聊天自动获得的原生记忆；若没有相关信息，就回答“不知道”，不要猜。不要读取普通项目文件、搜索其他聊天或联网，也不要写文件。\n",
+      "reply": "不知道。",
+      "stats": {
+        "requests": 1,
+        "toolCalls": 0,
+        "inputTokens": 35937,
+        "outputTokens": 21,
+        "prewarms": 0
+      },
+      "requestFile": "evidence/desktop-lab/native-memory-recall-consolidated-off/00-request.request.json",
+      "outputItemsFile": "evidence/desktop-lab/native-memory-recall-consolidated-off/00-request.output-items.json",
+      "responseId": "resp_0afb4b5e317a507d016ac0e6d90e0087d098b2cf7977aea07e",
+      "requestTimestamp": "2026-10-03T19:28:24.5153874+08:00",
+      "previousResponseId": null,
+      "inputAssistantMessages": 0,
+      "submission": {
+        "request_kind": "turn",
+        "thread_source": "user",
+        "turn_trigger": "composer",
+        "client_type": "desktop_app",
+        "model": "gpt-6-astra",
+        "source": "codex"
+      },
+      "memoryBlocks": [],
+      "targetInNonMemoryInputPaths": [],
+      "promptContainsAnswer": false,
+      "rollout": {
+        "source": "<USER_HOME>/.codex/sessions/2026/10/03/rollout-2026-10-03T19-28-19-01a10185-aacb-7600-9215-fd4d4455f555.jsonl",
+        "sha256": "f4920ca0c12dcb7ccda8554e24bdd8e41c480384351af2917de6b2ce983fb252",
+        "sessionSource": "vscode",
+        "forkedFromId": null,
+        "firstTaskStartedAt": "2026-10-03T11:28:20.705Z",
+        "taskCompleteCount": 1,
+        "functionCallCount": 0
+      },
+      "privateScreenshotEvidence": {
+        "storedPrivately": true,
+        "files": [
+          {
+            "filename": "final-off-settings.png",
+            "sha256": "209fc2660651210fe6fae91a39cc7c6d710464e5eb6869613eb756772b244a5f"
+          },
+          {
+            "filename": "final-off-result.png",
+            "sha256": "433accb53cc9b38ef67fc1894cb0d2952ec6d2b8e4f76e44fc1d272ff0eea841"
+          }
+        ]
+      }
+    },
+    "samePrompt": true,
+    "sameModel": true,
+    "answerAbsentFromBothPrompts": true,
+    "targetOnlyInNativeMemoryInput": true,
+    "memorySummaryLineMatch": true,
+    "injectedSummaryLine": "- codex-ts-demo price explanations use 松果回执: 实付金额 → 原价合计 → 减免金额.",
+    "onAnswerContainsTitle": true,
+    "onAnswerContainsOrderedAmounts": true,
+    "offAnswerUnknown": true
+  },
+  "beforeConsolidation": {
+    "baselineExperimentId": "native-memory-baseline",
+    "offExperimentId": "native-memory-recall-off",
+    "onExperimentId": "native-memory-recall-on",
+    "bothRepliesUnknown": true,
+    "sourceStage1Done": true,
+    "sourceSelectedForPhase2": false,
+    "globalConsolidation": "pending",
+    "targetInOnMemoryBlock": false,
+    "nativeCheckAt": "2026-10-03T11:02:11.839023+00:00",
+    "onResultScreenshot": "docs/images/desktop-lab/native-memory-before-consolidation.png"
+  },
+  "privacy": {
+    "policy": "公开请求只保留本实验相关原生记忆行，其他记忆与通用读取指引以明确占位替换。各实验 privacy.json 记录真实 CPA JSON 行、私有采集文件和公开文件的 SHA-256，并逐项列出文本删敏路径。",
+    "originalFilesPublished": false,
+    "privateEvidenceRetained": true,
+    "verifiedPublicFileHashes": 35,
+    "memoryTextRedactions": 4
+  },
+  "limitations": [
+    "后台提取与整合使用原生数据库状态、来源专属生成摘要及产物片段核验；本次未导出后台生成请求的 CPA HTTP 流程，不能当成普通用户轮次的请求证据。",
+    "本实验验证当前 Codex 版本、配置与这条项目偏好的召回，不代表每条会话内容都会被提取、整合或永久保存。",
+    "两个最终新聊天均无工具调用。本次证据显示摘要自动进入请求，没有验证按需读取原生记忆文件的路径。",
+    "原生 rollout 的 session_meta.source 为 vscode；Desktop 输入来源由界面截图及 CPA 的 desktop_app/user/composer 字段分别佐证。",
+    "公开 memory 文件片段及请求文本有明确删敏标记；完整私人记忆和数据库副本没有公开。"
+  ],
+  "cpaVerification": {
+    "experimentCount": 7,
+    "rawSourceBodyComparisons": 21,
+    "allMatchedAfterCredentialSanitization": true,
+    "scope": "Each exported client request, upstream request and response.completed body was compared by deep equality to sanitize(original CPA JSON line). Memory privacy redaction is a later explicit publication transformation; hashes and paths are in each privacy.json.",
+    "outputItemsMatchRecordedDoneEvents": true,
+    "checkedOutputItemStages": 7
+  },
+  "configurationAndStartupGuard": {
+    "documentedDefaults": {
+      "sourceUrl": "https://learn.chatgpt.com/docs/config-file/config-reference",
+      "min_rollout_idle_hours": 6,
+      "min_rate_limit_remaining_percent": 25,
+      "sourceExcerpt": [
+        "Minimum idle time before a thread is considered for memory generation. Defaults to `6` and is clamped to `1`-`48`.",
+        "Minimum remaining percentage required in Codex rate-limit windows before memory generation starts. Defaults to `25` and is clamped to `0`-`100`."
+      ],
+      "cachedReferenceSha256": "73242945d7891bc09bf95a39d83117025abd8eca61ae5707db38fda40db16d62"
+    },
+    "configuredValuesObserved": {
+      "checkedAt": "2026-10-03T11:31:54.251350+00:00",
+      "features.memories": true,
+      "memories": {
+        "min_rollout_idle_hours": 1,
+        "min_rate_limit_remaining_percent": 10,
+        "generate_memories": true,
+        "use_memories": true
+      }
+    },
+    "startupSkippedAt1915": {
+      "accountUsedPercent": 80,
+      "accountRemainingPercent": 20,
+      "guardLogs": [
+        {
+          "ts": 1791026133,
+          "level": "INFO",
+          "target": "codex_memories_write::guard",
+          "feedback_log_body": "skipping memories startup because Codex rate limits are below the configured threshold min_remaining_percent=25",
+          "timeShanghai": "2026-10-03T19:15:33+08:00"
+        },
+        {
+          "ts": 1791026111,
+          "level": "INFO",
+          "target": "codex_memories_write::guard",
+          "feedback_log_body": "skipping memories startup because Codex rate limits are below the configured threshold min_remaining_percent=25",
+          "timeShanghai": "2026-10-03T19:15:11+08:00"
+        }
+      ],
+      "diagnosisFileSha256": "11d9857978a24cf274f903cbfeddbe41750e1d4287736a9805ae24b83e802c4b",
+      "scope": "Current blocker is confirmed; this does not establish the cause of every earlier pending interval. No config or original database changed."
+    },
+    "authorizedAdjustment": {
+      "min_rate_limit_remaining_percent": {
+        "before": 25,
+        "after": 10
+      },
+      "min_rollout_idle_hours": {
+        "before": 1,
+        "after": 1
+      },
+      "desktopRestartedBeforeObservedConsolidation": true,
+      "consolidationStartedAt": "2026-10-03T19:19:24+08:00",
+      "interpretation": "User-authorized threshold change and Desktop restart were followed by the native running/done job. The worker in-memory config was not directly inspected. The 19:15 guard logs explain those skipped starts only; they do not establish the cause of every earlier pending interval."
+    }
+  },
+  "nativeContributionControls": {
+    "checkedAt": "2026-10-03T11:31:18.339423+00:00",
+    "rows": [
+      {
+        "id": "01a10183-f694-76e2-b438-211a32bd1b05",
+        "memory_mode": "disabled",
+        "created_at": 1791026787,
+        "updated_at": 1791026800,
+        "thread_source": "user",
+        "history_mode": "paginated"
+      },
+      {
+        "id": "01a10185-aacb-7600-9215-fd4d4455f555",
+        "memory_mode": "disabled",
+        "created_at": 1791026899,
+        "updated_at": 1791026908,
+        "thread_source": "user",
+        "history_mode": "paginated"
+      },
+      {
+        "id": "01a10034-1814-77d3-9563-3ca5e239f795",
+        "memory_mode": "enabled",
+        "created_at": 1791004776,
+        "updated_at": 1791025127,
+        "thread_source": "user",
+        "history_mode": "paginated"
+      }
+    ],
+    "interpretation": "memory_mode records contribution/generation for these chats, not the use-memories toggle. Use controls are established by UI and request input evidence."
+  },
+  "orchestrationContributionBoundary": {
+    "threadId": "01a0ed90-d59e-7743-ac5c-6577a682f76a",
+    "beforeFinalRecall": {
+      "snapshotAt": "2026-10-03T11:25:57.578545+00:00",
+      "memoryMode": "disabled",
+      "stage1RowPresent": false,
+      "sourceJobPresent": false,
+      "interpretation": "This completed-consolidation snapshot contains no extraction output or source job for the orchestration thread. The generated target artifact explicitly cites source A."
+    },
+    "completionCheck": {
+      "checkedAt": "2026-10-03T11:35:27.849053+00:00",
+      "databaseMemoryMode": "disabled",
+      "uiObservationReportedByParent": {
+        "generateMemories": true,
+        "useMemories": true,
+        "useControlDisabledForExistingChat": true,
+        "togglePerformed": false
+      },
+      "consistentAcrossUiAndDatabase": false,
+      "interpretation": "The completion UI and current persisted database disagree. No toggle was performed. These observations do not establish that the setting stayed unchanged at every point or that it was restored during cleanup."
+    },
+    "scope": "Metadata-only checks of this orchestration thread; no unrelated memory body was read. This boundary does not change the source-A artifact and final request provenance.",
+    "restorationAfterExperiments": {
+      "verifiedAt": "2026-10-03T11:38:44.546323+00:00",
+      "verifiedAtShanghai": "2026-10-03T19:38:44.546323+08:00",
+      "databaseMemoryMode": "enabled",
+      "restored": true,
+      "operation": "After all recall experiments, root chat generate-memories was explicitly toggled off and then on, and the dialog was completed.",
+      "privateUiEvidence": {
+        "storedPrivately": true,
+        "files": [
+          {
+            "filename": "work-chat-generation-restored.png",
+            "sha256": "0aa3bbc0ea43d70bce1a6a879f1e106f052f492e79fe3c46cec83d0a92577064"
+          },
+          {
+            "filename": "work-chat-generation-restored.ui.json",
+            "sha256": "339be3bb64931685d372405b04fe0baa9791e98d43e9f7feda7f8160bbdf8401"
+          }
+        ]
+      },
+      "scope": "This restoration occurred after both final recall experiments. The earlier disabled snapshot and initial UI/DB discrepancy are preserved above; global memory thresholds were not changed by this cleanup."
+    }
+  },
+  "environment": {
+    "observedOn": "2026-10-03",
+    "desktopAppVersion": "26.930.2377.0",
+    "bundledRuntimeVersion": "0.159.0-alpha.12.1",
+    "platform": "Windows",
+    "recallModel": "gpt-6-astra",
+    "versionEvidence": "Running app window process path; bundled runtime --version; CPA request model field."
+  }
+}

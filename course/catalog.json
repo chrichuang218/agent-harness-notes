@@ -112,14 +112,21 @@
     },
     {
       "id": "08-memory",
-      "title": "记忆与持久信息",
-      "subtitle": "任务结束之后，哪些信息还能留给下一次工作？",
+      "title": "记忆：跨任务保留与召回",
+      "subtitle": "一句项目偏好怎样被保存，并在新任务中重新出现？",
       "group": "context",
       "file": "course/08-memory.md",
-      "status": "partial",
+      "status": "verified",
       "evidenceIds": [
         "12-memory-write",
-        "12-memory-read"
+        "12-memory-read",
+        "native-memory-baseline",
+        "native-memory-source",
+        "native-memory-source-context",
+        "native-memory-recall-off",
+        "native-memory-recall-on",
+        "native-memory-recall-consolidated",
+        "native-memory-recall-consolidated-off"
       ]
     },
     {

@@ -1,0 +1,90 @@
+{
+  "id": "native-memory-recall-on",
+  "title": "新任务C：开启原生记忆对照",
+  "threadId": "01a1016f-d571-7e72-9b9d-9b421fbae2d1",
+  "turnIds": [
+    "01a1016f-d9ce-7261-a43c-66de551afdfb"
+  ],
+  "prompt": "在 codex-ts-demo 中，我希望总价说明使用什么固定回执标题、按什么顺序列出金额？可以使用本聊天自动获得的原生记忆；若没有相关信息，就回答“不知道”，不要猜。不要读取普通项目文件、搜索其他聊天或联网，也不要写文件。\n",
+  "reply": "不知道",
+  "stats": {
+    "requests": 1,
+    "toolCalls": 0,
+    "inputTokens": 38166,
+    "outputTokens": 39,
+    "prewarms": 0
+  },
+  "stages": [
+    {
+      "id": "00-request",
+      "requestFile": "evidence/desktop-lab/native-memory-recall-on/00-request.request.json",
+      "responseFile": "evidence/desktop-lab/native-memory-recall-on/00-request.response.json",
+      "eventsFile": "evidence/desktop-lab/native-memory-recall-on/00-request.events.json",
+      "upstreamFile": "evidence/desktop-lab/native-memory-recall-on/00-request.upstream.json",
+      "outputItemsFile": "evidence/desktop-lab/native-memory-recall-on/00-request.output-items.json",
+      "requestTimestamp": "2026-10-03T19:04:33.5354801+08:00",
+      "responseId": "resp_04b73493b4d82c21016ac0e141d29087d088fd2d9b21465713",
+      "previousResponseId": null,
+      "inputCount": 11,
+      "prewarm": false,
+      "source": {
+        "request": {
+          "file": "v1-responses-2026-10-03T190939-8d1932e6.log",
+          "line": 60,
+          "timestamp": "2026-10-03T19:04:33.5354801+08:00"
+        },
+        "completed": {
+          "file": "v1-responses-2026-10-03T190939-8d1932e6.log",
+          "line": 132,
+          "timestamp": "2026-10-03T19:04:39.3572249+08:00"
+        },
+        "upstream": {
+          "file": "v1-responses-2026-10-03T190939-8d1932e6.log",
+          "line": 226,
+          "timestamp": "2026-10-03T19:04:33.5456885+08:00"
+        }
+      }
+    }
+  ],
+  "notes": [
+    "Matched exact response event ids against rollout token_usage_record.response_id; text mentions are not matches.",
+    "response.json preserves the recorded response.completed event. Its output may be empty; output-items.json is a separately labelled derivation.",
+    "Only JSON request bodies and response.* events are exported. HTTP headers and transport header events are omitted.",
+    "Counts exclude prewarm stages. Token usage is the sum of formal model responses, not unique context size.",
+    "Native-memory publication redactions and original CPA/private/public SHA-256 values are documented in privacy.json. This public copy does not contain unrelated personal memory text."
+  ],
+  "sanitization": {
+    "mode": "structure-preserving-redaction",
+    "replacements": [
+      "Windows user home → <USER_HOME>",
+      "Credential values, encrypted content, installation and safety ids → <REDACTED>",
+      "Unrelated native-memory content → explicit publication-redaction marker; target lines are retained verbatim"
+    ],
+    "changedPaths": [
+      "00-request.events.json[0].data.response.safety_identifier",
+      "00-request.events.json[10].data.obfuscation",
+      "00-request.events.json[14].data.response.safety_identifier",
+      "00-request.events.json[1].data.response.safety_identifier",
+      "00-request.events.json[2].data.item.encrypted_content",
+      "00-request.events.json[4].data.obfuscation",
+      "00-request.events.json[7].data.item.encrypted_content",
+      "00-request.output-items.json.items[0].encrypted_content",
+      "00-request.request.json.client_metadata.x-codex-installation-id",
+      "00-request.request.json.client_metadata.x-codex-turn-metadata.installation_id",
+      "00-request.request.json.input[2].content[1].text",
+      "00-request.request.json.input[2].content[2].text",
+      "00-request.request.json.input[5].content[1].text",
+      "00-request.response.json.response.safety_identifier",
+      "00-request.upstream.json.client_metadata.x-codex-installation-id",
+      "00-request.upstream.json.client_metadata.x-codex-turn-metadata.installation_id",
+      "00-request.upstream.json.input[2].content[1].text",
+      "00-request.upstream.json.input[2].content[2].text",
+      "00-request.upstream.json.input[5].content[1].text",
+      "00-request.request.json:$.input[2].content[1].text",
+      "00-request.upstream.json:$.input[2].content[1].text"
+    ]
+  },
+  "rolloutSource": "<USER_HOME>/.codex/sessions/2026/10/03/rollout-2026-10-03T19-04-28-01a1016f-d571-7e72-9b9d-9b421fbae2d1.jsonl",
+  "collectedAt": "2026-10-03T11:26:48.558Z",
+  "privacyFile": "evidence/desktop-lab/native-memory-recall-on/privacy.json"
+}

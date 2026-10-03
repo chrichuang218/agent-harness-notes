@@ -1,0 +1,59 @@
+{
+  "mode": "structure-preserving-redaction",
+  "recordedAt": "2026-10-03T11:29:09.064590+00:00",
+  "policy": "All unrelated native-memory prose is omitted. Original request/response JSON object and array structure remains intact; altered text fields contain explicit publication-redaction markers. Complete private exports are retained locally. No whole memory file or DB is published.",
+  "files": [
+    {
+      "file": "evidence/desktop-lab/native-memory-recall-off/00-request.events.json",
+      "privateCollectedExportSha256": "fecc0f5dc9ff60b43905081a658fab54681126a13e5a219500073e2e43f73d38",
+      "publicFileSha256": "fecc0f5dc9ff60b43905081a658fab54681126a13e5a219500073e2e43f73d38",
+      "memoryTextRedactionCount": 0
+    },
+    {
+      "file": "evidence/desktop-lab/native-memory-recall-off/00-request.output-items.json",
+      "privateCollectedExportSha256": "6f9e0f9837a01e9d6b3eb0fb80ec9185a5e02d3273233d9ce945180a060ac02e",
+      "publicFileSha256": "6f9e0f9837a01e9d6b3eb0fb80ec9185a5e02d3273233d9ce945180a060ac02e",
+      "memoryTextRedactionCount": 0
+    },
+    {
+      "file": "evidence/desktop-lab/native-memory-recall-off/00-request.request.json",
+      "privateCollectedExportSha256": "75c4b8388f4a65188ba5873aecbaa49a079d1b7205f966dc7433994f083dc60b",
+      "publicFileSha256": "75c4b8388f4a65188ba5873aecbaa49a079d1b7205f966dc7433994f083dc60b",
+      "memoryTextRedactionCount": 0,
+      "originalCpaJsonLineSha256": "85dd694ea30b49779a929d5b979b3c4e3f9010cbeb7b508da8c01eb1d867cec4",
+      "originalCpaHashScope": "UTF-8 bytes of the recorded CPA JSON line, excluding line ending",
+      "source": {
+        "file": "v1-responses-2026-10-03T190742-f4061f4d.log",
+        "line": 60,
+        "timestamp": "2026-10-03T19:02:38.605705+08:00"
+      }
+    },
+    {
+      "file": "evidence/desktop-lab/native-memory-recall-off/00-request.response.json",
+      "privateCollectedExportSha256": "eef87fb8bbf9fa45d8216941f1e75b273d6f92f622152cd99daa65b71f24d928",
+      "publicFileSha256": "eef87fb8bbf9fa45d8216941f1e75b273d6f92f622152cd99daa65b71f24d928",
+      "memoryTextRedactionCount": 0,
+      "originalCpaJsonLineSha256": "014a7fdbbe292cabdb10f32030e9c63ba0454dd0d7bd1100b0e9349738830a71",
+      "originalCpaHashScope": "UTF-8 bytes of the recorded CPA JSON line, excluding line ending",
+      "source": {
+        "file": "v1-responses-2026-10-03T190742-f4061f4d.log",
+        "line": 116,
+        "timestamp": "2026-10-03T19:02:42.6148593+08:00"
+      }
+    },
+    {
+      "file": "evidence/desktop-lab/native-memory-recall-off/00-request.upstream.json",
+      "privateCollectedExportSha256": "75c4b8388f4a65188ba5873aecbaa49a079d1b7205f966dc7433994f083dc60b",
+      "publicFileSha256": "75c4b8388f4a65188ba5873aecbaa49a079d1b7205f966dc7433994f083dc60b",
+      "memoryTextRedactionCount": 0,
+      "originalCpaJsonLineSha256": "85dd694ea30b49779a929d5b979b3c4e3f9010cbeb7b508da8c01eb1d867cec4",
+      "originalCpaHashScope": "UTF-8 bytes of the recorded CPA JSON line, excluding line ending",
+      "source": {
+        "file": "v1-responses-2026-10-03T190742-f4061f4d.log",
+        "line": 210,
+        "timestamp": "2026-10-03T19:02:38.6164504+08:00"
+      }
+    }
+  ],
+  "memoryTextRedactions": []
+}
