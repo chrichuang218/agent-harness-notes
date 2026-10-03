@@ -1,6 +1,6 @@
 # AGENTS.md：项目规则怎样进入请求？
 
-读同一份 README，能不能让每次项目介绍都遵守一个固定约定？我们在 demo 中加入两条规则，再发送第二章用过的阅读要求，检查规则出现的位置和回答的变化。
+读同一份 README，能不能让介绍使用固定前缀？我们加入项目规则，再发送第二章的阅读要求。回答多了“项目观察：”，而输入框里没有这几个字。
 
 这组实验采集于修复之前，当时总价仍是 `13`。本章讨论的是规则加载，复现原结果需要使用[起始项目](../examples/01-baseline/README.md)；使用修复后的项目也可以测试前缀，但项目状态的回答会不同。
 
@@ -25,7 +25,11 @@
 
 > 项目观察：这是一个计算商品总价的极简 TypeScript 项目，用于在 Codex Desktop 中测试文件读取、代码修改和测试执行，并通过 CPA 日志观察过程。
 
-与[未添加项目规则时的输出](../evidence/desktop-lab/03-readme/01-request.output-items.json)相比，这次[最终输出](../evidence/desktop-lab/04-agents/01-request.output-items.json)使用了约定的前缀。要解释它从哪里得知这个要求，应回到第一次请求，而不是只看最终回答。
+![加入项目规则后，Desktop 的最终回答以项目观察开头](../docs/images/desktop-lab/agents-prefix.png)
+
+输入里仍是原来的阅读要求，最终介绍出现了项目规则指定的前缀，见[规则实验](../evidence/desktop-lab/04-agents/manifest.json)。
+
+可以对照[未添加项目规则时的输出](../evidence/desktop-lab/03-readme/01-request.output-items.json)和[本次最终输出](../evidence/desktop-lab/04-agents/01-request.output-items.json)。前缀的来源在第一次请求里。
 
 ## 规则在第一次生成前已经送达
 
@@ -54,7 +58,7 @@
 
 全局约定与项目约定被放进同一个规则块，项目部分从 `--- project-doc ---` 开始。它们已经在首请求中，早于模型提出读取 README 的调用。本轮没有一次单独读取 `AGENTS.md` 的工具调用。
 
-输入框里的阅读要求位于相邻的 `input[6]`。同一请求因此带着两种来源：用户当前要完成的任务，以及运行环境附加的工作约定。
+相邻的 `input[6]` 才是输入框里的阅读要求。当前任务和项目约定一起进入模型，但来源不同。
 
 ```mermaid
 flowchart LR
@@ -105,11 +109,9 @@ flowchart LR
 
 ## 规则约束回答方式，文件提供项目事实
 
-第一次响应调用 `exec`，其中 `tools.exec_command` 执行 `Get-Content`。第二次请求带回 README 正文，并引用产生调用的响应。模型这时既能使用之前的规则，又获得了说明项目所需的文件内容。
+第一次响应经 `exec` 和 `tools.exec_command` 执行 `Get-Content`，第二请求带回 README 正文。回答的前缀来自规则，项目用途来自读取结果。规则要求“说明用途”，用途本身仍需文件提供。
 
-前缀与项目规则一致，回答中的项目事实则要和 README 对照。规则要求“说明用途”，并不替代用途本身的来源。
-
-还要注意两处范围。读取前的进度文字以“我会只读取”开头，没有加前缀，所以这里只观察到最终介绍遵循格式。第二条规则要求未授权时不修改，但本轮用户也明确要求不修改；没有修改调用，不能证明是规则单独阻止了修改。
+读取前的进度文字以“我会只读取”开头，没有前缀；本次遵循格式的是最终介绍。至于“只读”要求，规则和用户消息里都有，仅凭没有修改调用，无法判断是哪一处单独起作用。
 
 `AGENTS.md` 提供参与模型决策的约定，不能据此认定某项操作在程序层面无法执行。实际权限限制会在第十章用工具拒绝结果检验。
 
@@ -144,6 +146,41 @@ flowchart LR
 
 如果词只出现在请求中，说明规则已经送达，但这次最终回答没有按要求使用。若请求里找不到它，应先检查目录、文件内容和任务上下文。只看到回答使用了新词，也还需要检查它是否来自其他输入。
 
-完成后，保存这次请求与回答，写下两个位置：规则在哪里进入、回答在哪里体现。以后调整更复杂的项目约定，也可以沿这条路径检查。
+保存自己的请求与回答，标出规则进入的位置和回答使用前缀的位置。
+
+## 补充实验：每轮生成的编号从哪里来？
+
+前面的项目规则来自文件。2026-10-03 的新实验使用另一种入口：在本地配置 `UserPromptSubmit` Hook，让脚本在提交时生成编号，经 `additionalContext` 交给 Codex。
+
+Computer Use 在真实 Desktop 输入框提交：
+
+```text
+本轮实验编号是什么？只根据已有上下文回答，不要读取文件或调用工具；没有就说“不知道”。
+```
+
+新任务回答 `HOOK-43141e17-ca46-4b06-8ba6-9b07205aa94d`，全轮只有一次请求，没有模型工具调用。它没有读取编号文件；[本地 Hook 事件](../evidence/desktop-lab/hook-marker-repeat/hook-events.json)先记录了编号，[请求](../evidence/desktop-lab/hook-marker-repeat/00-request.request.json)随后带上它，[输出](../evidence/desktop-lab/hook-marker-repeat/00-request.output-items.json)与编号一致。
+
+![输入框询问本轮编号，回答给出 Hook 注入的 UUID 编号](../docs/images/desktop-lab/hook-marker-repeat.png)
+
+2026-10-03 新实验的完成画面。输入框未写编号，回答中的值可与[Hook 和 CPA 审计](../evidence/desktop-lab/hook-marker-repeat/audit.json)逐项对应。
+
+请求里，问题在 `input[9].content[0].text`；编号在下一条 `role: "developer"` 消息的 `input[10].content[0].text`：
+
+```text
+本轮实验编号为 HOOK-43141e17-ca46-4b06-8ba6-9b07205aa94d。这是本轮 UserPromptSubmit Hook 自动生成并注入的编号。
+```
+
+这条路径解释了“没有工具调用，为什么仍然出现了新信息”：脚本在模型生成前已执行，输出参与请求组装。AGENTS 提供文件中的约定；这次 Hook 提供提交时生成的内容。模型提出的工具调用则发生在响应里，时间和入口都不同。
+
+<details>
+<summary>提交路径、信任状态与字段核对</summary>
+
+这份新任务请求没有 `previous_response_id`，编号直接出现在当前输入里。[上游快照](../evidence/desktop-lab/hook-marker-repeat/00-request.upstream.json)与客户端请求逐值相同，[审计](../evidence/desktop-lab/hook-marker-repeat/audit.json)将本地 Hook、CPA 响应和 rollout 本轮用量记录相互对应。
+
+同日较早的一次[输入框实验](../evidence/desktop-lab/hook-c-trusted-ui/README.md)得到 `HOOK-5467aee6-40de-4432-8f83-93ed1bc73794`。那次问题在 `input[2]`，编号在 `input[3]` 的 `developer` 消息中；`client_metadata["x-codex-turn-metadata"]` 解码后为 `turn_trigger: "composer"`、`client_type: "desktop_app"`。它是在原任务中继续的一轮，字段位置与这次新任务不同。脚本及交接检查时的受信任状态见[配置快照](../evidence/desktop-lab/hook-c-trusted-ui/hook-definition-snapshot.json)。
+
+此前三组记录由 `create_thread` 提交，问题放在工具输出的委派内容里，`turn_trigger` 是 `app_tool_create_thread`；均未附加编号，回答“不知道”。它们和输入框轮次的提交方式、历史不同，不能用来证明普通输入框在各个信任状态下的行为差异。字段位置、来源审计与限制见[实验说明](../evidence/desktop-lab/hook-c-trusted-ui/README.md)。
+
+</details>
 
 [上一章：上下文管理](05-context.md) · [下一章：Skills](07-skills.md)

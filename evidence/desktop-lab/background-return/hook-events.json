@@ -1,0 +1,15 @@
+{
+  "source": "E:/Develop/github/codex-ts-demo/.codex/hooks/events.jsonl",
+  "events": [
+    {
+      "sourceLine": 5,
+      "event": {
+        "timestamp": "2026-10-03T02:39:32.298Z",
+        "event": "UserPromptSubmit",
+        "session_id": "01a0ff9a-4c81-7900-b401-e149f5ef7cbe",
+        "turn_id": "01a0ffa1-8928-7421-bdce-6dca0ef609a3",
+        "marker": "HOOK-300243c8-9014-4d8a-8f8f-220ff6837cba"
+      }
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "auditedAt": "2026-10-03T02:43:25.498Z",
+  "requestCount": 6,
+  "modelToolCallCount": 5,
+  "sessionId": 48726,
+  "startCount": 1,
+  "readOverlapsRunningCommand": true,
+  "commands": {
+    "delayed": {
+      "rolloutLine": 104,
+      "id": "exec-4cbd5132-9181-4883-9b5f-9285f2c7de93",
+      "startedAt": "2026-10-03T02:39:37.278Z",
+      "completedAt": "2026-10-03T02:40:12.766Z",
+      "exitCode": 0
+    },
+    "read": {
+      "rolloutLine": 89,
+      "id": "exec-afcab9e3-bd0b-488c-b17a-343db83b6cea",
+      "startedAt": "2026-10-03T02:39:51.075Z",
+      "completedAt": "2026-10-03T02:39:51.574Z",
+      "exitCode": 0
+    }
+  },
+  "returns": [
+    {
+      "stage": "01-request",
+      "callId": "call_vH6I6E6RwL3u25p3MIUjCMYw",
+      "result": {
+        "chunk_id": "a6150b",
+        "wall_time_seconds": 10.0110264,
+        "session_id": 48726,
+        "original_token_count": 11,
+        "output": "BACKGROUND_START 2026-10-03T02:39:37.715Z\n"
+      }
+    },
+    {
+      "stage": "02-request",
+      "callId": "call_egMyVHRR8eODBrCGn7eTDHvx",
+      "result": {
+        "chunk_id": "1bd10c",
+        "wall_time_seconds": 0.4989261,
+        "exit_code": 0,
+        "original_token_count": 101,
+        "output": "# Codex TS Demo\r\n\r\n一个计算商品总价的极简 TypeScript 项目，用于在 Codex Desktop 中测试文件读取、代码修改和测试执行，并通过 CPA 日志观察过程。\r\n\r\n## 环境\r\n\r\n需要 Node.js 24 或更高版本。直接运行 TypeScript，使用 Node.js 内置测试工具；TypeScript 编译器用于类型检查。\r\n\r\n```powershell\r\nnpm install\r\nnpm start\r\nnpm run typecheck\r\n"
+      }
+    },
+    {
+      "stage": "03-request",
+      "callId": "call_LQTIBRt2Bk0l6uCrk3ea5IcG",
+      "result": {
+        "chunk_id": "ef10b2",
+        "wall_time_seconds": 5.0050825,
+        "session_id": 48726,
+        "original_token_count": 0,
+        "output": ""
+      }
+    },
+    {
+      "stage": "04-request",
+      "callId": "call_XYYAOdkpuX8VUzL2wNhVw8WC",
+      "result": {
+        "chunk_id": "a70950",
+        "wall_time_seconds": 5.0134519,
+        "session_id": 48726,
+        "original_token_count": 0,
+        "output": ""
+      }
+    },
+    {
+      "stage": "05-request",
+      "callId": "call_Ycin3k8M5QaoYrYTFsruuSMm",
+      "result": {
+        "chunk_id": "ae200b",
+        "wall_time_seconds": 4.3742069,
+        "exit_code": 0,
+        "original_token_count": 16,
+        "output": "BACKGROUND_TOTAL 27\nBACKGROUND_DONE 2026-10-03T02:40:12.726Z\n"
+      }
+    }
+  ],
+  "limitations": [
+    "这是同一轮内由命令工具管理的长进程与结果回收，未测试关闭应用、跨机器或跨轮后台调度。",
+    "请求 yield_time_ms=1000，首次实际返回约10秒；后续两次返回仍在运行，第三次取得最终输出和exit_code=0。",
+    "外层 Script completed 只说明编排代码返回，不能代替内部进程退出码。"
+  ]
+}

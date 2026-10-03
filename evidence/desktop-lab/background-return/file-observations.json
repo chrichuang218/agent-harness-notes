@@ -1,0 +1,26 @@
+{
+  "provenance": "The orchestrator prepared the delayed script before the formal Desktop turn. It did not change during the experiment; the command execution is recorded separately in CPA and rollout.",
+  "preparationTime": "2026-10-03T02:38:23.384Z",
+  "script": {
+    "path": "lab/background-delay.mjs",
+    "before": {
+      "name": "lab/background-delay.mjs",
+      "content": "import { setTimeout } from 'node:timers/promises';\nimport { calculateTotal } from '../src/price.ts';\nconsole.log('BACKGROUND_START ' + new Date().toISOString());\nawait setTimeout(35000);\nconsole.log('BACKGROUND_TOTAL ' + calculateTotal(10, 3, 10));\nconsole.log('BACKGROUND_DONE ' + new Date().toISOString());\n",
+      "sha256": "8ad205be439a28931046ad718981e5918c529ef9ebd76c8d017d6eabaa9ecc5d",
+      "exportedTextSha256": "8ad205be439a28931046ad718981e5918c529ef9ebd76c8d017d6eabaa9ecc5d"
+    },
+    "after": {
+      "sha256": "8ad205be439a28931046ad718981e5918c529ef9ebd76c8d017d6eabaa9ecc5d",
+      "text": "import { setTimeout } from 'node:timers/promises';\nimport { calculateTotal } from '../src/price.ts';\nconsole.log('BACKGROUND_START ' + new Date().toISOString());\nawait setTimeout(35000);\nconsole.log('BACKGROUND_TOTAL ' + calculateTotal(10, 3, 10));\nconsole.log('BACKGROUND_DONE ' + new Date().toISOString());\n",
+      "exportedTextSha256": "8ad205be439a28931046ad718981e5918c529ef9ebd76c8d017d6eabaa9ecc5d"
+    }
+  },
+  "importedPriceSource": {
+    "path": "src/price.ts",
+    "capturedAt": "2026-10-03T02:43:25.496Z",
+    "sha256": "b84c034a4d4617cd26d5c2afe3eedbecf1e4373db62ab009ccc0a61e1d15bfd0",
+    "text": "export function calculateTotal(\n  unitPrice: number,\n  quantity: number,\n  discountPercent: number = 0\n): number {\n  if (!Number.isInteger(discountPercent) || discountPercent < 0 || discountPercent > 100) {\n    throw new RangeError('discountPercent must be an integer between 0 and 100');\n  }\n\n  return (unitPrice * quantity) * ((100 - discountPercent) / 100);\n}\n",
+    "exportedTextSha256": "b84c034a4d4617cd26d5c2afe3eedbecf1e4373db62ab009ccc0a61e1d15bfd0"
+  },
+  "hashScope": "sha256 hashes original source-file bytes. exportedTextSha256 hashes the public text/content string after structure-preserving redaction and JSON-string normalization. Before/after comparisons use source-file hashes."
+}

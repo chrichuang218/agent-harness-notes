@@ -1,0 +1,51 @@
+{
+  "provenance": "Only the corresponding native hook events; tool_response is the captured stdout string, not an object containing an exit_code.",
+  "sources": [
+    {
+      "source": "E:/Develop/github/codex-ts-demo/.codex/hooks/events.jsonl",
+      "events": [
+        {
+          "sourceLine": 4,
+          "event": {
+            "timestamp": "2026-10-03T02:37:13.379Z",
+            "event": "UserPromptSubmit",
+            "session_id": "01a0ff9a-4c81-7900-b401-e149f5ef7cbe",
+            "turn_id": "01a0ff9f-6a99-7c42-b071-803a254205be",
+            "marker": "HOOK-7a5f90ff-3950-493e-ae28-9876d12fa713"
+          }
+        }
+      ]
+    },
+    {
+      "source": "E:/Develop/github/codex-ts-demo/.codex/hooks/tool-events.jsonl",
+      "events": [
+        {
+          "sourceLine": 2,
+          "event": {
+            "timestamp": "2026-10-03T02:37:18.733Z",
+            "event": "PostToolUse",
+            "session_id": "01a0ff9a-4c81-7900-b401-e149f5ef7cbe",
+            "turn_id": "01a0ff9f-6a99-7c42-b071-803a254205be",
+            "tool_use_id": "exec-56152b9d-e2c7-4f21-b515-f2ef593f86e5",
+            "tool_name": "Bash",
+            "decision": "observe",
+            "tool_response": "✔ hook-lab passing control (0.6819ms)\nℹ tests 1\nℹ suites 0\nℹ pass 1\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 98.4234\n"
+          }
+        },
+        {
+          "sourceLine": 3,
+          "event": {
+            "timestamp": "2026-10-03T02:37:23.245Z",
+            "event": "PostToolUse",
+            "session_id": "01a0ff9a-4c81-7900-b401-e149f5ef7cbe",
+            "turn_id": "01a0ff9f-6a99-7c42-b071-803a254205be",
+            "tool_use_id": "exec-c8d32167-5b9b-4cf3-b575-a6463c87e771",
+            "tool_name": "Bash",
+            "decision": "observe",
+            "tool_response": "✖ hook-lab failing control (1.327ms)\nℹ tests 1\nℹ suites 0\nℹ pass 0\nℹ fail 1\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 95.7441\n\n✖ failing tests:\n\ntest at .codex\\hook-lab\\fail.test.mjs:4:1\n✖ hook-lab failing control (1.327ms)\n  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n  \n  13 !== 30\n  \n      at TestContext.<anonymous> (file:///E:/Develop/github/codex-ts-demo/.codex/hook-lab/fail.test.mjs:4:47)\n      at Test.runInAsyncScope (node:async_hooks:228:14)\n      at Test.run (node:internal/test_runner/test:1118:25)\n      at Test.start (node:internal/test_runner/test:1015:17)\n      at startSubtestAfterBootstrap (node:internal/test_runner/harness:358:17) {\n    generatedMessage: true,\n    code: 'ERR_ASSERTION',\n    actual: 13,\n    expected: 30,\n    operator: 'strictEqual',\n    diff: 'simple'\n  }\n"
+          }
+        }
+      ]
+    }
+  ]
+}

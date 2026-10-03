@@ -1,8 +1,17 @@
 # 流式输出：一段“已修复”怎样逐渐出现？
 
-第三章修复总价错误后，Desktop 显示了一段以“已修复”开头的说明。在 CPA 记录中，这段回答并非一次性返回：最后一次响应有 154 个 `response.*` 事件，其中 146 个逐段追加文本。
+Desktop 中“已修复”这段说明是怎样逐渐显示出来的？第三章最后一次响应记录了 154 个 `response.*` 事件，其中 146 个追加文本片段，随后文本块、输出项和整个响应依次结束。
 
 本章只拆这份已经保存的响应，不重新运行修复。完整序列在[修复阶段 04 事件](../evidence/desktop-lab/07-fix/04-request.events.json)。
+
+<details>
+<summary>查看这段回答在 Desktop 中的样子</summary>
+
+![总价修复完成后，Desktop 显示已修复和三项验证结果](../docs/images/desktop-lab/fix-result.png)
+
+这是[修复实验](../evidence/desktop-lab/07-fix/manifest.json)结束后的静态画面，只用来对应最终文字。分片顺序和完成事件由 CPA 日志证明，不能从截图还原。
+
+</details>
 
 ## 片段怎样组成同一条消息？
 
@@ -12,7 +21,7 @@
 “已” → “修” → “复” → “：[” → “src” → “/” → “price” → “.ts”
 ```
 
-这行按真实字段整理，表示消息开头的分片顺序。它们合起来成为“已修复：[src/price.ts…”，没有在每个片段到达时重新运行测试或发起新的模型请求。
+这些真实片段组成“已修复：[src/price.ts…”，属于同一次模型响应，没有逐片重新请求模型或运行测试。
 
 第一条文本增量包含以下字段，省略日志时间戳等外层信息：
 
@@ -44,7 +53,7 @@
 | `response.content_part.done` / `response.output_item.done` | 完成内容块和输出项 |
 | `response.completed` | 完成本次响应，带回用量等信息 |
 
-因此看到一次 `done`，先看它结束的是哪个对象。某个文本块完成后，一次响应仍可能还有其他输出项；最后的 `response.completed` 才描述整个响应的完成。
+某个文本块完成后，响应仍可能有其他输出项。要判断结束范围，先看事件类型；`response.completed` 描述的是整次响应。
 
 上一章还看到另一层边界：响应完整生成了工具调用，工具却在之后被用户中断。响应结束不会替后续工具宣布成功。
 
@@ -59,15 +68,15 @@
 | 03 | `response.custom_tool_call_input.delta` | 工具调用的完整输入 | 执行验证并回传结果 |
 | 04 | `response.output_text.delta` | assistant 消息 | 显示最终回答 |
 
-工具定义仍是可调用接口的说明；这里看到的是模型为本次操作生成的具体输入。执行结果还要等工具运行后返回，它不会因为参数已经生成完成而提前存在。
+这里生成的是工具的具体输入。执行结果要等工具运行后，才随下一请求返回。
 
 ## 为什么完成事件里的 output 是空的？
 
 打开本样本的[完成事件](../evidence/desktop-lab/07-fix/04-request.response.json)，会看到 `response.output` 是空数组。回答文本已经在前面的流式事件里返回，空数组不能推翻那些事件中的正文。
 
-教程因此同时保留完整事件序列和[输出项汇集](../evidence/desktop-lab/07-fix/04-request.output-items.json)。后者从 `response.output_item.done` 提取，是衍生文件；原完成事件没有被改写或补入正文。
+完整事件序列和[输出项汇集](../evidence/desktop-lab/07-fix/04-request.output-items.json)都已保存。后者从 `response.output_item.done` 提取；原完成事件仍保留空 `output`。
 
-如果只保存最终完成事件，这个样本就会丢失回答内容。如果只保存屏幕文字，又无法核对响应身份、流式顺序和用量。回看一次生成，需要把相关记录对应起来。
+只保存完成事件会丢失本样本的回答内容；只保存屏幕文字，则缺少响应标识、事件顺序和用量。
 
 <details>
 <summary>深入核对：生成之前的输入、事件序号与用量</summary>

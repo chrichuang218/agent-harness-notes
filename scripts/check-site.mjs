@@ -3,6 +3,7 @@ import { createServer } from 'node:http';
 import { readFile, mkdir } from 'node:fs/promises';
 import { resolve, extname } from 'node:path';
 import { chromium } from '@playwright/test';
+import { marked } from 'marked';
 
 const root = resolve('dist');
 const catalog = JSON.parse(await readFile('course/catalog.json', 'utf8'));
@@ -12,8 +13,10 @@ const basePath = '/agent-harness-notes/';
 const stages = experiments.flatMap(experiment => experiment.stages.map((stage, index) => ({ experiment, stage, index })));
 assert.equal(catalog.lessons.length, 15);
 assert.equal(catalog.groups.length, 4);
-assert.equal(experiments.length, 26);
-assert.equal(stages.length, 74);
+assert.ok(experiments.length > 0, 'The evidence index must contain experiments.');
+assert.ok(stages.length > 0, 'Every indexed stage must be verified.');
+assert.equal(new Set(experiments.map(experiment => experiment.id)).size, experiments.length, 'Experiment IDs must be unique.');
+const expectedPreviousCount = (await Promise.all(stages.map(({ stage }) => readFile(stage.requestFile, 'utf8').then(JSON.parse)))).filter(request => request.previous_response_id).length;
 const types = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.png': 'image/png', '.svg': 'image/svg+xml', '.txt': 'text/plain; charset=utf-8' };
 const server = createServer(async (request, response) => {
   try {
@@ -106,13 +109,15 @@ try {
     assert.deepEqual(actual, expected, group.id + ': cards must preserve the Chinese course order.');
   }
   assert.equal(await page.locator('dialog').count(), 0, 'Reading/evidence must not require a dialog.');
-  const license = page.locator('.site-footer a[href*="licenses/learn-claude-code.txt"]');
-  assert.equal(await license.count(), 1, 'Reference license link is missing.');
-  const licenseUrl = new URL(await license.getAttribute('href'), url).href;
-  assert.ok(licenseUrl.startsWith(url + 'licenses/'), 'License must resolve under the GitHub Pages base path.');
-  const licenseResponse = await context.request.get(licenseUrl);
-  assert.equal(licenseResponse.status(), 200);
-  assert.ok((await licenseResponse.text()).includes('MIT License'));
+  for (const name of ['learn-claude-code', 'how-claude-code-works']) {
+    const license = page.locator(`.site-footer a[href*="licenses/${name}.txt"]`);
+    assert.equal(await license.count(), 1, name + ': reference license link is missing.');
+    const licenseUrl = new URL(await license.getAttribute('href'), url).href;
+    assert.ok(licenseUrl.startsWith(url + 'licenses/'), 'License must resolve under the GitHub Pages base path.');
+    const licenseResponse = await context.request.get(licenseUrl);
+    assert.equal(licenseResponse.status(), 200);
+    assert.ok((await licenseResponse.text()).includes('MIT License'));
+  }
   await noOverflow('Desktop homepage');
   await mkdir('work', { recursive: true });
   await page.screenshot({ path: 'work/site-reader-desktop.png', fullPage: false, animations: 'disabled' });
@@ -121,15 +126,17 @@ try {
   await page.locator('.home-example a').click();
   await waitChapter('03-agent-loop');
   assert.equal(new URLSearchParams(new URL(page.url()).hash.split('?')[1]).get('section'), 'agent-loop-timeline');
-  assert.ok(await page.locator('.page-toc [data-section="agent-loop-timeline"]').count(), 'The real repair timeline should have a chapter-outline entry.');
+  assert.ok(await page.locator('.chapter-outline [data-section="agent-loop-timeline"]').count(), 'The real repair timeline should have a chapter-outline entry.');
   const timelineTop = (await page.locator('#agent-loop-timeline').boundingBox()).y;
   assert.ok(timelineTop >= 60 && timelineTop < 200, 'The homepage repair link must land on the real request timeline.');
+  await page.screenshot({ path: 'work/site-timeline-desktop.png', fullPage: false, animations: 'disabled' });
   await page.goBack();
   await page.locator('.home-page:visible').waitFor();
 
   await page.locator('[data-start-learning]').click();
   await waitChapter('01-request');
   assert.ok((await page.locator('.breadcrumb').innerText()).includes('一次请求'));
+  await page.screenshot({ path: 'work/site-chapter-desktop.png', fullPage: false, animations: 'disabled' });
   await page.goBack();
   await page.locator('.home-page:visible').waitFor();
   assert.equal(await page.locator('.chapter:visible').count(), 0);
@@ -139,21 +146,26 @@ try {
   assert.equal(await page.locator('.chapter:visible,.home-page:visible').count(), 0);
   assert.ok(await page.locator('.introduction').evaluate(element => parseFloat(getComputedStyle(element).fontSize)) >= 15, 'Long-form guide text must remain readable.');
   await noOverflow('Desktop guide');
+  assert.equal(await page.locator('.chapter-outline').evaluate(element => element.parentElement.dataset.navLesson), 'introduction');
 
   await page.goto(url + '#/lesson/01-request');
   await waitChapter('01-request');
-  const screenshot = page.locator('img[src*="desktop-hello-readme"]').first();
+  const screenshot = page.locator('#chapter-01-request .prose img').first();
+  const lightCode = page.locator('.code-panel').first();
+  assert.ok(await lightCode.evaluate(element => Math.min(...getComputedStyle(element).backgroundColor.match(/\d+/g).slice(0, 3).map(Number)) > 230), 'Light-mode code should use a light background.');
+  assert.ok(await lightCode.evaluate(element => Math.max(...getComputedStyle(element).color.match(/\d+/g).slice(0, 3).map(Number)) < 100), 'Light-mode code must use dark text.');
   assert.ok(await screenshot.count(), 'Real Desktop screenshot is missing.');
   const asset = await screenshot.getAttribute('src');
   assert.equal((await context.request.get(new URL(asset, url).href)).status(), 200, 'Vite image asset is missing.');
   assert.equal(await screenshot.locator('..').getAttribute('target'), '_blank');
   assert.equal(await screenshot.locator('..').getAttribute('href'), new URL(asset, url).href);
-  assert.ok((await screenshot.locator('..').innerText()).includes('点击查看原图'));
+  assert.ok((await screenshot.locator('..').innerText()).includes('查看原图'));
   const imagePagePromise = context.waitForEvent('page');
   await screenshot.locator('..').click();
   const imagePage = await imagePagePromise;
   await imagePage.waitForLoadState();
   assert.equal(imagePage.url(), new URL(asset, url).href, 'Opening the original image should preserve its actual asset URL.');
+  await imagePage.screenshot({ path: 'work/site-screenshot-original.png', fullPage: false });
   await imagePage.close();
 
   // Navigation is a real route change, not a scroll through hidden chapters.
@@ -208,9 +220,22 @@ try {
     await page.goto(url + '#/lesson/' + lesson.id);
     await waitChapter(lesson.id);
     const chapter = page.locator('#chapter-' + lesson.id);
+    let expectedImages = 0;
+    marked.walkTokens(marked.lexer(await readFile(lesson.file, 'utf8')), token => { if (token.type === 'image') expectedImages++; });
+    assert.equal(await chapter.locator('.prose img').count(), expectedImages, lesson.id + ': article screenshot omitted.');
+    for (const image of await chapter.locator('.prose img').all()) {
+      const source = new URL(await image.getAttribute('src'), url).href;
+      assert.equal((await context.request.get(source)).status(), 200, lesson.id + ': screenshot asset is missing.');
+      assert.equal(await image.locator('..').getAttribute('href'), source, lesson.id + ': original image must keep the actual source URL.');
+      assert.equal(await image.locator('..').getAttribute('target'), '_blank', lesson.id + ': original screenshot must open separately.');
+      assert.equal(await image.locator('..').locator('a').count(), 0, lesson.id + ': screenshot link must not contain a nested link.');
+    }
     foldedHeadings.push(...await chapter.locator('.prose details h2,.prose details h3,.prose details h4,.prose details h5,.prose details h6,.prose details > summary[id]').evaluateAll(headings => headings.map(heading => ({ id: heading.id, lesson: heading.closest('.chapter').dataset.lesson }))));
-    assert.equal(await page.locator('.page-toc a').filter({ hasText: /核对答案|参考解释|核对思路/ }).count(), 0, 'Exercise answers should stay out of the chapter outline.');
-    assert.equal(await page.locator('.page-toc details').getAttribute('open') === null, false, 'Desktop chapter outline must start expanded.');
+    assert.equal(await page.locator('.chapter-outline a').filter({ hasText: /核对答案|参考解释|核对思路/ }).count(), 0, 'Exercise answers should stay out of the chapter outline.');
+    assert.equal(await page.locator('.page-toc').count(), 0, 'Reading must not duplicate its sidebar outline in a third column.');
+    assert.equal(await page.locator('.course-sidebar .chapter-outline').count(), 1, 'Exactly one chapter outline belongs in the sidebar.');
+    assert.equal(await page.locator('.chapter-outline').evaluate(element => element.parentElement.dataset.navLesson), lesson.id, 'Only the current chapter can expose section links.');
+    assert.ok(await page.locator('.chapter-outline a').count() > 0, 'The current chapter must expose its sections.');
     const expectedPrevious = catalog.lessons.indexOf(lesson) > 0 ? catalog.lessons[catalog.lessons.indexOf(lesson) - 1].id : null;
     const expectedNext = catalog.lessons[catalog.lessons.indexOf(lesson) + 1]?.id;
     if (expectedPrevious) assert.equal(await page.locator('.reader-page:visible .chapter-pagination [data-direction="previous"]').getAttribute('href'), '#/lesson/' + expectedPrevious);
@@ -229,13 +254,10 @@ try {
   }
   const repeatedTarget = foldedHeadings.at(-1);
   await page.evaluate(() => document.querySelectorAll('.prose details').forEach(details => details.open = false));
-  await page.locator(`.page-toc [data-section="${repeatedTarget.id}"]`).click();
+  await page.locator(`.chapter-outline [data-section="${repeatedTarget.id}"]`).click();
   assert.ok(await page.locator(`[id="${repeatedTarget.id}"]`).evaluate(element => element.closest('details').open), 'Following the current link again must reopen its folded content.');
   await page.evaluate(() => document.querySelectorAll('.prose details').forEach(details => details.open = false));
-  await page.locator('.page-toc details > summary').click();
-  assert.equal(await page.locator('.page-toc details').getAttribute('open'), null, 'Chapter outline should collapse.');
-  await page.locator('.page-toc details > summary').click();
-  assert.notEqual(await page.locator('.page-toc details').getAttribute('open'), null, 'Chapter outline should reopen.');
+  assert.equal(await page.locator('.nav-chapter:not(.active) .chapter-outline').count(), 0, 'Other chapters must not repeat expanded section links.');
 
   // Make route requests overlap while a fresh document lazily loads chapters.
   await page.goto(url + '#/');
@@ -252,7 +274,8 @@ try {
   await page.waitForLoadState('networkidle');
   await waitChapter('02-tools');
   assert.ok((await page.title()).startsWith(catalog.lessons[1].title), 'A stale lazy load replaced the last route title.');
-  assert.ok(await page.locator('.page-toc a[data-section]').evaluateAll(links => links.every(link => link.dataset.section.startsWith('02-tools-') || link.dataset.section === 'workbench-02-tools')), 'A stale lazy load replaced the active outline.');
+  assert.ok(await page.locator('.chapter-outline a[data-section]').count() > 0, 'The active chapter outline must exist after overlapping loads.');
+  assert.ok(await page.locator('.chapter-outline a[data-section]').evaluateAll(links => links.every(link => link.dataset.section.startsWith('02-tools-') || link.dataset.section === 'workbench-02-tools')), 'A stale lazy load replaced the active outline.');
 
   // Every recorded stage, including prewarms, is selectable. Compare all input
   // items, roles, content blocks and original objects against public sources.
@@ -290,8 +313,23 @@ try {
     host = await openWorkbench(experiment, index, 'raw', { kind: 'eventsFile' });
     assert.ok(await host.locator('[data-raw-content]').textContent() === await readFile(stage.eventsFile, 'utf8'), label + ': streamed events differ from current public source');
   }
-  assert.equal(previousCount, 60, 'All recorded response references must remain navigable.');
+  assert.equal(previousCount, expectedPreviousCount, 'All recorded response references must remain navigable.');
   console.log(`Verified all ${experiments.length} experiments / ${stages.length} stages: complete inputs, roles, content blocks, tools, output objects, completion events, client/upstream snapshots; ${previousCount} response references.`);
+
+  let supplementalCount = 0;
+  for (const experiment of experiments) {
+    for (const kind of ['auditFile', 'hookEventsFile', 'rolloutEventsFile', 'fileObservationsFile']) {
+      if (!experiment[kind]) continue;
+      const host = await openWorkbench(experiment, 0, 'raw', { kind });
+      assert.equal(await host.locator('.raw-select').inputValue(), kind, experiment.id + ': supplemental kind must remain selected.');
+      assert.equal(await host.locator('[data-raw-content]').textContent(), await readFile(experiment[kind], 'utf8'), experiment.id + ': supplemental evidence changed.');
+      if (experiment.submission?.method) assert.equal(await host.locator('[data-submission-method]').getAttribute('data-submission-method'), experiment.submission.method);
+      if (experiment.submission?.method === 'codex-app-create-thread') assert.ok((await host.locator('[data-submission-method]').innerText()).includes('不能作为普通输入框'));
+      if (experiment.coverage === 'text-progress-only') assert.ok((await host.locator('.experiment-summary').innerText()).includes('清单属于文字进度'));
+      supplementalCount++;
+    }
+  }
+  console.log(`Verified ${supplementalCount} supplemental audit, Hook, rollout and file-observation records, including submission paths and the ordinary-task plan limitation.`);
 
   const fix = experiments.find(item => item.id === '07-fix');
   await page.goto(url + '#/lesson/03-agent-loop');
@@ -428,6 +466,8 @@ try {
   assert.equal(await architectureDiagram.evaluate(element => getComputedStyle(element).backgroundColor), 'rgb(250, 250, 250)', 'Neutral diagram must retain a readable light background in dark mode.');
   assert.ok(await architectureDiagram.evaluate(element => [...element.querySelectorAll('.nodeLabel p,.edgeLabel p')].every(label => Math.max(...getComputedStyle(label).color.match(/\d+/g).slice(0, 3).map(Number)) < 140)), 'Diagram labels must remain dark on the light canvas after a theme toggle.');
   await noOverflow('Dark architecture chapter');
+  const darkCode = page.locator('.code-panel').first();
+  assert.ok(await darkCode.evaluate(element => Math.max(...getComputedStyle(element).backgroundColor.match(/\d+/g).slice(0, 3).map(Number)) < 70), 'Dark-mode code must remain dark.');
   await page.goto(url + '#/');
   await page.locator('.home-page:visible').waitFor();
   await page.screenshot({ path: 'work/site-reader-dark.png', fullPage: false });
@@ -439,15 +479,18 @@ try {
     for (const lesson of catalog.lessons) { await page.goto(url + '#/lesson/' + lesson.id); await waitChapter(lesson.id); await noOverflow(`${width}px ${lesson.id}`); }
     host = await openWorkbench(hello, 1, 'request'); await noOverflow(`${width}px structured input`);
     assert.ok(await host.locator('[data-full-content]').first().evaluate(element => parseFloat(getComputedStyle(element).fontSize)) >= 12, 'Mobile full-text source font is too small.');
-    assert.equal(await page.locator('.page-toc details').getAttribute('open'), null, 'The narrow-screen outline must start collapsed.');
-    await page.locator('.page-toc details > summary').click();
-    assert.notEqual(await page.locator('.page-toc details').getAttribute('open'), null);
-    await page.locator('.page-toc a[data-section]').first().click();
+    assert.equal(await page.locator('.chapter-outline').count(), 1, 'Responsive reading must keep a single outline.');
+    if (width === 390) await page.getByRole('button', { name: '展开学习目录' }).click();
+    await page.locator('.chapter-outline a[data-section]').first().click();
+    if (width === 390) assert.equal(await page.locator('.menu-toggle').getAttribute('aria-expanded'), 'false', 'A section jump must close the mobile menu.');
     await waitChapter('01-request');
     await noOverflow(`${width}px chapter heading jump`);
     if (width === 390) {
+      await page.goto(url + '#/lesson/01-request'); await waitChapter('01-request');
+      await page.screenshot({ path: 'work/site-chapter-mobile.png', fullPage: false, animations: 'disabled' });
       await page.getByRole('button', { name: '展开学习目录' }).click();
       assert.equal(await page.locator('.menu-toggle').getAttribute('aria-expanded'), 'true');
+      await page.screenshot({ path: 'work/site-directory-mobile.png', fullPage: false, animations: 'disabled' });
       await page.locator('.course-sidebar a[href="#/guide"]').click();
       await page.locator('.introduction:visible').waitFor();
       assert.equal(await page.locator('.menu-toggle').getAttribute('aria-expanded'), 'false');
@@ -455,12 +498,19 @@ try {
       assert.ok(await architectureDiagram.evaluate(element => element.scrollWidth > element.clientWidth), 'Wide mobile diagram must scroll inside its frame.');
       assert.ok(await architectureDiagram.locator('svg').evaluate(svg => svg.getBoundingClientRect().width >= svg.viewBox.baseVal.width - 1), 'Mobile diagram must retain its intrinsic scale.');
       await noOverflow('Mobile architecture diagram');
+      await page.goto(url + '#/lesson/03-agent-loop?section=agent-loop-timeline'); await waitChapter('03-agent-loop');
+      await noOverflow('Mobile Agent Loop timeline');
+      await page.screenshot({ path: 'work/site-timeline-mobile.png', fullPage: false, animations: 'disabled' });
       await page.goto(url + '#/'); await page.locator('.home-page:visible').waitFor();
       await page.screenshot({ path: 'work/site-reader-mobile.png', fullPage: false, animations: 'disabled' });
       await openWorkbench(hello, 1, 'request'); await page.screenshot({ path: 'work/site-workbench-mobile.png', fullPage: false, animations: 'disabled' });
     }
   }
   await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto(url + '#/lesson/10-permissions'); await waitChapter('10-permissions');
+  const desktopScreenshot = page.locator('#chapter-10-permissions .prose img').last();
+  await desktopScreenshot.scrollIntoViewIfNeeded();
+  await page.screenshot({ path: 'work/site-screenshot-in-article.png', fullPage: false, animations: 'disabled' });
   await openWorkbench(hello, 1, 'request'); await page.screenshot({ path: 'work/site-workbench-desktop.png', fullPage: false, animations: 'disabled' });
   assert.deepEqual(errors, [], 'Browser errors must not be swallowed.');
   assert.deepEqual(badResources, [], 'Deployed-path assets must all load without failed requests.');

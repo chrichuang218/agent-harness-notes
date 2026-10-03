@@ -1,0 +1,84 @@
+{
+  "auditedAt": "2026-10-03T02:27:33.750Z",
+  "scope": "逐值核对当前 CPA 合并日志与已导出的脱敏请求、完成事件；核对输出项和相关本地 Hook 事件。",
+  "submission": {
+    "method": "computer-use-desktop-composer",
+    "turnTrigger": "composer",
+    "submittedPrompt": "本轮实验编号是什么？只根据已有上下文回答，不要读取文件或调用工具；没有就说“不知道”。",
+    "promptField": "input[2].content[0].text",
+    "note": "通过 Computer Use 在真实 Desktop 输入框提交；这是同一任务的第二轮。"
+  },
+  "checks": [
+    {
+      "side": "client",
+      "requestMatches": true,
+      "completedMatches": true,
+      "source": {
+        "request": {
+          "file": "v1-responses-2026-10-03T094944-b05cbf4c.log",
+          "line": 140
+        },
+        "completed": {
+          "file": "v1-responses-2026-10-03T094944-b05cbf4c.log",
+          "line": 280
+        }
+      }
+    },
+    {
+      "side": "upstream",
+      "requestMatches": true,
+      "completedMatches": true,
+      "source": {
+        "request": {
+          "file": "v1-responses-2026-10-03T094944-b05cbf4c.log",
+          "line": 470
+        },
+        "completed": {
+          "file": "v1-responses-2026-10-03T094944-b05cbf4c.log",
+          "line": 610
+        }
+      }
+    }
+  ],
+  "outputItemsMatchEvents": true,
+  "modelToolCallCount": 0,
+  "requestContainsMarker": true,
+  "rollout": {
+    "source": "<USER_HOME>/.codex/sessions/2026/10/03/rollout-2026-10-03T09-44-20-01a0ff6f-01f4-70e0-992f-06c9a7b5fec0.jsonl",
+    "presentAtAudit": false,
+    "limitation": "采集时的 rollout 路径保留于 manifest；本次审计在该路径及 .codex 目录按任务 UUID 未找到文件，因此未重新核对 rollout。CPA 原始合并日志仍在且已逐值复核。"
+  },
+  "collectionCopy": {
+    "source": "<USER_HOME>/Documents/Codex/2026-10-02/new-chat/outputs/hook-experiment/evidence/desktop-lab/hook-c-trusted-ui",
+    "protocolFiles": [
+      {
+        "name": "00-request.events.json",
+        "sha256": "4ad10b9c51f7fc32a3b0bd029c5f8e440c2b9eabb11fc1fb9512b3e8c6145416"
+      },
+      {
+        "name": "00-request.output-items.json",
+        "sha256": "3cfdc787b1dcb69edf6086f711feef29383f246141a1cd96319d4206785c4c7a"
+      },
+      {
+        "name": "00-request.request.json",
+        "sha256": "5b7cb2ee20e7e957c71b7605710deb87faae79578edd953e1ebdf84199c23681"
+      },
+      {
+        "name": "00-request.response.json",
+        "sha256": "7cfad5027a989740ed4033744af3d58c721f9eb3fa1619d3009404a6c010124d"
+      },
+      {
+        "name": "00-request.upstream.json",
+        "sha256": "5b7cb2ee20e7e957c71b7605710deb87faae79578edd953e1ebdf84199c23681"
+      }
+    ]
+  },
+  "markerChain": {
+    "marker": "HOOK-5467aee6-40de-4432-8f83-93ed1bc73794",
+    "hookEventFile": "evidence/desktop-lab/hook-c-trusted-ui/hook-events.json",
+    "hookInputField": "input[3].content[0].text",
+    "hookInputRole": "developer",
+    "clientAndUpstreamMatch": true,
+    "replyMatches": true
+  }
+}

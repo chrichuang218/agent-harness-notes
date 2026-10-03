@@ -1,0 +1,27 @@
+{
+  "provenance": "Derived by collecting response.output_item.done.item in event order; response.completed is unchanged.",
+  "items": [
+    {
+      "id": "msg_04fdf1619efbd6d7016ac05c27f98887d0b0dcf6f28024eb74",
+      "type": "message",
+      "status": "completed",
+      "content": [
+        {
+          "type": "output_text",
+          "annotations": [],
+          "logprobs": [],
+          "text": "不知道。"
+        }
+      ],
+      "internal_chat_message_metadata_passthrough": {
+        "create_time": 1790991398.589502,
+        "turn_id": "01a0ff67-e202-7782-97c4-76cdb6d19ef3"
+      },
+      "phase": "final_answer",
+      "role": "assistant",
+      "metadata": {
+        "turn_id": "01a0ff67-e202-7782-97c4-76cdb6d19ef3"
+      }
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "type": "response.create",
+  "model": "gpt-6-astra",
+  "previous_response_id": "resp_06bf55714bc3c9c4016ac06a59a2f887d08c32c987c897fad7",
+  "input": [
+    {
+      "type": "custom_tool_call_output",
+      "id": "ctco_01a0ff9f-828d-78e0-bb2f-7946de1ee52a",
+      "call_id": "call_PSQDPoRAlos98JBhiczmxIM5",
+      "output": [
+        {
+          "type": "input_text",
+          "text": "Script completed\nWall time 2.7 seconds\nOutput:\n"
+        },
+        {
+          "type": "input_text",
+          "text": "{\"chunk_id\":\"bbe6d4\",\"wall_time_seconds\":0.5901444,\"exit_code\":0,\"original_token_count\":38,\"output\":\"✔ hook-lab passing control (0.6819ms)\\nℹ tests 1\\nℹ suites 0\\nℹ pass 1\\nℹ fail 0\\nℹ cancelled 0\\nℹ skipped 0\\nℹ todo 0\\nℹ duration_ms 98.4234\\n\"}"
+        }
+      ]
+    }
+  ],
+  "tool_choice": "auto",
+  "parallel_tool_calls": false,
+  "reasoning": {
+    "effort": "medium",
+    "summary": "detailed",
+    "context": "all_turns"
+  },
+  "store": false,
+  "stream": true,
+  "include": [
+    "reasoning.encrypted_content"
+  ],
+  "service_tier": "priority",
+  "prompt_cache_key": "01a0ff9a-4c81-7900-b401-e149f5ef7cbe",
+  "text": {
+    "verbosity": "low"
+  },
+  "client_metadata": {
+    "ws_request_header_x_openai_internal_codex_responses_lite": "true",
+    "x-codex-ws-stream-request-start-ms": "1790995038898",
+    "turn_id": "01a0ff9f-6a99-7c42-b071-803a254205be",
+    "thread_id": "01a0ff9a-4c81-7900-b401-e149f5ef7cbe",
+    "x-codex-turn-metadata": "{\"installation_id\":\"<REDACTED>\",\"session_id\":\"01a0ff9a-4c81-7900-b401-e149f5ef7cbe\",\"thread_id\":\"01a0ff9a-4c81-7900-b401-e149f5ef7cbe\",\"agent_name\":\"/root\",\"turn_id\":\"01a0ff9f-6a99-7c42-b071-803a254205be\",\"window_id\":\"01a0ff9a-4c81-7900-b401-e149f5ef7cbe:0\",\"window_number\":0,\"context_window_id\":\"01a0ff9a-4c84-7511-bb3c-bb864c575f8f\",\"request_kind\":\"turn\",\"root_turn_id\":\"01a0ff9f-6a99-7c42-b071-803a254205be\",\"thread_source\":\"user\",\"turn_trigger\":\"composer\",\"sandbox\":\"none\",\"sandbox_mode\":\"danger-full-access\",\"auto_review_enabled\":false,\"node_repl_auto_review_required\":true,\"node_repl_disabled\":false,\"turn_started_at_unix_ms\":1790995032790,\"analytics_enabled\":true,\"client_type\":\"desktop_app\",\"model\":\"gpt-6-astra\",\"reasoning_effort\":\"medium\",\"source\":\"codex\",\"workspace_kind\":\"project\"}",
+    "x-codex-window-id": "01a0ff9a-4c81-7900-b401-e149f5ef7cbe:0",
+    "x-codex-installation-id": "<REDACTED>",
+    "session_id": "01a0ff9a-4c81-7900-b401-e149f5ef7cbe",
+    "root_turn_id": "01a0ff9f-6a99-7c42-b071-803a254205be"
+  }
+}

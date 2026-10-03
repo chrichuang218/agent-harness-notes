@@ -123,10 +123,10 @@ function workbenchShell(lesson) {
   return `<section class="workbench" id="workbench-${lesson.id}" data-workbench="${lesson.id}" aria-busy="false"><h3>内嵌证据工作台</h3><p class="workbench-intro">先读结构，再展开全文。这里可以选择本章关联的全部实验与请求，包括预热。</p><div class="workbench-selectors"><label>实验 <select class="experiment-select" aria-label="选择实验">${lesson.evidenceIds.map(id => { const experiment = experiments.find(item => item.id === id); return `<option value="${esc(id)}">${esc(experiment?.title || id)}</option>`; }).join('')}</select></label><label>请求 <select class="stage-select" aria-label="选择请求"></select></label></div><div class="experiment-summary"></div><div class="request-controls"><button data-stage-prev>← 上一次请求</button><button data-stage-next>下一次请求 →</button><button data-share>复制此位置链接</button></div><div class="request-metadata"></div><div class="workbench-tabs" aria-label="工作台视图"><button data-view="request">输入与工具定义</button><button data-view="output">模型输出</button><button data-view="calls">工具调用与结果</button><button data-view="compare">客户端 / 上游</button><button data-view="raw">原始记录</button></div><div class="workbench-content"><button class="load-evidence">加载本次请求的真实证据</button></div></section><section class="supplement" id="supplement-${lesson.id}" hidden aria-label="补充原始证据"></section>`;
 }
 function homeMarkup() {
-  return `<section class="home-page" id="home-view"><header class="home-hero"><span class="eyebrow">CODEX DESKTOP · TYPESCRIPT · CPA</span><h1>从一次修复，<br class="hero-break">看懂 <span>Agent</span></h1><p>在真实 TypeScript 项目里使用 Codex Desktop，沿 CPA 请求与工具结果理解它怎样完成任务。</p><div class="hero-actions"><a class="primary-button" data-start-learning href="${href(catalog.lessons[0].id)}">开始学习 <span aria-hidden="true">→</span></a><a class="secondary-button" href="#/guide">阅读导读</a></div><div class="hero-meta">15 个主题 <span>·</span> 26 组真实实验 <span>·</span> 输入与输出可逐项核对</div></header><section class="home-example" aria-label="贯穿教程的修复案例"><div><span class="eyebrow">从这个错误开始</span><h2>10 × 3，为什么得到 13？</h2><p>读文件、定位错误、修改运算符，再运行测试。一次用户要求，对应五次模型请求。</p><a href="${href('03-agent-loop', { section: 'agent-loop-timeline' })}">跟踪这次修复 <span aria-hidden="true">→</span></a></div><div class="bug-example"><div><span>修复前</span><code>return unitPrice + quantity;</code><strong>13</strong></div><div><span>修复后</span><code>return unitPrice * quantity;</code><strong>30 <small>测试通过</small></strong></div></div></section><section class="learning-path" aria-labelledby="path-title"><div class="path-header"><span class="eyebrow">学习路线</span><h2 id="path-title">从一次请求，到完整运行</h2><p>先读懂输入和工具往返，再追查上下文、扩展能力与完成条件。</p></div>${catalog.groups.map((group, index) => `<section class="phase-section" data-phase="${group.id}"><header class="phase-header"><span class="phase-number">0${index + 1}</span><div><h3>${esc(group.title)}</h3><p>${esc(group.description)}</p></div></header><div class="lesson-grid">${catalog.lessons.filter(lesson => lesson.group === group.id).map(lesson => `<a class="lesson-card" href="${href(lesson.id)}" data-card-lesson="${lesson.id}"><div class="card-top"><span>${lessonNumber(lesson)}</span><span aria-hidden="true">↗</span></div><h4>${esc(lesson.title)}</h4><p>${esc(lesson.subtitle)}</p>${lesson.status === 'partial' ? '<small class="card-status">原生记忆含未实测范围</small>' : ''}</a>`).join('')}</div></section>`).join('')}</section></section>`;
+  return `<section class="home-page" id="home-view"><header class="home-hero"><span class="eyebrow">CODEX DESKTOP · TYPESCRIPT · CPA</span><h1>从一次修复，<br class="hero-break">看懂 <span>Agent</span></h1><p>在真实 TypeScript 项目里使用 Codex Desktop，沿 CPA 请求与工具结果理解它怎样完成任务。</p><div class="hero-actions"><a class="primary-button" data-start-learning href="${href(catalog.lessons[0].id)}">开始学习 <span aria-hidden="true">→</span></a><a class="secondary-button" href="#/guide">阅读导读</a></div><div class="hero-meta">${catalog.lessons.length} 个主题 <span>·</span> ${experiments.length} 组真实实验 <span>·</span> 输入与输出可逐项核对</div></header><section class="home-example" aria-label="贯穿教程的修复案例"><div><span class="eyebrow">从这个错误开始</span><h2>10 × 3，为什么得到 13？</h2><p>读文件、定位错误、修改运算符，再运行测试。一次用户要求，对应五次模型请求。</p><a href="${href('03-agent-loop', { section: 'agent-loop-timeline' })}">跟踪这次修复 <span aria-hidden="true">→</span></a></div><div class="bug-example"><div><span>修复前</span><code>return unitPrice + quantity;</code><strong>13</strong></div><div><span>修复后</span><code>return unitPrice * quantity;</code><strong>30 <small>测试通过</small></strong></div></div></section><section class="learning-path" aria-labelledby="path-title"><div class="path-header"><span class="eyebrow">学习路线</span><h2 id="path-title">从一次请求，到完整运行</h2><p>先读懂输入和工具往返，再追查上下文、扩展能力与完成条件。</p></div>${catalog.groups.map((group, index) => `<section class="phase-section" data-phase="${group.id}"><header class="phase-header"><span class="phase-number">0${index + 1}</span><div><h3>${esc(group.title)}</h3><p>${esc(group.description)}</p></div></header><div class="lesson-grid">${catalog.lessons.filter(lesson => lesson.group === group.id).map(lesson => `<a class="lesson-card" href="${href(lesson.id)}" data-card-lesson="${lesson.id}"><div class="card-top"><span>${lessonNumber(lesson)}</span><span aria-hidden="true">↗</span></div><h4>${esc(lesson.title)}</h4><p>${esc(lesson.subtitle)}</p>${lesson.status === 'partial' ? '<small class="card-status">原生记忆含未实测范围</small>' : ''}</a>`).join('')}</div></section>`).join('')}</section></section>`;
 }
 function shell() {
-  document.querySelector('#app').innerHTML = `<a class="skip-link" href="#main">跳至正文</a><header class="site-header"><a class="brand" href="#/" aria-label="回到教程首页"><span class="brand-icon"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M10 9h7a6 6 0 0 1 6 6v8M9 9v14h14" stroke="currentColor" stroke-width="2"/><rect x="5" y="5" width="8" height="8" rx="2" fill="var(--paper)" stroke="currentColor" stroke-width="2"/><rect x="19" y="19" width="8" height="8" rx="2" fill="var(--paper)" stroke="currentColor" stroke-width="2"/></svg></span><span>Agent Harness <span class="brand-light">学习笔记</span></span></a><div class="header-actions"><a class="guide-link" href="#/guide">导读</a><a href="${repo}" target="_blank" rel="noopener">GitHub ↗</a><button class="search-toggle" aria-label="搜索课程">⌕ <span>搜索</span></button><button id="theme-toggle" aria-label="切换深浅主题">◐ <span>主题</span></button><button class="menu-toggle" aria-label="展开学习目录" aria-expanded="false">☰</button></div></header><div class="mobile-shade" hidden></div><aside class="course-sidebar"><div class="directory-search"><span>⌕</span><input id="chapter-search" type="search" aria-label="搜索文档" placeholder="搜索课程…"></div><nav id="chapter-nav" aria-label="教程目录">${navMarkup()}</nav></aside><main id="main" tabindex="-1" aria-busy="true">${homeMarkup()}<section class="reader-page" id="reader-view" hidden><nav class="breadcrumb" aria-label="当前位置"></nav><div class="reading-layout"><div class="reading-content"><div id="lesson-content"></div><nav class="chapter-pagination" aria-label="章节翻页"></nav></div><aside class="page-toc"><details open><summary>本章目录</summary><nav class="chapter-outline" aria-label="本章目录"></nav></details></aside></div></section></main><footer class="site-footer"><div><a href="#/">Agent Harness 学习笔记</a><span>Codex Desktop × TypeScript × CPA</span></div><p>界面参考 <a href="https://github.com/shareAI-lab/learn-claude-code" target="_blank" rel="noopener">Learn Claude Code</a> · <a href="${import.meta.env.BASE_URL}licenses/learn-claude-code.txt" target="_blank" rel="noopener">MIT</a>，本项目为独立教程。</p></footer><button id="back-top" aria-label="回到顶部">↑</button><div class="toast" role="status" aria-live="polite"></div>`;
+  document.querySelector('#app').innerHTML = `<a class="skip-link" href="#main">跳至正文</a><header class="site-header"><a class="brand" href="#/" aria-label="回到教程首页"><span class="brand-icon"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M10 9h7a6 6 0 0 1 6 6v8M9 9v14h14" stroke="currentColor" stroke-width="2"/><rect x="5" y="5" width="8" height="8" rx="2" fill="var(--paper)" stroke="currentColor" stroke-width="2"/><rect x="19" y="19" width="8" height="8" rx="2" fill="var(--paper)" stroke="currentColor" stroke-width="2"/></svg></span><span>Agent Harness <span class="brand-light">学习笔记</span></span></a><div class="header-actions"><a class="guide-link" href="#/guide">导读</a><a href="${repo}" target="_blank" rel="noopener">GitHub ↗</a><button class="search-toggle" aria-label="搜索课程">⌕ <span>搜索</span></button><button id="theme-toggle" aria-label="切换深浅主题">◐ <span>主题</span></button><button class="menu-toggle" aria-label="展开学习目录" aria-expanded="false">☰</button></div></header><div class="mobile-shade" hidden></div><aside class="course-sidebar"><div class="directory-search"><span>⌕</span><input id="chapter-search" type="search" aria-label="搜索文档" placeholder="搜索课程…"></div><nav id="chapter-nav" aria-label="教程目录">${navMarkup()}</nav></aside><main id="main" tabindex="-1" aria-busy="true">${homeMarkup()}<section class="reader-page" id="reader-view" hidden><nav class="breadcrumb" aria-label="当前位置"></nav><div class="reading-layout"><div class="reading-content"><div id="lesson-content"></div><nav class="chapter-pagination" aria-label="章节翻页"></nav></div></div></section></main><footer class="site-footer"><div><a href="#/">Agent Harness 学习笔记</a><span>Codex Desktop × TypeScript × CPA</span></div><p>界面参考 <a href="https://github.com/shareAI-lab/learn-claude-code" target="_blank" rel="noopener">Learn Claude Code</a> · <a href="${import.meta.env.BASE_URL}licenses/learn-claude-code.txt" target="_blank" rel="noopener">MIT</a>；阅读布局参考 <a href="https://diwang.info/how-claude-code-works/" target="_blank" rel="noopener">How Claude Code Works</a> · <a href="${import.meta.env.BASE_URL}licenses/how-claude-code-works.txt" target="_blank" rel="noopener">MIT</a>。本项目为独立教程。</p></footer><button id="back-top" aria-label="回到顶部">↑</button><div class="toast" role="status" aria-live="polite"></div>`;
   document.querySelector('#theme-toggle').onclick = () => {
     document.documentElement.classList.toggle('dark');
     try { localStorage.setItem('ah-theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light'); } catch { /* Theme remains usable without storage. */ }
@@ -150,9 +150,6 @@ function shell() {
     if (event.key === 'Escape') toggleMenu(false);
     if ((event.key === '/' && !/INPUT|TEXTAREA|SELECT/.test(event.target.tagName)) || ((event.ctrlKey || event.metaKey) && event.key === 'k')) { event.preventDefault(); toggleMenu(true); document.querySelector('#chapter-search').focus(); }
   });
-  const narrow = matchMedia('(max-width: 1180px)');
-  const setTocLayout = () => document.querySelector('.page-toc details').open = !narrow.matches;
-  narrow.addEventListener('change', setTocLayout); setTocLayout();
   evidenceObserver = new IntersectionObserver(entries => entries.forEach(entry => {
     if (!entry.isIntersecting || entry.target.closest('[hidden]')) return;
     const state = states.get(entry.target.dataset.workbench);
@@ -165,7 +162,7 @@ function toggleMenu(open) {
   document.querySelector('.menu-toggle').setAttribute('aria-expanded', String(open));
 }
 function navMarkup() {
-  return `<a class="chapter-link home-link" href="#/">学习路线</a><a class="chapter-link intro-link" href="#/guide">导读与实验准备</a>${catalog.groups.map((group, index) => `<div class="nav-group"><h2><span class="nav-dot" aria-hidden="true"></span>0${index + 1} ${esc(group.title)}</h2>${catalog.lessons.filter(lesson => lesson.group === group.id).map(lesson => `<div class="nav-chapter" data-nav-lesson="${lesson.id}"><a class="chapter-link" href="${href(lesson.id)}"><span>${lessonNumber(lesson)}</span>${esc(lesson.title)}</a></div>`).join('')}</div>`).join('')}`;
+  return `<a class="chapter-link home-link" href="#/">学习路线</a><div class="nav-chapter" data-nav-lesson="introduction"><a class="chapter-link intro-link" href="#/guide">导读与实验准备</a></div>${catalog.groups.map((group, index) => `<div class="nav-group"><h2><span class="nav-dot" aria-hidden="true"></span>0${index + 1} ${esc(group.title)}</h2>${catalog.lessons.filter(lesson => lesson.group === group.id).map(lesson => `<div class="nav-chapter" data-nav-lesson="${lesson.id}"><a class="chapter-link" href="${href(lesson.id)}"><span>${lessonNumber(lesson)}</span>${esc(lesson.title)}</a></div>`).join('')}</div>`).join('')}`;
 }
 function resolveDocumentPath(path, base) { return new URL(path, 'https://local.invalid/' + base).pathname.slice(1); }
 function decorateMarkdown(container, lesson) {
@@ -175,16 +172,19 @@ function decorateMarkdown(container, lesson) {
     const id = `${lesson.id}-section-${index}`;
     heading.id = id;
     if (heading.tagName === 'SUMMARY') heading.style.scrollMarginTop = '88px';
-    headings.push({ id, text: heading.textContent });
+    headings.push({ id, text: heading.textContent, nested: /^H[3-6]$/.test(heading.tagName) });
     const anchor = document.createElement('a'); anchor.className = 'heading-anchor'; anchor.href = href(lesson.id, { section: id }); anchor.textContent = '#'; anchor.setAttribute('aria-label', '链接到这一段'); heading.append(anchor);
   });
   container.querySelectorAll('img').forEach(image => {
     const path = resolveDocumentPath(image.getAttribute('src'), lesson.file);
     if (images['../' + path]) {
       image.src = images['../' + path];
-      const link = document.createElement('a'); link.href = image.src; link.target = '_blank'; link.rel = 'noopener';
-      image.replaceWith(link); link.append(image);
-      const caption = document.createElement('span'); caption.className = 'image-caption'; caption.textContent = '真实界面截图 · 点击查看原图'; link.append(caption);
+      // Preserve author-supplied image links and adjacent captions. A separate
+      // original-image label also works when the screenshot has no caption.
+      const link = image.parentElement.tagName === 'A' ? image.parentElement : document.createElement('a');
+      if (!link.contains(image)) { image.replaceWith(link); link.append(image); }
+      link.href = image.src; link.target = '_blank'; link.rel = 'noopener'; link.classList.add('image-original');
+      const caption = document.createElement('span'); caption.className = 'image-caption'; caption.textContent = '查看原图'; link.append(caption);
     }
     image.loading = 'lazy';
   });
@@ -234,8 +234,8 @@ async function ensurePage(lesson) {
       page.innerHTML = `<article class="prose introduction" id="introduction">${DOMPurify.sanitize(marked.parse(text))}</article><section class="supplement" id="supplement-introduction" hidden aria-label="导读补充原始证据"></section>`;
     } else {
       page.id = 'chapter-' + lesson.id; page.className = 'chapter'; page.dataset.lesson = lesson.id;
-      const markdown = text.replace(/^# [^\n]+\n/, '').replace(/^(#{2,5}) /gm, '$1# ');
-      page.innerHTML = `<header class="chapter-header"><div class="chapter-kicker"><span class="chapter-number">${lessonNumber(lesson)}</span><span>${esc(catalog.groups.find(group => group.id === lesson.group).title)}</span></div><h1>${esc(lesson.title)}</h1><p class="chapter-subtitle">${esc(lesson.subtitle || '')}</p><div class="chapter-meta"><span>${lesson.status === 'partial' ? '含明确标注的未实测范围' : '真实实验与来源可核对'}</span><a href="${repo}/blob/main/${lesson.file}" target="_blank" rel="noopener">Markdown 原文 ↗</a><a href="${href(lesson.id)}">本章链接 #</a></div></header><article class="prose">${DOMPurify.sanitize(marked.parse(markdown))}</article>${workbenchShell(lesson)}`;
+      const markdown = text.replace(/^# [^\n]+\n/, '');
+      page.innerHTML = `<header class="chapter-header"><div class="chapter-kicker"><span class="chapter-number">${lessonNumber(lesson)}</span><span>${esc(catalog.groups.find(group => group.id === lesson.group).title)}</span></div><h1>${esc(lesson.title)}</h1><p class="chapter-subtitle">${esc(lesson.subtitle || '')}</p><div class="chapter-meta"><span>${lesson.status === 'partial' ? '含明确标注的未实测范围' : '真实实验与来源可核对'}</span><a href="${repo}/blob/main/${lesson.file}" target="_blank" rel="noopener">Markdown 原文 ↗</a></div></header><article class="prose">${DOMPurify.sanitize(marked.parse(markdown))}</article>${workbenchShell(lesson)}`;
       // The Markdown navigation still works on GitHub; the site has a dedicated
       // previous/next control below the workbench.
       const last = page.querySelector('.prose > p:last-child');
@@ -251,7 +251,7 @@ async function ensurePage(lesson) {
     }
     if (lesson.id === '03-agent-loop') {
       const timeline = document.createElement('section'); timeline.id = 'agent-loop-timeline'; timeline.className = 'agent-loop-timeline';
-      page.querySelector('.prose h3').before(timeline);
+      page.querySelector('.prose h2,.prose h3').before(timeline);
       outlines.get(lesson.id).unshift({ id: timeline.id, text: '真实请求时间线' });
       const { mountAgentLoopTimeline } = await import('./agent-loop-timeline.js');
       await mountAgentLoopTimeline(timeline, { loadJson, evidenceHref, experiment: experiments.find(item => item.id === '07-fix'), copyButton });
@@ -284,12 +284,21 @@ function showPage(page, lesson) {
   document.querySelector('#reader-view').hidden = !page;
   document.querySelectorAll('[data-reader-page]').forEach(node => node.hidden = node !== page);
   setActive(lesson?.id || '');
+  document.querySelector('.chapter-outline')?.remove();
   if (!page) return;
-  if (previousLesson !== lesson.id) document.querySelector('.page-toc details').open = !matchMedia('(max-width: 1180px)').matches;
   const group = catalog.groups.find(item => item.id === lesson.group);
   document.querySelector('.breadcrumb').innerHTML = `<a href="#/">学习路线</a><span aria-hidden="true">/</span>${group ? `<span>${esc(group.title)}</span><span aria-hidden="true">/</span>` : ''}<span aria-current="page">${lesson.id === 'introduction' ? '导读' : esc(lesson.title)}</span>`;
   const headings = outlines.get(lesson.id) || [];
-  document.querySelector('.page-toc .chapter-outline').innerHTML = headings.map(heading => `<a href="${href(lesson.id, { section: heading.id })}" data-section="${heading.id}">${esc(heading.text)}</a>`).join('') + (lesson.id === 'introduction' ? '' : `<a href="${href(lesson.id, { section: 'workbench-' + lesson.id })}" data-section="workbench-${lesson.id}">内嵌证据工作台</a>`);
+  const outline = document.createElement('nav'); outline.className = 'chapter-outline'; outline.setAttribute('aria-label', '本章目录');
+  outline.innerHTML = headings.map(heading => `<a href="${href(lesson.id, { section: heading.id })}" data-section="${heading.id}"${heading.nested ? ' class="nested"' : ''}>${esc(heading.text)}</a>`).join('') + (lesson.id === 'introduction' ? '' : `<a href="${href(lesson.id, { section: 'workbench-' + lesson.id })}" data-section="workbench-${lesson.id}">证据工作台</a>`);
+  document.querySelector(`[data-nav-lesson="${lesson.id}"]`).append(outline);
+  if (previousLesson !== lesson.id) {
+    const sidebar = document.querySelector('.course-sidebar');
+    const chapterLink = outline.previousElementSibling;
+    const top = chapterLink.getBoundingClientRect().top;
+    const visibleTop = sidebar.getBoundingClientRect().top + document.querySelector('.directory-search').offsetHeight;
+    if (top < visibleTop || top > innerHeight - 120) sidebar.scrollTop += top - visibleTop - 12;
+  }
   const index = catalog.lessons.indexOf(lesson);
   const previous = index > 0 ? catalog.lessons[index - 1] : null;
   const next = lesson.id === 'introduction' ? catalog.lessons[0] : catalog.lessons[index + 1];
@@ -308,8 +317,12 @@ function updateWorkbenchChrome(state) {
     : ['16-agent-a', '16-agent-b'].includes(experiment.id) ? '由父任务委派，普通聊天输入为空。实际委派内容见请求中的 agent_message 及本章说明。'
     : '本记录没有普通聊天输入，触发方式见本章说明与原始记录。';
   const inputMarkup = experiment.prompt?.trim() ? `<div><span>你</span><p>${esc(experiment.prompt)}</p></div>` : `<p class="delegation-note">${inputNote}</p>`;
+  const submissionMethod = experiment.submission?.method;
+  const submissionLabel = { 'computer-use-desktop-composer': '通过 Computer Use 在 Desktop 输入框提交。', 'codex-app-create-thread': '通过 create_thread 工具提交；不能作为普通输入框的 Hook 信任对照。' }[submissionMethod];
   const reply = interrupted && !experiment.reply ? '本轮已中断，没有最终回复。单次模型完成事件不代表整个任务成功完成。' : experiment.reply || '本记录没有普通最终回复，请查看逐阶段模型输出和本章原生事件。';
   host.querySelector('.experiment-summary').innerHTML = `<p class="experiment-count">${experiment.stats.requests} 次正式模型请求${experiment.stats.prewarms ? ` + ${experiment.stats.prewarms} 次预热` : ''} · ${experiment.stats.toolCalls} 次外层工具调用${interrupted ? '<strong class="interrupted-badge">已中断</strong>' : ''}</p>${experiment.requestKind === 'compaction' ? '<p class="evidence-notice">原生压缩操作，没有普通聊天输入与最终回复。原始记录中可查看本地压缩事件。</p>' : `<details class="conversation" open><summary>这次实验的输入与${interrupted ? '中断状态' : '回复'}</summary>${inputMarkup}<div><span>${interrupted || !experiment.reply ? '状态' : 'Codex'}</span><p>${esc(reply)}</p></div></details>`}`;
+  if (submissionLabel) host.querySelector('.experiment-count').insertAdjacentHTML('afterend', `<p class="field-note" data-submission-method="${esc(submissionMethod)}">${esc(submissionLabel)}</p>`);
+  if (experiment.coverage === 'text-progress-only') host.querySelector('.experiment-summary').insertAdjacentHTML('beforeend', '<p class="evidence-notice">本轮没有原生计划状态工具；记录中的清单属于文字进度。</p>');
   host.querySelector('[data-stage-prev]').disabled = state.stage === 0;
   host.querySelector('[data-stage-next]').disabled = state.stage === experiment.stages.length - 1;
   host.querySelectorAll('[data-view]').forEach(button => { button.classList.toggle('active', button.dataset.view === state.view); button.setAttribute('aria-pressed', String(button.dataset.view === state.view)); });
@@ -345,7 +358,7 @@ async function renderWorkbench(state, updateUrl = true) {
       if (version !== state.version) return;
       content.innerHTML = `<p class="comparison-result">${canonical(request) === canonical(upstream) ? '本次客户端与上游快照的 JSON 字段和值一致。' : '本次客户端与上游快照存在差异，请按字段逐项核对。'}不把其他请求的转发行为套用到这里。</p><div class="compare-grid">${codePanel(clientText, '客户端 → CPA · 完整快照', 'data-client-raw')}${codePanel(upstreamText, 'CPA → 上游 · 完整快照', 'data-upstream-raw')}</div>`;
     } else {
-      const available = [['requestFile', '客户端请求', stage.requestFile], ['outputItemsFile', '输出项（衍生）', stage.outputItemsFile], ['responseFile', '完成事件', stage.responseFile], ['eventsFile', '流式事件', stage.eventsFile], ['upstreamFile', '上游请求', stage.upstreamFile], ['compactionFile', '压缩记录', experiment.compactionFile], ['interruptionFile', '中断记录', experiment.interruptionFile], ['manifestFile', '实验来源与脱敏', experiment.manifestFile]].filter(([, , path]) => path);
+      const available = [['requestFile', '客户端请求', stage.requestFile], ['outputItemsFile', '输出项（衍生）', stage.outputItemsFile], ['responseFile', '完成事件', stage.responseFile], ['eventsFile', '流式事件', stage.eventsFile], ['upstreamFile', '上游请求', stage.upstreamFile], ['compactionFile', '压缩记录', experiment.compactionFile], ['interruptionFile', '中断记录', experiment.interruptionFile], ['hookEventsFile', 'Hook 事件', experiment.hookEventsFile], ['rolloutEventsFile', '本地执行事件', experiment.rolloutEventsFile], ['fileObservationsFile', '文件变化与退出码', experiment.fileObservationsFile], ['auditFile', '证据核对', experiment.auditFile], ['manifestFile', '实验来源与脱敏', experiment.manifestFile]].filter(([, , path]) => path);
       const selected = available.find(([kind]) => kind === state.rawKind) || available[0];
       state.rawKind = selected[0];
       const text = await loadFile(selected[2]);
@@ -523,7 +536,11 @@ function scrollSpy() {
   const page = document.querySelector('[data-reader-page]:not([hidden])');
   const headings = page ? [...page.querySelectorAll('.prose h2[id],.prose h3[id],.prose h4[id],.prose h5[id],.prose h6[id],.prose details > summary[id],.agent-loop-timeline,.workbench')] : [];
   const current = headings.filter(node => node.getClientRects().length && node.getBoundingClientRect().top < 170).at(-1);
-  document.querySelectorAll('.page-toc [data-section]').forEach(link => link.classList.toggle('current', Boolean(current?.id) && link.dataset.section === current.id));
+  document.querySelectorAll('.chapter-outline [data-section]').forEach(link => {
+    const active = Boolean(current?.id) && link.dataset.section === current.id;
+    link.classList.toggle('current', active);
+    if (active) link.setAttribute('aria-current', 'location'); else link.removeAttribute('aria-current');
+  });
 }
 
 async function start() {

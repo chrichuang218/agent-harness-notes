@@ -1,0 +1,76 @@
+{
+  "auditedAt": "2026-10-03T02:27:33.430Z",
+  "scope": "逐值核对当前 CPA 合并日志与已导出的脱敏请求、完成事件；核对输出项和相关本地 Hook 事件。",
+  "submission": {
+    "method": "codex-app-create-thread",
+    "turnTrigger": "app_tool_create_thread",
+    "submittedPrompt": "本轮实验编号是什么？只根据已有上下文回答，不要读取文件或调用工具；没有就说“不知道”。",
+    "promptField": "input[7].output (<codex_delegation><input>)",
+    "note": "通过 create_thread 工具提交；不能作为普通输入框提交的 Hook 信任对照。"
+  },
+  "checks": [
+    {
+      "side": "client",
+      "requestMatches": true,
+      "completedMatches": true,
+      "source": {
+        "request": {
+          "file": "v1-responses-2026-10-03T094218-8b1ba4f4.log",
+          "line": 60
+        },
+        "completed": {
+          "file": "v1-responses-2026-10-03T094218-8b1ba4f4.log",
+          "line": 136
+        }
+      }
+    },
+    {
+      "side": "upstream",
+      "requestMatches": true,
+      "completedMatches": true,
+      "source": {
+        "request": {
+          "file": "v1-responses-2026-10-03T094218-8b1ba4f4.log",
+          "line": 230
+        },
+        "completed": {
+          "file": "v1-responses-2026-10-03T094218-8b1ba4f4.log",
+          "line": 306
+        }
+      }
+    }
+  ],
+  "outputItemsMatchEvents": true,
+  "modelToolCallCount": 0,
+  "requestContainsMarker": false,
+  "rollout": {
+    "source": "<USER_HOME>/.codex/sessions/2026/10/03/rollout-2026-10-03T09-37-08-01a0ff68-6cfc-7f13-a4d1-b78dbf96d738.jsonl",
+    "presentAtAudit": false,
+    "limitation": "采集时的 rollout 路径保留于 manifest；本次审计在该路径及 .codex 目录按任务 UUID 未找到文件，因此未重新核对 rollout。CPA 原始合并日志仍在且已逐值复核。"
+  },
+  "collectionCopy": {
+    "source": "<USER_HOME>/Documents/Codex/2026-10-02/new-chat/outputs/hook-experiment/evidence/desktop-lab/hook-b-untrusted",
+    "protocolFiles": [
+      {
+        "name": "00-request.events.json",
+        "sha256": "b15d54d4c56c18dd8e470a99885879514daa4ffa29b2ca5833917eaa1a34780e"
+      },
+      {
+        "name": "00-request.output-items.json",
+        "sha256": "6eee745005fcdac3eca3a04ba252431713526edf2b73b1fe642147a70d8c4c68"
+      },
+      {
+        "name": "00-request.request.json",
+        "sha256": "60d57e00502c3305996d6e0d8f7da5e4a3698b31076b1cba3e8925137aeaed4d"
+      },
+      {
+        "name": "00-request.response.json",
+        "sha256": "4f1e4b9dabfd26c5a08859ca53af4d71bbb4f17e384726586ba10a22b5ce711f"
+      },
+      {
+        "name": "00-request.upstream.json",
+        "sha256": "60d57e00502c3305996d6e0d8f7da5e4a3698b31076b1cba3e8925137aeaed4d"
+      }
+    ]
+  }
+}

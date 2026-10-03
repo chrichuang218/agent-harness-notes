@@ -1,0 +1,20 @@
+{
+  "provenance": "Derived by collecting response.output_item.done.item in event order; response.completed is unchanged.",
+  "items": [
+    {
+      "id": "ctc_06bf55714bc3c9c4016ac06af96e8c87d0b072a16668b6988e",
+      "type": "custom_tool_call",
+      "status": "completed",
+      "call_id": "call_LQTIBRt2Bk0l6uCrk3ea5IcG",
+      "input": "text(await tools.write_stdin({session_id:48726,\"chars\":\"\",\"yield_time_ms\":1000,\"max_output_tokens\":2000}));\n",
+      "internal_chat_message_metadata_passthrough": {
+        "create_time": 1790995192.619218,
+        "turn_id": "01a0ffa1-8928-7421-bdce-6dca0ef609a3"
+      },
+      "name": "exec",
+      "metadata": {
+        "turn_id": "01a0ffa1-8928-7421-bdce-6dca0ef609a3"
+      }
+    }
+  ]
+}

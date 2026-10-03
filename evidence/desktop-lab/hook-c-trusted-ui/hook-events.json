@@ -1,0 +1,16 @@
+{
+  "provenance": "仅导出该实验的本地 Hook 事件；没有导出其他任务。",
+  "source": "E:/Develop/github/codex-ts-demo/.codex/hooks/events.jsonl",
+  "events": [
+    {
+      "sourceLine": 1,
+      "event": {
+        "timestamp": "2026-10-03T01:45:36.749Z",
+        "event": "UserPromptSubmit",
+        "session_id": "01a0ff6f-01f4-70e0-992f-06c9a7b5fec0",
+        "turn_id": "01a0ff70-20b3-7631-94d1-c5accb78af61",
+        "marker": "HOOK-5467aee6-40de-4432-8f83-93ed1bc73794"
+      }
+    }
+  ]
+}

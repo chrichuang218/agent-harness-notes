@@ -1,8 +1,6 @@
 # 权限与安全：模型要求写入，就一定能写吗？
 
-此前的任务多次要求“不要修改文件”，Codex 也按要求完成了读取和检查。这还不能说明运行环境会拦截写入。要观察执行边界，需要让一条明确的写入命令真正到达工具。
-
-本章使用预先准备的测试文件：写入前是 `UNCHANGED`，Codex 尝试改成 `CHANGED`，收到拒绝后停止。文件最后仍是 `UNCHANGED`。
+模型提出写入之后，运行环境还会检查权限。本章让 Codex 尝试把工作区外的测试文件从 `UNCHANGED` 改为 `CHANGED`。命令收到拒绝，模型停止，独立检查确认文件没有改变。
 
 ## 一次有范围的写入尝试
 
@@ -46,7 +44,7 @@ Access to the path 'E:\Develop\github\agent-harness-notes\work\permission-probe.
 }
 ```
 
-这里省略了其他沙箱字段。沙箱规定默认能访问哪些资源；审批策略规定需要额外授权时怎样处理申请。本轮可写范围包含 demo 项目及记录列出的其他允许位置，测试文件不在其中。`on-request` 没有自动授予对这个文件的写权限。
+沙箱规定默认能访问哪些资源；审批策略规定怎样处理额外授权申请。完整字段还列出了 demo 和其他可写位置，测试文件不在其中。`on-request` 没有自动授予对它的写权限。
 
 本次用户明确要求不要申请额外权限，因此没有出现审批通过或拒绝的交互。`network_access: false` 也只是观察到的配置，这轮没有发起网络请求。审批流程和网络拦截需要各自的实验，不能用一次文件写入失败代替。权限机制的官方说明见[权限模式文档](https://learn.chatgpt.com/docs/permission-modes)。
 
@@ -54,7 +52,7 @@ Access to the path 'E:\Develop\github\agent-harness-notes\work\permission-probe.
 
 切换权限之后，[首请求](../evidence/desktop-lab/15-permissions/00-request.request.json)新增了权限说明、环境更新和用户实验要求。模型先收到这些文字，才生成写入调用。已经提出的操作能否执行，则由运行环境实际决定。
 
-这也解释了 `AGENTS.md` 与沙箱的区别。项目文件可以规定“修改后运行测试”，模型据此选择后续动作；它不能靠这句话增加文件系统权限。反过来，沙箱允许写某个文件，也不会自动满足用户“本轮只检查”的要求。选择动作和执行动作都需要符合各自的约束。
+`AGENTS.md` 可以约定“修改后运行测试”，供模型选择后续动作；这句话不会增加文件系统权限。沙箱允许写某个文件时，模型也仍需遵守用户“本轮只检查”的要求。
 
 <details>
 <summary>深入核对：从模式变化到停止的请求链</summary>
@@ -77,7 +75,7 @@ Access to the path 'E:\Develop\github\agent-harness-notes\work\permission-probe.
 
 ## 下一章的“只做计划”又是什么限制？
 
-下一章会检查折扣功能的计划阶段。在实际实验时间线上，计划与实施发生在本次权限实验之前；这里调整阅读顺序，是为了先区分执行权限和工作阶段。
+下一章的折扣计划采集于这次权限实验之前，可以用来对照另一种“文件没变”的情况。
 
 那次计划前后，监测的项目文件哈希没有变化，但沙箱仍为 `danger-full-access`。模型在 `plan` 模式下调查、提问并形成方案，遵守了暂不实施的要求。本章则让写入真实发生到工具层，再观察运行时拒绝。
 
@@ -102,6 +100,35 @@ Access to the path 'E:\Develop\github\agent-harness-notes\work\permission-probe.
 <summary>参考解释</summary>
 
 文件未变无法区分这两种原因。阶段 00 的调用证明写入已提交执行；阶段 01 的结果证明命令失败；探针结果进一步确认文件仍为 `UNCHANGED`。计划模式下文件未变，也需要结合模式和操作记录解释。
+
+</details>
+
+## 补充实验：PreToolUse 在补丁执行前拒绝
+
+2026-10-03 的新实验在同一 demo 中准备了 `protected.txt` 和 `allowed.txt`。项目 `PreToolUse` Hook 匹配 `apply_patch`，检查补丁文件头；目标为 `.codex/hook-lab/protected.txt` 时返回 `permissionDecision: "deny"`。配置和脚本保存在[文件快照](../evidence/desktop-lab/hook-pre-tool/file-observations.json)中。
+
+用户要求先读取两份文件，再用两次独立补丁分别修改它们：受保护文件只尝试一次，被拒绝后不得重试或换写入方法；允许文件作为对照。原始要求见[首请求](../evidence/desktop-lab/hook-pre-tool/00-request.request.json)。这次实际过程是：读取原文，提交受保护补丁，收到拒绝，独立修改允许文件，最后重读两者。
+
+拒绝出现在[阶段 02 请求](../evidence/desktop-lab/hook-pre-tool/02-request.request.json)的工具返回中，开头是：
+
+```text
+Command blocked by PreToolUse hook: HOOK-LAB: apply_patch may not change .codex/hook-lab/protected.txt.
+```
+
+这是错误开头的节选，完整返回还包含拒绝原因与被拒补丁。下一次输出只修改 `allowed.txt`，没有再次尝试受保护目标。[最终重读](../evidence/desktop-lab/hook-pre-tool/04-request.request.json)显示：受保护文件保留 `ORIGINAL`，允许文件改为 `ALLOWED-UPDATED`。独立快照的哈希比较也只发现允许文件变化，Hook 配置和脚本未改。
+
+![Desktop 保留 PreToolUse 拒绝信息，并分别报告受保护文件与允许文件的最终内容](../docs/images/desktop-lab/hook-pre-tool.png)
+
+本次新实验的完成画面：拒绝信息保留，编辑入口只有 `allowed.txt`。两份文件的最终状态可与[独立文件核对](../evidence/desktop-lab/hook-pre-tool/audit.json)对应。
+
+与前面的沙箱拒绝相比，这次拒绝来自工具执行前的项目 Hook。它只检查 `apply_patch` 文件头中的精确目标，不能当作所有写入方式的通用防线。实验也没有尝试绕过它。
+
+<details>
+<summary>Hook 事件怎样与 CPA 调用对应</summary>
+
+本轮有 5 次模型请求、4 次外层 `exec`。[Hook 事件](../evidence/desktop-lab/hook-pre-tool/hook-events.json)记录 `PreToolUse` 和 `decision: "deny"`；其 `tool_use_id` 标识内部的原生补丁调用，CPA 的 `call_id` 标识外层 `exec`，两者值不同。对应关系根据同一轮次、时间和唯一一次受保护目标尝试核对，见[审计](../evidence/desktop-lab/hook-pre-tool/audit.json)。
+
+允许分支返回 `{}` 后直接退出，没有写一条 `allow` 日志。因此放行与修改成功由补丁返回、文件重读和哈希证明，不能在 Hook 日志里补造一条放行事件。
 
 </details>
 

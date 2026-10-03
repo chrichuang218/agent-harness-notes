@@ -1,0 +1,80 @@
+{
+  "auditedAt": "2026-10-03T02:35:42.789Z",
+  "requestCount": 5,
+  "modelToolCallCount": 4,
+  "sequence": [
+    {
+      "stage": "00-request",
+      "observed": "读取两个文件，均含 ORIGINAL"
+    },
+    {
+      "stage": "01-request",
+      "observed": "模型仅对 protected.txt 提出 apply_patch"
+    },
+    {
+      "stage": "02-request",
+      "observed": "收到 PreToolUse 拒绝后，对 allowed.txt 独立提出 apply_patch"
+    },
+    {
+      "stage": "03-request",
+      "observed": "允许补丁返回 {} 后重新读取两个文件"
+    },
+    {
+      "stage": "04-request",
+      "observed": "读取结果中 protected 保持 ORIGINAL，allowed 为 ALLOWED-UPDATED，模型据此报告"
+    }
+  ],
+  "deniedCallId": "call_SMLZFUcMgX8hcOqc3LxScUnj",
+  "allowedCallId": "call_JjwaOC81ihI4jWlwIDM3pA2Z",
+  "hookNativeToolUseId": "exec-d3c230e7-e677-48e1-be03-4f9a641c81b9",
+  "hookJoin": "Hook tool_use_id identifies the nested native apply_patch; CPA call_id identifies the outer exec. Match this single protected attempt by turn_id, time, target and denial text; these ids are not equal.",
+  "fileComparisons": [
+    {
+      "path": ".codex/hook-lab/protected.txt",
+      "before": "87e750999fb5ccc2324934a1e745c3614b3dca13ba11174935c0931a0f0e07c3",
+      "after": "87e750999fb5ccc2324934a1e745c3614b3dca13ba11174935c0931a0f0e07c3",
+      "changed": false
+    },
+    {
+      "path": ".codex/hook-lab/allowed.txt",
+      "before": "5d2050143575ec99b570f8e101b026e92994eadbad1a42ffa3a2a780aa106c0b",
+      "after": "630dde6da7e3911025654849ffb3e96e93e65925303a1c0965e660f35a327adf",
+      "changed": true
+    },
+    {
+      "path": ".codex/hook-lab/pass.test.mjs",
+      "before": "b748d311608b159c5091e5be6023240d641b6949c2ffc8bc42df70c34a0b0545",
+      "after": "b748d311608b159c5091e5be6023240d641b6949c2ffc8bc42df70c34a0b0545",
+      "changed": false
+    },
+    {
+      "path": ".codex/hook-lab/fail.test.mjs",
+      "before": "9b89bdd1e22f144c3a02e9ceb3ac6d21ffff77b1e1cbd10d9a49d09d716fbc51",
+      "after": "9b89bdd1e22f144c3a02e9ceb3ac6d21ffff77b1e1cbd10d9a49d09d716fbc51",
+      "changed": false
+    },
+    {
+      "path": ".codex/hooks.json",
+      "before": "ef5febd00e4fd63b5f63a23e236699652123f95ac1683d39cd854837cdeff784",
+      "after": "ef5febd00e4fd63b5f63a23e236699652123f95ac1683d39cd854837cdeff784",
+      "changed": false
+    },
+    {
+      "path": ".codex/hooks/tool-experiment.mjs",
+      "before": "c9fc29975d704087b669931bae329367a9ffff0bd88109a2590b9f0bab45f66b",
+      "after": "c9fc29975d704087b669931bae329367a9ffff0bd88109a2590b9f0bab45f66b",
+      "changed": false
+    },
+    {
+      "path": ".codex/hooks/prompt-marker.mjs",
+      "before": "7a920876284d0a568e5839a3881f9d6c1d8324e768c5094821efef4b63167fbc",
+      "after": "7a920876284d0a568e5839a3881f9d6c1d8324e768c5094821efef4b63167fbc",
+      "changed": false
+    }
+  ],
+  "limitations": [
+    "Hook 只匹配 apply_patch 补丁头中的精确受保护目标，不是通用文件写入防线。",
+    "放行分支返回 {} 后直接退出，因此本地 Hook 日志没有 allow 事件；放行结果由补丁返回、重读内容和文件哈希证明。",
+    "拒绝后没有换写入工具重试；允许文件是另一条独立补丁。"
+  ]
+}

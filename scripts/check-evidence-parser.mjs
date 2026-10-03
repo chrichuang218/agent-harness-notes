@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFile, readdir } from 'node:fs/promises';
 import { join } from 'node:path';
+import { createHash } from 'node:crypto';
 import { parseTimeline, groupStages, sanitize, summarizeExperiment } from './collect-evidence.mjs';
 
 const responseId = 'resp_exact_event_identifier';
@@ -41,15 +42,104 @@ assert.equal(JSON.parse(cleaned.metadata).access_token, '<REDACTED>');
 assert.equal(JSON.parse(cleaned.metadata).session_id, 'session-keep');
 assert(!JSON.stringify(cleaned).includes('veryLongPrivate'));
 
+async function verifyAdditionalEvidence(experiment, stages) {
+  const sidecars = {};
+  for (const key of ['auditFile', 'rolloutEventsFile', 'hookEventsFile', 'fileObservationsFile']) {
+    if (!experiment[key]) continue;
+    assert(experiment[key].startsWith(`evidence/desktop-lab/${experiment.id}/`), `${key}: unexpected experiment directory`);
+    sidecars[key] = JSON.parse(await readFile(experiment[key], 'utf8'));
+  }
+  if (sidecars.auditFile?.markerChain?.hookEventFile) {
+    const hookFile = sidecars.auditFile.markerChain.hookEventFile;
+    assert(hookFile.startsWith(`evidence/desktop-lab/${experiment.id}/`));
+    sidecars.hookEventsFile = JSON.parse(await readFile(hookFile, 'utf8'));
+  }
+  if (experiment.submission) {
+    const first = stages[0].request;
+    const metadata = JSON.parse(first.client_metadata['x-codex-turn-metadata']);
+    assert.equal(metadata.turn_trigger, experiment.submission.turnTrigger);
+    const expected = experiment.submission.method === 'computer-use-desktop-composer' ? 'composer' : 'app_tool_create_thread';
+    assert.equal(metadata.turn_trigger, expected, `${experiment.id}: submission path must match CPA metadata`);
+    const inputText = first.input.flatMap(item => [
+      ...(item.content || []).map(part => part.text || ''),
+      ...(typeof item.output === 'string' ? [item.output] : []),
+    ]).join('\n');
+    assert(inputText.includes(experiment.submission.submittedPrompt.trim()), `${experiment.id}: submitted prompt missing from recorded input`);
+  }
+  const nativeEvents = sidecars.rolloutEventsFile?.events || [];
+  if (sidecars.rolloutEventsFile) {
+    assert(nativeEvents.length > 0);
+    for (const { sourceLine, event } of nativeEvents) {
+      assert(Number.isInteger(sourceLine) && sourceLine > 0);
+      if (event.payload.turn_id) assert(experiment.turnIds.includes(event.payload.turn_id));
+    }
+    const nativeResponses = nativeEvents.filter(({ event }) => event.type === 'token_usage_record').map(({ event }) => event.payload.response_id);
+    assert.deepEqual(nativeResponses.sort(), experiment.stages.filter(stage => !stage.prewarm).map(stage => stage.responseId).sort());
+    const nativeCalls = nativeEvents.filter(({ event }) => event.type === 'response_item' && /(?:function|custom_tool)_call$/.test(event.payload.type)).map(({ event }) => event.payload);
+    const cpaCalls = stages.flatMap(stage => stage.items).filter(item => /(?:function|custom_tool)_call$/.test(item.type));
+    assert.equal(nativeCalls.length, cpaCalls.length, `${experiment.id}: native and CPA call counts differ`);
+    for (const call of cpaCalls) {
+      const native = nativeCalls.find(item => item.call_id === call.call_id);
+      assert(native, `${experiment.id}: native call missing ${call.call_id}`);
+      for (const key of ['type', 'name', 'input', 'arguments']) assert.deepEqual(native[key], call[key]);
+    }
+    for (const turn of experiment.turnIds) assert(nativeEvents.some(({ event }) => event.payload.type === 'task_complete' && event.payload.turn_id === turn));
+  }
+  const hookEvents = sidecars.hookEventsFile?.events || sidecars.hookEventsFile?.sources?.flatMap(source => source.events) || [];
+  for (const { sourceLine, event } of hookEvents) {
+    assert(sourceLine > 0);
+    assert.equal(event.session_id, experiment.threadId);
+    assert(experiment.turnIds.includes(event.turn_id));
+    if (event.event === 'UserPromptSubmit') {
+      assert(stages.some(({ request }) => request.input.some(item => item.role === 'developer' && item.content?.some(part => part.text?.includes(event.marker)))), `${experiment.id}: Hook marker missing from developer input`);
+    } else if (event.event === 'PostToolUse') {
+      const native = nativeEvents.find(({ event: row }) => row.payload.item?.id === event.tool_use_id)?.event.payload.item;
+      assert.equal(native?.type, 'CommandExecution');
+      assert.equal(native.stdout, event.tool_response, `${experiment.id}: Hook and native stdout differ`);
+      const returned = stages.flatMap(({ request }) => request.input).flatMap(item => Array.isArray(item.output) ? item.output : []).flatMap(part => {
+        if (!part.text?.startsWith('{')) return [];
+        try { return [JSON.parse(part.text)]; } catch { return []; }
+      }).find(result => result.output === event.tool_response);
+      assert(returned, `${experiment.id}: Hook stdout missing from CPA tool result`);
+      assert.equal(returned.exit_code, native.exit_code);
+    } else if (event.event === 'PreToolUse') {
+      assert.equal(event.decision, 'deny');
+      assert(stages.some(({ request }) => JSON.stringify(request.input).includes('Command blocked by PreToolUse hook')));
+    }
+  }
+  // Hash the recorded file contents, not the current external demo directory.
+  function verifySnapshot(value) {
+    if (!value || typeof value !== 'object') return;
+    const text = value.text ?? value.content;
+    if (value.sha256 && typeof text === 'string') {
+      assert.match(value.sha256, /^[a-f0-9]{64}$/);
+      assert.equal(createHash('sha256').update(text).digest('hex'), value.exportedTextSha256, 'Public snapshot contents do not match their hash');
+    }
+    if (typeof value.changed === 'boolean') assert.equal(value.changed, value.before !== value.after);
+    for (const child of Object.values(value)) verifySnapshot(child);
+  }
+  verifySnapshot(sidecars.fileObservationsFile);
+  if (experiment.coverage === 'text-progress-only') {
+    const context = nativeEvents.find(({ event }) => event.type === 'turn_context')?.event.payload;
+    assert.equal(context?.collaboration_mode.mode, 'default');
+    assert(!nativeEvents.some(({ event }) => /plan/i.test(event.payload.item?.type || event.payload.type || '')));
+    assert.equal(sidecars.auditFile.nativePlanCallsObserved, 0);
+    assert.equal(sidecars.auditFile.progressKind, 'assistant commentary text');
+  }
+  return Object.keys(sidecars).length;
+}
+
 // Missing linked evidence must fail; only an absent catalog can skip export checks.
 async function verifyExports(catalog) {
   let checked = 0;
   const responseIds = new Set(catalog.experiments.flatMap(experiment => experiment.stages.map(stage => stage.responseId)));
+  assert.equal(responseIds.size, catalog.experiments.reduce((sum, experiment) => sum + experiment.stages.length, 0), 'Response ids must identify unique stages');
   for (const experiment of catalog.experiments) {
     if (experiment.manifestFile) {
       const manifest = JSON.parse(await readFile(experiment.manifestFile, 'utf8'));
       assert.equal(manifest.id, experiment.id);
       assert.equal(manifest.sanitization.changedPaths.length, experiment.sanitization.changedPathCount);
+      assert.deepEqual(summarizeExperiment(manifest), experiment, `${experiment.id}: index and manifest differ`);
     }
     if (experiment.compactionFile) {
       const compaction = JSON.parse(await readFile(experiment.compactionFile, 'utf8'));
@@ -74,6 +164,7 @@ async function verifyExports(catalog) {
       }
       checked++;
     }
+    const stages = [];
     for (const exported of experiment.stages) {
       for (const key of ['requestFile', 'responseFile', 'eventsFile', 'upstreamFile', 'outputItemsFile']) {
         if (exported[key]) { JSON.parse(await readFile(exported[key], 'utf8')); checked++; }
@@ -83,16 +174,31 @@ async function verifyExports(catalog) {
       assert.equal(completion.response.id, exported.responseId);
       const events = JSON.parse(await readFile(exported.eventsFile, 'utf8'));
       assert(events.every(event => event.data?.type?.startsWith('response.')), `${exported.eventsFile}: transport headers or non-response events must not be published`);
+      assert.deepEqual(completion, events.findLast(event => event.data.type === 'response.completed')?.data, `${experiment.id}: completed response differs from its event`);
       const request = JSON.parse(await readFile(exported.requestFile, 'utf8'));
+      const items = JSON.parse(await readFile(exported.outputItemsFile, 'utf8')).items;
+      assert.deepEqual(items, events.filter(event => event.data.type === 'response.output_item.done').map(event => event.data.item), `${experiment.id}: derived output differs from events`);
+      stages.push({ request, items, completion });
       assert.equal(request.client_metadata.thread_id, experiment.threadId);
       assert.equal(exported.prewarm, request.generate === false, `${exported.requestFile}: prewarm label must match the request`);
       if (request.previous_response_id) assert(responseIds.has(request.previous_response_id), `${exported.requestFile}: referenced response is missing from the public dataset`);
       if (!exported.prewarm) assert(experiment.turnIds.includes(request.client_metadata.turn_id));
     }
+    if (experiment.stats) {
+      const formal = stages.filter(({ request }) => request.generate !== false);
+      assert.equal(experiment.stats.requests, formal.length);
+      assert.equal(experiment.stats.prewarms, stages.length - formal.length);
+      assert.equal(experiment.stats.toolCalls, formal.flatMap(stage => stage.items).filter(item => /(?:function|custom_tool)_call$/.test(item.type)).length);
+      for (const [key, field] of [['inputTokens', 'input_tokens'], ['outputTokens', 'output_tokens']]) {
+        assert.equal(experiment.stats[key], formal.reduce((sum, { completion }) => sum + (completion.response.usage?.[field] || 0), 0));
+      }
+    }
+    checked += await verifyAdditionalEvidence(experiment, stages);
     for (const file of await readdir(join('evidence/desktop-lab', experiment.id))) {
       const text = await readFile(join('evidence/desktop-lab', experiment.id, file), 'utf8');
-      assert(!/[A-Za-z]:\\+Users\\+(?!<)[^\\\s"]+/.test(text), `${file}: unredacted Windows user root`);
+      assert(!/[A-Za-z]:[\\/]+Users[\\/]+(?!<)[^\\/\s"<>]+/.test(text), `${file}: unredacted Windows user root`);
       assert(!/"(?:authorization|access_token|refresh_token|api_key)"\s*:\s*"(?!<REDACTED>)[^"]+"/i.test(text), `${file}: credential field`);
+      if (experiment.submission && file.endsWith('.json')) assert.deepEqual(sanitize(JSON.parse(text)), JSON.parse(text), `${file}: public evidence is not fully sanitized`);
     }
   }
   return checked;
@@ -102,6 +208,11 @@ await assert.rejects(
   verifyExports({ experiments: [{ stages: [{ requestFile: 'evidence/desktop-lab/__missing_export_fixture__/request.json' }] }] }),
   { code: 'ENOENT' },
   'An existing catalog must not accept missing linked evidence',
+);
+await assert.rejects(
+  verifyAdditionalEvidence({ id: '__missing_export_fixture__', auditFile: 'evidence/desktop-lab/__missing_export_fixture__/audit.json' }, []),
+  { code: 'ENOENT' },
+  'New audit references must fail when the referenced file is absent',
 );
 const summaryFixture = { id: 'fixture', stages: [], notes: ['keep'], flags: { keep: true }, sanitization: { mode: 'fixture', changedPaths: ['a', 'b'] } };
 const summary = summarizeExperiment(summaryFixture);

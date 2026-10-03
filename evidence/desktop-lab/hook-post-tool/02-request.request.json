@@ -1,0 +1,50 @@
+{
+  "type": "response.create",
+  "model": "gpt-6-astra",
+  "previous_response_id": "resp_06bf55714bc3c9c4016ac06a5f131c87d0b454b53be99cf3b6",
+  "input": [
+    {
+      "type": "custom_tool_call_output",
+      "id": "ctco_01a0ff9f-942b-7912-a874-a5bab4b31dd4",
+      "call_id": "call_UplLpLFMlGfbgPsMBVXuqkAX",
+      "output": [
+        {
+          "type": "input_text",
+          "text": "Script completed\nWall time 2.7 seconds\nOutput:\n"
+        },
+        {
+          "type": "input_text",
+          "text": "{\"chunk_id\":\"54ebee\",\"wall_time_seconds\":0.5716421,\"exit_code\":1,\"original_token_count\":213,\"output\":\"✖ hook-lab failing control (1.327ms)\\nℹ tests 1\\nℹ suites 0\\nℹ pass 0\\nℹ fail 1\\nℹ cancelled 0\\nℹ skipped 0\\nℹ todo 0\\nℹ duration_ms 95.7441\\n\\n✖ failing tests:\\n\\ntest at .codex\\\\hook-lab\\\\fail.test.mjs:4:1\\n✖ hook-lab failing control (1.327ms)\\n  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\\n  \\n  13 !== 30\\n  \\n      at TestContext.<anonymous> (file:///E:/Develop/github/codex-ts-demo/.codex/hook-lab/fail.test.mjs:4:47)\\n      at Test.runInAsyncScope (node:async_hooks:228:14)\\n      at Test.run (node:internal/test_runner/test:1118:25)\\n      at Test.start (node:internal/test_runner/test:1015:17)\\n      at startSubtestAfterBootstrap (node:internal/test_runner/harness:358:17) {\\n    generatedMessage: true,\\n    code: 'ERR_ASSERTION',\\n    actual: 13,\\n    expected: 30,\\n    operator: 'strictEqual',\\n    diff: 'simple'\\n  }\\n\"}"
+        }
+      ]
+    }
+  ],
+  "tool_choice": "auto",
+  "parallel_tool_calls": false,
+  "reasoning": {
+    "effort": "medium",
+    "summary": "detailed",
+    "context": "all_turns"
+  },
+  "store": false,
+  "stream": true,
+  "include": [
+    "reasoning.encrypted_content"
+  ],
+  "service_tier": "priority",
+  "prompt_cache_key": "01a0ff9a-4c81-7900-b401-e149f5ef7cbe",
+  "text": {
+    "verbosity": "low"
+  },
+  "client_metadata": {
+    "root_turn_id": "01a0ff9f-6a99-7c42-b071-803a254205be",
+    "x-codex-ws-stream-request-start-ms": "1790995043407",
+    "x-codex-window-id": "01a0ff9a-4c81-7900-b401-e149f5ef7cbe:0",
+    "ws_request_header_x_openai_internal_codex_responses_lite": "true",
+    "x-codex-installation-id": "<REDACTED>",
+    "turn_id": "01a0ff9f-6a99-7c42-b071-803a254205be",
+    "session_id": "01a0ff9a-4c81-7900-b401-e149f5ef7cbe",
+    "x-codex-turn-metadata": "{\"installation_id\":\"<REDACTED>\",\"session_id\":\"01a0ff9a-4c81-7900-b401-e149f5ef7cbe\",\"thread_id\":\"01a0ff9a-4c81-7900-b401-e149f5ef7cbe\",\"agent_name\":\"/root\",\"turn_id\":\"01a0ff9f-6a99-7c42-b071-803a254205be\",\"window_id\":\"01a0ff9a-4c81-7900-b401-e149f5ef7cbe:0\",\"window_number\":0,\"context_window_id\":\"01a0ff9a-4c84-7511-bb3c-bb864c575f8f\",\"request_kind\":\"turn\",\"root_turn_id\":\"01a0ff9f-6a99-7c42-b071-803a254205be\",\"thread_source\":\"user\",\"turn_trigger\":\"composer\",\"sandbox\":\"none\",\"sandbox_mode\":\"danger-full-access\",\"auto_review_enabled\":false,\"node_repl_auto_review_required\":true,\"node_repl_disabled\":false,\"turn_started_at_unix_ms\":1790995032790,\"analytics_enabled\":true,\"client_type\":\"desktop_app\",\"model\":\"gpt-6-astra\",\"reasoning_effort\":\"medium\",\"source\":\"codex\",\"workspace_kind\":\"project\"}",
+    "thread_id": "01a0ff9a-4c81-7900-b401-e149f5ef7cbe"
+  }
+}

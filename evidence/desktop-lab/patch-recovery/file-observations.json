@@ -1,0 +1,36 @@
+{
+  "provenance": "The orchestrator prepared this faulty copy and test before Desktop submission. Only the price.ts line changed during the formal turn.",
+  "preparationTime": "2026-10-03T02:38:23.384Z",
+  "capturedAt": "2026-10-03T02:46:54.317Z",
+  "files": [
+    {
+      "path": "lab/patch-recovery/price.ts",
+      "before": {
+        "name": "lab/patch-recovery/price.ts",
+        "content": "export function calculateTotal(unitPrice: number, quantity: number): number {\n  return unitPrice + quantity;\n}\n",
+        "sha256": "1f5e59b518c53c185e8e57ca54f7575e2a2fe1bde72b65dfe8552476909ae51b",
+        "exportedTextSha256": "1f5e59b518c53c185e8e57ca54f7575e2a2fe1bde72b65dfe8552476909ae51b"
+      },
+      "after": {
+        "sha256": "3fdacb285f461530f097fbe5b3f13eb780f6106cb82ec4708451d0ac0b0aa19b",
+        "text": "export function calculateTotal(unitPrice: number, quantity: number): number {\n  return unitPrice * quantity;\n}\n",
+        "exportedTextSha256": "3fdacb285f461530f097fbe5b3f13eb780f6106cb82ec4708451d0ac0b0aa19b"
+      }
+    },
+    {
+      "path": "lab/patch-recovery/price.test.mjs",
+      "before": {
+        "name": "lab/patch-recovery/price.test.mjs",
+        "content": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { calculateTotal } from './price.ts';\ntest('three items at ten yuan total thirty', () => {\n  assert.equal(calculateTotal(10, 3), 30);\n});\n",
+        "sha256": "e1d7692943ffcaee93925396a8aeaddb10f96334d1e6fc7c72fb09dafbb6a4e2",
+        "exportedTextSha256": "e1d7692943ffcaee93925396a8aeaddb10f96334d1e6fc7c72fb09dafbb6a4e2"
+      },
+      "after": {
+        "sha256": "e1d7692943ffcaee93925396a8aeaddb10f96334d1e6fc7c72fb09dafbb6a4e2",
+        "text": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { calculateTotal } from './price.ts';\ntest('three items at ten yuan total thirty', () => {\n  assert.equal(calculateTotal(10, 3), 30);\n});\n",
+        "exportedTextSha256": "e1d7692943ffcaee93925396a8aeaddb10f96334d1e6fc7c72fb09dafbb6a4e2"
+      }
+    }
+  ],
+  "hashScope": "sha256 hashes original source-file bytes. exportedTextSha256 hashes the public text/content string after structure-preserving redaction and JSON-string normalization. Before/after comparisons use source-file hashes."
+}

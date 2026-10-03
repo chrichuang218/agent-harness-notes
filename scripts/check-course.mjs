@@ -1,7 +1,8 @@
-import { readFile, readdir, stat } from 'node:fs/promises';
+import { readFile, readdir, stat, realpath } from 'node:fs/promises';
 import { resolve, dirname, relative, sep } from 'node:path';
 import { marked } from 'marked';
 import { spawnSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 
 // Validate the public course and its explicit references, never arbitrary paths
 // inside historical prompts, private source metadata, or archived evidence.
@@ -9,7 +10,40 @@ const root = resolve('.');
 const failures = [];
 let linksChecked = 0;
 let jsonChecked = 0;
+let experimentCount = 0;
+let stageCount = 0;
+let screenshotCount = 0;
+// Published v0.5.0 stages remain addressable when later experiments are added.
+const preservedStages = {
+  '01-hello': ['00-prewarm', '01-request'],
+  '02-context': ['00-request'],
+  '03-readme': ['00-request', '01-request'],
+  '04-agents': ['00-request', '01-request'],
+  '05-skills': ['00-request', '01-request'],
+  '06-tests': ['00-request', '01-request'],
+  '07-fix': ['00-request', '01-request', '02-request', '03-request', '04-request'],
+  '08-session-new': ['00-request'],
+  '08-session-resume': ['00-request'],
+  '08-session-seed': ['00-request'],
+  '10-compaction': ['00-request'],
+  '10-compaction-check': ['00-request'],
+  '12-memory-read': ['00-request', '01-request'],
+  '12-memory-write': ['00-request', '01-request', '02-request', '03-request', '04-request'],
+  '13-mcp': ['00-request', '01-request', '02-request'],
+  '14-plan': ['00-request', '01-request', '02-request', '03-request', '04-request', '05-request'],
+  '14-plan-implement': ['00-request', '01-request', '02-request', '03-request'],
+  '15-permissions': ['00-request', '01-request'],
+  '16-agent-a': ['00-prewarm', '00-request', '01-request', '02-request', '03-request'],
+  '16-agent-b': ['00-prewarm', '00-request', '01-request', '02-request'],
+  '16-multi-agent': ['00-request', '01-request', '02-request', '03-request', '04-request'],
+  '17-goal': ['00-request', '01-request', '02-request', '03-request', '04-request'],
+  '19-recovery': ['00-request', '01-request', '02-request', '03-request'],
+  '20-interrupted': ['00-request', '01-request'],
+  '20-resume': ['00-request', '01-request'],
+  '20-uninterrupted-control': ['00-request', '01-request', '02-request', '03-request'],
+};
 const check = (condition, message) => { if (!condition) failures.push(message); };
+check(Object.keys(preservedStages).length === 26 && Object.values(preservedStages).flat().length === 74, 'The preserved v0.5.0 stage list must contain 26 experiments and 74 stages.');
 async function exists(path) { try { return await stat(path); } catch { return null; } }
 async function readJson(path) {
   try { const value = JSON.parse(await readFile(path, 'utf8')); jsonChecked++; return value; }
@@ -62,14 +96,70 @@ if (catalog && index) {
   const experiments = Array.isArray(index.experiments) ? index.experiments : [];
   check(lessons.length === 15, `Expected 15 topic chapters; found ${lessons.length}.`);
   check(groups.length === 4, `Expected 4 groups; found ${groups.length}.`);
-  check(experiments.length === 26, `Expected all 26 preserved experiments; found ${experiments.length}.`);
-  check(experiments.reduce((count, item) => count + (item.stages || []).length, 0) === 74, 'All 74 evidence stages must remain available.');
+  experimentCount = experiments.length;
+  stageCount = experiments.reduce((count, item) => count + (item.stages || []).length, 0);
+  for (const [id, stageIds] of Object.entries(preservedStages)) {
+    const experiment = experiments.find(item => item.id === id);
+    check(Boolean(experiment), `Missing preserved experiment: ${id}`);
+    for (const stageId of stageIds) check(experiment?.stages?.some(stage => stage.id === stageId), `Missing preserved evidence stage: ${id}/${stageId}`);
+  }
   check(new Set(lessons.map(item => item.id)).size === lessons.length, 'Lesson ids must be unique.');
   check(new Set(lessons.map(item => item.file)).size === lessons.length, 'Lesson files must be unique.');
   check(new Set(groups.map(item => item.id)).size === groups.length, 'Group ids must be unique.');
   check(new Set(experiments.map(item => item.id)).size === experiments.length, 'Experiment ids must be unique.');
   for (const group of groups) check(lessons.some(lesson => lesson.group === group.id), `Empty course group: ${group.id}`);
   const experimentIds = new Set(experiments.map(item => item.id));
+  const screenshotIndex = await readJson('docs/images/desktop-lab/index.json');
+  if (screenshotIndex) {
+    check(screenshotIndex.schemaVersion === 1 && Array.isArray(screenshotIndex.images), 'Screenshot index must use schemaVersion 1 and an images array.');
+    const images = Array.isArray(screenshotIndex.images) ? screenshotIndex.images : [];
+    screenshotCount = images.length;
+    check(new Set(images.map(image => image.id)).size === images.length, 'Screenshot ids must be unique.');
+    check(new Set(images.map(image => image.file)).size === images.length, 'Screenshot file paths must be unique.');
+    const coveredChapters = new Set();
+    const imageRoot = resolve('docs/images/desktop-lab');
+    for (const image of images) {
+      check(typeof image.id === 'string' && image.id.length > 0, 'Screenshot id must be a nonempty string.');
+      check(typeof image.caption === 'string' && image.caption.length > 0, `${image.id}: missing screenshot caption.`);
+      check(Array.isArray(image.chapters) && image.chapters.length > 0, `${image.id}: missing chapter mapping.`);
+      for (const chapter of image.chapters || []) {
+        check(lessons.some(lesson => lesson.id === chapter), `${image.id}: unknown chapter ${chapter}`);
+        coveredChapters.add(chapter);
+      }
+      check(Array.isArray(image.experiments) && image.experiments.length > 0, `${image.id}: missing experiment mapping.`);
+      for (const link of image.experiments || []) {
+        const experiment = experiments.find(item => item.id === link.id);
+        check(Boolean(experiment), `${image.id}: unknown experiment ${link.id}`);
+        if (!experiment) continue;
+        check(link.threadId === experiment.threadId && link.manifestFile === experiment.manifestFile
+          && JSON.stringify(link.turnIds) === JSON.stringify(experiment.turnIds), `${image.id}: experiment identifiers differ from ${link.id}`);
+      }
+      const { source, crop } = image;
+      const dimensions = [image.width, image.height, source?.width, source?.height, crop?.width, crop?.height];
+      check(dimensions.every(value => Number.isInteger(value) && value > 0), `${image.id}: invalid screenshot dimensions.`);
+      check(Number.isInteger(crop?.x) && crop.x >= 0 && Number.isInteger(crop?.y) && crop.y >= 0
+        && crop.x + crop.width <= source?.width && crop.y + crop.height <= source?.height
+        && crop.width === image.width && crop.height === image.height, `${image.id}: crop must fit within its recorded source dimensions.`);
+      check(/^[a-f0-9]{64}$/.test(source?.sha256 || ''), `${image.id}: invalid private-source hash.`);
+      const target = typeof image.file === 'string' ? resolve(image.file) : '';
+      const safe = target.startsWith(imageRoot + sep) && image.file.endsWith('.png');
+      check(safe, `${image.id}: screenshot path must stay within docs/images/desktop-lab.`);
+      if (!safe) continue;
+      try {
+        const realTarget = await realpath(target);
+        if (!realTarget.startsWith(imageRoot + sep)) {
+          check(false, `${image.id}: screenshot symlink leaves its public directory.`);
+          continue;
+        }
+        const png = await readFile(target);
+        const validHeader = png.length >= 24 && png.subarray(0, 8).equals(Buffer.from('89504e470d0a1a0a', 'hex')) && png.toString('ascii', 12, 16) === 'IHDR';
+        check(validHeader, `${image.id}: public file is not a PNG with an IHDR header.`);
+        if (validHeader) check(png.readUInt32BE(16) === image.width && png.readUInt32BE(20) === image.height, `${image.id}: PNG dimensions differ from the index.`);
+        check(createHash('sha256').update(png).digest('hex') === image.sha256, `${image.id}: public PNG hash differs from the index.`);
+      } catch (error) { failures.push(`${image.id}: cannot verify public screenshot: ${error.message}`); }
+    }
+    for (const lesson of lessons) check(coveredChapters.has(lesson.id), `${lesson.id}: no screenshot mapping.`);
+  }
   const legacyRoutes = Object.entries(catalog.legacyRoutes || {});
   check(legacyRoutes.length === 20, 'All 20 previous chapter URLs need an explicit destination.');
   for (const [previous, current] of legacyRoutes) {
@@ -97,7 +187,7 @@ if (catalog && index) {
     }
   }
   check(lessons.some(lesson => lesson.id === '08-memory'), 'The memory chapter and its evidence boundary must be present.');
-  for (const file of ['README.md', 'PROGRESS.md', 'GLOSSARY.md', 'CHANGELOG.md', 'course/introduction.md', 'THIRD_PARTY_NOTICES.md', 'site/docs/DESIGN.md']) await documentLinks(file);
+  for (const file of ['README.md', 'PROGRESS.md', 'GLOSSARY.md', 'CHANGELOG.md', 'course/introduction.md', 'THIRD_PARTY_NOTICES.md', 'site/docs/DESIGN.md', 'docs/images/desktop-lab/README.md']) await documentLinks(file);
   for (const file of await readdir('lessons/02-desktop-lab-chronological')) if (file.endsWith('.md')) await documentLinks(`lessons/02-desktop-lab-chronological/${file}`);
   const coveredExperiments = new Set(lessons.flatMap(lesson => lesson.evidenceIds || []));
   for (const experiment of experiments) check(coveredExperiments.has(experiment.id), `Experiment missing from the reader: ${experiment.id}`);
@@ -105,7 +195,8 @@ if (catalog && index) {
   // Only these schema fields are public file references. Source metadata may
   // deliberately point to redacted or private original logs and is not a link.
   for (const experiment of experiments) {
-    const referenced = [experiment.manifestFile, experiment.compactionFile, experiment.interruptionFile];
+    const referenced = [experiment.manifestFile, experiment.compactionFile, experiment.interruptionFile,
+      experiment.auditFile, experiment.rolloutEventsFile, experiment.hookEventsFile, experiment.fileObservationsFile];
     for (const stage of experiment.stages || []) referenced.push(stage.requestFile, stage.responseFile, stage.eventsFile, stage.upstreamFile, stage.outputItemsFile);
     for (const path of referenced.filter(Boolean)) {
       check(path.startsWith('evidence/desktop-lab/'), `${experiment.id}: evidence file is outside the new public evidence tree: ${path}`);
@@ -143,5 +234,5 @@ if (failures.length) {
   console.error(`Course checks failed (${failures.length}):\n` + failures.map(message => '- ' + message).join('\n'));
   process.exitCode = 1;
 } else {
-  console.log(`Course checks passed: 15 chapters / 4 groups; 20 legacy chapter routes; all 26 experiments / 74 stages; ${linksChecked} local links; ${jsonChecked} JSON files; 4 complete example snapshots. Runtime checks: intentional baseline failure, 1 fixed test, 11 discount tests. Memory remains explicitly partial.`);
+  console.log(`Course checks passed: 15 chapters / 4 groups; 20 legacy chapter routes; ${experimentCount} experiments / ${stageCount} stages including all original 26 / 74; ${screenshotCount} screenshots mapped across all chapters; ${linksChecked} local links; ${jsonChecked} JSON files; 4 complete example snapshots. Runtime checks: intentional baseline failure, 1 fixed test, 11 discount tests. Memory remains explicitly partial.`);
 }

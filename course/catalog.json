@@ -95,7 +95,12 @@
       "status": "verified",
       "evidenceIds": [
         "04-agents",
-        "03-readme"
+        "03-readme",
+        "hook-marker-repeat",
+        "hook-c-trusted-ui",
+        "hook-a-baseline",
+        "hook-b-untrusted",
+        "hook-c-tool-origin"
       ]
     },
     {
@@ -141,7 +146,8 @@
       "file": "course/10-permissions.md",
       "status": "verified",
       "evidenceIds": [
-        "15-permissions"
+        "15-permissions",
+        "hook-pre-tool"
       ]
     },
     {
@@ -153,7 +159,8 @@
       "status": "verified",
       "evidenceIds": [
         "14-plan",
-        "14-plan-implement"
+        "14-plan-implement",
+        "plan-status"
       ]
     },
     {
@@ -181,7 +188,9 @@
         "19-recovery",
         "20-uninterrupted-control",
         "20-interrupted",
-        "20-resume"
+        "20-resume",
+        "background-return",
+        "patch-recovery"
       ]
     },
     {
@@ -206,7 +215,8 @@
         "07-fix",
         "13-mcp",
         "15-permissions",
-        "16-multi-agent"
+        "16-multi-agent",
+        "hook-post-tool"
       ]
     }
   ],

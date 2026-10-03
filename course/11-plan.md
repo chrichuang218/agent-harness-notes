@@ -2,7 +2,7 @@
 
 乘法错误修好后，项目要增加折扣。需求已经给出 10% 和 100% 的例子，却没说遇到小数金额时要不要四舍五入。这会影响实现、测试和文档，适合先查清现状，再确定方案。
 
-这次使用 Desktop 原生计划模式，完整经历了调查、澄清、生成计划和确认实施。计划阶段有 6 次正式模型请求，实施阶段另有 4 次。
+Codex 先读取项目，询问精度策略，生成计划；确认实施后才修改代码。计划阶段的基线检查和实施后的折扣测试，验证的是不同状态。
 
 ## 从一个未完全确定的需求开始
 
@@ -34,7 +34,7 @@
 
 最终计划采用 JavaScript `number` 的现有精度，不额外舍入；第三个参数默认 0，只接受 0 到 100 的整数，非法值抛出 `RangeError`，旧两参数调用保持兼容。测试包含 10% 返回 27、100% 返回 0、25% 返回 22.5，以及越界、小数、`NaN` 和无限值等输入。
 
-这些决定使下一阶段有了明确的验收条件。仅写“加折扣并补测试”，仍会把精度和非法值的选择留给实施时临时决定。
+精度、默认值和非法参数的处理都有了明确结果，实施后可以逐项验收。
 
 ## 计划阶段已经用了工具，也运行了测试
 
@@ -68,7 +68,7 @@
 
 Desktop 显示“实施此计划？”，选择“是，实施此计划”后，[实施首请求](../evidence/desktop-lab/14-plan-implement/00-request.request.json)包含两项新内容：developer 消息将模式切回 `Default`；user 消息以 `PLEASE IMPLEMENT THIS PLAN:` 开头，携带完整计划。它继续引用计划阶段的最终响应。
 
-模型重新读了当前文件，再调用 `apply_patch` 修改函数、测试、README 和 `docs/DECISIONS.md`。重读使实施依据当前文件，避免把先前调查当作永久不变的状态。修改之后，再运行三条检查。
+模型重读当前文件，用 `apply_patch` 修改函数、测试、README 和 `docs/DECISIONS.md`，再运行三条检查。重新读取可以核对调查之后文件是否发生变化。
 
 [实施后快照](../examples/14-discount/README.md)中的计算表达式为：
 
@@ -77,6 +77,15 @@ return (unitPrice * quantity) * ((100 - discountPercent) / 100);
 ```
 
 [实际验证结果](../evidence/desktop-lab/14-plan-implement/03-request.request.json)显示 11 项测试通过，类型检查通过，旧示例仍输出 30 元，三条命令退出码均为 0。计划里的兼容性、边界和文档要求，也能在快照中继续核对。
+
+<details>
+<summary>查看历史计划、确认实施与完成结果</summary>
+
+![Desktop 历史对话中的折扣计划、执行此计划的确认与实施结果](../docs/images/desktop-lab/plan-and-implementation.png)
+
+上方是[计划阶段](../evidence/desktop-lab/14-plan/manifest.json)的调查和计划产物，下方是确认之后的[实施结果](../evidence/desktop-lab/14-plan-implement/manifest.json)。截图重开于 2026-10-03，实验时间以两份记录为准。
+
+</details>
 
 <details>
 <summary>深入核对：四次实施请求与阶段边界</summary>
@@ -102,6 +111,36 @@ return (unitPrice * quantity) * ((100 - discountPercent) / 100);
 <summary>参考解释</summary>
 
 阶段 04 的澄清返回选择保留现有数值精度，计划据此不增加舍入。基线测试发生在实施前，只证明原有行为；新增功能需要实际补丁、最终文件和实施后的测试结果。实施后的 11 项测试支持约定场景，但是否足以防止意外舍入，还可以继续审查，下一章会检查这个覆盖问题。
+
+</details>
+
+## 补充实验：普通任务中的文字进度
+
+2026-10-03，我们在 Default 模式要求 Codex 修复 `lab/plan-state/price.ts` 副本，并跟踪“读取、修复、测试”三步。提示要求优先使用可用的计划状态工具；如果没有，则明确标为文字进度。没有进入需要选择或确认的 Plan Mode。
+
+模型先搜索本轮暴露的 `ALL_TOOLS` 目录，[返回结果](../evidence/desktop-lab/plan-status/01-request.request.json)为 `[]`。它随后说明没有找到相应工具，以进度文字继续：读取副本和测试之后，将读取标为完成；补丁返回之后，将修复标为完成；测试结果返回前，仍将测试标为进行中。
+
+![执行中的文字进度，读取与修复已完成，指定测试仍在运行](../docs/images/desktop-lab/plan-progress.png)
+
+这张保留的执行中画面显示“测试进行中”，对应[本轮实际调用](../evidence/desktop-lab/plan-status/03-request.output-items.json)。其中的状态由助手文字表达，不是原生计划状态控件。
+
+[最后一份请求](../evidence/desktop-lab/plan-status/04-request.request.json)带回 `node --test lab/plan-state/price.test.mjs` 的结果：退出码 0，通过 1，失败 0。模型收到结果后，才在[最终报告](../evidence/desktop-lab/plan-status/04-request.output-items.json)里把三步全部标为完成。独立[文件比较](../evidence/desktop-lab/plan-status/file-observations.json)确认副本仅从加法改为乘法，测试未改。
+
+这里验证了进度文字与执行记录一致。文字表格、原生计划状态、Plan Mode 是三件事：本轮没有原生计划工具调用或状态事件；前面折扣实验才进入了原生 Plan Mode，并保存了计划与实施记录。
+
+<details>
+<summary>查看文字进度的完成报告</summary>
+
+![测试通过后，Desktop 最终报告将三步文字进度标为完成](../docs/images/desktop-lab/plan-final.png)
+
+完成报告仍明确标为“文字进度”。退出码 0 和三步的依据见[逐阶段核对](../evidence/desktop-lab/plan-status/audit.json)。
+
+</details>
+
+<details>
+<summary>这次没有验证到的原生状态</summary>
+
+本地 `turn_context` 记录模式为 `default`，全轮有 5 次请求、4 次工具调用。工具目录查询使用 `update_plan|plan state|plan status|planning tool`；空结果只说明这次查询没有找到匹配条目，不能推广到所有 Codex 版本或模式。[审计](../evidence/desktop-lab/plan-status/audit.json)列出了各阶段进度与实际调用，[rollout 节选](../evidence/desktop-lab/plan-status/rollout-events.json)保留运行模式和执行事件。
 
 </details>
 

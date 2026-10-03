@@ -1,0 +1,15 @@
+{
+  "auditedAt": "2026-10-03T02:32:45.775Z",
+  "marker": "HOOK-43141e17-ca46-4b06-8ba6-9b07205aa94d",
+  "promptField": "input[9].content[0].text",
+  "contextField": "input[10].content[0].text",
+  "contextRole": "developer",
+  "clientUpstreamEqual": true,
+  "replyEqualsMarker": true,
+  "rolloutTokenUsageMatchesResponse": true,
+  "modelToolCalls": 0,
+  "priorResponse": null,
+  "limitations": [
+    "这是受信任 Hook 在新任务的输入框实验；不补足未信任状态下的输入框对照。"
+  ]
+}

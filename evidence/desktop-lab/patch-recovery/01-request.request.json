@@ -1,0 +1,50 @@
+{
+  "type": "response.create",
+  "model": "gpt-6-astra",
+  "previous_response_id": "resp_06bf55714bc3c9c4016ac06c079c9087d093fb875e4b51e765",
+  "input": [
+    {
+      "type": "custom_tool_call_output",
+      "id": "ctco_01a0ffa6-0d0d-78d2-b4ce-80e7f8ad4f4e",
+      "call_id": "call_mNaUwoauogM4swR04jN5q4VG",
+      "output": [
+        {
+          "type": "input_text",
+          "text": "Script failed\nWall time 0.5 seconds\nOutput:\n"
+        },
+        {
+          "type": "input_text",
+          "text": "Script error:\napply_patch verification failed: Failed to find expected lines in E:\\Develop\\github\\codex-ts-demo\\lab\\patch-recovery\\price.ts:\n  return unitPrice - quantity;"
+        }
+      ]
+    }
+  ],
+  "tool_choice": "auto",
+  "parallel_tool_calls": false,
+  "reasoning": {
+    "effort": "medium",
+    "summary": "detailed",
+    "context": "all_turns"
+  },
+  "store": false,
+  "stream": true,
+  "include": [
+    "reasoning.encrypted_content"
+  ],
+  "service_tier": "priority",
+  "prompt_cache_key": "01a0ff9a-4c81-7900-b401-e149f5ef7cbe",
+  "text": {
+    "verbosity": "low"
+  },
+  "client_metadata": {
+    "turn_id": "01a0ffa5-fa13-7e92-987e-d8586c07b0b5",
+    "session_id": "01a0ff9a-4c81-7900-b401-e149f5ef7cbe",
+    "thread_id": "01a0ff9a-4c81-7900-b401-e149f5ef7cbe",
+    "x-codex-window-id": "01a0ff9a-4c81-7900-b401-e149f5ef7cbe:0",
+    "x-codex-ws-stream-request-start-ms": "1790995467569",
+    "ws_request_header_x_openai_internal_codex_responses_lite": "true",
+    "x-codex-installation-id": "<REDACTED>",
+    "x-codex-turn-metadata": "{\"installation_id\":\"<REDACTED>\",\"session_id\":\"01a0ff9a-4c81-7900-b401-e149f5ef7cbe\",\"thread_id\":\"01a0ff9a-4c81-7900-b401-e149f5ef7cbe\",\"agent_name\":\"/root\",\"turn_id\":\"01a0ffa5-fa13-7e92-987e-d8586c07b0b5\",\"window_id\":\"01a0ff9a-4c81-7900-b401-e149f5ef7cbe:0\",\"window_number\":0,\"context_window_id\":\"01a0ff9a-4c84-7511-bb3c-bb864c575f8f\",\"request_kind\":\"turn\",\"root_turn_id\":\"01a0ffa5-fa13-7e92-987e-d8586c07b0b5\",\"thread_source\":\"user\",\"turn_trigger\":\"composer\",\"sandbox\":\"none\",\"sandbox_mode\":\"danger-full-access\",\"auto_review_enabled\":false,\"node_repl_auto_review_required\":true,\"node_repl_disabled\":false,\"turn_started_at_unix_ms\":1790995462740,\"analytics_enabled\":true,\"client_type\":\"desktop_app\",\"model\":\"gpt-6-astra\",\"reasoning_effort\":\"medium\",\"source\":\"codex\",\"workspace_kind\":\"project\"}",
+    "root_turn_id": "01a0ffa5-fa13-7e92-987e-d8586c07b0b5"
+  }
+}

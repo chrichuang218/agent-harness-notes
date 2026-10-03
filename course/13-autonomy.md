@@ -1,8 +1,8 @@
 # 目标、停止条件与续跑：下一步还需要做什么？
 
-Agent Loop 能连续工作，但并非每次工具返回后都应再做一步。已有证据满足要求时可以结束；工具失败时要判断是否还有获准的路径；用户停止后，则要核对完成到哪里，再决定如何继续。
+工具返回以后，下一步可能是结束、处理错误，也可能是等待新的继续要求。先看原生 Goal 完成检查、缺少脚本后改用现有检查，以及用户中断后只执行剩余测试；再检查仍在运行的命令和过时补丁怎样处理。
 
-本章用同一个折扣项目的三组独立实验观察这些选择：原生 Goal 的完成、脚本失败后的恢复，以及中断后只执行剩余测试。它们并非同一个 Goal 连续运行的三个阶段。
+前三组使用同一个折扣项目，各有自己的请求链，并非一个 Goal 的连续阶段。后两组是 2026-10-03 补做的独立实验。
 
 ## 先给目标一个可检查的终点
 
@@ -22,7 +22,7 @@ Codex 读取 README、实现、测试和配置，核对折扣的默认值、整�
 text(await tools.update_goal({status:"complete"}));
 ```
 
-[工具真实返回](../evidence/desktop-lab/17-goal/goal-state.json)中的目标状态为 `complete`。完成状态位于验证之后，可以与此前的文件和命令结果相互核对。如果只留下状态变化，却没有目标要求的测试结果，仍然缺少业务验收证据。
+[工具返回](../evidence/desktop-lab/17-goal/goal-state.json)记录状态为 `complete`。它发生在验证之后；前面的文件和命令结果才是本次目标达成的依据，状态值本身不能替代验收。
 
 <details>
 <summary>深入核对：Goal 的五次请求与状态返回</summary>
@@ -53,9 +53,9 @@ npm error Missing script: "lint"
 
 错误进入[下一次请求](../evidence/desktop-lab/19-recovery/01-request.request.json)后，Codex 读取 `package.json` 和 `tsconfig.json`，找到了现有的 typecheck 与 test 脚本。用户已经允许在这种情况下改用现有检查，并明确不安装依赖、不新增脚本，因此模型接着运行这两项。
 
-类型检查成功，11 项测试通过。最终报告仍保留最初的 lint 失败。后续检查解决了可以执行哪些验证的问题，没有让那个不存在的 lint 脚本变成成功。
+类型检查成功，11 项测试通过。最终报告同时保留 lint 失败，以及替代检查通过这两个结果。
 
-这次恢复发生在模型收到错误后的新决策中：下一份输出明确提出读取配置，再下一份输出提出替代检查。它没有表现为 CPA 自动重发网络请求，也没有反复运行同一条必然缺少脚本的命令。
+收到错误之后，模型先提出读取配置，再提出替代检查。这是根据工具反馈调整动作的记录，没有发生 CPA 自动重发或反复运行缺失脚本的情况。
 
 <details>
 <summary>深入核对：失败怎样影响后续动作</summary>
@@ -114,6 +114,15 @@ aborted by user after 15.3s
 [恢复阶段输出](../evidence/desktop-lab/20-resume/00-request.output-items.json)只提出 `npm test`，没有重跑类型检查或重启等待。工具返回退出码 0、11 项通过，模型再报告结果。原来的中断记录仍保留，恢复是新一轮中的两次模型请求。
 
 <details>
+<summary>查看中断后只补测试的历史画面</summary>
+
+![用户中断等待后要求继续，Desktop 只运行尚未执行的测试](../docs/images/desktop-lab/interruption-resume.png)
+
+上方保留类型检查已通过的消息，下方继续要求与报告明确只补测试。对应[中断](../evidence/desktop-lab/20-interrupted/manifest.json)和[恢复](../evidence/desktop-lab/20-resume/manifest.json)两个轮次。
+
+</details>
+
+<details>
 <summary>深入核对：中断前、取消结果与恢复输入</summary>
 
 实际中断要求为：
@@ -158,9 +167,9 @@ aborted by user after 15.3s
 
 ## 继续之前，依据实际状态
 
-本例取消的是等待工具，返回清楚，也没有文件修改。若停止时正在写文件或运行后台进程，就需要先检查文件、进程或工具句柄；不能仅凭停止按钮推断所有动作都没有发生。
+本例取消的是等待工具，没有文件修改。如果停止时正在写文件或运行后台进程，应先检查文件、进程或工具句柄，确认实际执行到了哪里。
 
-模型响应完成也不足以判断整个任务完成。中断前，两次模型生成都已有 `response.completed`，其中第二次完整生成了等待调用，但等待随后被用户取消。模型生成、工具执行和用户任务分别有自己的结束状态，下一章会从流式事件继续拆解。
+中断前，两次模型生成都有 `response.completed`；第二次生成的等待调用随后却被用户取消。模型生成结束、工具结束、任务完成各有自己的状态，下一章会从流式事件继续拆解。
 
 ## 为下一步写出依据
 
@@ -172,5 +181,54 @@ aborted by user after 15.3s
 类型检查的退出码 0 在中断阶段 01 请求中；等待取消在本地事件和恢复首请求中；测试只在恢复轮次发出并返回成功。如果被中断的是修改工具，要先核对实际文件是否未改、已改或部分改动，以及工具是否仍在运行，再选择补做、继续或报告问题。原计划中的顺序不能替代这些状态。
 
 </details>
+
+## 补充实验：命令还在运行时，先做别的读取
+
+2026-10-03 的新实验启动 `node lab/background-delay.mjs`。脚本先输出开始标记，延迟后再输出总价与结束标记。用户要求只启动一次，在它运行期间读取 README 前 12 行，再用原句柄取得最终结果。
+
+[启动返回](../evidence/desktop-lab/background-return/01-request.request.json)给出了 `session_id: 48726` 和 `BACKGROUND_START`，没有 `exit_code`。这时命令仍在运行。模型接着调用另一个工具读取 README，然后用 `write_stdin` 回收同一会话的输出。前两次回收仍返回会话号，没有新增输出；第三次才带回：
+
+```text
+BACKGROUND_TOTAL 27
+BACKGROUND_DONE 2026-10-03T02:40:12.726Z
+```
+
+[最终返回](../evidence/desktop-lab/background-return/05-request.request.json)还给出 `exit_code: 0`。全轮只启动一个延迟进程，没有为了等待结果而重复执行脚本。
+
+CPA 的工具返回可串起会话句柄，本地命令时间则补充了实际重叠的证据：延迟脚本运行约 35 秒，README 的读取发生在它启动之后、结束之前，见[时间核对](../evidence/desktop-lab/background-return/audit.json)。这和上一节取消等待不同：进程仍在执行，模型先安排了一件独立的读取工作，再继续回收结果。
+
+<details>
+<summary>查看同一句柄的启动与回收报告</summary>
+
+![Desktop 最终报告保留后台会话48726、开始输出和回收的结束输出](../docs/images/desktop-lab/background-return.png)
+
+这张图是完成后的报告，不是运行期间的录像。会话号、读取时机与退出码仍需沿[本轮记录](../evidence/desktop-lab/background-return/manifest.json)和时间核对确认。
+
+</details>
+
+<details>
+<summary>编排返回、会话句柄与进程退出</summary>
+
+本轮共 6 次请求、5 次外层调用：启动、读取、三次回收。首次启动调用设置较短的 `yield_time_ms: 1000`，实际约 10 秒返回；它没有在 1 秒时停止脚本。`session_id` 用于找回同一个仍在运行的命令。
+
+外层 `Script completed` 只表明编排代码返回。内层结果仍有会话号、没有退出码时，不能据此宣布进程成功。最后的输出和退出码才确定本次命令完成，原生命令事件见[rollout 节选](../evidence/desktop-lab/background-return/rollout-events.json)。
+
+这次验证的是同一轮内的长进程与结果回收，没有关闭应用、跨机器恢复或定时调度。
+
+</details>
+
+## 补充实验：补丁找不到旧代码，先重新读取
+
+同日另一个实验在 `lab/patch-recovery/price.ts` 副本中观察编辑失败。提示故意指定过时的上下文 `return unitPrice - quantity;`，要求首次补丁先不读取目标。文件实际仍是加法，所以这次失败是受控实验条件，不能描述成模型偶然犯错。
+
+第一次 `apply_patch` 返回[上下文不匹配错误](../evidence/desktop-lab/patch-recovery/01-request.request.json)，包含 `Failed to find expected lines` 和那条减法表达式。模型随后读取当前文件，[读取结果](../evidence/desktop-lab/patch-recovery/02-request.request.json)显示 `return unitPrice + quantity;`，便按实际内容生成最小补丁，把加法改成乘法。
+
+修改返回后，模型运行 `node --test lab/patch-recovery/price.test.mjs`。[测试结果](../evidence/desktop-lab/patch-recovery/04-request.request.json)为退出码 0，通过 1、失败 0，验证 `10` 和 `3` 得到 `30`。[前后文件](../evidence/desktop-lab/patch-recovery/file-observations.json)只差这一行，测试内容与哈希未变。
+
+![Desktop 保留过时补丁的失败原文，以及重新读取、修改和测试结果](../docs/images/desktop-lab/patch-recovery.png)
+
+新实验的最终报告同时保留失败与恢复结果。首次减法上下文由实验提示指定，实际加法实现和修改后的乘法可与[审计](../evidence/desktop-lab/patch-recovery/audit.json)对应。
+
+这次错误说明补丁依赖的旧文本与文件不符，重新读取可以提供新的编辑依据。第 10 章的 Hook 拒绝则明确禁止修改目标，被拒之后没有换方法重试。决定怎样恢复前，要先读清错误和本轮允许的范围。
 
 [上一章：多 Agent](12-multi-agent.md) · [下一章：流式输出与协议细节](14-streaming.md)

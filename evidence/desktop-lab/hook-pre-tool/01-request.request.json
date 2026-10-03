@@ -1,0 +1,50 @@
+{
+  "type": "response.create",
+  "model": "gpt-6-astra",
+  "previous_response_id": "resp_06bf55714bc3c9c4016ac069a70f7887d088eeb09a40fe733b",
+  "input": [
+    {
+      "type": "custom_tool_call_output",
+      "id": "ctco_01a0ff9c-d432-71b3-b5b2-f5259fef1b7c",
+      "call_id": "call_aWz4HbQyvR2JLr7stjQx4c02",
+      "output": [
+        {
+          "type": "input_text",
+          "text": "Script completed\nWall time 4.4 seconds\nOutput:\n"
+        },
+        {
+          "type": "input_text",
+          "text": "{\"chunk_id\":\"9b5c24\",\"wall_time_seconds\":0.5230304,\"exit_code\":0,\"original_token_count\":35,\"output\":\"HOOK-LAB ORIGINAL: this file must remain unchanged during the deny experiment.\\r\\nHOOK-LAB ORIGINAL: this file is the allowed patch control.\\r\\n\"}"
+        }
+      ]
+    }
+  ],
+  "tool_choice": "auto",
+  "parallel_tool_calls": false,
+  "reasoning": {
+    "effort": "medium",
+    "summary": "detailed",
+    "context": "all_turns"
+  },
+  "store": false,
+  "stream": true,
+  "include": [
+    "reasoning.encrypted_content"
+  ],
+  "service_tier": "priority",
+  "prompt_cache_key": "01a0ff9a-4c81-7900-b401-e149f5ef7cbe",
+  "text": {
+    "verbosity": "low"
+  },
+  "client_metadata": {
+    "session_id": "01a0ff9a-4c81-7900-b401-e149f5ef7cbe",
+    "ws_request_header_x_openai_internal_codex_responses_lite": "true",
+    "x-codex-ws-stream-request-start-ms": "1790994863371",
+    "root_turn_id": "01a0ff9c-b0f9-7f73-a8b7-00b232d65a01",
+    "thread_id": "01a0ff9a-4c81-7900-b401-e149f5ef7cbe",
+    "x-codex-window-id": "01a0ff9a-4c81-7900-b401-e149f5ef7cbe:0",
+    "turn_id": "01a0ff9c-b0f9-7f73-a8b7-00b232d65a01",
+    "x-codex-installation-id": "<REDACTED>",
+    "x-codex-turn-metadata": "{\"installation_id\":\"<REDACTED>\",\"session_id\":\"01a0ff9a-4c81-7900-b401-e149f5ef7cbe\",\"thread_id\":\"01a0ff9a-4c81-7900-b401-e149f5ef7cbe\",\"agent_name\":\"/root\",\"turn_id\":\"01a0ff9c-b0f9-7f73-a8b7-00b232d65a01\",\"window_id\":\"01a0ff9a-4c81-7900-b401-e149f5ef7cbe:0\",\"window_number\":0,\"context_window_id\":\"01a0ff9a-4c84-7511-bb3c-bb864c575f8f\",\"request_kind\":\"turn\",\"root_turn_id\":\"01a0ff9c-b0f9-7f73-a8b7-00b232d65a01\",\"thread_source\":\"user\",\"turn_trigger\":\"composer\",\"sandbox\":\"none\",\"sandbox_mode\":\"danger-full-access\",\"auto_review_enabled\":false,\"node_repl_auto_review_required\":true,\"node_repl_disabled\":false,\"turn_started_at_unix_ms\":1790994854197,\"analytics_enabled\":true,\"client_type\":\"desktop_app\",\"model\":\"gpt-6-astra\",\"reasoning_effort\":\"medium\",\"source\":\"codex\",\"workspace_kind\":\"project\"}"
+  }
+}

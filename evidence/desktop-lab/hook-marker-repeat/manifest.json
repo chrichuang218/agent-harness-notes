@@ -1,0 +1,112 @@
+{
+  "id": "hook-marker-repeat",
+  "title": "输入框编号注入复核",
+  "threadId": "01a0ff9a-4c81-7900-b401-e149f5ef7cbe",
+  "turnIds": [
+    "01a0ff9a-715a-7eb0-95cf-c1a77e566b83"
+  ],
+  "prompt": "本轮实验编号是什么？只根据已有上下文回答，不要读取文件或调用工具；没有就说“不知道”。\n",
+  "reply": "HOOK-43141e17-ca46-4b06-8ba6-9b07205aa94d",
+  "stats": {
+    "requests": 1,
+    "toolCalls": 0,
+    "inputTokens": 35900,
+    "outputTokens": 28,
+    "prewarms": 0
+  },
+  "stages": [
+    {
+      "id": "00-request",
+      "requestFile": "evidence/desktop-lab/hook-marker-repeat/00-request.request.json",
+      "responseFile": "evidence/desktop-lab/hook-marker-repeat/00-request.response.json",
+      "eventsFile": "evidence/desktop-lab/hook-marker-repeat/00-request.events.json",
+      "upstreamFile": "evidence/desktop-lab/hook-marker-repeat/00-request.upstream.json",
+      "outputItemsFile": "evidence/desktop-lab/hook-marker-repeat/00-request.output-items.json",
+      "requestTimestamp": "2026-10-03T10:31:48.8331228+08:00",
+      "responseId": "resp_06bf55714bc3c9c4016ac0691520bc87d0b958a6b36cbd73be",
+      "previousResponseId": null,
+      "inputCount": 11,
+      "prewarm": false,
+      "source": {
+        "request": {
+          "file": "request-log-parts-websocket-timeline-3085549980/request-1563589592.tmp",
+          "line": 3,
+          "timestamp": "2026-10-03T10:31:48.8331228+08:00"
+        },
+        "completed": {
+          "file": "request-log-parts-websocket-timeline-3085549980/request-1563589592.tmp",
+          "line": 143,
+          "timestamp": "2026-10-03T10:31:51.2160263+08:00"
+        },
+        "upstream": {
+          "file": "request-log-parts-api-websocket-timeline-1731919760/part-411459921.tmp",
+          "line": 19,
+          "timestamp": "2026-10-03T10:31:48.8421287+08:00"
+        }
+      }
+    }
+  ],
+  "notes": [
+    "Matched exact response event ids against rollout token_usage_record.response_id; text mentions are not matches.",
+    "response.json preserves the recorded response.completed event. Its output may be empty; output-items.json is a separately labelled derivation.",
+    "Only JSON request bodies and response.* events are exported. HTTP headers and transport header events are omitted.",
+    "Counts exclude prewarm stages. Token usage is the sum of formal model responses, not unique context size.",
+    "2026-10-03 新建真实 Desktop 任务，经 Computer Use 输入框提交；本轮重新采集以取得可见会话截图，原编号实验仍保留。"
+  ],
+  "sanitization": {
+    "mode": "structure-preserving-redaction",
+    "replacements": [
+      "Windows user home → <USER_HOME>",
+      "Credential values, encrypted content, installation and safety ids → <REDACTED>"
+    ],
+    "changedPaths": [
+      "00-request.events.json[0].data.response.safety_identifier",
+      "00-request.events.json[10].data.obfuscation",
+      "00-request.events.json[11].data.obfuscation",
+      "00-request.events.json[12].data.obfuscation",
+      "00-request.events.json[13].data.obfuscation",
+      "00-request.events.json[14].data.obfuscation",
+      "00-request.events.json[15].data.obfuscation",
+      "00-request.events.json[16].data.obfuscation",
+      "00-request.events.json[17].data.obfuscation",
+      "00-request.events.json[18].data.obfuscation",
+      "00-request.events.json[19].data.obfuscation",
+      "00-request.events.json[1].data.response.safety_identifier",
+      "00-request.events.json[20].data.obfuscation",
+      "00-request.events.json[21].data.obfuscation",
+      "00-request.events.json[22].data.obfuscation",
+      "00-request.events.json[23].data.obfuscation",
+      "00-request.events.json[24].data.obfuscation",
+      "00-request.events.json[25].data.obfuscation",
+      "00-request.events.json[26].data.obfuscation",
+      "00-request.events.json[27].data.obfuscation",
+      "00-request.events.json[31].data.response.safety_identifier",
+      "00-request.events.json[4].data.obfuscation",
+      "00-request.events.json[5].data.obfuscation",
+      "00-request.events.json[6].data.obfuscation",
+      "00-request.events.json[7].data.obfuscation",
+      "00-request.events.json[8].data.obfuscation",
+      "00-request.events.json[9].data.obfuscation",
+      "00-request.request.json.client_metadata.x-codex-installation-id",
+      "00-request.request.json.client_metadata.x-codex-turn-metadata.installation_id",
+      "00-request.request.json.input[2].content[1].text",
+      "00-request.request.json.input[5].content[1].text",
+      "00-request.response.json.response.safety_identifier",
+      "00-request.upstream.json.client_metadata.x-codex-installation-id",
+      "00-request.upstream.json.client_metadata.x-codex-turn-metadata.installation_id",
+      "00-request.upstream.json.input[2].content[1].text",
+      "00-request.upstream.json.input[5].content[1].text"
+    ]
+  },
+  "rolloutSource": "<USER_HOME>/.codex/sessions/2026/10/03/rollout-2026-10-03T10-31-37-01a0ff9a-4c81-7900-b401-e149f5ef7cbe.jsonl",
+  "collectedAt": "2026-10-03T02:32:11.862Z",
+  "submission": {
+    "method": "computer-use-desktop-composer",
+    "turnTrigger": "composer",
+    "threadSource": "user",
+    "submittedPrompt": "本轮实验编号是什么？只根据已有上下文回答，不要读取文件或调用工具；没有就说“不知道”。\n"
+  },
+  "auditFile": "evidence/desktop-lab/hook-marker-repeat/audit.json",
+  "rolloutEventsFile": "evidence/desktop-lab/hook-marker-repeat/rollout-events.json",
+  "hookEventsFile": "evidence/desktop-lab/hook-marker-repeat/hook-events.json"
+}

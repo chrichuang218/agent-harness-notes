@@ -3165,6 +3165,1346 @@
       "rolloutSource": "<USER_HOME>/.codex/sessions/2026/09/30/rollout-2026-09-30T00-26-18-01a0edfd-0bdc-7042-985c-5c6a957c6895.jsonl",
       "collectedAt": "2026-09-29T16:58:23.460Z",
       "manifestFile": "evidence/desktop-lab/20-uninterrupted-control/manifest.json"
+    },
+    {
+      "id": "background-return",
+      "title": "延迟命令运行期间读取文件并回收结果",
+      "threadId": "01a0ff9a-4c81-7900-b401-e149f5ef7cbe",
+      "turnIds": [
+        "01a0ffa1-8928-7421-bdce-6dca0ef609a3"
+      ],
+      "prompt": "进行后台任务与结果回收实验。请用现有命令工具启动 node lab/background-delay.mjs，只启动一次，并让工具尽快返回运行中的会话或进程句柄（可设置较短 yield_time_ms）；不要使用 Start-Process、另外打开终端或脱离工具管理。确认脚本仍在运行后，先用另一次工具调用读取 README.md 的前12行，再使用刚才的句柄回收延迟脚本的最终输出和退出码。脚本尚未完成时不要当作成功，也不要重复启动。最后按实际顺序报告启动时输出、读取文件发生的时机、回收结果和退出码。不要修改文件。\n",
+      "reply": "已按顺序完成，全程只启动一次，未修改文件。\n\n1. 启动 `node lab/background-delay.mjs`，约 10 秒后返回运行中的会话句柄 `48726`，当时尚无退出码。启动输出：\n   ```text\n   BACKGROUND_START 2026-10-03T02:39:37.715Z\n   ```\n2. 获得句柄后，独立调用工具读取 `README.md` 前 12 行，退出码为 `0`。读取发生在脚本运行期间；随后两次回收仍返回运行中的会话，无新增输出。\n3. 使用同一句柄最终回收：\n   ```text\n   BACKGROUND_TOTAL 27\n   BACKGROUND_DONE 2026-10-03T02:40:12.726Z\n   ```\n   延迟脚本实际退出码为 **0**。",
+      "stats": {
+        "requests": 6,
+        "toolCalls": 5,
+        "inputTokens": 232693,
+        "outputTokens": 451,
+        "prewarms": 0
+      },
+      "stages": [
+        {
+          "id": "00-request",
+          "requestFile": "evidence/desktop-lab/background-return/00-request.request.json",
+          "responseFile": "evidence/desktop-lab/background-return/00-request.response.json",
+          "eventsFile": "evidence/desktop-lab/background-return/00-request.events.json",
+          "upstreamFile": "evidence/desktop-lab/background-return/00-request.upstream.json",
+          "outputItemsFile": "evidence/desktop-lab/background-return/00-request.output-items.json",
+          "requestTimestamp": "2026-10-03T10:39:32.7745256+08:00",
+          "responseId": "resp_06bf55714bc3c9c4016ac06ae4fe6487d0952875901f5000f9",
+          "previousResponseId": "resp_06bf55714bc3c9c4016ac06a637ae087d0ae5a39ce7957f9f9",
+          "inputCount": 2,
+          "prewarm": false,
+          "source": {
+            "request": {
+              "file": "request-log-parts-websocket-timeline-3085549980/request-1470667235.tmp",
+              "line": 3,
+              "timestamp": "2026-10-03T10:39:32.7745256+08:00"
+            },
+            "completed": {
+              "file": "request-log-parts-websocket-timeline-3085549980/request-1470667235.tmp",
+              "line": 339,
+              "timestamp": "2026-10-03T10:39:35.4725423+08:00"
+            },
+            "upstream": {
+              "file": "request-log-parts-api-websocket-timeline-1731919760/part-4205926923.tmp",
+              "line": 19,
+              "timestamp": "2026-10-03T10:39:32.7758088+08:00"
+            }
+          }
+        },
+        {
+          "id": "01-request",
+          "requestFile": "evidence/desktop-lab/background-return/01-request.request.json",
+          "responseFile": "evidence/desktop-lab/background-return/01-request.response.json",
+          "eventsFile": "evidence/desktop-lab/background-return/01-request.events.json",
+          "upstreamFile": "evidence/desktop-lab/background-return/01-request.upstream.json",
+          "outputItemsFile": "evidence/desktop-lab/background-return/01-request.output-items.json",
+          "requestTimestamp": "2026-10-03T10:39:47.3345489+08:00",
+          "responseId": "resp_06bf55714bc3c9c4016ac06af36d0c87d0a440ac6a98be8765",
+          "previousResponseId": "resp_06bf55714bc3c9c4016ac06ae4fe6487d0952875901f5000f9",
+          "inputCount": 1,
+          "prewarm": false,
+          "source": {
+            "request": {
+              "file": "request-log-parts-websocket-timeline-3085549980/request-3807355767.tmp",
+              "line": 3,
+              "timestamp": "2026-10-03T10:39:47.3345489+08:00"
+            },
+            "completed": {
+              "file": "request-log-parts-websocket-timeline-3085549980/request-3807355767.tmp",
+              "line": 155,
+              "timestamp": "2026-10-03T10:39:49.4383365+08:00"
+            },
+            "upstream": {
+              "file": "request-log-parts-api-websocket-timeline-1731919760/part-1177759131.tmp",
+              "line": 19,
+              "timestamp": "2026-10-03T10:39:47.3355748+08:00"
+            }
+          }
+        },
+        {
+          "id": "02-request",
+          "requestFile": "evidence/desktop-lab/background-return/02-request.request.json",
+          "responseFile": "evidence/desktop-lab/background-return/02-request.response.json",
+          "eventsFile": "evidence/desktop-lab/background-return/02-request.events.json",
+          "upstreamFile": "evidence/desktop-lab/background-return/02-request.upstream.json",
+          "outputItemsFile": "evidence/desktop-lab/background-return/02-request.output-items.json",
+          "requestTimestamp": "2026-10-03T10:39:52.4569357+08:00",
+          "responseId": "resp_06bf55714bc3c9c4016ac06af88a0887d08ef29f9e93ab62e2",
+          "previousResponseId": "resp_06bf55714bc3c9c4016ac06af36d0c87d0a440ac6a98be8765",
+          "inputCount": 1,
+          "prewarm": false,
+          "source": {
+            "request": {
+              "file": "request-log-parts-websocket-timeline-3085549980/request-2926257763.tmp",
+              "line": 3,
+              "timestamp": "2026-10-03T10:39:52.4569357+08:00"
+            },
+            "completed": {
+              "file": "request-log-parts-websocket-timeline-3085549980/request-2926257763.tmp",
+              "line": 155,
+              "timestamp": "2026-10-03T10:39:54.2363503+08:00"
+            },
+            "upstream": {
+              "file": "request-log-parts-api-websocket-timeline-1731919760/part-620056135.tmp",
+              "line": 19,
+              "timestamp": "2026-10-03T10:39:52.4574894+08:00"
+            }
+          }
+        },
+        {
+          "id": "03-request",
+          "requestFile": "evidence/desktop-lab/background-return/03-request.request.json",
+          "responseFile": "evidence/desktop-lab/background-return/03-request.response.json",
+          "eventsFile": "evidence/desktop-lab/background-return/03-request.events.json",
+          "upstreamFile": "evidence/desktop-lab/background-return/03-request.upstream.json",
+          "outputItemsFile": "evidence/desktop-lab/background-return/03-request.output-items.json",
+          "requestTimestamp": "2026-10-03T10:39:59.303878+08:00",
+          "responseId": "resp_06bf55714bc3c9c4016ac06aff687487d0a1e5c1094b149eb3",
+          "previousResponseId": "resp_06bf55714bc3c9c4016ac06af88a0887d08ef29f9e93ab62e2",
+          "inputCount": 1,
+          "prewarm": false,
+          "source": {
+            "request": {
+              "file": "request-log-parts-websocket-timeline-3085549980/request-2148483860.tmp",
+              "line": 3,
+              "timestamp": "2026-10-03T10:39:59.303878+08:00"
+            },
+            "completed": {
+              "file": "request-log-parts-websocket-timeline-3085549980/request-2148483860.tmp",
+              "line": 155,
+              "timestamp": "2026-10-03T10:40:01.2948779+08:00"
+            },
+            "upstream": {
+              "file": "request-log-parts-api-websocket-timeline-1731919760/part-953762840.tmp",
+              "line": 19,
+              "timestamp": "2026-10-03T10:39:59.3050173+08:00"
+            }
+          }
+        },
+        {
+          "id": "04-request",
+          "requestFile": "evidence/desktop-lab/background-return/04-request.request.json",
+          "responseFile": "evidence/desktop-lab/background-return/04-request.response.json",
+          "eventsFile": "evidence/desktop-lab/background-return/04-request.events.json",
+          "upstreamFile": "evidence/desktop-lab/background-return/04-request.upstream.json",
+          "outputItemsFile": "evidence/desktop-lab/background-return/04-request.output-items.json",
+          "requestTimestamp": "2026-10-03T10:40:06.2221864+08:00",
+          "responseId": "resp_06bf55714bc3c9c4016ac06b06590c87d09a82f1911cc846e7",
+          "previousResponseId": "resp_06bf55714bc3c9c4016ac06aff687487d0a1e5c1094b149eb3",
+          "inputCount": 1,
+          "prewarm": false,
+          "source": {
+            "request": {
+              "file": "request-log-parts-websocket-timeline-3085549980/request-1286010582.tmp",
+              "line": 3,
+              "timestamp": "2026-10-03T10:40:06.2221864+08:00"
+            },
+            "completed": {
+              "file": "request-log-parts-websocket-timeline-3085549980/request-1286010582.tmp",
+              "line": 163,
+              "timestamp": "2026-10-03T10:40:08.4821426+08:00"
+            },
+            "upstream": {
+              "file": "request-log-parts-api-websocket-timeline-1731919760/part-2332241270.tmp",
+              "line": 19,
+              "timestamp": "2026-10-03T10:40:06.2232445+08:00"
+            }
+          }
+        },
+        {
+          "id": "05-request",
+          "requestFile": "evidence/desktop-lab/background-return/05-request.request.json",
+          "responseFile": "evidence/desktop-lab/background-return/05-request.response.json",
+          "eventsFile": "evidence/desktop-lab/background-return/05-request.events.json",
+          "upstreamFile": "evidence/desktop-lab/background-return/05-request.upstream.json",
+          "outputItemsFile": "evidence/desktop-lab/background-return/05-request.output-items.json",
+          "requestTimestamp": "2026-10-03T10:40:13.2871852+08:00",
+          "responseId": "resp_06bf55714bc3c9c4016ac06b0d7e3487d0b0943ebada4da396",
+          "previousResponseId": "resp_06bf55714bc3c9c4016ac06b06590c87d09a82f1911cc846e7",
+          "inputCount": 1,
+          "prewarm": false,
+          "source": {
+            "request": {
+              "file": "request-log-parts-websocket-timeline-3085549980/request-1300551204.tmp",
+              "line": 3,
+              "timestamp": "2026-10-03T10:40:13.2871852+08:00"
+            },
+            "completed": {
+              "file": "request-log-parts-websocket-timeline-3085549980/request-1300551204.tmp",
+              "line": 811,
+              "timestamp": "2026-10-03T10:40:17.8603976+08:00"
+            },
+            "upstream": {
+              "file": "request-log-parts-api-websocket-timeline-1731919760/part-961732293.tmp",
+              "line": 19,
+              "timestamp": "2026-10-03T10:40:13.2877842+08:00"
+            }
+          }
+        }
+      ],
+      "notes": [
+        "Matched exact response event ids against rollout token_usage_record.response_id; text mentions are not matches.",
+        "response.json preserves the recorded response.completed event. Its output may be empty; output-items.json is a separately labelled derivation.",
+        "Only JSON request bodies and response.* events are exported. HTTP headers and transport header events are omitted.",
+        "Counts exclude prewarm stages. Token usage is the sum of formal model responses, not unique context size.",
+        "命令只启动一次，session_id=48726；读取README的原生命令时间落在延迟脚本运行区间内。",
+        "后台进程与脚本均为教学实验；未测试应用关闭或定时调度。"
+      ],
+      "sanitization": {
+        "mode": "structure-preserving-redaction",
+        "replacements": [
+          "Windows user home → <USER_HOME>",
+          "Credential values, encrypted content, installation and safety ids → <REDACTED>"
+        ],
+        "changedPathCount": 428
+      },
+      "rolloutSource": "<USER_HOME>/.codex/sessions/2026/10/03/rollout-2026-10-03T10-31-37-01a0ff9a-4c81-7900-b401-e149f5ef7cbe.jsonl",
+      "collectedAt": "2026-10-03T02:42:46.875Z",
+      "submission": {
+        "method": "computer-use-desktop-composer",
+        "turnTrigger": "composer",
+        "submittedPrompt": "进行后台任务与结果回收实验。请用现有命令工具启动 node lab/background-delay.mjs，只启动一次，并让工具尽快返回运行中的会话或进程句柄（可设置较短 yield_time_ms）；不要使用 Start-Process、另外打开终端或脱离工具管理。确认脚本仍在运行后，先用另一次工具调用读取 README.md 的前12行，再使用刚才的句柄回收延迟脚本的最终输出和退出码。脚本尚未完成时不要当作成功，也不要重复启动。最后按实际顺序报告启动时输出、读取文件发生的时机、回收结果和退出码。不要修改文件。\n"
+      },
+      "auditFile": "evidence/desktop-lab/background-return/audit.json",
+      "rolloutEventsFile": "evidence/desktop-lab/background-return/rollout-events.json",
+      "hookEventsFile": "evidence/desktop-lab/background-return/hook-events.json",
+      "fileObservationsFile": "evidence/desktop-lab/background-return/file-observations.json",
+      "manifestFile": "evidence/desktop-lab/background-return/manifest.json"
+    },
+    {
+      "id": "hook-a-baseline",
+      "title": "Hook baseline",
+      "threadId": "01a0ff67-dd10-7311-a63e-0d81f648bee1",
+      "turnIds": [
+        "01a0ff67-e202-7782-97c4-76cdb6d19ef3"
+      ],
+      "prompt": "",
+      "reply": "不知道。",
+      "stats": {
+        "requests": 1,
+        "toolCalls": 0,
+        "inputTokens": 35773,
+        "outputTokens": 6,
+        "prewarms": 0
+      },
+      "stages": [
+        {
+          "id": "00-request",
+          "requestFile": "evidence/desktop-lab/hook-a-baseline/00-request.request.json",
+          "responseFile": "evidence/desktop-lab/hook-a-baseline/00-request.response.json",
+          "eventsFile": "evidence/desktop-lab/hook-a-baseline/00-request.events.json",
+          "upstreamFile": "evidence/desktop-lab/hook-a-baseline/00-request.upstream.json",
+          "outputItemsFile": "evidence/desktop-lab/hook-a-baseline/00-request.output-items.json",
+          "requestTimestamp": "2026-10-03T09:36:38.0242669+08:00",
+          "responseId": "resp_04fdf1619efbd6d7016ac05c26516c87d09cea62f0a7110681",
+          "previousResponseId": null,
+          "inputCount": 8,
+          "prewarm": false,
+          "source": {
+            "request": {
+              "file": "request-log-parts-websocket-timeline-132098263/request-4194940267.tmp",
+              "line": 3,
+              "timestamp": "2026-10-03T09:36:38.0242669+08:00"
+            },
+            "completed": {
+              "file": "request-log-parts-websocket-timeline-132098263/request-4194940267.tmp",
+              "line": 55,
+              "timestamp": "2026-10-03T09:36:40.7987757+08:00"
+            },
+            "upstream": {
+              "file": "request-log-parts-api-websocket-timeline-167356586/part-1873856837.tmp",
+              "line": 19,
+              "timestamp": "2026-10-03T09:36:38.0531254+08:00"
+            }
+          }
+        }
+      ],
+      "notes": [
+        "Matched exact response event ids against rollout token_usage_record.response_id; text mentions are not matches.",
+        "response.json preserves the recorded response.completed event. Its output may be empty; output-items.json is a separately labelled derivation.",
+        "Only JSON request bodies and response.* events are exported. HTTP headers and transport header events are omitted.",
+        "Counts exclude prewarm stages. Token usage is the sum of formal model responses, not unique context size.",
+        "2026-10-03 复核：原临时分片已合并；audit.json 记录现存合并日志及行号，并核对两侧请求与完成事件。",
+        "通过 create_thread 工具提交；不能作为普通输入框提交的 Hook 信任对照。",
+        "原始 rollout 当前未找到；本次复核以原始 CPA、既有导出和相关 Hook 本地事件为依据。"
+      ],
+      "sanitization": {
+        "mode": "structure-preserving-redaction",
+        "replacements": [
+          "Windows user home → <USER_HOME>",
+          "Credential values, encrypted content, installation and safety ids → <REDACTED>"
+        ],
+        "changedPathCount": 14
+      },
+      "rolloutSource": "<USER_HOME>/.codex/sessions/2026/10/03/rollout-2026-10-03T09-36-32-01a0ff67-dd10-7311-a63e-0d81f648bee1.jsonl",
+      "collectedAt": "2026-10-03T01:39:17.515Z",
+      "submission": {
+        "method": "codex-app-create-thread",
+        "turnTrigger": "app_tool_create_thread",
+        "submittedPrompt": "本轮实验编号是什么？只根据已有上下文回答，不要读取文件或调用工具；没有就说“不知道”。",
+        "promptField": "input[7].output (<codex_delegation><input>)",
+        "note": "通过 create_thread 工具提交；不能作为普通输入框提交的 Hook 信任对照。"
+      },
+      "auditFile": "evidence/desktop-lab/hook-a-baseline/audit.json",
+      "manifestFile": "evidence/desktop-lab/hook-a-baseline/manifest.json"
+    },
+    {
+      "id": "hook-b-untrusted",
+      "title": "Hook untrusted control",
+      "threadId": "01a0ff68-6cfc-7f13-a4d1-b78dbf96d738",
+      "turnIds": [
+        "01a0ff68-703c-7411-a89d-0d5d44766c49"
+      ],
+      "prompt": "",
+      "reply": "不知道。",
+      "stats": {
+        "requests": 1,
+        "toolCalls": 0,
+        "inputTokens": 35783,
+        "outputTokens": 19,
+        "prewarms": 0
+      },
+      "stages": [
+        {
+          "id": "00-request",
+          "requestFile": "evidence/desktop-lab/hook-b-untrusted/00-request.request.json",
+          "responseFile": "evidence/desktop-lab/hook-b-untrusted/00-request.response.json",
+          "eventsFile": "evidence/desktop-lab/hook-b-untrusted/00-request.events.json",
+          "upstreamFile": "evidence/desktop-lab/hook-b-untrusted/00-request.upstream.json",
+          "outputItemsFile": "evidence/desktop-lab/hook-b-untrusted/00-request.output-items.json",
+          "requestTimestamp": "2026-10-03T09:37:14.1685435+08:00",
+          "responseId": "resp_06d193dac6c9cb59016ac05c4b553487d0b8c6ae8759fb6306",
+          "previousResponseId": null,
+          "inputCount": 8,
+          "prewarm": false,
+          "source": {
+            "request": {
+              "file": "request-log-parts-websocket-timeline-492735331/request-4197836059.tmp",
+              "line": 3,
+              "timestamp": "2026-10-03T09:37:14.1685435+08:00"
+            },
+            "completed": {
+              "file": "request-log-parts-websocket-timeline-492735331/request-4197836059.tmp",
+              "line": 79,
+              "timestamp": "2026-10-03T09:37:18.6355306+08:00"
+            },
+            "upstream": {
+              "file": "request-log-parts-api-websocket-timeline-384887639/part-407503017.tmp",
+              "line": 19,
+              "timestamp": "2026-10-03T09:37:14.2433953+08:00"
+            }
+          }
+        }
+      ],
+      "notes": [
+        "Matched exact response event ids against rollout token_usage_record.response_id; text mentions are not matches.",
+        "response.json preserves the recorded response.completed event. Its output may be empty; output-items.json is a separately labelled derivation.",
+        "Only JSON request bodies and response.* events are exported. HTTP headers and transport header events are omitted.",
+        "Counts exclude prewarm stages. Token usage is the sum of formal model responses, not unique context size.",
+        "2026-10-03 复核：原临时分片已合并；audit.json 记录现存合并日志及行号，并核对两侧请求与完成事件。",
+        "通过 create_thread 工具提交；不能作为普通输入框提交的 Hook 信任对照。",
+        "原始 rollout 当前未找到；本次复核以原始 CPA、既有导出和相关 Hook 本地事件为依据。"
+      ],
+      "sanitization": {
+        "mode": "structure-preserving-redaction",
+        "replacements": [
+          "Windows user home → <USER_HOME>",
+          "Credential values, encrypted content, installation and safety ids → <REDACTED>"
+        ],
+        "changedPathCount": 18
+      },
+      "rolloutSource": "<USER_HOME>/.codex/sessions/2026/10/03/rollout-2026-10-03T09-37-08-01a0ff68-6cfc-7f13-a4d1-b78dbf96d738.jsonl",
+      "collectedAt": "2026-10-03T01:39:19.115Z",
+      "submission": {
+        "method": "codex-app-create-thread",
+        "turnTrigger": "app_tool_create_thread",
+        "submittedPrompt": "本轮实验编号是什么？只根据已有上下文回答，不要读取文件或调用工具；没有就说“不知道”。",
+        "promptField": "input[7].output (<codex_delegation><input>)",
+        "note": "通过 create_thread 工具提交；不能作为普通输入框提交的 Hook 信任对照。"
+      },
+      "auditFile": "evidence/desktop-lab/hook-b-untrusted/audit.json",
+      "manifestFile": "evidence/desktop-lab/hook-b-untrusted/manifest.json"
+    },
+    {
+      "id": "hook-c-tool-origin",
+      "title": "Trusted hook tool-origin control",
+      "threadId": "01a0ff6f-01f4-70e0-992f-06c9a7b5fec0",
+      "turnIds": [
+        "01a0ff6f-0519-7530-b157-2b29e1fcea16"
+      ],
+      "prompt": "",
+      "reply": "不知道。",
+      "stats": {
+        "requests": 1,
+        "toolCalls": 0,
+        "inputTokens": 35786,
+        "outputTokens": 20,
+        "prewarms": 0
+      },
+      "stages": [
+        {
+          "id": "00-request",
+          "requestFile": "evidence/desktop-lab/hook-c-tool-origin/00-request.request.json",
+          "responseFile": "evidence/desktop-lab/hook-c-tool-origin/00-request.response.json",
+          "eventsFile": "evidence/desktop-lab/hook-c-tool-origin/00-request.events.json",
+          "upstreamFile": "evidence/desktop-lab/hook-c-tool-origin/00-request.upstream.json",
+          "outputItemsFile": "evidence/desktop-lab/hook-c-tool-origin/00-request.output-items.json",
+          "requestTimestamp": "2026-10-03T09:44:24.1368971+08:00",
+          "responseId": "resp_092b822b0796fc55016ac05df8464087d0a7d65a72b0c83530",
+          "previousResponseId": null,
+          "inputCount": 8,
+          "prewarm": false,
+          "source": {
+            "request": {
+              "file": "request-log-parts-websocket-timeline-546661417/request-623373904.tmp",
+              "line": 3,
+              "timestamp": "2026-10-03T09:44:24.1368971+08:00"
+            },
+            "completed": {
+              "file": "request-log-parts-websocket-timeline-546661417/request-623373904.tmp",
+              "line": 79,
+              "timestamp": "2026-10-03T09:44:29.7587006+08:00"
+            },
+            "upstream": {
+              "file": "request-log-parts-api-websocket-timeline-1694373794/part-1277431306.tmp",
+              "line": 19,
+              "timestamp": "2026-10-03T09:44:24.1470358+08:00"
+            }
+          }
+        }
+      ],
+      "notes": [
+        "Matched exact response event ids against rollout token_usage_record.response_id; text mentions are not matches.",
+        "response.json preserves the recorded response.completed event. Its output may be empty; output-items.json is a separately labelled derivation.",
+        "Only JSON request bodies and response.* events are exported. HTTP headers and transport header events are omitted.",
+        "Counts exclude prewarm stages. Token usage is the sum of formal model responses, not unique context size.",
+        "2026-10-03 复核：原临时分片已合并；audit.json 记录现存合并日志及行号，并核对两侧请求与完成事件。",
+        "通过 create_thread 工具提交；不能作为普通输入框提交的 Hook 信任对照。",
+        "原始 rollout 当前未找到；本次复核以原始 CPA、既有导出和相关 Hook 本地事件为依据。"
+      ],
+      "sanitization": {
+        "mode": "structure-preserving-redaction",
+        "replacements": [
+          "Windows user home → <USER_HOME>",
+          "Credential values, encrypted content, installation and safety ids → <REDACTED>"
+        ],
+        "changedPathCount": 18
+      },
+      "rolloutSource": "<USER_HOME>/.codex/sessions/2026/10/03/rollout-2026-10-03T09-44-20-01a0ff6f-01f4-70e0-992f-06c9a7b5fec0.jsonl",
+      "collectedAt": "2026-10-03T01:45:55.622Z",
+      "submission": {
+        "method": "codex-app-create-thread",
+        "turnTrigger": "app_tool_create_thread",
+        "submittedPrompt": "本轮实验编号是什么？只根据已有上下文回答，不要读取文件或调用工具；没有就说“不知道”。",
+        "promptField": "input[7].output (<codex_delegation><input>)",
+        "note": "通过 create_thread 工具提交；不能作为普通输入框提交的 Hook 信任对照。"
+      },
+      "auditFile": "evidence/desktop-lab/hook-c-tool-origin/audit.json",
+      "manifestFile": "evidence/desktop-lab/hook-c-tool-origin/manifest.json"
+    },
+    {
+      "id": "hook-c-trusted-ui",
+      "title": "Trusted hook via Desktop input",
+      "threadId": "01a0ff6f-01f4-70e0-992f-06c9a7b5fec0",
+      "turnIds": [
+        "01a0ff70-20b3-7631-94d1-c5accb78af61"
+      ],
+      "prompt": "本轮实验编号是什么？只根据已有上下文回答，不要读取文件或调用工具；没有就说“不知道”。\n",
+      "reply": "HOOK-5467aee6-40de-4432-8f83-93ed1bc73794",
+      "stats": {
+        "requests": 1,
+        "toolCalls": 0,
+        "inputTokens": 36017,
+        "outputTokens": 28,
+        "prewarms": 0
+      },
+      "stages": [
+        {
+          "id": "00-request",
+          "requestFile": "evidence/desktop-lab/hook-c-trusted-ui/00-request.request.json",
+          "responseFile": "evidence/desktop-lab/hook-c-trusted-ui/00-request.response.json",
+          "eventsFile": "evidence/desktop-lab/hook-c-trusted-ui/00-request.events.json",
+          "upstreamFile": "evidence/desktop-lab/hook-c-trusted-ui/00-request.upstream.json",
+          "outputItemsFile": "evidence/desktop-lab/hook-c-trusted-ui/00-request.output-items.json",
+          "requestTimestamp": "2026-10-03T09:45:36.91114+08:00",
+          "responseId": "resp_092b822b0796fc55016ac05e40c1c487d0921006f007cadada",
+          "previousResponseId": "resp_092b822b0796fc55016ac05df8464087d0a7d65a72b0c83530",
+          "inputCount": 4,
+          "prewarm": false,
+          "source": {
+            "request": {
+              "file": "request-log-parts-websocket-timeline-546661417/request-173139741.tmp",
+              "line": 3,
+              "timestamp": "2026-10-03T09:45:36.91114+08:00"
+            },
+            "completed": {
+              "file": "request-log-parts-websocket-timeline-546661417/request-173139741.tmp",
+              "line": 143,
+              "timestamp": "2026-10-03T09:45:38.5242109+08:00"
+            },
+            "upstream": {
+              "file": "request-log-parts-api-websocket-timeline-1694373794/part-1393194157.tmp",
+              "line": 19,
+              "timestamp": "2026-10-03T09:45:36.9127329+08:00"
+            }
+          }
+        }
+      ],
+      "notes": [
+        "Matched exact response event ids against rollout token_usage_record.response_id; text mentions are not matches.",
+        "response.json preserves the recorded response.completed event. Its output may be empty; output-items.json is a separately labelled derivation.",
+        "Only JSON request bodies and response.* events are exported. HTTP headers and transport header events are omitted.",
+        "Counts exclude prewarm stages. Token usage is the sum of formal model responses, not unique context size.",
+        "2026-10-03 复核：原临时分片已合并；audit.json 记录现存合并日志及行号，并核对两侧请求与完成事件。",
+        "通过 Computer Use 在真实 Desktop 输入框提交；这是同一任务的第二轮。",
+        "原始 rollout 当前未找到；本次复核以原始 CPA、既有导出和相关 Hook 本地事件为依据。"
+      ],
+      "sanitization": {
+        "mode": "structure-preserving-redaction",
+        "replacements": [
+          "Windows user home → <USER_HOME>",
+          "Credential values, encrypted content, installation and safety ids → <REDACTED>"
+        ],
+        "changedPathCount": 32
+      },
+      "rolloutSource": "<USER_HOME>/.codex/sessions/2026/10/03/rollout-2026-10-03T09-44-20-01a0ff6f-01f4-70e0-992f-06c9a7b5fec0.jsonl",
+      "collectedAt": "2026-10-03T01:45:54.589Z",
+      "submission": {
+        "method": "computer-use-desktop-composer",
+        "turnTrigger": "composer",
+        "submittedPrompt": "本轮实验编号是什么？只根据已有上下文回答，不要读取文件或调用工具；没有就说“不知道”。",
+        "promptField": "input[2].content[0].text",
+        "note": "通过 Computer Use 在真实 Desktop 输入框提交；这是同一任务的第二轮。"
+      },
+      "auditFile": "evidence/desktop-lab/hook-c-trusted-ui/audit.json",
+      "manifestFile": "evidence/desktop-lab/hook-c-trusted-ui/manifest.json"
+    },
+    {
+      "id": "hook-marker-repeat",
+      "title": "输入框编号注入复核",
+      "threadId": "01a0ff9a-4c81-7900-b401-e149f5ef7cbe",
+      "turnIds": [
+        "01a0ff9a-715a-7eb0-95cf-c1a77e566b83"
+      ],
+      "prompt": "本轮实验编号是什么？只根据已有上下文回答，不要读取文件或调用工具；没有就说“不知道”。\n",
+      "reply": "HOOK-43141e17-ca46-4b06-8ba6-9b07205aa94d",
+      "stats": {
+        "requests": 1,
+        "toolCalls": 0,
+        "inputTokens": 35900,
+        "outputTokens": 28,
+        "prewarms": 0
+      },
+      "stages": [
+        {
+          "id": "00-request",
+          "requestFile": "evidence/desktop-lab/hook-marker-repeat/00-request.request.json",
+          "responseFile": "evidence/desktop-lab/hook-marker-repeat/00-request.response.json",
+          "eventsFile": "evidence/desktop-lab/hook-marker-repeat/00-request.events.json",
+          "upstreamFile": "evidence/desktop-lab/hook-marker-repeat/00-request.upstream.json",
+          "outputItemsFile": "evidence/desktop-lab/hook-marker-repeat/00-request.output-items.json",
+          "requestTimestamp": "2026-10-03T10:31:48.8331228+08:00",
+          "responseId": "resp_06bf55714bc3c9c4016ac0691520bc87d0b958a6b36cbd73be",
+          "previousResponseId": null,
+          "inputCount": 11,
+          "prewarm": false,
+          "source": {
+            "request": {
+              "file": "request-log-parts-websocket-timeline-3085549980/request-1563589592.tmp",
+              "line": 3,
+              "timestamp": "2026-10-03T10:31:48.8331228+08:00"
+            },
+            "completed": {
+              "file": "request-log-parts-websocket-timeline-3085549980/request-1563589592.tmp",
+              "line": 143,
+              "timestamp": "2026-10-03T10:31:51.2160263+08:00"
+            },
+            "upstream": {
+              "file": "request-log-parts-api-websocket-timeline-1731919760/part-411459921.tmp",
+              "line": 19,
+              "timestamp": "2026-10-03T10:31:48.8421287+08:00"
+            }
+          }
+        }
+      ],
+      "notes": [
+        "Matched exact response event ids against rollout token_usage_record.response_id; text mentions are not matches.",
+        "response.json preserves the recorded response.completed event. Its output may be empty; output-items.json is a separately labelled derivation.",
+        "Only JSON request bodies and response.* events are exported. HTTP headers and transport header events are omitted.",
+        "Counts exclude prewarm stages. Token usage is the sum of formal model responses, not unique context size.",
+        "2026-10-03 新建真实 Desktop 任务，经 Computer Use 输入框提交；本轮重新采集以取得可见会话截图，原编号实验仍保留。"
+      ],
+      "sanitization": {
+        "mode": "structure-preserving-redaction",
+        "replacements": [
+          "Windows user home → <USER_HOME>",
+          "Credential values, encrypted content, installation and safety ids → <REDACTED>"
+        ],
+        "changedPathCount": 36
+      },
+      "rolloutSource": "<USER_HOME>/.codex/sessions/2026/10/03/rollout-2026-10-03T10-31-37-01a0ff9a-4c81-7900-b401-e149f5ef7cbe.jsonl",
+      "collectedAt": "2026-10-03T02:32:11.862Z",
+      "submission": {
+        "method": "computer-use-desktop-composer",
+        "turnTrigger": "composer",
+        "threadSource": "user",
+        "submittedPrompt": "本轮实验编号是什么？只根据已有上下文回答，不要读取文件或调用工具；没有就说“不知道”。\n"
+      },
+      "auditFile": "evidence/desktop-lab/hook-marker-repeat/audit.json",
+      "rolloutEventsFile": "evidence/desktop-lab/hook-marker-repeat/rollout-events.json",
+      "hookEventsFile": "evidence/desktop-lab/hook-marker-repeat/hook-events.json",
+      "manifestFile": "evidence/desktop-lab/hook-marker-repeat/manifest.json"
+    },
+    {
+      "id": "hook-post-tool",
+      "title": "PostToolUse 观察通过与失败测试",
+      "threadId": "01a0ff9a-4c81-7900-b401-e149f5ef7cbe",
+      "turnIds": [
+        "01a0ff9f-6a99-7c42-b071-803a254205be"
+      ],
+      "prompt": "进行 PostToolUse 结果观察实验。请分别实际运行 node --test .codex/hook-lab/pass.test.mjs 和 node --test .codex/hook-lab/fail.test.mjs，每个命令独立调用一次，不把它们合并成一条命令。后者是故意失败的对照，失败后不要修复、重试或修改任何文件。最终分别报告两条命令的实际退出码、通过与失败数量，以及原始断言错误。不要读取或修改 Hook 日志与配置；那些由实验记录方另行核对。\n",
+      "reply": "两条命令已各自独立运行一次：\n\n| 命令 | 实际退出码 | 通过 | 失败 |\n|---|---:|---:|---:|\n| `node --test .codex/hook-lab/pass.test.mjs` | 0 | 1 | 0 |\n| `node --test .codex/hook-lab/fail.test.mjs` | 1 | 0 | 1 |\n\n第一条无断言错误。第二条原始断言错误：\n\n```text\nAssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n13 !== 30\n\n    at TestContext.<anonymous> (file:///E:/Develop/github/codex-ts-demo/.codex/hook-lab/fail.test.mjs:4:47)\n    at Test.runInAsyncScope (node:async_hooks:228:14)\n    at Test.run (node:internal/test_runner/test:1118:25)\n    at Test.start (node:internal/test_runner/test:1015:17)\n    at startSubtestAfterBootstrap (node:internal/test_runner/harness:358:17) {\n  generatedMessage: true,\n  code: 'ERR_ASSERTION',\n  actual: 13,\n  expected: 30,\n  operator: 'strictEqual',\n  diff: 'simple'\n}\n```\n\n未修复、重试或修改任何文件，未读取 Hook 日志与配置。",
+      "stats": {
+        "requests": 3,
+        "toolCalls": 2,
+        "inputTokens": 112682,
+        "outputTokens": 432,
+        "prewarms": 0
+      },
+      "stages": [
+        {
+          "id": "00-request",
+          "requestFile": "evidence/desktop-lab/hook-post-tool/00-request.request.json",
+          "responseFile": "evidence/desktop-lab/hook-post-tool/00-request.response.json",
+          "eventsFile": "evidence/desktop-lab/hook-post-tool/00-request.events.json",
+          "upstreamFile": "evidence/desktop-lab/hook-post-tool/00-request.upstream.json",
+          "outputItemsFile": "evidence/desktop-lab/hook-post-tool/00-request.output-items.json",
+          "requestTimestamp": "2026-10-03T10:37:13.5519259+08:00",
+          "responseId": "resp_06bf55714bc3c9c4016ac06a59a2f887d08c32c987c897fad7",
+          "previousResponseId": "resp_06bf55714bc3c9c4016ac069b973e487d0b179c938c6a4452b",
+          "inputCount": 2,
+          "prewarm": false,
+          "source": {
+            "request": {
+              "file": "request-log-parts-websocket-timeline-3085549980/request-1300104824.tmp",
+              "line": 3,
+              "timestamp": "2026-10-03T10:37:13.5519259+08:00"
+            },
+            "completed": {
+              "file": "request-log-parts-websocket-timeline-3085549980/request-1300104824.tmp",
+              "line": 335,
+              "timestamp": "2026-10-03T10:37:16.1925939+08:00"
+            },
+            "upstream": {
+              "file": "request-log-parts-api-websocket-timeline-1731919760/part-771354996.tmp",
+              "line": 19,
+              "timestamp": "2026-10-03T10:37:13.553063+08:00"
+            }
+          }
+        },
+        {
+          "id": "01-request",
+          "requestFile": "evidence/desktop-lab/hook-post-tool/01-request.request.json",
+          "responseFile": "evidence/desktop-lab/hook-post-tool/01-request.response.json",
+          "eventsFile": "evidence/desktop-lab/hook-post-tool/01-request.events.json",
+          "upstreamFile": "evidence/desktop-lab/hook-post-tool/01-request.upstream.json",
+          "outputItemsFile": "evidence/desktop-lab/hook-post-tool/01-request.output-items.json",
+          "requestTimestamp": "2026-10-03T10:37:18.8992748+08:00",
+          "responseId": "resp_06bf55714bc3c9c4016ac06a5f131c87d0b454b53be99cf3b6",
+          "previousResponseId": "resp_06bf55714bc3c9c4016ac06a59a2f887d08c32c987c897fad7",
+          "inputCount": 1,
+          "prewarm": false,
+          "source": {
+            "request": {
+              "file": "request-log-parts-websocket-timeline-3085549980/request-4291620283.tmp",
+              "line": 3,
+              "timestamp": "2026-10-03T10:37:18.8992748+08:00"
+            },
+            "completed": {
+              "file": "request-log-parts-websocket-timeline-3085549980/request-4291620283.tmp",
+              "line": 163,
+              "timestamp": "2026-10-03T10:37:20.7351859+08:00"
+            },
+            "upstream": {
+              "file": "request-log-parts-api-websocket-timeline-1731919760/part-206463362.tmp",
+              "line": 19,
+              "timestamp": "2026-10-03T10:37:18.8998166+08:00"
+            }
+          }
+        },
+        {
+          "id": "02-request",
+          "requestFile": "evidence/desktop-lab/hook-post-tool/02-request.request.json",
+          "responseFile": "evidence/desktop-lab/hook-post-tool/02-request.response.json",
+          "eventsFile": "evidence/desktop-lab/hook-post-tool/02-request.events.json",
+          "upstreamFile": "evidence/desktop-lab/hook-post-tool/02-request.upstream.json",
+          "outputItemsFile": "evidence/desktop-lab/hook-post-tool/02-request.output-items.json",
+          "requestTimestamp": "2026-10-03T10:37:23.4074516+08:00",
+          "responseId": "resp_06bf55714bc3c9c4016ac06a637ae087d0ae5a39ce7957f9f9",
+          "previousResponseId": "resp_06bf55714bc3c9c4016ac06a5f131c87d0b454b53be99cf3b6",
+          "inputCount": 1,
+          "prewarm": false,
+          "source": {
+            "request": {
+              "file": "request-log-parts-websocket-timeline-3085549980/request-772925992.tmp",
+              "line": 3,
+              "timestamp": "2026-10-03T10:37:23.4074516+08:00"
+            },
+            "completed": {
+              "file": "request-log-parts-websocket-timeline-3085549980/request-772925992.tmp",
+              "line": 1247,
+              "timestamp": "2026-10-03T10:37:30.4782053+08:00"
+            },
+            "upstream": {
+              "file": "request-log-parts-api-websocket-timeline-1731919760/part-3770011943.tmp",
+              "line": 19,
+              "timestamp": "2026-10-03T10:37:23.408525+08:00"
+            }
+          }
+        }
+      ],
+      "notes": [
+        "Matched exact response event ids against rollout token_usage_record.response_id; text mentions are not matches.",
+        "response.json preserves the recorded response.completed event. Its output may be empty; output-items.json is a separately labelled derivation.",
+        "Only JSON request bodies and response.* events are exported. HTTP headers and transport header events are omitted.",
+        "Counts exclude prewarm stages. Token usage is the sum of formal model responses, not unique context size.",
+        "两条测试命令由 Desktop 分别真实执行一次；故意失败 fixture 保留未修复。",
+        "本地 Hook 只记录 stdout；退出码为 CPA 工具返回的 0/1，不在 Hook tool_response 字符串上虚构字段。"
+      ],
+      "sanitization": {
+        "mode": "structure-preserving-redaction",
+        "replacements": [
+          "Windows user home → <USER_HOME>",
+          "Credential values, encrypted content, installation and safety ids → <REDACTED>"
+        ],
+        "changedPathCount": 424
+      },
+      "rolloutSource": "<USER_HOME>/.codex/sessions/2026/10/03/rollout-2026-10-03T10-31-37-01a0ff9a-4c81-7900-b401-e149f5ef7cbe.jsonl",
+      "collectedAt": "2026-10-03T02:39:06.092Z",
+      "submission": {
+        "method": "computer-use-desktop-composer",
+        "turnTrigger": "composer",
+        "submittedPrompt": "进行 PostToolUse 结果观察实验。请分别实际运行 node --test .codex/hook-lab/pass.test.mjs 和 node --test .codex/hook-lab/fail.test.mjs，每个命令独立调用一次，不把它们合并成一条命令。后者是故意失败的对照，失败后不要修复、重试或修改任何文件。最终分别报告两条命令的实际退出码、通过与失败数量，以及原始断言错误。不要读取或修改 Hook 日志与配置；那些由实验记录方另行核对。\n"
+      },
+      "auditFile": "evidence/desktop-lab/hook-post-tool/audit.json",
+      "rolloutEventsFile": "evidence/desktop-lab/hook-post-tool/rollout-events.json",
+      "hookEventsFile": "evidence/desktop-lab/hook-post-tool/hook-events.json",
+      "fileObservationsFile": "evidence/desktop-lab/hook-post-tool/file-observations.json",
+      "manifestFile": "evidence/desktop-lab/hook-post-tool/manifest.json"
+    },
+    {
+      "id": "hook-pre-tool",
+      "title": "PreToolUse 拒绝补丁与允许文件对照",
+      "threadId": "01a0ff9a-4c81-7900-b401-e149f5ef7cbe",
+      "turnIds": [
+        "01a0ff9c-b0f9-7f73-a8b7-00b232d65a01"
+      ],
+      "prompt": "进行 PreToolUse 真实拦截实验。先读取 .codex/hook-lab/protected.txt 和 .codex/hook-lab/allowed.txt。只用 apply_patch，分两次独立调用：先尝试把 protected.txt 中的 ORIGINAL 改为 ATTEMPTED，一次即可；若 Hook 拒绝，保留原始拒绝信息，不重试、不换写入方法、不修改 Hook 或信任设置。随后对 allowed.txt 独立应用补丁，把 ORIGINAL 改为 ALLOWED-UPDATED，作为允许文件的对照。最后重新读取两个文件，分别报告调用是否被拒绝、实际内容和是否改变。若受保护文件没有按预期被拦截，立即报告并停止，不执行后续修改。不要修改其他文件或业务源码，也不要申请额外权限。\n",
+      "reply": "实验符合预期：`protected.txt` 被 Hook 拒绝，内容未改变；`allowed.txt` 未被拒绝，修改成功。已重新读取确认。\n\n| 文件 | 调用被拒绝 | 实际内容 | 是否改变 |\n|---|---|---|---|\n| `protected.txt` | 是 | `HOOK-LAB ORIGINAL: this file must remain unchanged during the deny experiment.` | 否 |\n| `allowed.txt` | 否 | `HOOK-LAB ALLOWED-UPDATED: this file is the allowed patch control.` | 是 |\n\n原始拒绝信息：\n\n```text\nCommand blocked by PreToolUse hook: HOOK-LAB: apply_patch may not change .codex/hook-lab/protected.txt. Report the denial; do not retry using another write method.. Command: *** Begin Patch\n*** Update File: E:/Develop/github/codex-ts-demo/.codex/hook-lab/protected.txt\n@@\n-HOOK-LAB ORIGINAL: this file must remain unchanged during the deny experiment.\n+HOOK-LAB ATTEMPTED: this file must remain unchanged during the deny experiment.\n*** End Patch\n```\n\n两次补丁均独立调用；未重试、未更换写入方法、未修改其他文件或设置、未申请额外权限。",
+      "stats": {
+        "requests": 5,
+        "toolCalls": 4,
+        "inputTokens": 182601,
+        "outputTokens": 602,
+        "prewarms": 0
+      },
+      "stages": [
+        {
+          "id": "00-request",
+          "requestFile": "evidence/desktop-lab/hook-pre-tool/00-request.request.json",
+          "responseFile": "evidence/desktop-lab/hook-pre-tool/00-request.response.json",
+          "eventsFile": "evidence/desktop-lab/hook-pre-tool/00-request.events.json",
+          "upstreamFile": "evidence/desktop-lab/hook-pre-tool/00-request.upstream.json",
+          "outputItemsFile": "evidence/desktop-lab/hook-pre-tool/00-request.output-items.json",
+          "requestTimestamp": "2026-10-03T10:34:15.0026267+08:00",
+          "responseId": "resp_06bf55714bc3c9c4016ac069a70f7887d088eeb09a40fe733b",
+          "previousResponseId": "resp_06bf55714bc3c9c4016ac0691520bc87d0b958a6b36cbd73be",
+          "inputCount": 2,
+          "prewarm": false,
+          "source": {
+            "request": {
+              "file": "request-log-parts-websocket-timeline-3085549980/request-1125960492.tmp",
+              "line": 3,
+              "timestamp": "2026-10-03T10:34:15.0026267+08:00"
+            },
+            "completed": {
+              "file": "request-log-parts-websocket-timeline-3085549980/request-1125960492.tmp",
+              "line": 379,
+              "timestamp": "2026-10-03T10:34:18.7253193+08:00"
+            },
+            "upstream": {
+              "file": "request-log-parts-api-websocket-timeline-1731919760/part-2393064596.tmp",
+              "line": 19,
+              "timestamp": "2026-10-03T10:34:15.0036736+08:00"
+            }
+          }
+        },
+        {
+          "id": "01-request",
+          "requestFile": "evidence/desktop-lab/hook-pre-tool/01-request.request.json",
+          "responseFile": "evidence/desktop-lab/hook-pre-tool/01-request.response.json",
+          "eventsFile": "evidence/desktop-lab/hook-pre-tool/01-request.events.json",
+          "upstreamFile": "evidence/desktop-lab/hook-pre-tool/01-request.upstream.json",
+          "outputItemsFile": "evidence/desktop-lab/hook-pre-tool/01-request.output-items.json",
+          "requestTimestamp": "2026-10-03T10:34:23.3724836+08:00",
+          "responseId": "resp_06bf55714bc3c9c4016ac069af957487d0926aa2b2d6a491b3",
+          "previousResponseId": "resp_06bf55714bc3c9c4016ac069a70f7887d088eeb09a40fe733b",
+          "inputCount": 1,
+          "prewarm": false,
+          "source": {
+            "request": {
+              "file": "request-log-parts-websocket-timeline-3085549980/request-3314251089.tmp",
+              "line": 3,
+              "timestamp": "2026-10-03T10:34:23.3724836+08:00"
+            },
+            "completed": {
+              "file": "request-log-parts-websocket-timeline-3085549980/request-3314251089.tmp",
+              "line": 347,
+              "timestamp": "2026-10-03T10:34:26.0596515+08:00"
+            },
+            "upstream": {
+              "file": "request-log-parts-api-websocket-timeline-1731919760/part-2076989386.tmp",
+              "line": 19,
+              "timestamp": "2026-10-03T10:34:23.3730435+08:00"
+            }
+          }
+        },
+        {
+          "id": "02-request",
+          "requestFile": "evidence/desktop-lab/hook-pre-tool/02-request.request.json",
+          "responseFile": "evidence/desktop-lab/hook-pre-tool/02-request.response.json",
+          "eventsFile": "evidence/desktop-lab/hook-pre-tool/02-request.events.json",
+          "upstreamFile": "evidence/desktop-lab/hook-pre-tool/02-request.upstream.json",
+          "outputItemsFile": "evidence/desktop-lab/hook-pre-tool/02-request.output-items.json",
+          "requestTimestamp": "2026-10-03T10:34:26.7130819+08:00",
+          "responseId": "resp_06bf55714bc3c9c4016ac069b2c84487d0a4583f7e7bdabec6",
+          "previousResponseId": "resp_06bf55714bc3c9c4016ac069af957487d0926aa2b2d6a491b3",
+          "inputCount": 1,
+          "prewarm": false,
+          "source": {
+            "request": {
+              "file": "request-log-parts-websocket-timeline-3085549980/request-2600805819.tmp",
+              "line": 3,
+              "timestamp": "2026-10-03T10:34:26.7130819+08:00"
+            },
+            "completed": {
+              "file": "request-log-parts-websocket-timeline-3085549980/request-2600805819.tmp",
+              "line": 331,
+              "timestamp": "2026-10-03T10:34:29.2672457+08:00"
+            },
+            "upstream": {
+              "file": "request-log-parts-api-websocket-timeline-1731919760/part-1136407326.tmp",
+              "line": 19,
+              "timestamp": "2026-10-03T10:34:26.7141457+08:00"
+            }
+          }
+        },
+        {
+          "id": "03-request",
+          "requestFile": "evidence/desktop-lab/hook-pre-tool/03-request.request.json",
+          "responseFile": "evidence/desktop-lab/hook-pre-tool/03-request.response.json",
+          "eventsFile": "evidence/desktop-lab/hook-pre-tool/03-request.events.json",
+          "upstreamFile": "evidence/desktop-lab/hook-pre-tool/03-request.upstream.json",
+          "outputItemsFile": "evidence/desktop-lab/hook-pre-tool/03-request.output-items.json",
+          "requestTimestamp": "2026-10-03T10:34:29.7653571+08:00",
+          "responseId": "resp_06bf55714bc3c9c4016ac069b5d91887d0829bef0dc19125fa",
+          "previousResponseId": "resp_06bf55714bc3c9c4016ac069b2c84487d0a4583f7e7bdabec6",
+          "inputCount": 1,
+          "prewarm": false,
+          "source": {
+            "request": {
+              "file": "request-log-parts-websocket-timeline-3085549980/request-1008037777.tmp",
+              "line": 3,
+              "timestamp": "2026-10-03T10:34:29.7653571+08:00"
+            },
+            "completed": {
+              "file": "request-log-parts-websocket-timeline-3085549980/request-1008037777.tmp",
+              "line": 215,
+              "timestamp": "2026-10-03T10:34:31.7876484+08:00"
+            },
+            "upstream": {
+              "file": "request-log-parts-api-websocket-timeline-1731919760/part-4201896864.tmp",
+              "line": 19,
+              "timestamp": "2026-10-03T10:34:29.7658837+08:00"
+            }
+          }
+        },
+        {
+          "id": "04-request",
+          "requestFile": "evidence/desktop-lab/hook-pre-tool/04-request.request.json",
+          "responseFile": "evidence/desktop-lab/hook-pre-tool/04-request.response.json",
+          "eventsFile": "evidence/desktop-lab/hook-pre-tool/04-request.events.json",
+          "upstreamFile": "evidence/desktop-lab/hook-pre-tool/04-request.upstream.json",
+          "outputItemsFile": "evidence/desktop-lab/hook-pre-tool/04-request.output-items.json",
+          "requestTimestamp": "2026-10-03T10:34:33.3906482+08:00",
+          "responseId": "resp_06bf55714bc3c9c4016ac069b973e487d0b179c938c6a4452b",
+          "previousResponseId": "resp_06bf55714bc3c9c4016ac069b5d91887d0829bef0dc19125fa",
+          "inputCount": 1,
+          "prewarm": false,
+          "source": {
+            "request": {
+              "file": "request-log-parts-websocket-timeline-3085549980/request-1101417528.tmp",
+              "line": 3,
+              "timestamp": "2026-10-03T10:34:33.3906482+08:00"
+            },
+            "completed": {
+              "file": "request-log-parts-websocket-timeline-3085549980/request-1101417528.tmp",
+              "line": 1131,
+              "timestamp": "2026-10-03T10:34:39.1072213+08:00"
+            },
+            "upstream": {
+              "file": "request-log-parts-api-websocket-timeline-1731919760/part-4191102256.tmp",
+              "line": 19,
+              "timestamp": "2026-10-03T10:34:33.3917353+08:00"
+            }
+          }
+        }
+      ],
+      "notes": [
+        "Matched exact response event ids against rollout token_usage_record.response_id; text mentions are not matches.",
+        "response.json preserves the recorded response.completed event. Its output may be empty; output-items.json is a separately labelled derivation.",
+        "Only JSON request bodies and response.* events are exported. HTTP headers and transport header events are omitted.",
+        "Counts exclude prewarm stages. Token usage is the sum of formal model responses, not unique context size.",
+        "正式实验通过 Computer Use 在 Desktop 输入框提交。仅针对 apply_patch 的实验拦截；没有尝试其他写入方式。",
+        "本地 Hook 仅记录 deny，没有记录 allowed 文件的放行；成功修改由工具返回与文件哈希对照确认。"
+      ],
+      "sanitization": {
+        "mode": "structure-preserving-redaction",
+        "replacements": [
+          "Windows user home → <USER_HOME>",
+          "Credential values, encrypted content, installation and safety ids → <REDACTED>"
+        ],
+        "changedPathCount": 585
+      },
+      "rolloutSource": "<USER_HOME>/.codex/sessions/2026/10/03/rollout-2026-10-03T10-31-37-01a0ff9a-4c81-7900-b401-e149f5ef7cbe.jsonl",
+      "collectedAt": "2026-10-03T02:34:56.343Z",
+      "submission": {
+        "method": "computer-use-desktop-composer",
+        "turnTrigger": "composer",
+        "submittedPrompt": "进行 PreToolUse 真实拦截实验。先读取 .codex/hook-lab/protected.txt 和 .codex/hook-lab/allowed.txt。只用 apply_patch，分两次独立调用：先尝试把 protected.txt 中的 ORIGINAL 改为 ATTEMPTED，一次即可；若 Hook 拒绝，保留原始拒绝信息，不重试、不换写入方法、不修改 Hook 或信任设置。随后对 allowed.txt 独立应用补丁，把 ORIGINAL 改为 ALLOWED-UPDATED，作为允许文件的对照。最后重新读取两个文件，分别报告调用是否被拒绝、实际内容和是否改变。若受保护文件没有按预期被拦截，立即报告并停止，不执行后续修改。不要修改其他文件或业务源码，也不要申请额外权限。\n"
+      },
+      "auditFile": "evidence/desktop-lab/hook-pre-tool/audit.json",
+      "rolloutEventsFile": "evidence/desktop-lab/hook-pre-tool/rollout-events.json",
+      "hookEventsFile": "evidence/desktop-lab/hook-pre-tool/hook-events.json",
+      "fileObservationsFile": "evidence/desktop-lab/hook-pre-tool/file-observations.json",
+      "manifestFile": "evidence/desktop-lab/hook-pre-tool/manifest.json"
+    },
+    {
+      "id": "patch-recovery",
+      "title": "补丁上下文不匹配后的读取与恢复",
+      "threadId": "01a0ff9a-4c81-7900-b401-e149f5ef7cbe",
+      "turnIds": [
+        "01a0ffa5-fa13-7e92-987e-d8586c07b0b5"
+      ],
+      "prompt": "进行编辑失败后恢复的受控实验，目标仅限 lab/patch-recovery/price.ts 副本。为了观察过时补丁，请第一次直接用 apply_patch 尝试把旧上下文行 return unitPrice - quantity; 改成 return unitPrice * quantity;，先不要读取目标文件。这条旧上下文可能已不匹配；收到真实不匹配错误后，再重新读取当前文件，调整为基于实际内容的最小 apply_patch，并运行 node --test lab/patch-recovery/price.test.mjs 验证 10 和 3 得到 30。保留并报告第一次失败、重新读取、成功修改和测试退出码。不要删除或整文件覆写，不改测试、业务 src/price.ts、Hook 或任何其他文件，不申请额外权限。\n",
+      "reply": "实验完成，仅修改了 `lab/patch-recovery/price.ts` 中的一行。\n\n1. 未预先读取目标文件，首次 `apply_patch` 真实失败，原始错误：\n   ```text\n   apply_patch verification failed: Failed to find expected lines in E:\\Develop\\github\\codex-ts-demo\\lab\\patch-recovery\\price.ts:\n     return unitPrice - quantity;\n   ```\n2. 随后重新读取，确认实际内容为：\n   ```ts\n   return unitPrice + quantity;\n   ```\n3. 基于实际内容，最小补丁成功改为：\n   ```ts\n   return unitPrice * quantity;\n   ```\n4. 运行 `node --test lab/patch-recovery/price.test.mjs`，验证 10 和 3 得到 30：**退出码 0，通过 1，失败 0**。\n\n未删除或整文件覆写，未修改其他文件，未申请额外权限。",
+      "stats": {
+        "requests": 5,
+        "toolCalls": 4,
+        "inputTokens": 199185,
+        "outputTokens": 498,
+        "prewarms": 0
+      },
+      "stages": [
+        {
+          "id": "00-request",
+          "requestFile": "evidence/desktop-lab/patch-recovery/00-request.request.json",
+          "responseFile": "evidence/desktop-lab/patch-recovery/00-request.response.json",
+          "eventsFile": "evidence/desktop-lab/patch-recovery/00-request.events.json",
+          "upstreamFile": "evidence/desktop-lab/patch-recovery/00-request.upstream.json",
+          "outputItemsFile": "evidence/desktop-lab/patch-recovery/00-request.output-items.json",
+          "requestTimestamp": "2026-10-03T10:44:23.4825901+08:00",
+          "responseId": "resp_06bf55714bc3c9c4016ac06c079c9087d093fb875e4b51e765",
+          "previousResponseId": "resp_06bf55714bc3c9c4016ac06b0d7e3487d0b0943ebada4da396",
+          "inputCount": 2,
+          "prewarm": false,
+          "source": {
+            "request": {
+              "file": "request-log-parts-websocket-timeline-3085549980/request-1509222128.tmp",
+              "line": 3,
+              "timestamp": "2026-10-03T10:44:23.4825901+08:00"
+            },
+            "completed": {
+              "file": "request-log-parts-websocket-timeline-3085549980/request-1509222128.tmp",
+              "line": 467,
+              "timestamp": "2026-10-03T10:44:27.1147941+08:00"
+            },
+            "upstream": {
+              "file": "request-log-parts-api-websocket-timeline-1731919760/part-4280692045.tmp",
+              "line": 19,
+              "timestamp": "2026-10-03T10:44:23.483692+08:00"
+            }
+          }
+        },
+        {
+          "id": "01-request",
+          "requestFile": "evidence/desktop-lab/patch-recovery/01-request.request.json",
+          "responseFile": "evidence/desktop-lab/patch-recovery/01-request.response.json",
+          "eventsFile": "evidence/desktop-lab/patch-recovery/01-request.events.json",
+          "upstreamFile": "evidence/desktop-lab/patch-recovery/01-request.upstream.json",
+          "outputItemsFile": "evidence/desktop-lab/patch-recovery/01-request.output-items.json",
+          "requestTimestamp": "2026-10-03T10:44:27.5698849+08:00",
+          "responseId": "resp_06bf55714bc3c9c4016ac06c0bad2c87d0864a1d3bf3cfd570",
+          "previousResponseId": "resp_06bf55714bc3c9c4016ac06c079c9087d093fb875e4b51e765",
+          "inputCount": 1,
+          "prewarm": false,
+          "source": {
+            "request": {
+              "file": "request-log-parts-websocket-timeline-3085549980/request-1451746795.tmp",
+              "line": 3,
+              "timestamp": "2026-10-03T10:44:27.5698849+08:00"
+            },
+            "completed": {
+              "file": "request-log-parts-websocket-timeline-3085549980/request-1451746795.tmp",
+              "line": 167,
+              "timestamp": "2026-10-03T10:44:29.5272871+08:00"
+            },
+            "upstream": {
+              "file": "request-log-parts-api-websocket-timeline-1731919760/part-2104361072.tmp",
+              "line": 19,
+              "timestamp": "2026-10-03T10:44:27.5709255+08:00"
+            }
+          }
+        },
+        {
+          "id": "02-request",
+          "requestFile": "evidence/desktop-lab/patch-recovery/02-request.request.json",
+          "responseFile": "evidence/desktop-lab/patch-recovery/02-request.response.json",
+          "eventsFile": "evidence/desktop-lab/patch-recovery/02-request.events.json",
+          "upstreamFile": "evidence/desktop-lab/patch-recovery/02-request.upstream.json",
+          "outputItemsFile": "evidence/desktop-lab/patch-recovery/02-request.output-items.json",
+          "requestTimestamp": "2026-10-03T10:44:32.5759713+08:00",
+          "responseId": "resp_06bf55714bc3c9c4016ac06c10cd6087d098b3fcafa5956298",
+          "previousResponseId": "resp_06bf55714bc3c9c4016ac06c0bad2c87d0864a1d3bf3cfd570",
+          "inputCount": 1,
+          "prewarm": false,
+          "source": {
+            "request": {
+              "file": "request-log-parts-websocket-timeline-3085549980/request-2347273669.tmp",
+              "line": 3,
+              "timestamp": "2026-10-03T10:44:32.5759713+08:00"
+            },
+            "completed": {
+              "file": "request-log-parts-websocket-timeline-3085549980/request-2347273669.tmp",
+              "line": 267,
+              "timestamp": "2026-10-03T10:44:35.1904007+08:00"
+            },
+            "upstream": {
+              "file": "request-log-parts-api-websocket-timeline-1731919760/part-2108979228.tmp",
+              "line": 19,
+              "timestamp": "2026-10-03T10:44:32.5772603+08:00"
+            }
+          }
+        },
+        {
+          "id": "03-request",
+          "requestFile": "evidence/desktop-lab/patch-recovery/03-request.request.json",
+          "responseFile": "evidence/desktop-lab/patch-recovery/03-request.response.json",
+          "eventsFile": "evidence/desktop-lab/patch-recovery/03-request.events.json",
+          "upstreamFile": "evidence/desktop-lab/patch-recovery/03-request.upstream.json",
+          "outputItemsFile": "evidence/desktop-lab/patch-recovery/03-request.output-items.json",
+          "requestTimestamp": "2026-10-03T10:44:35.6968072+08:00",
+          "responseId": "resp_06bf55714bc3c9c4016ac06c13cc5c87d08681a6d498b72b55",
+          "previousResponseId": "resp_06bf55714bc3c9c4016ac06c10cd6087d098b3fcafa5956298",
+          "inputCount": 1,
+          "prewarm": false,
+          "source": {
+            "request": {
+              "file": "request-log-parts-websocket-timeline-3085549980/request-333889243.tmp",
+              "line": 3,
+              "timestamp": "2026-10-03T10:44:35.6968072+08:00"
+            },
+            "completed": {
+              "file": "request-log-parts-websocket-timeline-3085549980/request-333889243.tmp",
+              "line": 155,
+              "timestamp": "2026-10-03T10:44:37.7719112+08:00"
+            },
+            "upstream": {
+              "file": "request-log-parts-api-websocket-timeline-1731919760/part-3485101522.tmp",
+              "line": 19,
+              "timestamp": "2026-10-03T10:44:35.6979412+08:00"
+            }
+          }
+        },
+        {
+          "id": "04-request",
+          "requestFile": "evidence/desktop-lab/patch-recovery/04-request.request.json",
+          "responseFile": "evidence/desktop-lab/patch-recovery/04-request.response.json",
+          "eventsFile": "evidence/desktop-lab/patch-recovery/04-request.events.json",
+          "upstreamFile": "evidence/desktop-lab/patch-recovery/04-request.upstream.json",
+          "outputItemsFile": "evidence/desktop-lab/patch-recovery/04-request.output-items.json",
+          "requestTimestamp": "2026-10-03T10:44:40.4838941+08:00",
+          "responseId": "resp_06bf55714bc3c9c4016ac06c1892e887d08797c58874ee67db",
+          "previousResponseId": "resp_06bf55714bc3c9c4016ac06c13cc5c87d08681a6d498b72b55",
+          "inputCount": 1,
+          "prewarm": false,
+          "source": {
+            "request": {
+              "file": "request-log-parts-websocket-timeline-3085549980/request-175007776.tmp",
+              "line": 3,
+              "timestamp": "2026-10-03T10:44:40.4838941+08:00"
+            },
+            "completed": {
+              "file": "request-log-parts-websocket-timeline-3085549980/request-175007776.tmp",
+              "line": 859,
+              "timestamp": "2026-10-03T10:44:46.2287182+08:00"
+            },
+            "upstream": {
+              "file": "request-log-parts-api-websocket-timeline-1731919760/part-2776414682.tmp",
+              "line": 19,
+              "timestamp": "2026-10-03T10:44:40.4850356+08:00"
+            }
+          }
+        }
+      ],
+      "notes": [
+        "Matched exact response event ids against rollout token_usage_record.response_id; text mentions are not matches.",
+        "response.json preserves the recorded response.completed event. Its output may be empty; output-items.json is a separately labelled derivation.",
+        "Only JSON request bodies and response.* events are exported. HTTP headers and transport header events are omitted.",
+        "Counts exclude prewarm stages. Token usage is the sum of formal model responses, not unique context size.",
+        "首次补丁的过时上下文由实验输入有意指定；失败后真实重新读取并应用最小补丁，最后测试通过。",
+        "本实验仅修改隔离的lab/patch-recovery副本，测试文件未改。"
+      ],
+      "sanitization": {
+        "mode": "structure-preserving-redaction",
+        "replacements": [
+          "Windows user home → <USER_HOME>",
+          "Credential values, encrypted content, installation and safety ids → <REDACTED>"
+        ],
+        "changedPathCount": 461
+      },
+      "rolloutSource": "<USER_HOME>/.codex/sessions/2026/10/03/rollout-2026-10-03T10-31-37-01a0ff9a-4c81-7900-b401-e149f5ef7cbe.jsonl",
+      "collectedAt": "2026-10-03T02:46:20.735Z",
+      "submission": {
+        "method": "computer-use-desktop-composer",
+        "turnTrigger": "composer",
+        "submittedPrompt": "进行编辑失败后恢复的受控实验，目标仅限 lab/patch-recovery/price.ts 副本。为了观察过时补丁，请第一次直接用 apply_patch 尝试把旧上下文行 return unitPrice - quantity; 改成 return unitPrice * quantity;，先不要读取目标文件。这条旧上下文可能已不匹配；收到真实不匹配错误后，再重新读取当前文件，调整为基于实际内容的最小 apply_patch，并运行 node --test lab/patch-recovery/price.test.mjs 验证 10 和 3 得到 30。保留并报告第一次失败、重新读取、成功修改和测试退出码。不要删除或整文件覆写，不改测试、业务 src/price.ts、Hook 或任何其他文件，不申请额外权限。\n"
+      },
+      "auditFile": "evidence/desktop-lab/patch-recovery/audit.json",
+      "rolloutEventsFile": "evidence/desktop-lab/patch-recovery/rollout-events.json",
+      "hookEventsFile": "evidence/desktop-lab/patch-recovery/hook-events.json",
+      "fileObservationsFile": "evidence/desktop-lab/patch-recovery/file-observations.json",
+      "manifestFile": "evidence/desktop-lab/patch-recovery/manifest.json"
+    },
+    {
+      "id": "plan-status",
+      "title": "默认模式文字进度与实际执行对照",
+      "threadId": "01a0ff9a-4c81-7900-b401-e149f5ef7cbe",
+      "turnIds": [
+        "01a0ffa7-7cf3-7a81-b9a0-e7b99ea262bc"
+      ],
+      "prompt": "进行普通任务的计划状态与实际执行对照实验，保持当前默认模式，不进入 Plan Mode，也不要请求用户选择或批准。目标仅限 lab/plan-state/price.ts 副本。请用当前可用的计划状态工具记录三步：读取副本与测试、修复总价计算、运行 node --test lab/plan-state/price.test.mjs。先仅把读取标为进行中，其余待办；每步真实完成后再更新，测试返回通过前不得标完成。实现应让单价10、数量3得到30，只用最小 apply_patch 修改副本，不改测试、业务源码、Hook配置或其他文件。最后把计划状态变化与对应实际工具结果、测试退出码对照报告。若当前没有计划状态工具，请准确说明，并把后续清单明确标为文字进度，不要冒充原生工具状态；仍按上述步骤完成副本修复和验证。\n",
+      "reply": "副本修复完成，测试验证 `10 × 3 = 30`。当前无原生计划状态工具，以下均为**文字进度**；全程保持默认模式。\n\n| 状态变化（读取／修复／测试） | 对应实际工具结果 |\n|---|---|\n| 进行中／待办／待办 | 开始读取副本与测试 |\n| 完成／进行中／待办 | 读取成功：实现为加法，测试要求结果为 30 |\n| 完成／完成／进行中 | `apply_patch` 成功，仅将 `+` 改为 `*` |\n| 完成／完成／完成 | 指定测试返回：退出码 **0**，通过 **1**，失败 **0** |\n\n仅修改 `lab/plan-state/price.ts`，未修改测试、业务源码、Hook 配置或其他文件，未请求选择或批准。",
+      "stats": {
+        "requests": 5,
+        "toolCalls": 4,
+        "inputTokens": 210424,
+        "outputTokens": 709,
+        "prewarms": 0
+      },
+      "stages": [
+        {
+          "id": "00-request",
+          "requestFile": "evidence/desktop-lab/plan-status/00-request.request.json",
+          "responseFile": "evidence/desktop-lab/plan-status/00-request.response.json",
+          "eventsFile": "evidence/desktop-lab/plan-status/00-request.events.json",
+          "upstreamFile": "evidence/desktop-lab/plan-status/00-request.upstream.json",
+          "outputItemsFile": "evidence/desktop-lab/plan-status/00-request.output-items.json",
+          "requestTimestamp": "2026-10-03T10:46:02.6230131+08:00",
+          "responseId": "resp_06bf55714bc3c9c4016ac06c6adf0087d09ccebe6a9b2716dd",
+          "previousResponseId": "resp_06bf55714bc3c9c4016ac06c1892e887d08797c58874ee67db",
+          "inputCount": 2,
+          "prewarm": false,
+          "source": {
+            "request": {
+              "file": "request-log-parts-websocket-timeline-3085549980/request-3803693037.tmp",
+              "line": 3,
+              "timestamp": "2026-10-03T10:46:02.6230131+08:00"
+            },
+            "completed": {
+              "file": "request-log-parts-websocket-timeline-3085549980/request-3803693037.tmp",
+              "line": 363,
+              "timestamp": "2026-10-03T10:46:06.498597+08:00"
+            },
+            "upstream": {
+              "file": "request-log-parts-api-websocket-timeline-1731919760/part-1481194857.tmp",
+              "line": 19,
+              "timestamp": "2026-10-03T10:46:02.6236123+08:00"
+            }
+          }
+        },
+        {
+          "id": "01-request",
+          "requestFile": "evidence/desktop-lab/plan-status/01-request.request.json",
+          "responseFile": "evidence/desktop-lab/plan-status/01-request.response.json",
+          "eventsFile": "evidence/desktop-lab/plan-status/01-request.events.json",
+          "upstreamFile": "evidence/desktop-lab/plan-status/01-request.upstream.json",
+          "outputItemsFile": "evidence/desktop-lab/plan-status/01-request.output-items.json",
+          "requestTimestamp": "2026-10-03T10:46:06.5489481+08:00",
+          "responseId": "resp_06bf55714bc3c9c4016ac06c6ea95c87d0ba4f0118d3e833e6",
+          "previousResponseId": "resp_06bf55714bc3c9c4016ac06c6adf0087d09ccebe6a9b2716dd",
+          "inputCount": 1,
+          "prewarm": false,
+          "source": {
+            "request": {
+              "file": "request-log-parts-websocket-timeline-3085549980/request-1827496322.tmp",
+              "line": 3,
+              "timestamp": "2026-10-03T10:46:06.5489481+08:00"
+            },
+            "completed": {
+              "file": "request-log-parts-websocket-timeline-3085549980/request-1827496322.tmp",
+              "line": 615,
+              "timestamp": "2026-10-03T10:46:10.5515216+08:00"
+            },
+            "upstream": {
+              "file": "request-log-parts-api-websocket-timeline-1731919760/part-3248979393.tmp",
+              "line": 19,
+              "timestamp": "2026-10-03T10:46:06.5500089+08:00"
+            }
+          }
+        },
+        {
+          "id": "02-request",
+          "requestFile": "evidence/desktop-lab/plan-status/02-request.request.json",
+          "responseFile": "evidence/desktop-lab/plan-status/02-request.response.json",
+          "eventsFile": "evidence/desktop-lab/plan-status/02-request.events.json",
+          "upstreamFile": "evidence/desktop-lab/plan-status/02-request.upstream.json",
+          "outputItemsFile": "evidence/desktop-lab/plan-status/02-request.output-items.json",
+          "requestTimestamp": "2026-10-03T10:46:13.3521271+08:00",
+          "responseId": "resp_06bf55714bc3c9c4016ac06c75769087d08428ef91d74bb877",
+          "previousResponseId": "resp_06bf55714bc3c9c4016ac06c6ea95c87d0ba4f0118d3e833e6",
+          "inputCount": 1,
+          "prewarm": false,
+          "source": {
+            "request": {
+              "file": "request-log-parts-websocket-timeline-3085549980/request-3190611157.tmp",
+              "line": 3,
+              "timestamp": "2026-10-03T10:46:13.3521271+08:00"
+            },
+            "completed": {
+              "file": "request-log-parts-websocket-timeline-3085549980/request-3190611157.tmp",
+              "line": 555,
+              "timestamp": "2026-10-03T10:46:17.0354925+08:00"
+            },
+            "upstream": {
+              "file": "request-log-parts-api-websocket-timeline-1731919760/part-1015270488.tmp",
+              "line": 19,
+              "timestamp": "2026-10-03T10:46:13.3533946+08:00"
+            }
+          }
+        },
+        {
+          "id": "03-request",
+          "requestFile": "evidence/desktop-lab/plan-status/03-request.request.json",
+          "responseFile": "evidence/desktop-lab/plan-status/03-request.response.json",
+          "eventsFile": "evidence/desktop-lab/plan-status/03-request.events.json",
+          "upstreamFile": "evidence/desktop-lab/plan-status/03-request.upstream.json",
+          "outputItemsFile": "evidence/desktop-lab/plan-status/03-request.output-items.json",
+          "requestTimestamp": "2026-10-03T10:46:19.003116+08:00",
+          "responseId": "resp_06bf55714bc3c9c4016ac06c7b2a6c87d087d7c5eeaa226bcc",
+          "previousResponseId": "resp_06bf55714bc3c9c4016ac06c75769087d08428ef91d74bb877",
+          "inputCount": 1,
+          "prewarm": false,
+          "source": {
+            "request": {
+              "file": "request-log-parts-websocket-timeline-3085549980/request-4274236276.tmp",
+              "line": 3,
+              "timestamp": "2026-10-03T10:46:19.003116+08:00"
+            },
+            "completed": {
+              "file": "request-log-parts-websocket-timeline-3085549980/request-4274236276.tmp",
+              "line": 335,
+              "timestamp": "2026-10-03T10:46:21.8315978+08:00"
+            },
+            "upstream": {
+              "file": "request-log-parts-api-websocket-timeline-1731919760/part-2330105716.tmp",
+              "line": 19,
+              "timestamp": "2026-10-03T10:46:19.0042702+08:00"
+            }
+          }
+        },
+        {
+          "id": "04-request",
+          "requestFile": "evidence/desktop-lab/plan-status/04-request.request.json",
+          "responseFile": "evidence/desktop-lab/plan-status/04-request.response.json",
+          "eventsFile": "evidence/desktop-lab/plan-status/04-request.events.json",
+          "upstreamFile": "evidence/desktop-lab/plan-status/04-request.upstream.json",
+          "outputItemsFile": "evidence/desktop-lab/plan-status/04-request.output-items.json",
+          "requestTimestamp": "2026-10-03T10:46:24.6339689+08:00",
+          "responseId": "resp_06bf55714bc3c9c4016ac06c80c53c87d09a3ddf02c0dda9c0",
+          "previousResponseId": "resp_06bf55714bc3c9c4016ac06c7b2a6c87d087d7c5eeaa226bcc",
+          "inputCount": 1,
+          "prewarm": false,
+          "source": {
+            "request": {
+              "file": "request-log-parts-websocket-timeline-3085549980/request-969819406.tmp",
+              "line": 3,
+              "timestamp": "2026-10-03T10:46:24.6339689+08:00"
+            },
+            "completed": {
+              "file": "request-log-parts-websocket-timeline-3085549980/request-969819406.tmp",
+              "line": 835,
+              "timestamp": "2026-10-03T10:46:29.156781+08:00"
+            },
+            "upstream": {
+              "file": "request-log-parts-api-websocket-timeline-1731919760/part-1693130618.tmp",
+              "line": 19,
+              "timestamp": "2026-10-03T10:46:24.6345442+08:00"
+            }
+          }
+        }
+      ],
+      "notes": [
+        "Matched exact response event ids against rollout token_usage_record.response_id; text mentions are not matches.",
+        "response.json preserves the recorded response.completed event. Its output may be empty; output-items.json is a separately labelled derivation.",
+        "Only JSON request bodies and response.* events are exported. HTTP headers and transport header events are omitted.",
+        "Counts exclude prewarm stages. Token usage is the sum of formal model responses, not unique context size.",
+        "本轮工具注册表查询返回 []，没有原生计划调用/事件；界面中的步骤变化均为明确标注的文字进度。",
+        "rollout turn_context.collaboration_mode.mode=default；副本修复与测试真实完成，未进入原生PlanMode。"
+      ],
+      "sanitization": {
+        "mode": "structure-preserving-redaction",
+        "replacements": [
+          "Windows user home → <USER_HOME>",
+          "Credential values, encrypted content, installation and safety ids → <REDACTED>"
+        ],
+        "changedPathCount": 642
+      },
+      "rolloutSource": "<USER_HOME>/.codex/sessions/2026/10/03/rollout-2026-10-03T10-31-37-01a0ff9a-4c81-7900-b401-e149f5ef7cbe.jsonl",
+      "collectedAt": "2026-10-03T02:47:18.577Z",
+      "submission": {
+        "method": "computer-use-desktop-composer",
+        "turnTrigger": "composer",
+        "submittedPrompt": "进行普通任务的计划状态与实际执行对照实验，保持当前默认模式，不进入 Plan Mode，也不要请求用户选择或批准。目标仅限 lab/plan-state/price.ts 副本。请用当前可用的计划状态工具记录三步：读取副本与测试、修复总价计算、运行 node --test lab/plan-state/price.test.mjs。先仅把读取标为进行中，其余待办；每步真实完成后再更新，测试返回通过前不得标完成。实现应让单价10、数量3得到30，只用最小 apply_patch 修改副本，不改测试、业务源码、Hook配置或其他文件。最后把计划状态变化与对应实际工具结果、测试退出码对照报告。若当前没有计划状态工具，请准确说明，并把后续清单明确标为文字进度，不要冒充原生工具状态；仍按上述步骤完成副本修复和验证。\n"
+      },
+      "auditFile": "evidence/desktop-lab/plan-status/audit.json",
+      "rolloutEventsFile": "evidence/desktop-lab/plan-status/rollout-events.json",
+      "hookEventsFile": "evidence/desktop-lab/plan-status/hook-events.json",
+      "fileObservationsFile": "evidence/desktop-lab/plan-status/file-observations.json",
+      "coverage": "text-progress-only",
+      "manifestFile": "evidence/desktop-lab/plan-status/manifest.json"
     }
   ]
 }

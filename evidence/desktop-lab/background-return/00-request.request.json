@@ -1,0 +1,57 @@
+{
+  "type": "response.create",
+  "model": "gpt-6-astra",
+  "previous_response_id": "resp_06bf55714bc3c9c4016ac06a637ae087d0ae5a39ce7957f9f9",
+  "input": [
+    {
+      "type": "message",
+      "id": "msg_01a0ffa1-8c47-7890-9a5a-afd7dcf5fca9",
+      "role": "user",
+      "content": [
+        {
+          "type": "input_text",
+          "text": "进行后台任务与结果回收实验。请用现有命令工具启动 node lab/background-delay.mjs，只启动一次，并让工具尽快返回运行中的会话或进程句柄（可设置较短 yield_time_ms）；不要使用 Start-Process、另外打开终端或脱离工具管理。确认脚本仍在运行后，先用另一次工具调用读取 README.md 的前12行，再使用刚才的句柄回收延迟脚本的最终输出和退出码。脚本尚未完成时不要当作成功，也不要重复启动。最后按实际顺序报告启动时输出、读取文件发生的时机、回收结果和退出码。不要修改文件。\n"
+        }
+      ]
+    },
+    {
+      "type": "message",
+      "id": "msg_01a0ffa1-8d2c-75d1-9112-088ed5cdf7cf",
+      "role": "developer",
+      "content": [
+        {
+          "type": "input_text",
+          "text": "本轮实验编号为 HOOK-300243c8-9014-4d8a-8f8f-220ff6837cba。这是本轮 UserPromptSubmit Hook 自动生成并注入的编号。"
+        }
+      ]
+    }
+  ],
+  "tool_choice": "auto",
+  "parallel_tool_calls": false,
+  "reasoning": {
+    "effort": "medium",
+    "summary": "detailed",
+    "context": "all_turns"
+  },
+  "store": false,
+  "stream": true,
+  "include": [
+    "reasoning.encrypted_content"
+  ],
+  "service_tier": "priority",
+  "prompt_cache_key": "01a0ff9a-4c81-7900-b401-e149f5ef7cbe",
+  "text": {
+    "verbosity": "low"
+  },
+  "client_metadata": {
+    "ws_request_header_x_openai_internal_codex_responses_lite": "true",
+    "turn_id": "01a0ffa1-8928-7421-bdce-6dca0ef609a3",
+    "x-codex-window-id": "01a0ff9a-4c81-7900-b401-e149f5ef7cbe:0",
+    "session_id": "01a0ff9a-4c81-7900-b401-e149f5ef7cbe",
+    "x-codex-turn-metadata": "{\"installation_id\":\"<REDACTED>\",\"session_id\":\"01a0ff9a-4c81-7900-b401-e149f5ef7cbe\",\"thread_id\":\"01a0ff9a-4c81-7900-b401-e149f5ef7cbe\",\"agent_name\":\"/root\",\"turn_id\":\"01a0ffa1-8928-7421-bdce-6dca0ef609a3\",\"window_id\":\"01a0ff9a-4c81-7900-b401-e149f5ef7cbe:0\",\"window_number\":0,\"context_window_id\":\"01a0ff9a-4c84-7511-bb3c-bb864c575f8f\",\"request_kind\":\"turn\",\"root_turn_id\":\"01a0ffa1-8928-7421-bdce-6dca0ef609a3\",\"thread_source\":\"user\",\"turn_trigger\":\"composer\",\"sandbox\":\"none\",\"sandbox_mode\":\"danger-full-access\",\"auto_review_enabled\":false,\"node_repl_auto_review_required\":true,\"node_repl_disabled\":false,\"turn_started_at_unix_ms\":1790995171688,\"analytics_enabled\":true,\"client_type\":\"desktop_app\",\"model\":\"gpt-6-astra\",\"reasoning_effort\":\"medium\",\"source\":\"codex\",\"workspace_kind\":\"project\"}",
+    "x-codex-installation-id": "<REDACTED>",
+    "x-codex-ws-stream-request-start-ms": "1790995172774",
+    "thread_id": "01a0ff9a-4c81-7900-b401-e149f5ef7cbe",
+    "root_turn_id": "01a0ffa1-8928-7421-bdce-6dca0ef609a3"
+  }
+}

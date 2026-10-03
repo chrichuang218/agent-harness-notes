@@ -1,0 +1,143 @@
+{
+  "provenance": "Read-only snapshots taken before and after the real Desktop experiment. Hash comparisons do not replace CPA tool result evidence.",
+  "before": {
+    "capturedAt": "2026-10-03T02:28:15.284Z",
+    "provenance": "Before formal Desktop hook tool experiments; file read only, no synthetic hook events or test execution.",
+    "files": [
+      {
+        "path": ".codex/hook-lab/protected.txt",
+        "sha256": "87e750999fb5ccc2324934a1e745c3614b3dca13ba11174935c0931a0f0e07c3",
+        "text": "HOOK-LAB ORIGINAL: this file must remain unchanged during the deny experiment.\n",
+        "exportedTextSha256": "87e750999fb5ccc2324934a1e745c3614b3dca13ba11174935c0931a0f0e07c3"
+      },
+      {
+        "path": ".codex/hook-lab/allowed.txt",
+        "sha256": "5d2050143575ec99b570f8e101b026e92994eadbad1a42ffa3a2a780aa106c0b",
+        "text": "HOOK-LAB ORIGINAL: this file is the allowed patch control.\n",
+        "exportedTextSha256": "5d2050143575ec99b570f8e101b026e92994eadbad1a42ffa3a2a780aa106c0b"
+      },
+      {
+        "path": ".codex/hook-lab/pass.test.mjs",
+        "sha256": "b748d311608b159c5091e5be6023240d641b6949c2ffc8bc42df70c34a0b0545",
+        "text": "import test from 'node:test';\nimport assert from 'node:assert/strict';\ntest('hook-lab passing control', () => assert.equal(10 * 3, 30));\n",
+        "exportedTextSha256": "b748d311608b159c5091e5be6023240d641b6949c2ffc8bc42df70c34a0b0545"
+      },
+      {
+        "path": ".codex/hook-lab/fail.test.mjs",
+        "sha256": "9b89bdd1e22f144c3a02e9ceb3ac6d21ffff77b1e1cbd10d9a49d09d716fbc51",
+        "text": "import test from 'node:test';\nimport assert from 'node:assert/strict';\n// Intentional failing fixture; do not fix it during the observation experiment.\ntest('hook-lab failing control', () => assert.equal(10 + 3, 30));\n",
+        "exportedTextSha256": "9b89bdd1e22f144c3a02e9ceb3ac6d21ffff77b1e1cbd10d9a49d09d716fbc51"
+      },
+      {
+        "path": ".codex/hooks.json",
+        "sha256": "ef5febd00e4fd63b5f63a23e236699652123f95ac1683d39cd854837cdeff784",
+        "text": "{\"description\":\"Hook experiment: inject a random per-turn marker; record identifiers locally without recording prompts.\",\"hooks\":{\"UserPromptSubmit\":[{\"hooks\":[{\"type\":\"command\",\"command\":\"E:/Develop/node/node.exe E:/Develop/github/codex-ts-demo/.codex/hooks/prompt-marker.mjs\",\"timeout\":5,\"statusMessage\":\"生成本轮 Hook 实验编号\"}]}],\"PreToolUse\":[{\"matcher\":\"^apply_patch$\",\"hooks\":[{\"type\":\"command\",\"command\":\"E:/Develop/node/node.exe E:/Develop/github/codex-ts-demo/.codex/hooks/tool-experiment.mjs\",\"statusMessage\":\"Hook lab: check protected patch\",\"timeout\":5}]}],\"PostToolUse\":[{\"matcher\":\"^Bash$\",\"hooks\":[{\"type\":\"command\",\"command\":\"E:/Develop/node/node.exe E:/Develop/github/codex-ts-demo/.codex/hooks/tool-experiment.mjs\",\"statusMessage\":\"Hook lab: record test result\",\"timeout\":5}]}]}}",
+        "exportedTextSha256": "82e820cc5437e4cbff285518bba1cf4d8108a16771e7454cbb17fa03463684a3"
+      },
+      {
+        "path": ".codex/hooks/tool-experiment.mjs",
+        "sha256": "c9fc29975d704087b669931bae329367a9ffff0bd88109a2590b9f0bab45f66b",
+        "text": "import { appendFileSync } from 'node:fs';\nimport path from 'node:path';\nimport { fileURLToPath } from 'node:url';\n\nlet input = '';\nfor await (const chunk of process.stdin) input += chunk;\nconst event = JSON.parse(input);\nconst root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');\nconst normalize = value => path.resolve(value).toLowerCase();\nconst command = event.tool_input?.command ?? event.tool_input?.cmd;\nlet decision;\nlet output = {};\n\n// This experiment intercepts apply_patch only, not every possible write method.\nif (event.hook_event_name === 'PreToolUse' && event.tool_name === 'apply_patch') {\n  if (typeof command !== 'string' || typeof event.cwd !== 'string') {\n    throw new Error('Expected patch command and cwd');\n  }\n  const protectedFile = normalize(path.join(root, '.codex/hook-lab/protected.txt'));\n  const paths = [...command.matchAll(/^\\*\\*\\* (?:Add File|Update File|Delete File|Move to): (.+)\\r?$/gm)];\n  if (!paths.some(match => normalize(path.resolve(event.cwd, match[1].trim())) === protectedFile)) {\n    console.log('{}');\n    process.exit(0);\n  }\n  decision = 'deny';\n  output = { hookSpecificOutput: {\n    hookEventName: 'PreToolUse',\n    permissionDecision: 'deny',\n    permissionDecisionReason: 'HOOK-LAB: apply_patch may not change .codex/hook-lab/protected.txt. Report the denial; do not retry using another write method.',\n  }};\n} else if (event.hook_event_name === 'PostToolUse' && event.tool_name === 'Bash') {\n  if (typeof command !== 'string') throw new Error('Expected command text');\n  if (!/(?:^|[ /\"'])\\.codex\\/hook-lab\\/(?:pass|fail)\\.test\\.mjs(?=[\\s\"']|$)/i.test(command.replaceAll('\\\\', '/'))) {\n    console.log('{}');\n    process.exit(0);\n  }\n  if (!Object.hasOwn(event, 'tool_response')) throw new Error('Missing tool_response');\n  decision = 'observe';\n} else {\n  throw new Error('Unexpected hook event or tool');\n}\n\n// Only matched experiment calls are logged. PostToolUse never changes results.\nappendFileSync(new URL('./tool-events.jsonl', import.meta.url), JSON.stringify({\n  timestamp: new Date().toISOString(),\n  event: event.hook_event_name,\n  session_id: event.session_id ?? null,\n  turn_id: event.turn_id ?? null,\n  tool_use_id: event.tool_use_id ?? null,\n  tool_name: event.tool_name,\n  decision,\n  ...(decision === 'observe' ? { tool_response: event.tool_response } : {}),\n}) + '\\n', 'utf8');\nconsole.log(JSON.stringify(output));\n",
+        "exportedTextSha256": "c9fc29975d704087b669931bae329367a9ffff0bd88109a2590b9f0bab45f66b"
+      },
+      {
+        "path": ".codex/hooks/prompt-marker.mjs",
+        "sha256": "7a920876284d0a568e5839a3881f9d6c1d8324e768c5094821efef4b63167fbc",
+        "text": "import { randomUUID } from 'node:crypto';\nimport { appendFileSync } from 'node:fs';\n\nlet input = '';\nfor await (const chunk of process.stdin) input += chunk;\nconst event = JSON.parse(input);\nif (event.hook_event_name !== 'UserPromptSubmit') {\n  throw new Error('Expected UserPromptSubmit');\n}\n\nconst marker = `HOOK-${randomUUID()}`;\n// Record identifiers only; never copy prompts or conversation contents.\nappendFileSync(new URL('./events.jsonl', import.meta.url), JSON.stringify({\n  timestamp: new Date().toISOString(),\n  event: event.hook_event_name,\n  session_id: event.session_id ?? null,\n  turn_id: event.turn_id ?? null,\n  marker,\n}) + '\\n', 'utf8');\n\nconsole.log(JSON.stringify({\n  hookSpecificOutput: {\n    hookEventName: 'UserPromptSubmit',\n    additionalContext: `本轮实验编号为 ${marker}。这是本轮 UserPromptSubmit Hook 自动生成并注入的编号。`,\n  },\n}));\n",
+        "exportedTextSha256": "7a920876284d0a568e5839a3881f9d6c1d8324e768c5094821efef4b63167fbc"
+      }
+    ]
+  },
+  "after": {
+    "capturedAt": "2026-10-03T02:35:42.784Z",
+    "files": [
+      {
+        "path": ".codex/hook-lab/protected.txt",
+        "sha256": "87e750999fb5ccc2324934a1e745c3614b3dca13ba11174935c0931a0f0e07c3",
+        "text": "HOOK-LAB ORIGINAL: this file must remain unchanged during the deny experiment.\n",
+        "exportedTextSha256": "87e750999fb5ccc2324934a1e745c3614b3dca13ba11174935c0931a0f0e07c3"
+      },
+      {
+        "path": ".codex/hook-lab/allowed.txt",
+        "sha256": "630dde6da7e3911025654849ffb3e96e93e65925303a1c0965e660f35a327adf",
+        "text": "HOOK-LAB ALLOWED-UPDATED: this file is the allowed patch control.\n",
+        "exportedTextSha256": "630dde6da7e3911025654849ffb3e96e93e65925303a1c0965e660f35a327adf"
+      },
+      {
+        "path": ".codex/hook-lab/pass.test.mjs",
+        "sha256": "b748d311608b159c5091e5be6023240d641b6949c2ffc8bc42df70c34a0b0545",
+        "text": "import test from 'node:test';\nimport assert from 'node:assert/strict';\ntest('hook-lab passing control', () => assert.equal(10 * 3, 30));\n",
+        "exportedTextSha256": "b748d311608b159c5091e5be6023240d641b6949c2ffc8bc42df70c34a0b0545"
+      },
+      {
+        "path": ".codex/hook-lab/fail.test.mjs",
+        "sha256": "9b89bdd1e22f144c3a02e9ceb3ac6d21ffff77b1e1cbd10d9a49d09d716fbc51",
+        "text": "import test from 'node:test';\nimport assert from 'node:assert/strict';\n// Intentional failing fixture; do not fix it during the observation experiment.\ntest('hook-lab failing control', () => assert.equal(10 + 3, 30));\n",
+        "exportedTextSha256": "9b89bdd1e22f144c3a02e9ceb3ac6d21ffff77b1e1cbd10d9a49d09d716fbc51"
+      },
+      {
+        "path": ".codex/hooks.json",
+        "sha256": "ef5febd00e4fd63b5f63a23e236699652123f95ac1683d39cd854837cdeff784",
+        "text": "{\"description\":\"Hook experiment: inject a random per-turn marker; record identifiers locally without recording prompts.\",\"hooks\":{\"UserPromptSubmit\":[{\"hooks\":[{\"type\":\"command\",\"command\":\"E:/Develop/node/node.exe E:/Develop/github/codex-ts-demo/.codex/hooks/prompt-marker.mjs\",\"timeout\":5,\"statusMessage\":\"生成本轮 Hook 实验编号\"}]}],\"PreToolUse\":[{\"matcher\":\"^apply_patch$\",\"hooks\":[{\"type\":\"command\",\"command\":\"E:/Develop/node/node.exe E:/Develop/github/codex-ts-demo/.codex/hooks/tool-experiment.mjs\",\"statusMessage\":\"Hook lab: check protected patch\",\"timeout\":5}]}],\"PostToolUse\":[{\"matcher\":\"^Bash$\",\"hooks\":[{\"type\":\"command\",\"command\":\"E:/Develop/node/node.exe E:/Develop/github/codex-ts-demo/.codex/hooks/tool-experiment.mjs\",\"statusMessage\":\"Hook lab: record test result\",\"timeout\":5}]}]}}",
+        "exportedTextSha256": "82e820cc5437e4cbff285518bba1cf4d8108a16771e7454cbb17fa03463684a3"
+      },
+      {
+        "path": ".codex/hooks/tool-experiment.mjs",
+        "sha256": "c9fc29975d704087b669931bae329367a9ffff0bd88109a2590b9f0bab45f66b",
+        "text": "import { appendFileSync } from 'node:fs';\nimport path from 'node:path';\nimport { fileURLToPath } from 'node:url';\n\nlet input = '';\nfor await (const chunk of process.stdin) input += chunk;\nconst event = JSON.parse(input);\nconst root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');\nconst normalize = value => path.resolve(value).toLowerCase();\nconst command = event.tool_input?.command ?? event.tool_input?.cmd;\nlet decision;\nlet output = {};\n\n// This experiment intercepts apply_patch only, not every possible write method.\nif (event.hook_event_name === 'PreToolUse' && event.tool_name === 'apply_patch') {\n  if (typeof command !== 'string' || typeof event.cwd !== 'string') {\n    throw new Error('Expected patch command and cwd');\n  }\n  const protectedFile = normalize(path.join(root, '.codex/hook-lab/protected.txt'));\n  const paths = [...command.matchAll(/^\\*\\*\\* (?:Add File|Update File|Delete File|Move to): (.+)\\r?$/gm)];\n  if (!paths.some(match => normalize(path.resolve(event.cwd, match[1].trim())) === protectedFile)) {\n    console.log('{}');\n    process.exit(0);\n  }\n  decision = 'deny';\n  output = { hookSpecificOutput: {\n    hookEventName: 'PreToolUse',\n    permissionDecision: 'deny',\n    permissionDecisionReason: 'HOOK-LAB: apply_patch may not change .codex/hook-lab/protected.txt. Report the denial; do not retry using another write method.',\n  }};\n} else if (event.hook_event_name === 'PostToolUse' && event.tool_name === 'Bash') {\n  if (typeof command !== 'string') throw new Error('Expected command text');\n  if (!/(?:^|[ /\"'])\\.codex\\/hook-lab\\/(?:pass|fail)\\.test\\.mjs(?=[\\s\"']|$)/i.test(command.replaceAll('\\\\', '/'))) {\n    console.log('{}');\n    process.exit(0);\n  }\n  if (!Object.hasOwn(event, 'tool_response')) throw new Error('Missing tool_response');\n  decision = 'observe';\n} else {\n  throw new Error('Unexpected hook event or tool');\n}\n\n// Only matched experiment calls are logged. PostToolUse never changes results.\nappendFileSync(new URL('./tool-events.jsonl', import.meta.url), JSON.stringify({\n  timestamp: new Date().toISOString(),\n  event: event.hook_event_name,\n  session_id: event.session_id ?? null,\n  turn_id: event.turn_id ?? null,\n  tool_use_id: event.tool_use_id ?? null,\n  tool_name: event.tool_name,\n  decision,\n  ...(decision === 'observe' ? { tool_response: event.tool_response } : {}),\n}) + '\\n', 'utf8');\nconsole.log(JSON.stringify(output));\n",
+        "exportedTextSha256": "c9fc29975d704087b669931bae329367a9ffff0bd88109a2590b9f0bab45f66b"
+      },
+      {
+        "path": ".codex/hooks/prompt-marker.mjs",
+        "sha256": "7a920876284d0a568e5839a3881f9d6c1d8324e768c5094821efef4b63167fbc",
+        "text": "import { randomUUID } from 'node:crypto';\nimport { appendFileSync } from 'node:fs';\n\nlet input = '';\nfor await (const chunk of process.stdin) input += chunk;\nconst event = JSON.parse(input);\nif (event.hook_event_name !== 'UserPromptSubmit') {\n  throw new Error('Expected UserPromptSubmit');\n}\n\nconst marker = `HOOK-${randomUUID()}`;\n// Record identifiers only; never copy prompts or conversation contents.\nappendFileSync(new URL('./events.jsonl', import.meta.url), JSON.stringify({\n  timestamp: new Date().toISOString(),\n  event: event.hook_event_name,\n  session_id: event.session_id ?? null,\n  turn_id: event.turn_id ?? null,\n  marker,\n}) + '\\n', 'utf8');\n\nconsole.log(JSON.stringify({\n  hookSpecificOutput: {\n    hookEventName: 'UserPromptSubmit',\n    additionalContext: `本轮实验编号为 ${marker}。这是本轮 UserPromptSubmit Hook 自动生成并注入的编号。`,\n  },\n}));\n",
+        "exportedTextSha256": "7a920876284d0a568e5839a3881f9d6c1d8324e768c5094821efef4b63167fbc"
+      }
+    ]
+  },
+  "comparisons": [
+    {
+      "path": ".codex/hook-lab/protected.txt",
+      "before": "87e750999fb5ccc2324934a1e745c3614b3dca13ba11174935c0931a0f0e07c3",
+      "after": "87e750999fb5ccc2324934a1e745c3614b3dca13ba11174935c0931a0f0e07c3",
+      "changed": false
+    },
+    {
+      "path": ".codex/hook-lab/allowed.txt",
+      "before": "5d2050143575ec99b570f8e101b026e92994eadbad1a42ffa3a2a780aa106c0b",
+      "after": "630dde6da7e3911025654849ffb3e96e93e65925303a1c0965e660f35a327adf",
+      "changed": true
+    },
+    {
+      "path": ".codex/hook-lab/pass.test.mjs",
+      "before": "b748d311608b159c5091e5be6023240d641b6949c2ffc8bc42df70c34a0b0545",
+      "after": "b748d311608b159c5091e5be6023240d641b6949c2ffc8bc42df70c34a0b0545",
+      "changed": false
+    },
+    {
+      "path": ".codex/hook-lab/fail.test.mjs",
+      "before": "9b89bdd1e22f144c3a02e9ceb3ac6d21ffff77b1e1cbd10d9a49d09d716fbc51",
+      "after": "9b89bdd1e22f144c3a02e9ceb3ac6d21ffff77b1e1cbd10d9a49d09d716fbc51",
+      "changed": false
+    },
+    {
+      "path": ".codex/hooks.json",
+      "before": "ef5febd00e4fd63b5f63a23e236699652123f95ac1683d39cd854837cdeff784",
+      "after": "ef5febd00e4fd63b5f63a23e236699652123f95ac1683d39cd854837cdeff784",
+      "changed": false
+    },
+    {
+      "path": ".codex/hooks/tool-experiment.mjs",
+      "before": "c9fc29975d704087b669931bae329367a9ffff0bd88109a2590b9f0bab45f66b",
+      "after": "c9fc29975d704087b669931bae329367a9ffff0bd88109a2590b9f0bab45f66b",
+      "changed": false
+    },
+    {
+      "path": ".codex/hooks/prompt-marker.mjs",
+      "before": "7a920876284d0a568e5839a3881f9d6c1d8324e768c5094821efef4b63167fbc",
+      "after": "7a920876284d0a568e5839a3881f9d6c1d8324e768c5094821efef4b63167fbc",
+      "changed": false
+    }
+  ],
+  "hashScope": "sha256 hashes original source-file bytes. exportedTextSha256 hashes the public text/content string after structure-preserving redaction and JSON-string normalization. Before/after comparisons use source-file hashes."
+}

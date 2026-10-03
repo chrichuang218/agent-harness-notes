@@ -1,0 +1,22 @@
+{
+  "auditedAt": "2026-10-03T02:46:54.319Z",
+  "requestCount": 5,
+  "modelToolCallCount": 4,
+  "failureStage": "01-request",
+  "failureCallId": "call_mNaUwoauogM4swR04jN5q4VG",
+  "failureKind": "apply_patch context mismatch",
+  "readStage": "02-request",
+  "observedActualLine": "return unitPrice + quantity;",
+  "changedLine": "return unitPrice * quantity;",
+  "testStage": "04-request",
+  "testCallId": "call_nFt05LYmvtjLAbIh72a24vmL",
+  "testExitCode": 0,
+  "testPass": 1,
+  "testFail": 0,
+  "nativeTestSourceLine": 138,
+  "limitations": [
+    "首次错误上下文由实验提示指定，用于观察真实失败后的恢复；不是声称模型自行产生了一次偶然错误。",
+    "修改和测试只针对 lab/patch-recovery 副本；业务 src/price.ts 未作为此次修复目标。",
+    "补丁上下文不匹配属于可重新读取后调整的错误，本轮没有发生权限拒绝或绕过拒绝。"
+  ]
+}

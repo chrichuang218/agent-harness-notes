@@ -1,0 +1,95 @@
+{
+  "id": "hook-b-untrusted",
+  "title": "Hook untrusted control",
+  "threadId": "01a0ff68-6cfc-7f13-a4d1-b78dbf96d738",
+  "turnIds": [
+    "01a0ff68-703c-7411-a89d-0d5d44766c49"
+  ],
+  "prompt": "",
+  "reply": "不知道。",
+  "stats": {
+    "requests": 1,
+    "toolCalls": 0,
+    "inputTokens": 35783,
+    "outputTokens": 19,
+    "prewarms": 0
+  },
+  "stages": [
+    {
+      "id": "00-request",
+      "requestFile": "evidence/desktop-lab/hook-b-untrusted/00-request.request.json",
+      "responseFile": "evidence/desktop-lab/hook-b-untrusted/00-request.response.json",
+      "eventsFile": "evidence/desktop-lab/hook-b-untrusted/00-request.events.json",
+      "upstreamFile": "evidence/desktop-lab/hook-b-untrusted/00-request.upstream.json",
+      "outputItemsFile": "evidence/desktop-lab/hook-b-untrusted/00-request.output-items.json",
+      "requestTimestamp": "2026-10-03T09:37:14.1685435+08:00",
+      "responseId": "resp_06d193dac6c9cb59016ac05c4b553487d0b8c6ae8759fb6306",
+      "previousResponseId": null,
+      "inputCount": 8,
+      "prewarm": false,
+      "source": {
+        "request": {
+          "file": "request-log-parts-websocket-timeline-492735331/request-4197836059.tmp",
+          "line": 3,
+          "timestamp": "2026-10-03T09:37:14.1685435+08:00"
+        },
+        "completed": {
+          "file": "request-log-parts-websocket-timeline-492735331/request-4197836059.tmp",
+          "line": 79,
+          "timestamp": "2026-10-03T09:37:18.6355306+08:00"
+        },
+        "upstream": {
+          "file": "request-log-parts-api-websocket-timeline-384887639/part-407503017.tmp",
+          "line": 19,
+          "timestamp": "2026-10-03T09:37:14.2433953+08:00"
+        }
+      }
+    }
+  ],
+  "notes": [
+    "Matched exact response event ids against rollout token_usage_record.response_id; text mentions are not matches.",
+    "response.json preserves the recorded response.completed event. Its output may be empty; output-items.json is a separately labelled derivation.",
+    "Only JSON request bodies and response.* events are exported. HTTP headers and transport header events are omitted.",
+    "Counts exclude prewarm stages. Token usage is the sum of formal model responses, not unique context size.",
+    "2026-10-03 复核：原临时分片已合并；audit.json 记录现存合并日志及行号，并核对两侧请求与完成事件。",
+    "通过 create_thread 工具提交；不能作为普通输入框提交的 Hook 信任对照。",
+    "原始 rollout 当前未找到；本次复核以原始 CPA、既有导出和相关 Hook 本地事件为依据。"
+  ],
+  "sanitization": {
+    "mode": "structure-preserving-redaction",
+    "replacements": [
+      "Windows user home → <USER_HOME>",
+      "Credential values, encrypted content, installation and safety ids → <REDACTED>"
+    ],
+    "changedPaths": [
+      "00-request.events.json[0].data.response.safety_identifier",
+      "00-request.events.json[10].data.obfuscation",
+      "00-request.events.json[11].data.obfuscation",
+      "00-request.events.json[15].data.response.safety_identifier",
+      "00-request.events.json[1].data.response.safety_identifier",
+      "00-request.events.json[2].data.item.encrypted_content",
+      "00-request.events.json[4].data.obfuscation",
+      "00-request.events.json[7].data.item.encrypted_content",
+      "00-request.output-items.json.items[0].encrypted_content",
+      "00-request.request.json.client_metadata.x-codex-installation-id",
+      "00-request.request.json.client_metadata.x-codex-turn-metadata.installation_id",
+      "00-request.request.json.input[2].content[1].text",
+      "00-request.request.json.input[5].content[1].text",
+      "00-request.response.json.response.safety_identifier",
+      "00-request.upstream.json.client_metadata.x-codex-installation-id",
+      "00-request.upstream.json.client_metadata.x-codex-turn-metadata.installation_id",
+      "00-request.upstream.json.input[2].content[1].text",
+      "00-request.upstream.json.input[5].content[1].text"
+    ]
+  },
+  "rolloutSource": "<USER_HOME>/.codex/sessions/2026/10/03/rollout-2026-10-03T09-37-08-01a0ff68-6cfc-7f13-a4d1-b78dbf96d738.jsonl",
+  "collectedAt": "2026-10-03T01:39:19.115Z",
+  "submission": {
+    "method": "codex-app-create-thread",
+    "turnTrigger": "app_tool_create_thread",
+    "submittedPrompt": "本轮实验编号是什么？只根据已有上下文回答，不要读取文件或调用工具；没有就说“不知道”。",
+    "promptField": "input[7].output (<codex_delegation><input>)",
+    "note": "通过 create_thread 工具提交；不能作为普通输入框提交的 Hook 信任对照。"
+  },
+  "auditFile": "evidence/desktop-lab/hook-b-untrusted/audit.json"
+}

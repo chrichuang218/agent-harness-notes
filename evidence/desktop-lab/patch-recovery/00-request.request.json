@@ -1,0 +1,57 @@
+{
+  "type": "response.create",
+  "model": "gpt-6-astra",
+  "previous_response_id": "resp_06bf55714bc3c9c4016ac06b0d7e3487d0b0943ebada4da396",
+  "input": [
+    {
+      "type": "message",
+      "id": "msg_01a0ffa5-fd14-79e0-843f-e68dfa46988e",
+      "role": "user",
+      "content": [
+        {
+          "type": "input_text",
+          "text": "进行编辑失败后恢复的受控实验，目标仅限 lab/patch-recovery/price.ts 副本。为了观察过时补丁，请第一次直接用 apply_patch 尝试把旧上下文行 return unitPrice - quantity; 改成 return unitPrice * quantity;，先不要读取目标文件。这条旧上下文可能已不匹配；收到真实不匹配错误后，再重新读取当前文件，调整为基于实际内容的最小 apply_patch，并运行 node --test lab/patch-recovery/price.test.mjs 验证 10 和 3 得到 30。保留并报告第一次失败、重新读取、成功修改和测试退出码。不要删除或整文件覆写，不改测试、业务 src/price.ts、Hook 或任何其他文件，不申请额外权限。\n"
+        }
+      ]
+    },
+    {
+      "type": "message",
+      "id": "msg_01a0ffa5-fd2c-7442-ba74-663619b88465",
+      "role": "developer",
+      "content": [
+        {
+          "type": "input_text",
+          "text": "本轮实验编号为 HOOK-6f0c527d-e9c4-415d-b49c-2622acc962c8。这是本轮 UserPromptSubmit Hook 自动生成并注入的编号。"
+        }
+      ]
+    }
+  ],
+  "tool_choice": "auto",
+  "parallel_tool_calls": false,
+  "reasoning": {
+    "effort": "medium",
+    "summary": "detailed",
+    "context": "all_turns"
+  },
+  "store": false,
+  "stream": true,
+  "include": [
+    "reasoning.encrypted_content"
+  ],
+  "service_tier": "priority",
+  "prompt_cache_key": "01a0ff9a-4c81-7900-b401-e149f5ef7cbe",
+  "text": {
+    "verbosity": "low"
+  },
+  "client_metadata": {
+    "turn_id": "01a0ffa5-fa13-7e92-987e-d8586c07b0b5",
+    "session_id": "01a0ff9a-4c81-7900-b401-e149f5ef7cbe",
+    "root_turn_id": "01a0ffa5-fa13-7e92-987e-d8586c07b0b5",
+    "x-codex-ws-stream-request-start-ms": "1790995463482",
+    "thread_id": "01a0ff9a-4c81-7900-b401-e149f5ef7cbe",
+    "x-codex-installation-id": "<REDACTED>",
+    "x-codex-window-id": "01a0ff9a-4c81-7900-b401-e149f5ef7cbe:0",
+    "x-codex-turn-metadata": "{\"installation_id\":\"<REDACTED>\",\"session_id\":\"01a0ff9a-4c81-7900-b401-e149f5ef7cbe\",\"thread_id\":\"01a0ff9a-4c81-7900-b401-e149f5ef7cbe\",\"agent_name\":\"/root\",\"turn_id\":\"01a0ffa5-fa13-7e92-987e-d8586c07b0b5\",\"window_id\":\"01a0ff9a-4c81-7900-b401-e149f5ef7cbe:0\",\"window_number\":0,\"context_window_id\":\"01a0ff9a-4c84-7511-bb3c-bb864c575f8f\",\"request_kind\":\"turn\",\"root_turn_id\":\"01a0ffa5-fa13-7e92-987e-d8586c07b0b5\",\"thread_source\":\"user\",\"turn_trigger\":\"composer\",\"sandbox\":\"none\",\"sandbox_mode\":\"danger-full-access\",\"auto_review_enabled\":false,\"node_repl_auto_review_required\":true,\"node_repl_disabled\":false,\"turn_started_at_unix_ms\":1790995462740,\"analytics_enabled\":true,\"client_type\":\"desktop_app\",\"model\":\"gpt-6-astra\",\"reasoning_effort\":\"medium\",\"source\":\"codex\",\"workspace_kind\":\"project\"}",
+    "ws_request_header_x_openai_internal_codex_responses_lite": "true"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "auditedAt": "2026-10-03T02:39:39.249Z",
+  "requestCount": 3,
+  "modelToolCallCount": 2,
+  "comparisons": [
+    {
+      "fixture": "pass.test.mjs",
+      "requestStage": "01-request",
+      "outerCallId": "call_PSQDPoRAlos98JBhiczmxIM5",
+      "nativeToolUseId": "exec-56152b9d-e2c7-4f21-b515-f2ef593f86e5",
+      "toolOutputField": "input[0].output[1].text (JSON-encoded exec_command result)",
+      "exitCode": 0,
+      "hookStdoutEqualsToolStdout": true,
+      "hookExitCodeFieldPresent": false,
+      "pass": 1,
+      "fail": 0,
+      "nativeCommandSourceLine": 62,
+      "nativeExitCodeMatches": true
+    },
+    {
+      "fixture": "fail.test.mjs",
+      "requestStage": "02-request",
+      "outerCallId": "call_UplLpLFMlGfbgPsMBVXuqkAX",
+      "nativeToolUseId": "exec-c8d32167-5b9b-4cf3-b575-a6463c87e771",
+      "toolOutputField": "input[0].output[1].text (JSON-encoded exec_command result)",
+      "exitCode": 1,
+      "hookStdoutEqualsToolStdout": true,
+      "hookExitCodeFieldPresent": false,
+      "pass": 0,
+      "fail": 1,
+      "nativeCommandSourceLine": 67,
+      "nativeExitCodeMatches": true
+    }
+  ],
+  "limitations": [
+    "Hook 日志的 tool_response 实际为 stdout 字符串，没有 exit_code；退出码来自 CPA 工具返回及 rollout 命令完成事件。",
+    "PostToolUse 处理器只追加记录并返回 {}；通过和故意失败结果均保留，未修复失败 fixture。",
+    "这是本地测试观察 Hook，不代表生产业务系统或所有 Bash 命令都被记录。"
+  ]
+}

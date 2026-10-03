@@ -1,0 +1,47 @@
+{
+  "auditedAt": "2026-10-03T02:47:58.305Z",
+  "requestCount": 5,
+  "modelToolCallCount": 4,
+  "runtimeMode": "default",
+  "runtimeContextSourceLine": 148,
+  "availableToolsSearch": {
+    "stage": "00-request",
+    "query": "update_plan|plan state|plan status|planning tool",
+    "resultStage": "01-request",
+    "result": [],
+    "scope": "Model searched the exposed ALL_TOOLS registry by name and description."
+  },
+  "nativePlanCallsObserved": 0,
+  "nativePlanEventsObserved": 0,
+  "progressKind": "assistant commentary text",
+  "progressSequence": [
+    {
+      "stage": "01-request",
+      "text": "读取进行中，修复/测试待办",
+      "actualNextCall": "读取 Skill、实验副本与测试"
+    },
+    {
+      "stage": "02-request",
+      "text": "读取完成，修复进行中，测试待办",
+      "actualNextCall": "apply_patch 将 + 改为 *"
+    },
+    {
+      "stage": "03-request",
+      "text": "读取/修复完成，测试进行中",
+      "actualNextCall": "node --test lab/plan-state/price.test.mjs"
+    },
+    {
+      "stage": "04-request",
+      "text": "读取/修复/测试完成",
+      "actualEvidence": "工具返回 exit_code=0，pass1/fail0"
+    }
+  ],
+  "testExitCode": 0,
+  "nativeTestSourceLine": 182,
+  "testFixtureUnchanged": true,
+  "limitations": [
+    "本轮没有调用原生计划状态工具，也没有原生计划状态事件。能证明的是普通模式下的文字进度与实际执行相符。",
+    "工具搜索在本轮暴露的注册表中返回空；不能据此断言所有 Codex 版本或所有模式都没有计划工具。",
+    "本轮保持 Default，未进入需要用户选择或确认的 Plan Mode。"
+  ]
+}

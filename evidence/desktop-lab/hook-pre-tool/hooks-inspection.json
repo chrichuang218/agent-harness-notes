@@ -1,0 +1,76 @@
+{
+  "queriedAt": "2026-10-03T02:29:27.109Z",
+  "provenance": "Fresh read-only app-server process using the same installed executable path as the running Desktop. This inspects on-disk hook configuration/trust; it is not a query to the existing Desktop process.",
+  "executable": "E:/Develop/codex/versions/current/resources/codex.exe",
+  "result": {
+    "id": 2,
+    "result": {
+      "data": [
+        {
+          "cwd": "E:/Develop/github/codex-ts-demo",
+          "hooks": [
+            {
+              "key": "E:\\Develop\\github\\codex-ts-demo\\.codex\\hooks.json:pre_tool_use:0:0",
+              "eventName": "preToolUse",
+              "handlerType": "command",
+              "command": "E:/Develop/node/node.exe E:/Develop/github/codex-ts-demo/.codex/hooks/tool-experiment.mjs",
+              "async": false,
+              "matcher": "^apply_patch$",
+              "timeoutSec": 5,
+              "statusMessage": "Hook lab: check protected patch",
+              "additionalContextLimit": null,
+              "sourcePath": "E:\\Develop\\github\\codex-ts-demo\\.codex\\hooks.json",
+              "source": "project",
+              "pluginId": null,
+              "displayOrder": 1,
+              "enabled": true,
+              "isManaged": false,
+              "currentHash": "sha256:7a7a25ce89a430740c56681b57b5cd92919eb0da14bee9fc7849d3c8059ca167",
+              "trustStatus": "trusted"
+            },
+            {
+              "key": "E:\\Develop\\github\\codex-ts-demo\\.codex\\hooks.json:post_tool_use:0:0",
+              "eventName": "postToolUse",
+              "handlerType": "command",
+              "command": "E:/Develop/node/node.exe E:/Develop/github/codex-ts-demo/.codex/hooks/tool-experiment.mjs",
+              "async": false,
+              "matcher": "^Bash$",
+              "timeoutSec": 5,
+              "statusMessage": "Hook lab: record test result",
+              "additionalContextLimit": null,
+              "sourcePath": "E:\\Develop\\github\\codex-ts-demo\\.codex\\hooks.json",
+              "source": "project",
+              "pluginId": null,
+              "displayOrder": 2,
+              "enabled": true,
+              "isManaged": false,
+              "currentHash": "sha256:a1859fb6168ed75fae041b05c1ec7ee4694d3f892ea1e12b628920d2ee3d1417",
+              "trustStatus": "trusted"
+            },
+            {
+              "key": "E:\\Develop\\github\\codex-ts-demo\\.codex\\hooks.json:user_prompt_submit:0:0",
+              "eventName": "userPromptSubmit",
+              "handlerType": "command",
+              "command": "E:/Develop/node/node.exe E:/Develop/github/codex-ts-demo/.codex/hooks/prompt-marker.mjs",
+              "async": false,
+              "matcher": null,
+              "timeoutSec": 5,
+              "statusMessage": "生成本轮 Hook 实验编号",
+              "additionalContextLimit": null,
+              "sourcePath": "E:\\Develop\\github\\codex-ts-demo\\.codex\\hooks.json",
+              "source": "project",
+              "pluginId": null,
+              "displayOrder": 3,
+              "enabled": true,
+              "isManaged": false,
+              "currentHash": "sha256:b65bf42c4992c8567b5c8b039966519a98eab74ddb91b96d01b5961e43f9e1a9",
+              "trustStatus": "trusted"
+            }
+          ],
+          "warnings": [],
+          "errors": []
+        }
+      ]
+    }
+  }
+}

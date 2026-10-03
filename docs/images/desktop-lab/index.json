@@ -1,0 +1,785 @@
+{
+  "schemaVersion": 1,
+  "capturedOn": "2026-10-03",
+  "notes": [
+    "图片来自真实 Codex 模式窗口，只做确定性裁剪，未重绘或改写消息、命令、报错与结果。",
+    "原始全窗口截图与可访问性文本保存在本地私有 work/desktop-captures，不随仓库发布。公开 PNG 为裁剪后的原尺寸图片。",
+    "savedAt 是保存文件的时间。reopened-history 表示重新打开旧对话拍摄，不代表原实验发生时间；实验时间以对应 manifest 和日志为准。",
+    "plan-progress 来自执行中的保留画面，保存晚于观察；裁剪排除了上方含个人目录的命令行。",
+    "静态截图用于对照可见操作与结果，工具执行、流式过程和文件变化仍需结合 CPA、本地事件与文件观察核对。"
+  ],
+  "images": [
+    {
+      "id": "hello-continuation",
+      "file": "docs/images/desktop-lab/hello-continuation.png",
+      "sha256": "3dc5a346941155293765d5ade0582310d5a65f8663f4d74e53294ca891027426",
+      "width": 920,
+      "height": 815,
+      "chapters": [
+        "01-request",
+        "04-session"
+      ],
+      "caption": "问候、追问和读取 README 是同一任务里的三轮输入。",
+      "source": {
+        "captureMethod": "Computer Use / @oai/sky / Codex mode",
+        "originalStoredPrivately": true,
+        "originalFileName": "hello-continuation.png",
+        "sha256": "8749b5a7bfd3459e20f78f086909a46cc3d0228b2a65c0585acaee46479db45c",
+        "width": 2560,
+        "height": 1392,
+        "savedAt": "2026-10-03T02:51:37.773Z",
+        "displayState": "reopened-history"
+      },
+      "crop": {
+        "x": 1025,
+        "y": 175,
+        "width": 920,
+        "height": 815
+      },
+      "redactions": [],
+      "experiments": [
+        {
+          "id": "01-hello",
+          "threadId": "01a0edd8-fde9-7d31-9f55-d1623325e6e5",
+          "turnIds": [
+            "01a0edd9-1f47-70f3-b690-d38f98b1142a"
+          ],
+          "manifestFile": "evidence/desktop-lab/01-hello/manifest.json"
+        },
+        {
+          "id": "02-context",
+          "threadId": "01a0edd8-fde9-7d31-9f55-d1623325e6e5",
+          "turnIds": [
+            "01a0ede8-42f4-7353-b214-fd56062e10d8"
+          ],
+          "manifestFile": "evidence/desktop-lab/02-context/manifest.json"
+        },
+        {
+          "id": "03-readme",
+          "threadId": "01a0edd8-fde9-7d31-9f55-d1623325e6e5",
+          "turnIds": [
+            "01a0ede9-7793-7513-ba04-da061fcd167e"
+          ],
+          "manifestFile": "evidence/desktop-lab/03-readme/manifest.json"
+        }
+      ]
+    },
+    {
+      "id": "readme-tool",
+      "file": "docs/images/desktop-lab/readme-tool.png",
+      "sha256": "323b25c71804bcaff336af7bd38774694db6bceef32455d107639cd839a7e990",
+      "width": 920,
+      "height": 500,
+      "chapters": [
+        "02-tools"
+      ],
+      "caption": "展开读取这一轮后，Desktop 显示“已读取 README.md”，随后给出三句话概括。",
+      "source": {
+        "captureMethod": "Computer Use / @oai/sky / Codex mode",
+        "originalStoredPrivately": true,
+        "originalFileName": "readme-tool.png",
+        "sha256": "960ebadf0bec96d8141f9f104cc94a884a7e5d2f87b3d392e8a200689ccc8531",
+        "width": 2560,
+        "height": 1392,
+        "savedAt": "2026-10-03T02:51:53.085Z",
+        "displayState": "reopened-history"
+      },
+      "crop": {
+        "x": 1025,
+        "y": 585,
+        "width": 920,
+        "height": 500
+      },
+      "redactions": [],
+      "experiments": [
+        {
+          "id": "03-readme",
+          "threadId": "01a0edd8-fde9-7d31-9f55-d1623325e6e5",
+          "turnIds": [
+            "01a0ede9-7793-7513-ba04-da061fcd167e"
+          ],
+          "manifestFile": "evidence/desktop-lab/03-readme/manifest.json"
+        }
+      ]
+    },
+    {
+      "id": "fix-result",
+      "file": "docs/images/desktop-lab/fix-result.png",
+      "sha256": "eec9673ed777cbacdeb1d65d508995ac0b7c96b585f1540a137269fe1bca9ead",
+      "width": 920,
+      "height": 670,
+      "chapters": [
+        "03-agent-loop",
+        "14-streaming"
+      ],
+      "caption": "修复后的回答列出三项检查和退出码；这是完成后的静态画面，流式过程另由 CPA 事件核对。",
+      "source": {
+        "captureMethod": "Computer Use / @oai/sky / Codex mode",
+        "originalStoredPrivately": true,
+        "originalFileName": "fix-result.png",
+        "sha256": "0002fdbaa44ba35fbaa1f6569bc8495c494a10012e1653fa48b1e9e925ec2b62",
+        "width": 2560,
+        "height": 1392,
+        "savedAt": "2026-10-03T02:52:43.885Z",
+        "displayState": "reopened-history"
+      },
+      "crop": {
+        "x": 1025,
+        "y": 125,
+        "width": 920,
+        "height": 670
+      },
+      "redactions": [],
+      "experiments": [
+        {
+          "id": "07-fix",
+          "threadId": "01a0eded-ff1b-7e82-ac47-067861c26ea8",
+          "turnIds": [
+            "01a0edf0-47eb-7873-9476-2ea1d0d21769"
+          ],
+          "manifestFile": "evidence/desktop-lab/07-fix/manifest.json"
+        }
+      ]
+    },
+    {
+      "id": "new-chat-no-code",
+      "file": "docs/images/desktop-lab/new-chat-no-code.png",
+      "sha256": "efa06a5cbae320a61df2aa2abd7f6154ae6e99523ba81c56960bdc2df46d41f4",
+      "width": 920,
+      "height": 245,
+      "chapters": [
+        "04-session"
+      ],
+      "caption": "另一个任务面对相同临时代号问题，回答“不知道”。",
+      "source": {
+        "captureMethod": "Computer Use / @oai/sky / Codex mode",
+        "originalStoredPrivately": true,
+        "originalFileName": "new-chat-no-code.png",
+        "sha256": "97a3484aa62ba2141d9c11e5bc3c076fa8c135b0b9aa1f5f7f8ee714139e75ee",
+        "width": 2560,
+        "height": 1392,
+        "savedAt": "2026-10-03T02:52:53.573Z",
+        "displayState": "reopened-history"
+      },
+      "crop": {
+        "x": 1025,
+        "y": 175,
+        "width": 920,
+        "height": 245
+      },
+      "redactions": [],
+      "experiments": [
+        {
+          "id": "08-session-new",
+          "threadId": "01a0edf4-4b38-7523-8e34-dca5f11e84af",
+          "turnIds": [
+            "01a0edf4-6ddd-7b43-945f-37adf9a0e069"
+          ],
+          "manifestFile": "evidence/desktop-lab/08-session-new/manifest.json"
+        }
+      ]
+    },
+    {
+      "id": "compaction",
+      "file": "docs/images/desktop-lab/compaction.png",
+      "sha256": "ceca2e630d839446d313585056b0371d56ebd7a4a1dcf2dc130261a185d2637a",
+      "width": 920,
+      "height": 500,
+      "chapters": [
+        "05-context"
+      ],
+      "caption": "Desktop 显示压缩标记，后续回答仍给出了代号、表达式和验证命令；触发方式以原生记录为准。",
+      "source": {
+        "captureMethod": "Computer Use / @oai/sky / Codex mode",
+        "originalStoredPrivately": true,
+        "originalFileName": "compaction-and-note.png",
+        "sha256": "6d3a8c65d8026841eec74c1276390226e04a4665a581f11629ceb658b71b9fdb",
+        "width": 2560,
+        "height": 1392,
+        "savedAt": "2026-10-03T02:52:20.751Z",
+        "displayState": "reopened-history"
+      },
+      "crop": {
+        "x": 1025,
+        "y": 210,
+        "width": 920,
+        "height": 500
+      },
+      "redactions": [],
+      "experiments": [
+        {
+          "id": "08-session-resume",
+          "threadId": "01a0eded-ff1b-7e82-ac47-067861c26ea8",
+          "turnIds": [
+            "01a0edf5-a929-7572-92a4-f3fba33584e8"
+          ],
+          "manifestFile": "evidence/desktop-lab/08-session-resume/manifest.json"
+        },
+        {
+          "id": "10-compaction",
+          "threadId": "01a0eded-ff1b-7e82-ac47-067861c26ea8",
+          "turnIds": [
+            "01a0edf8-0d38-7f90-ab1f-763e3c41be64"
+          ],
+          "manifestFile": "evidence/desktop-lab/10-compaction/manifest.json"
+        },
+        {
+          "id": "10-compaction-check",
+          "threadId": "01a0eded-ff1b-7e82-ac47-067861c26ea8",
+          "turnIds": [
+            "01a0edf9-cf1c-7902-87cc-04a4b896cd37"
+          ],
+          "manifestFile": "evidence/desktop-lab/10-compaction-check/manifest.json"
+        }
+      ]
+    },
+    {
+      "id": "agents-prefix",
+      "file": "docs/images/desktop-lab/agents-prefix.png",
+      "sha256": "714e49b2caf6c1803a72bad407652159e264a97c24fafcf08582be6a7caa4c2c",
+      "width": 920,
+      "height": 440,
+      "chapters": [
+        "06-agents"
+      ],
+      "caption": "读取 README 的回答以“项目观察：”开头，对应项目规则要求。",
+      "source": {
+        "captureMethod": "Computer Use / @oai/sky / Codex mode",
+        "originalStoredPrivately": true,
+        "originalFileName": "agents-prefix.png",
+        "sha256": "f4bb327bc405e3b6f83a374820aa99a10c0d4d552a9b4497075cc58e0c2de604",
+        "width": 2560,
+        "height": 1392,
+        "savedAt": "2026-10-03T02:52:06.137Z",
+        "displayState": "reopened-history"
+      },
+      "crop": {
+        "x": 1025,
+        "y": 175,
+        "width": 920,
+        "height": 440
+      },
+      "redactions": [],
+      "experiments": [
+        {
+          "id": "04-agents",
+          "threadId": "01a0edec-8071-72f3-93bd-68203e7c47ec",
+          "turnIds": [
+            "01a0edec-98ab-72a3-a349-a8e9de43b572"
+          ],
+          "manifestFile": "evidence/desktop-lab/04-agents/manifest.json"
+        }
+      ]
+    },
+    {
+      "id": "hook-marker-repeat",
+      "file": "docs/images/desktop-lab/hook-marker-repeat.png",
+      "sha256": "bdaa3a0af22688326919bb603ebf155b084b519c5166aee2ed767c26351038f9",
+      "width": 920,
+      "height": 235,
+      "chapters": [
+        "06-agents"
+      ],
+      "caption": "输入框只询问本轮编号，回答出现 Hook 注入的编号；该轮没有模型工具调用。",
+      "source": {
+        "captureMethod": "Computer Use / @oai/sky / Codex mode",
+        "originalStoredPrivately": true,
+        "originalFileName": "hook-marker-repeat.png",
+        "sha256": "4daf961d4450d73baaf4c52485d43abe124e2c0e7f4462d23833d230a2aa4c26",
+        "width": 2560,
+        "height": 1392,
+        "savedAt": "2026-10-03T02:32:20.293Z",
+        "displayState": "after-turn"
+      },
+      "crop": {
+        "x": 1025,
+        "y": 145,
+        "width": 920,
+        "height": 235
+      },
+      "redactions": [],
+      "experiments": [
+        {
+          "id": "hook-marker-repeat",
+          "threadId": "01a0ff9a-4c81-7900-b401-e149f5ef7cbe",
+          "turnIds": [
+            "01a0ff9a-715a-7eb0-95cf-c1a77e566b83"
+          ],
+          "manifestFile": "evidence/desktop-lab/hook-marker-repeat/manifest.json"
+        }
+      ]
+    },
+    {
+      "id": "skill-invocation",
+      "file": "docs/images/desktop-lab/skill-invocation.png",
+      "sha256": "4c42e7ac47414d97ceec4fb119e2e7a0bd2ba312fa3b388b3894994a92f32280",
+      "width": 920,
+      "height": 535,
+      "chapters": [
+        "07-skills"
+      ],
+      "caption": "用户消息中的 Price Project Check 技能与只读概览结果。",
+      "source": {
+        "captureMethod": "Computer Use / @oai/sky / Codex mode",
+        "originalStoredPrivately": true,
+        "originalFileName": "skill-and-failing-test.png",
+        "sha256": "3793cdaa6eebb697ae5cf639fb0510b58cb6220eb38e5782b43a5c5a48b4f5fd",
+        "width": 2560,
+        "height": 1392,
+        "savedAt": "2026-10-03T02:52:34.319Z",
+        "displayState": "reopened-history"
+      },
+      "crop": {
+        "x": 1025,
+        "y": 125,
+        "width": 920,
+        "height": 535
+      },
+      "redactions": [],
+      "experiments": [
+        {
+          "id": "05-skills",
+          "threadId": "01a0eded-ff1b-7e82-ac47-067861c26ea8",
+          "turnIds": [
+            "01a0edee-1ab1-70e2-81c2-a90a8a0ef9c2"
+          ],
+          "manifestFile": "evidence/desktop-lab/05-skills/manifest.json"
+        }
+      ]
+    },
+    {
+      "id": "file-memory-read",
+      "file": "docs/images/desktop-lab/file-memory-read.png",
+      "sha256": "642a1422bfd575161e49c85ab05239e283dc9e24e2f664ca39f90e4268fa9bf0",
+      "width": 920,
+      "height": 275,
+      "chapters": [
+        "08-memory"
+      ],
+      "caption": "新任务明确从 docs/DECISIONS.md 读取项目决定，这是文件笔记实验。",
+      "source": {
+        "captureMethod": "Computer Use / @oai/sky / Codex mode",
+        "originalStoredPrivately": true,
+        "originalFileName": "file-memory-read.png",
+        "sha256": "97f856ffb984a6f900c7a34d064ae53af607ba0b462251a1ffa3db8faebf12fb",
+        "width": 2560,
+        "height": 1392,
+        "savedAt": "2026-10-03T02:53:34.325Z",
+        "displayState": "reopened-history"
+      },
+      "crop": {
+        "x": 1025,
+        "y": 120,
+        "width": 920,
+        "height": 275
+      },
+      "redactions": [],
+      "experiments": [
+        {
+          "id": "12-memory-read",
+          "threadId": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+          "turnIds": [
+            "01a0edfd-2778-77a2-b0d4-e9f00da37785"
+          ],
+          "manifestFile": "evidence/desktop-lab/12-memory-read/manifest.json"
+        }
+      ]
+    },
+    {
+      "id": "mcp-query",
+      "file": "docs/images/desktop-lab/mcp-query.png",
+      "sha256": "223c43037764680d17c7a2c89522c90c2f670c3659b37f41119ae2b8efa893dc",
+      "width": 920,
+      "height": 500,
+      "chapters": [
+        "09-mcp"
+      ],
+      "caption": "Desktop 显示 Product Catalog 集成已使用，返回单价 12 元，随后按项目表达式得到 36 元。",
+      "source": {
+        "captureMethod": "Computer Use / @oai/sky / Codex mode",
+        "originalStoredPrivately": true,
+        "originalFileName": "mcp-query.png",
+        "sha256": "7dee7467d069e1c7324d94a15d16efddc0f01e9efb7ba744ea4500d08228524a",
+        "width": 2560,
+        "height": 1392,
+        "savedAt": "2026-10-03T02:53:47.596Z",
+        "displayState": "reopened-history"
+      },
+      "crop": {
+        "x": 1025,
+        "y": 435,
+        "width": 920,
+        "height": 500
+      },
+      "redactions": [],
+      "experiments": [
+        {
+          "id": "13-mcp",
+          "threadId": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+          "turnIds": [
+            "01a0ee05-ff7e-7003-bc0e-e04ba5c9f926"
+          ],
+          "manifestFile": "evidence/desktop-lab/13-mcp/manifest.json"
+        }
+      ]
+    },
+    {
+      "id": "hook-pre-tool",
+      "file": "docs/images/desktop-lab/hook-pre-tool.png",
+      "sha256": "e2ab1d20e1c3275b5dce56145b4d6619ac21e1d76b1211b51b18c863448ca2a9",
+      "width": 920,
+      "height": 760,
+      "chapters": [
+        "10-permissions"
+      ],
+      "caption": "protected.txt 的补丁被 PreToolUse 拦截；allowed.txt 的独立补丁成功，原始拒绝信息保留。",
+      "source": {
+        "captureMethod": "Computer Use / @oai/sky / Codex mode",
+        "originalStoredPrivately": true,
+        "originalFileName": "hook-pre-tool-result.png",
+        "sha256": "3ebb191e48bed7d6912552200c00b34c70b60b069043c0df0320f2ff85bd6906",
+        "width": 2560,
+        "height": 1392,
+        "savedAt": "2026-10-03T02:35:09.917Z",
+        "displayState": "after-turn"
+      },
+      "crop": {
+        "x": 1025,
+        "y": 435,
+        "width": 920,
+        "height": 760
+      },
+      "redactions": [],
+      "experiments": [
+        {
+          "id": "hook-pre-tool",
+          "threadId": "01a0ff9a-4c81-7900-b401-e149f5ef7cbe",
+          "turnIds": [
+            "01a0ff9c-b0f9-7f73-a8b7-00b232d65a01"
+          ],
+          "manifestFile": "evidence/desktop-lab/hook-pre-tool/manifest.json"
+        }
+      ]
+    },
+    {
+      "id": "plan-and-implementation",
+      "file": "docs/images/desktop-lab/plan-and-implementation.png",
+      "sha256": "3d594625e2aa98d661e76c90933f726d33ebfff9b7dc30a2a97b96dc144f9606",
+      "width": 920,
+      "height": 1115,
+      "chapters": [
+        "11-plan"
+      ],
+      "caption": "历史计划产物、用户“执行此计划”的输入与实施后的验证结果。",
+      "source": {
+        "captureMethod": "Computer Use / @oai/sky / Codex mode",
+        "originalStoredPrivately": true,
+        "originalFileName": "plan-and-implementation.png",
+        "sha256": "b4fd8241dee55281055134b66f282588dbc1d6189d5d0aa5d136ac22e3d2b788",
+        "width": 2560,
+        "height": 1392,
+        "savedAt": "2026-10-03T02:54:14.108Z",
+        "displayState": "reopened-history"
+      },
+      "crop": {
+        "x": 1025,
+        "y": 125,
+        "width": 920,
+        "height": 1115
+      },
+      "redactions": [],
+      "experiments": [
+        {
+          "id": "14-plan",
+          "threadId": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+          "turnIds": [
+            "01a0ee08-4c19-72b0-9345-676981bd6d8e"
+          ],
+          "manifestFile": "evidence/desktop-lab/14-plan/manifest.json"
+        },
+        {
+          "id": "14-plan-implement",
+          "threadId": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+          "turnIds": [
+            "01a0ee0b-9fe6-7bb2-8a02-dd8c1b54a513"
+          ],
+          "manifestFile": "evidence/desktop-lab/14-plan-implement/manifest.json"
+        }
+      ]
+    },
+    {
+      "id": "plan-progress",
+      "file": "docs/images/desktop-lab/plan-progress.png",
+      "sha256": "080d3d042b50517037faadcafa3ea63efd5147d9dc25e87450a7431bd1175b29",
+      "width": 920,
+      "height": 240,
+      "chapters": [
+        "11-plan"
+      ],
+      "caption": "运行中的文字进度：读取与修改已完成，指定测试正在执行；这不是原生计划状态工具。",
+      "source": {
+        "captureMethod": "Computer Use / @oai/sky / Codex mode",
+        "originalStoredPrivately": true,
+        "originalFileName": "plan-progress.png",
+        "sha256": "0a506dd26904d1dee08cd72c82d4073656017f78d6c322a361b99d9d15f53c95",
+        "width": 2560,
+        "height": 1392,
+        "savedAt": "2026-10-03T02:50:25.744Z",
+        "displayState": "during-turn"
+      },
+      "crop": {
+        "x": 1025,
+        "y": 625,
+        "width": 920,
+        "height": 240
+      },
+      "redactions": [],
+      "experiments": [
+        {
+          "id": "plan-status",
+          "threadId": "01a0ff9a-4c81-7900-b401-e149f5ef7cbe",
+          "turnIds": [
+            "01a0ffa7-7cf3-7a81-b9a0-e7b99ea262bc"
+          ],
+          "manifestFile": "evidence/desktop-lab/plan-status/manifest.json"
+        }
+      ]
+    },
+    {
+      "id": "plan-final",
+      "file": "docs/images/desktop-lab/plan-final.png",
+      "sha256": "758a8df2134b6e6ce9986e701f2f52e68f84d1e06f1f962253825a6af26182ce",
+      "width": 920,
+      "height": 460,
+      "chapters": [
+        "11-plan"
+      ],
+      "caption": "完成后明确标注“文字进度”，并将各阶段与实际结果对照，测试退出码为 0。",
+      "source": {
+        "captureMethod": "Computer Use / @oai/sky / Codex mode",
+        "originalStoredPrivately": true,
+        "originalFileName": "plan-final.png",
+        "sha256": "cb17cb3d314be11965fc0bfd043073df2fd595442353209f769c3e3378770a1d",
+        "width": 2560,
+        "height": 1392,
+        "savedAt": "2026-10-03T02:51:05.085Z",
+        "displayState": "after-turn"
+      },
+      "crop": {
+        "x": 1025,
+        "y": 465,
+        "width": 920,
+        "height": 460
+      },
+      "redactions": [],
+      "experiments": [
+        {
+          "id": "plan-status",
+          "threadId": "01a0ff9a-4c81-7900-b401-e149f5ef7cbe",
+          "turnIds": [
+            "01a0ffa7-7cf3-7a81-b9a0-e7b99ea262bc"
+          ],
+          "manifestFile": "evidence/desktop-lab/plan-status/manifest.json"
+        }
+      ]
+    },
+    {
+      "id": "multi-agent",
+      "file": "docs/images/desktop-lab/multi-agent.png",
+      "sha256": "b267303e5d072cce2b44b4246d70945c3af3ac9e133029fd32ea61a6f529606d",
+      "width": 920,
+      "height": 505,
+      "chapters": [
+        "12-multi-agent"
+      ],
+      "caption": "父任务分别列出 A 的实现检查和 B 的测试覆盖检查，再作汇总。",
+      "source": {
+        "captureMethod": "Computer Use / @oai/sky / Codex mode",
+        "originalStoredPrivately": true,
+        "originalFileName": "permission-and-multi-agent.png",
+        "sha256": "947fd14d4ad4e04ef7e96225ca134e5da98fdbf460e63eafe6c4e23bbf376331",
+        "width": 2560,
+        "height": 1392,
+        "savedAt": "2026-10-03T02:54:46.823Z",
+        "displayState": "reopened-history"
+      },
+      "crop": {
+        "x": 1025,
+        "y": 625,
+        "width": 920,
+        "height": 505
+      },
+      "redactions": [],
+      "experiments": [
+        {
+          "id": "16-multi-agent",
+          "threadId": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+          "turnIds": [
+            "01a0ee11-38aa-76f1-b4b2-0bc5d34086c1"
+          ],
+          "manifestFile": "evidence/desktop-lab/16-multi-agent/manifest.json"
+        }
+      ]
+    },
+    {
+      "id": "background-return",
+      "file": "docs/images/desktop-lab/background-return.png",
+      "sha256": "2eb18a7650f445891e3fb06f99c274b29dad40a6b5aa5c8f34a59690d4d44358",
+      "width": 920,
+      "height": 560,
+      "chapters": [
+        "13-autonomy"
+      ],
+      "caption": "完成后的回收报告保留同一会话句柄与开始、结束时间；读取 README 的时序由本地执行记录核对。",
+      "source": {
+        "captureMethod": "Computer Use / @oai/sky / Codex mode",
+        "originalStoredPrivately": true,
+        "originalFileName": "background-return.png",
+        "sha256": "47e37b19590b2e3cdc0e5c7e6f244391838f4afa39ce186f8370828cc9585fed",
+        "width": 2560,
+        "height": 1392,
+        "savedAt": "2026-10-03T02:44:13.735Z",
+        "displayState": "after-turn"
+      },
+      "crop": {
+        "x": 1025,
+        "y": 470,
+        "width": 920,
+        "height": 560
+      },
+      "redactions": [],
+      "experiments": [
+        {
+          "id": "background-return",
+          "threadId": "01a0ff9a-4c81-7900-b401-e149f5ef7cbe",
+          "turnIds": [
+            "01a0ffa1-8928-7421-bdce-6dca0ef609a3"
+          ],
+          "manifestFile": "evidence/desktop-lab/background-return/manifest.json"
+        }
+      ]
+    },
+    {
+      "id": "patch-recovery",
+      "file": "docs/images/desktop-lab/patch-recovery.png",
+      "sha256": "7714d27d35e9513c9f25462ebe159afe6e2b45883074296533f06fa627c7f203",
+      "width": 920,
+      "height": 725,
+      "chapters": [
+        "13-autonomy"
+      ],
+      "caption": "受控实验先用过时上下文使补丁失败，再读取实际代码、修正补丁并通过测试。",
+      "source": {
+        "captureMethod": "Computer Use / @oai/sky / Codex mode",
+        "originalStoredPrivately": true,
+        "originalFileName": "patch-recovery.png",
+        "sha256": "636b64bbdd74e82171f40c24b6bed6ef46699f6c18be487b826693d0766395cd",
+        "width": 2560,
+        "height": 1392,
+        "savedAt": "2026-10-03T02:45:53.279Z",
+        "displayState": "after-turn"
+      },
+      "crop": {
+        "x": 1025,
+        "y": 465,
+        "width": 920,
+        "height": 725
+      },
+      "redactions": [],
+      "experiments": [
+        {
+          "id": "patch-recovery",
+          "threadId": "01a0ff9a-4c81-7900-b401-e149f5ef7cbe",
+          "turnIds": [
+            "01a0ffa5-fa13-7e92-987e-d8586c07b0b5"
+          ],
+          "manifestFile": "evidence/desktop-lab/patch-recovery/manifest.json"
+        }
+      ]
+    },
+    {
+      "id": "interruption-resume",
+      "file": "docs/images/desktop-lab/interruption-resume.png",
+      "sha256": "0b6c07f9383bd64197b376fa44a0e238dabef0a7eb4e63c5e8716eb5eda64f02",
+      "width": 920,
+      "height": 800,
+      "chapters": [
+        "13-autonomy"
+      ],
+      "caption": "历史中断后只补运行尚未完成的测试，已通过的类型检查没有重跑。",
+      "source": {
+        "captureMethod": "Computer Use / @oai/sky / Codex mode",
+        "originalStoredPrivately": true,
+        "originalFileName": "interruption-resume.png",
+        "sha256": "9766e808f35f472e0aec9009cb1eb0c5ec3b2ae2320035a7f6228730a1d33873",
+        "width": 2560,
+        "height": 1392,
+        "savedAt": "2026-10-03T02:53:06.409Z",
+        "displayState": "reopened-history"
+      },
+      "crop": {
+        "x": 1025,
+        "y": 390,
+        "width": 920,
+        "height": 800
+      },
+      "redactions": [],
+      "experiments": [
+        {
+          "id": "20-interrupted",
+          "threadId": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+          "turnIds": [
+            "01a0ee1a-ad09-7131-9368-5c7bc06db9db"
+          ],
+          "manifestFile": "evidence/desktop-lab/20-interrupted/manifest.json"
+        },
+        {
+          "id": "20-resume",
+          "threadId": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+          "turnIds": [
+            "01a0ee1c-a608-7b02-9124-a529fafcb58c"
+          ],
+          "manifestFile": "evidence/desktop-lab/20-resume/manifest.json"
+        }
+      ]
+    },
+    {
+      "id": "hook-post-tool",
+      "file": "docs/images/desktop-lab/hook-post-tool.png",
+      "sha256": "41f91d7ca09d039d4fed20fbcfcc6caf87425df9dc18e16e4869599c7813f58e",
+      "width": 920,
+      "height": 755,
+      "chapters": [
+        "15-architecture"
+      ],
+      "caption": "通过和故意失败的测试分别返回 0、1；失败断言为 13 !== 30，两个输出均进入 PostToolUse 记录。",
+      "source": {
+        "captureMethod": "Computer Use / @oai/sky / Codex mode",
+        "originalStoredPrivately": true,
+        "originalFileName": "hook-post-tool-result.png",
+        "sha256": "14be918cee947bf862e01e41dbb03d06750715cb0e76075878b42a5acf5f936e",
+        "width": 2560,
+        "height": 1392,
+        "savedAt": "2026-10-03T02:39:24.098Z",
+        "displayState": "after-turn"
+      },
+      "crop": {
+        "x": 1025,
+        "y": 465,
+        "width": 920,
+        "height": 755
+      },
+      "redactions": [],
+      "experiments": [
+        {
+          "id": "hook-post-tool",
+          "threadId": "01a0ff9a-4c81-7900-b401-e149f5ef7cbe",
+          "turnIds": [
+            "01a0ff9f-6a99-7c42-b071-803a254205be"
+          ],
+          "manifestFile": "evidence/desktop-lab/hook-post-tool/manifest.json"
+        }
+      ]
+    }
+  ]
+}
