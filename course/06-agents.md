@@ -1,12 +1,12 @@
 # AGENTS.md：项目规则怎样进入请求？
 
-读同一份 README，能不能让介绍使用固定前缀？我们加入项目规则，再发送第二章的阅读要求。回答多了“项目观察：”，而输入框里没有这几个字。
+加入项目规则后，再发送第二章的 README 阅读要求，回答就多了“项目观察：”这个前缀。输入框里没有这几个字，它们来自项目根目录的规则文件。
 
 此时总价仍是 `13`。复现规则加载时，可以使用[起始项目](../examples/01-baseline/README.md)；修复后的项目也能测试前缀，但项目状态的回答会不同。
 
 ## 在文件里写约定，在输入框里提任务
 
-实验时在项目根目录创建了 `AGENTS.md`，内容如下：
+项目根目录的 `AGENTS.md` 写了两条约定：
 
 ```markdown
 # 项目约定
@@ -27,13 +27,11 @@
 
 ![加入项目规则后，Desktop 的最终回答以项目观察开头](../docs/images/desktop-lab/agents-prefix.png)
 
-输入里仍是原来的阅读要求，最终介绍出现了项目规则指定的前缀，见[规则实验](../evidence/desktop-lab/04-agents/manifest.json)。
-
-可以对照[未添加项目规则时的输出](../evidence/desktop-lab/03-readme/01-request.output-items.json)和[本次最终输出](../evidence/desktop-lab/04-agents/01-request.output-items.json)。前缀的来源在第一次请求里。
+[规则实验](../evidence/desktop-lab/04-agents/manifest.json)保留了完整过程。[未添加项目规则时的输出](../evidence/desktop-lab/03-readme/01-request.output-items.json)和[本次最终输出](../evidence/desktop-lab/04-agents/01-request.output-items.json)可以对照回答的变化；要找前缀的来源，还需查看第一次请求。
 
 ## 规则在第一次生成前已经送达
 
-打开[首请求](../evidence/desktop-lab/04-agents/00-request.request.json)，搜索“项目观察：”。它出现在 `input[5].content[1].text`。下面保留外层包装与项目部分，明确省略全局规则中间段落，并统一显示换行：
+打开[首请求](../evidence/desktop-lab/04-agents/00-request.request.json)，搜索“项目观察：”，可以在 `input[5].content[1].text` 找到规则块。以下节选省略了全局规则的中间段落，并统一换行：
 
 ```text
 # AGENTS.md instructions for E:\Develop\github\codex-ts-demo
@@ -56,7 +54,7 @@
 </INSTRUCTIONS>
 ```
 
-全局约定与项目约定被放进同一个规则块，项目部分从 `--- project-doc ---` 开始。它们已经在首请求中，早于模型提出读取 README 的调用。本轮没有一次单独读取 `AGENTS.md` 的工具调用。
+客户端把全局约定与项目约定放进同一个规则块，项目部分从 `--- project-doc ---` 开始。模型提出读取 README 时，已经收到这些规则；本轮没有单独读取 `AGENTS.md` 的工具调用。
 
 相邻的 `input[6]` 才是输入框里的阅读要求。当前任务和项目约定一起进入模型，但来源不同。
 
@@ -86,7 +84,7 @@ flowchart LR
 | `content[1]` | `# AGENTS.md instructions...` 与 `<INSTRUCTIONS>` 中的规则 |
 | `content[2]` | `<environment_context>` 中的工作目录、Shell、时间等 |
 
-这整条消息不等于一份 AGENTS 文件。环境与插件目录也不是项目规则的章节。规则块虽含指令文字，协议角色在本样本中仍是 `user`；应用行为说明另在前面的 `developer` 消息中。
+这条消息还包含环境信息与插件目录，不能把它整体当作 AGENTS 文件。规则块虽含指令文字，协议角色在本样本中仍是 `user`；应用行为说明在前面的 `developer` 消息中。
 
 去掉外层包装、统一换行后，全局规则正文与第一章相同，包含沟通、指令与规则来源、自主执行与任务范围、澄清与批准、实现与调试、验证与清理、完成与阻塞七部分。新增的两条项目约定也保存在[规则快照](../examples/07-fixed/AGENTS.md)中。
 
@@ -109,7 +107,7 @@ flowchart LR
 
 ## 规则约束回答方式，文件提供项目事实
 
-第一次响应经 `exec` 和 `tools.exec_command` 执行 `Get-Content`，第二请求带回 README 正文。回答的前缀来自规则，项目用途来自读取结果。规则要求“说明用途”，用途本身仍需文件提供。
+第一次响应经 `exec` 和 `tools.exec_command` 执行 `Get-Content`，第二请求带回 README 正文。规则要求“说明用途”并指定前缀，项目的具体用途则来自读取结果。
 
 读取前的进度文字以“我会只读取”开头，没有前缀；本次遵循格式的是最终介绍。至于“只读”要求，规则和用户消息里都有，仅凭没有修改调用，无法判断是哪一处单独起作用。
 
@@ -136,13 +134,13 @@ flowchart LR
 
 [官方 AGENTS.md 文档](https://learn.chatgpt.com/docs/agent-configuration/agents-md)说明，全局配置位置优先使用 `AGENTS.override.md`，否则使用 `AGENTS.md`；项目范围沿项目根到当前目录逐层收集，每层至多选择一份规则文件，更靠近当前目录的规则作用更具体。
 
-本次看到全局正文与项目正文接合进请求，没有跟踪目录遍历、文件选择函数或缓存，也没有设置嵌套目录中的冲突规则。文档解释其他情形怎样设计；这份实验只验证展示出来的组装结果。
+本次请求中能看到全局正文与项目正文接在一起，但没有目录遍历、文件选择函数或缓存的记录，也没有设置嵌套目录中的冲突规则。这份实验验证了规则组装的结果；其他情形的设计可查官方文档。
 
 </details>
 
 ## 自己换一次前缀
 
-下面是读者待做的实验，现有日志没有记录这个改动：在自己的项目副本中，将第一条规则里的“项目观察：”改成一个新词，新建任务并发送同样的阅读问题。分别在请求和最终回答中搜索新词。
+在自己的项目副本中，将第一条规则里的“项目观察：”改成一个新词，新建任务并发送同样的阅读问题，再分别在请求和最终回答中搜索新词。这一步需要你自己操作，现有日志没有记录这个改动。
 
 如果词只出现在请求中，说明规则已经送达，但这次最终回答没有按要求使用。若请求里找不到它，应先检查目录、文件内容和任务上下文。只看到回答使用了新词，也还需要检查它是否来自其他输入。
 

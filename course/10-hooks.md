@@ -1,10 +1,10 @@
 # Hooks：在运行过程中注入、拦截与观察
 
-模型还没开始回答，本地脚本已经生成了一个实验编号；模型提出修改文件，补丁却在执行前被拒绝；测试执行之后，处理器记录了它的输出。这三个动作发生在运行过程的不同位置，都来自项目配置的 Hook。
+Hook 让本地脚本在指定的运行事件发生时执行。本章的项目配置分别在提交问题时生成编号、在补丁执行前拒绝指定目标，以及在测试完成后记录输出。
 
 ## Hook 与 AGENTS.md、Skills 有什么区别？
 
-前面已经看到两种影响模型工作的材料。`AGENTS.md` 里的项目约定由客户端附加到上下文；Skill 提供一套检查步骤，模型取得正文后再安排读取和执行。Hook 则把脚本接在指定运行事件上，由运行层在那个位置调用。
+`AGENTS.md` 里的项目约定由客户端附加到上下文；Skill 提供检查步骤，模型取得正文后安排读取和执行。Hook 由运行层在指定事件发生时调用。
 
 | 机制 | 本项目中做了什么 | 从哪里核对 |
 | --- | --- | --- |
@@ -12,7 +12,7 @@
 | Skill | 要求读取三个文件并报告实现差异 | 技能正文、读取调用与文件结果 |
 | Hook | 提交时生成编号、补丁前拒绝指定目标、命令后记录输出 | Hook 配置与本地事件，再与请求和执行结果对应 |
 
-三者可以参与同一个任务，但执行位置不同。编号实验没有模型工具调用，本地脚本仍然执行了；补丁实验则已有模型调用，Hook 才在执行前检查目标。判断是哪种机制起作用，需要找到它实际进入这次运行的位置。
+三者可以参与同一个任务。编号实验没有模型工具调用，本地脚本仍然执行了；补丁实验则在模型提出调用后，由 Hook 检查目标。要判断哪种机制起作用，需要找到它进入运行流程的位置。
 
 ## 配置、审阅信任与触发时机
 
@@ -32,7 +32,7 @@
 
 审阅时应核对命令指向哪个脚本、脚本检查或记录了什么。实验前的[检查快照](../evidence/desktop-lab/hook-pre-tool/hooks-inspection.json)将三项都列为 `source: "project"`、`handlerType: "command"`、`enabled: true`、`trustStatus: "trusted"`；超时为 5 秒，`warnings` 和 `errors` 都为空。
 
-这些字段说明检查时的配置状态。是否在真实任务中触发，还要看下面的 Hook 事件、模型请求和工具结果，不能只凭配置文件存在或显示启用就判断成功。
+这些字段只说明检查时的配置状态。是否在任务中触发，还需用 Hook 事件、模型请求和工具结果核对。
 
 <details>
 <summary>信任状态与提交路径</summary>
@@ -45,7 +45,7 @@
 
 ## UserPromptSubmit：编号怎样进入请求？
 
-先看提交时的编号。项目配置 `UserPromptSubmit` Hook，让脚本在提交时生成编号，经 `additionalContext` 交给 Codex。
+项目配置 `UserPromptSubmit` Hook，让脚本在提交时生成编号，经 `additionalContext` 交给 Codex。
 
 对应源码是 [prompt-marker.mjs](../examples/runtime-lab/start/.codex/hooks/prompt-marker.mjs)，可以沿事件读取、编号生成和返回值查看它怎样提供这条信息。
 
@@ -55,11 +55,11 @@
 本轮实验编号是什么？只根据已有上下文回答，不要读取文件或调用工具；没有就说“不知道”。
 ```
 
-新任务回答 `HOOK-43141e17-ca46-4b06-8ba6-9b07205aa94d`，全轮只有一次请求，没有模型工具调用。它没有读取编号文件；[本地 Hook 事件](../evidence/desktop-lab/hook-marker-repeat/hook-events.json)先记录了编号，[请求](../evidence/desktop-lab/hook-marker-repeat/00-request.request.json)随后带上它，[输出](../evidence/desktop-lab/hook-marker-repeat/00-request.output-items.json)与编号一致。
+新任务回答 `HOOK-43141e17-ca46-4b06-8ba6-9b07205aa94d`，全轮只有一次请求，没有模型工具调用，也没有读取编号文件。[本地 Hook 事件](../evidence/desktop-lab/hook-marker-repeat/hook-events.json)先记录编号，[请求](../evidence/desktop-lab/hook-marker-repeat/00-request.request.json)随后带上它，[输出](../evidence/desktop-lab/hook-marker-repeat/00-request.output-items.json)与编号一致。
 
 ![输入框询问本轮编号，回答给出 Hook 注入的 UUID 编号](../docs/images/desktop-lab/hook-marker-repeat.png)
 
-输入框未写编号，回答却给出了一个编号。它的值与[Hook 事件和 CPA 请求](../evidence/desktop-lab/hook-marker-repeat/audit.json)一致。
+[Hook 事件与 CPA 请求的核对记录](../evidence/desktop-lab/hook-marker-repeat/audit.json)确认了编号的一致性。
 
 请求里，问题在 `input[9].content[0].text`；编号在下一条 `role: "developer"` 消息的 `input[10].content[0].text`：
 
@@ -67,7 +67,7 @@
 本轮实验编号为 HOOK-43141e17-ca46-4b06-8ba6-9b07205aa94d。这是本轮 UserPromptSubmit Hook 自动生成并注入的编号。
 ```
 
-这条路径解释了“没有工具调用，为什么仍然出现了新信息”：脚本在模型生成前已执行，输出参与请求组装。AGENTS 提供文件中的约定；这次 Hook 提供提交时生成的内容。模型提出的工具调用则发生在响应里，时间和入口都不同。
+脚本在模型生成前已执行，输出参与请求组装，所以没有模型工具调用也能带入新信息。AGENTS 提供文件中的约定，这次 Hook 提供提交时生成的内容；模型提出的工具调用出现在响应里，发生时间与入口都不同。
 
 <details>
 <summary>提交路径、信任状态与字段核对</summary>
@@ -94,11 +94,11 @@ demo 中有 [protected.txt](../examples/runtime-lab/start/.codex/hook-lab/protec
 Command blocked by PreToolUse hook: HOOK-LAB: apply_patch may not change .codex/hook-lab/protected.txt.
 ```
 
-这是错误开头的节选，完整返回还包含拒绝原因与被拒补丁。下一次输出只修改 `allowed.txt`，没有再次尝试受保护目标。[最终重读](../evidence/desktop-lab/hook-pre-tool/04-request.request.json)显示：受保护文件保留 `ORIGINAL`，允许文件改为 `ALLOWED-UPDATED`。独立快照的哈希比较也只发现允许文件变化，Hook 配置和脚本未改。
+完整返回还包含拒绝原因与被拒补丁。下一次输出只修改 `allowed.txt`，没有再次尝试受保护目标。[最终重读](../evidence/desktop-lab/hook-pre-tool/04-request.request.json)显示：受保护文件保留 `ORIGINAL`，允许文件改为 `ALLOWED-UPDATED`。独立快照的哈希比较也只发现允许文件变化，Hook 配置和脚本未改。
 
 ![Desktop 保留 PreToolUse 拒绝信息，并分别报告受保护文件与允许文件的最终内容](../docs/images/desktop-lab/hook-pre-tool.png)
 
-界面显示补丁被拒绝，编辑入口只有 `allowed.txt`。两份文件的最终状态见[独立文件核对](../evidence/desktop-lab/hook-pre-tool/audit.json)。
+编辑入口只列出 `allowed.txt`，两份文件的最终状态由[独立文件核对](../evidence/desktop-lab/hook-pre-tool/audit.json)确认。
 
 起始目录中的两个文件都含 `ORIGINAL`；[结果对照](../examples/runtime-lab/results/.codex/hook-lab/allowed.txt)只展示允许文件修改后的内容。
 
@@ -115,7 +115,7 @@ Command blocked by PreToolUse hook: HOOK-LAB: apply_patch may not change .codex/
 
 ## PostToolUse：命令完成后记录返回
 
-两个独立测试文件中，一个检查 `10 * 3` 等于 `30`，另一个故意要求 `10 + 3` 等于 `30`。在 Desktop 输入框要求分别运行一次，失败后不修复、不重试，也不让模型读取 Hook 日志。
+两个独立测试文件中，一个检查 `10 * 3` 等于 `30`，另一个故意要求 `10 + 3` 等于 `30`。任务要求分别运行一次，失败后不修复、不重试，也不让模型读取 Hook 日志。
 
 代码分别在 [pass.test.mjs](../examples/runtime-lab/start/.codex/hook-lab/pass.test.mjs) 和 [fail.test.mjs](../examples/runtime-lab/start/.codex/hook-lab/fail.test.mjs)。在复制后的 `start/` 目录分别运行下面两条命令，失败测试应保持失败；命令本身不会启用 Hook，观察 Hook 仍需由配置完成的 Codex 任务调用它们。
 
@@ -130,11 +130,11 @@ Command blocked by PreToolUse hook: HOOK-LAB: apply_patch may not change .codex/
 
 ![Desktop 分别报告两个测试的退出码，并保留13不等于30的原始断言错误](../docs/images/desktop-lab/hook-post-tool.png)
 
-界面分别列出通过和失败的退出码，并显示 `13 !== 30` 的断言错误，见[本轮记录](../evidence/desktop-lab/hook-post-tool/manifest.json)。Hook 取得的内容还要与本地日志对照。
+[本轮记录](../evidence/desktop-lab/hook-post-tool/manifest.json)保留了 `13 !== 30` 的断言错误。要知道 Hook 取得哪些内容，还需查看它的日志。
 
-与此同时，`PostToolUse` 处理器在每次命令完成后记录返回内容，再返回 `{}`。它只是观察这两个指定测试，没有把失败改为成功。[Hook 日志](../evidence/desktop-lab/hook-post-tool/hook-events.json)里的 `tool_response` 实际是输出字符串，没有 `exit_code` 字段。这个字符串与 CPA 工具返回内层的 `output` 逐字一致；退出码需要从工具结果或原生命令完成事件读取。
+`PostToolUse` 处理器在每次命令完成后记录返回内容，再返回 `{}`。它只观察这两个指定测试，不改变测试结果。[Hook 日志](../evidence/desktop-lab/hook-post-tool/hook-events.json)里的 `tool_response` 是输出字符串，没有 `exit_code` 字段。这个字符串与 CPA 工具返回内层的 `output` 逐字一致；退出码需要从工具结果或原生命令完成事件读取。
 
-这样能分别回答三个问题：测试执行得到了什么，Hook 记录了什么，模型最后怎样报告。仅有一份 Hook 日志，不能补出它没有记录的退出码。
+工具结果、Hook 日志和最终回答分别记录了执行、观察与报告的内容，核对时需要区分各自提供了哪些字段。
 
 <details>
 <summary>命令工具名称与记录范围</summary>

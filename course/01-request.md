@@ -10,9 +10,7 @@
 
 ![Codex Desktop 中的问候、追问与读取 README](../docs/images/desktop-lab/hello-continuation.png)
 
-问候、追问和读取 README 是同一任务里的三轮输入。本章先看第一轮对应的[问候记录](../evidence/desktop-lab/01-hello/manifest.json)。
-
-问候位于 `input[6]`，也就是数组第七项。下面节选它的类型、角色和内容，省略消息 ID：
+问候、追问和读取 README 是同一任务里的三轮输入。第一轮的[问候记录](../evidence/desktop-lab/01-hello/manifest.json)中，问候位于 `input[6]`，也就是数组第七项。它的类型、角色和内容如下，省略了消息 ID：
 
 ```json
 {
@@ -31,7 +29,7 @@
 
 ## 其余六项在告诉模型什么？
 
-模型处理这句问候时，还会收到应用的工作说明、可用工具、项目环境等内容。它们在本次请求里的位置如下：
+模型处理这句问候时，还收到了应用的工作说明、可用工具和项目环境：
 
 | 输入位置 | 内容 | 为什么一起发送 |
 | --- | --- | --- |
@@ -40,7 +38,7 @@
 | `input[5]` | 推荐插件、AGENTS 规则、工作目录等环境信息 | 提供本次任务所在环境的约定和背景 |
 | `input[6]` | “你好” | 本轮要处理的用户输入 |
 
-`input[5]` 也标为 `user`，里面却是客户端附加的规则和环境。`user` 这个标签不能单独证明文字来自输入框，要结合具体内容判断。
+`input[5]` 也标为 `user`，内容是客户端附加的规则和环境。因此，要判断文字是否来自输入框，需要看具体内容，不能只看 `user` 标签。
 
 这份可见请求没有 `role: "system"` 消息。应用的主要工作指令出现在 `developer` 消息中，AGENTS 则在前述 `user` 消息的内容块里。日常讨论中的“系统提示词”可能泛指应用附加指令；核对日志时应保留这些实际角色和字段位置。
 
@@ -48,9 +46,9 @@
 
 ## 回复在哪份记录里？
 
-工作台的“模型输出”可以找到那句问候，原文来自[输出项记录](../evidence/desktop-lab/01-hello/01-request.output-items.json)。它是一条助手消息，`role` 为 `assistant`，`phase` 为 `final_answer`。
+那句问候保存在[输出项记录](../evidence/desktop-lab/01-hello/01-request.output-items.json)中，也显示在工作台的“模型输出”里。它是一条助手消息，`role` 为 `assistant`，`phase` 为 `final_answer`。
 
-这次没有工具调用。模型直接生成文字，运行程序将它显示在 Desktop 中。请求中的工具定义只提供可用接口，本轮没有使用它们。
+这次没有工具调用，模型直接生成文字，运行程序将它显示在 Desktop 中。请求虽然带有工具定义，模型仍可以直接回答。
 
 本样本完成事件的 `response.output` 是空数组，文字已在前面的流式事件中返回。“模型输出”显示这些事件中的输出项，第 15 章会解释它们与完成事件的关系。
 
@@ -76,13 +74,13 @@
 | `input[5].content[2]` | user | `<environment_context>`，工作目录、Shell、日期、时区等 |
 | `input[6].content[0]` | user | `你好\n` |
 
-其中 `<app-context>` 等标签是文本里的包装，不能据此更改消息的协议角色。此时 demo 尚未加入后续实验的项目 AGENTS 文件，因此规则块只有本次全局约定；第 6 章会比较加入项目约定后的变化。
+其中 `<app-context>` 等标签只是文本包装，消息角色仍以协议字段为准。此时 demo 尚未加入后续实验的项目 AGENTS 文件，规则块只有本次全局约定；第 6 章会比较加入项目约定后的变化。
 
 工具定义位于 `input[0].tools`，包含 `functions`、`clock`、`collaboration`、`mcp__cua_repl` 四个命名空间，共 13 个可见工具条目。这里没有把外层 `exec` 能编排的下层能力算成额外注册条目。
 
 ### 请求级配置与来源
 
-下面是本次请求的外层字段节选，其余字段可在工作台展开：
+本次请求的外层字段节选如下，其余字段可在工作台展开：
 
 ```json
 {
@@ -97,7 +95,7 @@
 
 请求没有顶层 `instructions` 或 `tools`；完成事件的 `response.instructions` 为 `null`，`response.tools` 回显工具配置。这些位置要分别查看。`model` 是请求中的模型标识，单凭它无法确认上游实际部署身份。
 
-[客户端请求](../evidence/desktop-lab/01-hello/01-request.request.json)与[CPA 上游快照](../evidence/desktop-lab/01-hello/01-request.upstream.json)的字段和值相同。它们说明 CPA 这一段链路上可见的数据，无法展示上游服务内部未记录的处理。
+[客户端请求](../evidence/desktop-lab/01-hello/01-request.request.json)与[CPA 上游快照](../evidence/desktop-lab/01-hello/01-request.upstream.json)的字段和值相同，可见 CPA 转发前后保留了这些数据。上游服务内部未记录的处理仍不可见。
 
 </details>
 

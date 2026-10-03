@@ -1,33 +1,33 @@
 {
   "title": "Codex 的一次完整运行",
-  "description": "从一次请求、一次文件读取到完整修复，在 TypeScript 项目和 CPA 日志中逐步理解 Agent。",
+  "description": "在 TypeScript 项目中，从一句问候和一次读取开始，沿 CPA 日志看完一轮修复。",
   "groups": [
     {
       "id": "basic",
       "title": "看懂一次运行",
-      "description": "先读懂模型收到什么，再跟踪工具调用和完整修复。"
+      "description": "找到模型的输入，把工具调用、返回和修复结果串起来。"
     },
     {
       "id": "context",
       "title": "信息从哪里来",
-      "description": "沿会话、上下文、项目规则、技能和笔记追查信息来源。"
+      "description": "分清对话历史、项目规则、技能和记忆怎样进入请求。"
     },
     {
       "id": "extensions",
       "title": "扩展能力与控制执行",
-      "description": "接入 MCP，观察 Hooks、权限、规划和多个 Agent 怎样参与工作。"
+      "description": "调用 MCP 服务，再观察 Hooks、权限、计划和多 Agent 怎样影响执行。"
     },
     {
       "id": "reliability",
       "title": "完成复杂任务与复盘",
-      "description": "检查停止与恢复条件，再回看流式协议和整套运行架构。"
+      "description": "核对完成与恢复条件，再理解流式输出和各部分的职责。"
     }
   ],
   "lessons": [
     {
       "id": "01-request",
       "title": "一次请求与提示词组装",
-      "subtitle": "我只输入“你好”，模型为什么收到了这么多内容？",
+      "subtitle": "只输入一句“你好”，请求里为什么还有其他内容？",
       "group": "basic",
       "file": "course/01-request.md",
       "status": "verified",
@@ -38,7 +38,7 @@
     {
       "id": "02-tools",
       "title": "工具系统",
-      "subtitle": "让它读 README，究竟是谁打开了文件？",
+      "subtitle": "让它读 README，谁打开了文件？",
       "group": "basic",
       "file": "course/02-tools.md",
       "status": "verified",
@@ -49,7 +49,7 @@
     {
       "id": "03-agent-loop",
       "title": "Agent Loop",
-      "subtitle": "让它修一个 bug，为什么会产生多次请求？",
+      "subtitle": "一次修复为什么会用到多次模型请求？",
       "group": "basic",
       "file": "course/03-agent-loop.md",
       "status": "verified",
@@ -61,7 +61,7 @@
     {
       "id": "04-session",
       "title": "任务与会话",
-      "subtitle": "下一句话怎样接上之前的工作？新任务为什么不知道旧代号？",
+      "subtitle": "继续原任务和新建任务，模型拿到的历史有什么不同？",
       "group": "context",
       "file": "course/04-session.md",
       "status": "verified",
@@ -75,7 +75,7 @@
     {
       "id": "05-context",
       "title": "上下文管理",
-      "subtitle": "历史越来越长怎么办？引用、重发、压缩和缓存有什么区别？",
+      "subtitle": "历史变长后，引用、重发、压缩和缓存各有什么作用？",
       "group": "context",
       "file": "course/05-context.md",
       "status": "verified",
@@ -89,7 +89,7 @@
     {
       "id": "06-agents",
       "title": "AGENTS.md：项目规则",
-      "subtitle": "项目约定在哪里进入请求？怎样核对它对回答的影响？",
+      "subtitle": "怎样从请求和回答中核对项目约定？",
       "group": "context",
       "file": "course/06-agents.md",
       "status": "verified",
@@ -101,7 +101,7 @@
     {
       "id": "07-skills",
       "title": "Skills：可复用的工作方法",
-      "subtitle": "除了告诉它规则，能不能给它一套检查流程？",
+      "subtitle": "怎样让 Codex 找到并使用项目检查流程？",
       "group": "context",
       "file": "course/07-skills.md",
       "status": "verified",
@@ -113,7 +113,7 @@
     {
       "id": "08-memory",
       "title": "记忆：跨任务保留与召回",
-      "subtitle": "一句项目偏好怎样被保存，并在新任务中重新出现？",
+      "subtitle": "旧聊天里的项目偏好怎样进入新任务？",
       "group": "context",
       "file": "course/08-memory.md",
       "status": "verified",
@@ -131,8 +131,8 @@
     },
     {
       "id": "09-mcp",
-      "title": "MCP：接入外部能力",
-      "subtitle": "本地文件里没有商品价格，它怎样通过服务查询？",
+      "title": "MCP：调用外部服务",
+      "subtitle": "只给出商品编号，怎样调用服务查到单价？",
       "group": "extensions",
       "file": "course/09-mcp.md",
       "status": "verified",
@@ -142,8 +142,8 @@
     },
     {
       "id": "10-hooks",
-      "title": "Hooks：在运行过程中注入、拦截与观察",
-      "subtitle": "提交输入、执行工具时，本地脚本怎样参与这次运行？",
+      "title": "Hooks：运行中的脚本",
+      "subtitle": "哪些时机会触发 Hook 脚本，它能改变什么？",
       "group": "extensions",
       "file": "course/10-hooks.md",
       "status": "verified",
@@ -160,7 +160,7 @@
     {
       "id": "10-permissions",
       "title": "权限与安全",
-      "subtitle": "模型提出一个操作，是否就一定能执行？",
+      "subtitle": "模型提出的操作，哪些会被执行环境拒绝？",
       "group": "extensions",
       "file": "course/10-permissions.md",
       "status": "verified",
@@ -171,7 +171,7 @@
     {
       "id": "11-plan",
       "title": "Plan Mode",
-      "subtitle": "需求复杂起来后，怎样先调查、澄清、定方案，再实施？",
+      "subtitle": "计划模式下能做什么，何时开始修改代码？",
       "group": "extensions",
       "file": "course/11-plan.md",
       "status": "verified",
@@ -184,7 +184,7 @@
     {
       "id": "12-multi-agent",
       "title": "多 Agent",
-      "subtitle": "检查任务怎样委派？各自知道什么，结果怎样汇总？",
+      "subtitle": "子任务收到哪些上下文，结果怎样交回主任务？",
       "group": "extensions",
       "file": "course/12-multi-agent.md",
       "status": "verified",
@@ -197,7 +197,7 @@
     {
       "id": "13-autonomy",
       "title": "目标、停止条件与续跑",
-      "subtitle": "怎样判断完成？失败或中断后，从哪里继续？",
+      "subtitle": "任务怎样确认完成？失败或中断后从哪里继续？",
       "group": "reliability",
       "file": "course/13-autonomy.md",
       "status": "verified",
@@ -213,8 +213,8 @@
     },
     {
       "id": "14-streaming",
-      "title": "流式输出与协议细节",
-      "subtitle": "文字和工具调用，在网络上怎样逐步返回？",
+      "title": "流式输出",
+      "subtitle": "文字和工具调用怎样逐段返回？",
       "group": "reliability",
       "file": "course/14-streaming.md",
       "status": "verified",
@@ -224,8 +224,8 @@
     },
     {
       "id": "15-architecture",
-      "title": "完整复盘：架构与验证",
-      "subtitle": "各部分分别负责什么？哪些结论已经有证据？",
+      "title": "架构与验证",
+      "subtitle": "模型、运行层和工具各做了什么，怎样验证结果？",
       "group": "reliability",
       "file": "course/15-architecture.md",
       "status": "verified",

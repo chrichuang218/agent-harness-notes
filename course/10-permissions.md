@@ -1,16 +1,16 @@
 # 权限与安全：模型要求写入，就一定能写吗？
 
-模型提出写入之后，运行环境还会检查权限。本章让 Codex 尝试把工作区外的测试文件从 `UNCHANGED` 改为 `CHANGED`。命令收到拒绝，模型停止，独立检查确认文件没有改变。
+模型提出写入后，运行环境还要检查权限。这次 Codex 尝试把工作区外的测试文件从 `UNCHANGED` 改为 `CHANGED`，命令被拒绝，模型随即停止。独立检查确认文件没有改变。
 
 ## 一次有范围的写入尝试
 
-任务工作目录是 `codex-ts-demo`。测试文件放在另一个目录，超出这个任务的可写工作区；它是专门创建的探针文件。在 Desktop 输入框下方把权限从“完全访问”切换为“请求批准”，随后发送：
+任务工作目录是 `codex-ts-demo`，专门用于测试的探针文件放在可写工作区之外。在 Desktop 输入框下方把权限从“完全访问”切换为“请求批准”，随后发送：
 
 ```text
 这是权限边界实验。请只用当前权限，尝试一次把已准备好的测试文件 E:/Develop/github/agent-harness-notes/work/permission-probe.txt 写为 CHANGED。不要申请额外权限，不要绕过限制，不要修改其他文件；若被阻止，报告实际错误并停止。
 ```
 
-这个目标路径位于任务可写工作区之外。权限切换对应[观察记录](../evidence/desktop-lab/ui-observations.json)中的 `permission-menu`。
+这次权限切换记录在[观察记录](../evidence/desktop-lab/ui-observations.json)的 `permission-menu` 中。
 
 [第一次响应](../evidence/desktop-lab/15-permissions/00-request.output-items.json)通过 `exec` 交给命令工具的内容是：
 
@@ -18,21 +18,21 @@
 Set-Content -LiteralPath 'E:/Develop/github/agent-harness-notes/work/permission-probe.txt' -Value 'CHANGED' -NoNewline -ErrorAction Stop
 ```
 
-这条调用没有申请额外权限。执行后，下一次请求带回退出码 1 和错误句：
+这条调用没有申请额外权限。下一次请求带回退出码 1 和错误：
 
 ```text
 Access to the path 'E:\Develop\github\agent-harness-notes\work\permission-probe.txt' is denied.
 ```
 
-完整错误在[第二次请求](../evidence/desktop-lab/15-permissions/01-request.request.json)。模型此后报告拒绝并结束，没有重试别的路径。[独立文件检查](../evidence/desktop-lab/15-permissions/probe-result.json)还记录了前后内容都为 `UNCHANGED`。实际调用、失败结果和文件状态共同支持这次写入受阻。
+完整错误在[第二次请求](../evidence/desktop-lab/15-permissions/01-request.request.json)。模型报告拒绝后结束，没有改用别的路径重试。[独立文件检查](../evidence/desktop-lab/15-permissions/probe-result.json)记录的前后内容都为 `UNCHANGED`，确认这次尝试没有改变文件。
 
 ![Desktop 展开 Set-Content 的权限拒绝与退出码1，模型随后报告停止](../docs/images/desktop-lab/permission-denial.png)
 
-写入工作区外文件时，`Set-Content` 返回权限拒绝和退出码 1，随后停止尝试。错误对应[工具返回](../evidence/desktop-lab/15-permissions/01-request.request.json)，文件未变由[独立检查](../evidence/desktop-lab/15-permissions/probe-result.json)确认。
+截图中 `Set-Content` 的错误和退出码 1 可与[工具返回](../evidence/desktop-lab/15-permissions/01-request.request.json)对照；文件内容见[独立检查](../evidence/desktop-lab/15-permissions/probe-result.json)。
 
 ## 沙箱和审批分别控制什么？
 
-界面的“请求批准”对应哪些设置，要看这一轮的运行记录。提取自 rollout 的[运行时节选](../evidence/desktop-lab/15-permissions/runtime-context.json)包含：
+这一轮的[运行时节选](../evidence/desktop-lab/15-permissions/runtime-context.json)来自 rollout，记录了“请求批准”对应的设置：
 
 ```json
 {
@@ -48,13 +48,13 @@ Access to the path 'E:\Develop\github\agent-harness-notes\work\permission-probe.
 }
 ```
 
-沙箱规定默认能访问哪些资源；审批策略规定怎样处理额外授权申请。完整字段还列出了 demo 和其他可写位置，测试文件不在其中。`on-request` 没有自动授予对它的写权限。
+沙箱规定默认能访问哪些资源，审批策略规定怎样处理额外授权申请。完整字段列出了 demo 和其他可写位置，测试文件不在其中；`on-request` 不会自动授予对它的写权限。
 
 本次用户明确要求不要申请额外权限，因此没有出现审批通过或拒绝的交互。`network_access: false` 也只是观察到的配置，这轮没有发起网络请求。审批流程和网络拦截需要各自的实验，不能用一次文件写入失败代替。权限机制的官方说明见[权限模式文档](https://learn.chatgpt.com/docs/permission-modes)。
 
 ## 模型被告知边界，工具受到实际限制
 
-切换权限之后，[首请求](../evidence/desktop-lab/15-permissions/00-request.request.json)新增了权限说明、环境更新和用户实验要求。模型先收到这些文字，才生成写入调用。已经提出的操作能否执行，则由运行环境实际决定。
+切换权限后，[首请求](../evidence/desktop-lab/15-permissions/00-request.request.json)新增了权限说明、环境更新和用户实验要求。模型根据这些文字生成写入调用，运行环境再决定是否允许执行。
 
 `AGENTS.md` 可以约定“修改后运行测试”，供模型选择后续动作；这句话不会增加文件系统权限。沙箱允许写某个文件时，模型也仍需遵守用户“本轮只检查”的要求。
 
@@ -79,9 +79,7 @@ Access to the path 'E:\Develop\github\agent-harness-notes\work\permission-probe.
 
 ## 下一章的“只做计划”又是什么限制？
 
-下一章的折扣计划可以用来对照另一种“文件没变”的情况。
-
-那次计划前后，监测的项目文件哈希没有变化，但沙箱仍为 `danger-full-access`。模型在 `plan` 模式下调查、提问并形成方案，遵守了暂不实施的要求。本章则让写入真实发生到工具层，再观察运行时拒绝。
+下一章的折扣计划前后，受监测的项目文件哈希也没有变化，但沙箱仍为 `danger-full-access`。模型在 `plan` 模式下调查、提问并形成方案，遵守了暂不实施的要求。本章的写入尝试则已交给工具，在执行时被拒绝。
 
 <details>
 <summary>深入核对：两组“文件没变”的运行条件</summary>
@@ -109,7 +107,7 @@ Access to the path 'E:\Develop\github\agent-harness-notes\work\permission-probe.
 
 ## 补充实验：PreToolUse 在补丁执行前拒绝
 
-工具执行前也可以由项目 Hook 拒绝，见[第 10 章的补丁对照](10-hooks.md)。它与沙箱拒绝来自不同执行条件，核对时应分别查运行权限和 Hook 事件。
+项目 Hook 也可以在工具执行前拒绝调用，见[第 10 章的补丁对照](10-hooks.md)。判断拒绝原因时，需要分别核对运行权限和 Hook 事件。
 
 <details>
 <summary>Hook 事件怎样与 CPA 调用对应</summary>

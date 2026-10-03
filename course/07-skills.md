@@ -1,8 +1,6 @@
 # Skills：一套检查步骤怎样被用上？
 
-如果希望每次概览都检查同几份文件、按同样的标准报告，可以把步骤写成 Skill。这次项目技能要求只读检查，最终回答确实指出了加法实现与乘法需求的差异。它在哪里获得步骤，又怎样取得文件内容？
-
-这次只读检查发生在修复前，代码仍使用加法。
+Skill 可以保存重复使用的检查步骤。这次项目技能要求读取指定文件，核对实现是否符合 README，再按固定格式报告。检查发生在修复前，代码仍使用加法，最终回答指出了它与乘法需求的差异。
 
 ## 把只读检查写成一个技能
 
@@ -25,7 +23,7 @@ description: 对商品总价项目做只读概览检查，核对用途、运行�
 
 文件开头的 `name` 与 `description` 说明技能叫什么、适用什么任务；后面的正文给出具体步骤。这次检查需要用 README 核对需求，用 `package.json` 核对命令，再看实现是否符合要求。
 
-新建项目任务后，我们显式发送：
+在新建的项目任务中发送：
 
 ```text
 $price-project-check 请对当前项目做一次只读概览检查。
@@ -35,11 +33,11 @@ $price-project-check 请对当前项目做一次只读概览检查。
 
 ![Desktop 中显式选择 Price Project Check 技能后的只读概览结果](../docs/images/desktop-lab/skill-invocation.png)
 
-界面把技能显示为 `Price Project Check`，回答末尾写明未运行测试。名称、正文和实际读取的对应见[技能实验](../evidence/desktop-lab/05-skills/manifest.json)。
+技能在界面中的名称是 `Price Project Check`，完整的正文与调用记录见[技能实验](../evidence/desktop-lab/05-skills/manifest.json)。
 
 ## 首次请求里已经有完整正文
 
-打开[第一份请求](../evidence/desktop-lab/05-skills/00-request.request.json)，搜索 `price-project-check`。它出现了几次，各自承担不同作用：
+在[第一份请求](../evidence/desktop-lab/05-skills/00-request.request.json)中搜索 `price-project-check`，可以找到目录条目、用户选择和技能正文：
 
 | 位置 | 内容 | 模型从这里得知什么 |
 | --- | --- | --- |
@@ -47,7 +45,7 @@ $price-project-check 请对当前项目做一次只读概览检查。
 | 用户消息 | `$price-project-check` 与当前要求 | 用户选择了这个技能 |
 | 附加的 `<skill>` 块 | 名称、路径与完整 `SKILL.md` | 检查哪几份文件，怎样报告，哪些操作不执行 |
 
-第三处已经包含完整正文，早于第一个工具调用。随后模型又读取了 `SKILL.md` 和三个项目文件；这次读取可以核对磁盘内容，但正文首次送达发生在请求组装时。
+客户端组装首请求时已经附上完整正文。随后模型又读取了 `SKILL.md` 和三个项目文件，取得磁盘内容；这次工具读取并非正文首次送达。
 
 <details>
 <summary>深入核对：目录、用户消息和附加正文的字段</summary>
@@ -70,7 +68,7 @@ $price-project-check 请对当前项目做一次只读概览检查。
 </skill>
 ```
 
-`<skill>` 是文本包装，没有增加协议角色，也不是一次工具结果。[官方 Skills 文档](https://learn.chatgpt.com/docs/build-skills)说明了先提供名称、描述与位置，按需使用正文的组织方式。本次显式使用的具体路径，可以直接从首请求核对：客户端已经附加正文。
+`<skill>` 是文本包装，没有增加协议角色，也不是工具结果。[官方 Skills 文档](https://learn.chatgpt.com/docs/build-skills)说明，客户端先提供名称、描述与位置，再按需使用正文。本次显式选择技能后，客户端在首请求中就附加了正文。
 
 </details>
 
@@ -88,7 +86,7 @@ $price-project-check 请对当前项目做一次只读概览检查。
 按技能要求报告用途、命令与实现差异
 ```
 
-[第一次输出](../evidence/desktop-lab/05-skills/00-request.output-items.json)用一个 `exec` 安排了四次读取，四份结果合在一个 `custom_tool_call_output` 中，进入[第二份请求](../evidence/desktop-lab/05-skills/01-request.request.json)，随后生成[最终说明](../evidence/desktop-lab/05-skills/01-request.output-items.json)。模型没有在读取技能之后多等一轮，才决定读取项目文件。
+[第一次输出](../evidence/desktop-lab/05-skills/00-request.output-items.json)用一个 `exec` 一并安排技能文件和三个项目文件的读取。四份结果合在一个 `custom_tool_call_output` 中，进入[第二份请求](../evidence/desktop-lab/05-skills/01-request.request.json)，随后生成[最终说明](../evidence/desktop-lab/05-skills/01-request.output-items.json)。读取技能与读取项目文件之间没有另一轮模型决策。
 
 <details>
 <summary>深入核对：四条命令怎样回到同一个调用</summary>
@@ -114,7 +112,7 @@ $price-project-check 请对当前项目做一次只读概览检查。
 
 `output[0]` 是统一执行包装，因此总计 5 个内容块。文件结果的 `text` 为 JSON 字符串，解析后有 `file`、`status` 和 `value`，其中 `value.exit_code` 是命令退出码，`value.output` 是文件正文。四份结果共用 `call_liyjTQFrR1JWvixVysn2Xm73`，没有四个独立的外层 `call_id`。
 
-这段代码安排并收集多个读取，若要判断底层命令在具体时间点是否重叠，还需时间记录。不能根据命令列表直接把它们计成四次模型决策。
+四条命令来自同一次模型决策。代码负责安排并收集读取结果；要判断底层命令的执行时间是否重叠，还需时间记录。
 
 第二请求通过 `previous_response_id` 引用第一响应 `resp_0061bd7340416e34016abbe2dbb46487d0af4b34ab5dd4d0a3`。原始事件见[第一阶段](../evidence/desktop-lab/05-skills/00-request.events.json)与[第二阶段](../evidence/desktop-lab/05-skills/01-request.events.json)。两份完成事件的 `output` 为空，具体输出在各自的 `response.output_item.done` 中。
 
@@ -124,7 +122,7 @@ $price-project-check 请对当前项目做一次只读概览检查。
 
 ## 看输出有没有按步骤工作
 
-回答为结论注明了文件：README 要求总价相乘，`src/price.ts` 使用 `unitPrice + quantity`。
+回答指出了需求与实现的差异，并注明文件依据：README 要求总价相乘，`src/price.ts` 使用 `unitPrice + quantity`。
 
 回答中的 `10 + 3 = 13` 来自源码的静态推算。本轮工具只读文件，没有执行 npm 命令，“未运行测试”因此符合实际记录。第三章看到的失败测试和后续修复，是另一次授权后发生的操作。
 
@@ -134,7 +132,7 @@ $price-project-check 请对当前项目做一次只读概览检查。
 
 第三章修复时，用户只要求修 bug，没有点名技能。模型的进度文字却说将使用本机 `ponytail`，随后的读取调用也包含该技能文件。
 
-这说明可用技能目录会影响模型选择。它与本章显式 `$price-project-check` 的记录不同：本章首请求已有完整正文；修复记录中，可以直接看见模型选择并读取另一份本机技能。判断加载时机时，要逐份检查请求，不能把其中一种路径当成所有技能的固定流程。
+可用技能目录也会影响模型选择。本章显式使用 `$price-project-check` 时，首请求已经带上完整正文；修复任务中则能看到模型自行选择并读取技能。要判断正文何时进入上下文，需要检查具体请求，不能把其中一种路径当成固定流程。
 
 <details>
 <summary>深入核对：修复任务中的 ponytail 读取</summary>

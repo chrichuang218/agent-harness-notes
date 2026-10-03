@@ -1,17 +1,17 @@
 # 上下文管理：历史变长以后，怎样继续工作？
 
-修复过程留下了文件内容、搜索结果、补丁与测试输出。我们在原任务中触发压缩，再追问临时代号、修复表达式和验证命令。模型仍答出了这三项。本章追查哪些历史被替换，哪些信息保留下来。
+修复过程留下了文件内容、搜索结果、补丁与测试输出。原任务压缩后，模型仍能回答临时代号、修复表达式和验证命令。这些答案要从压缩摘要和后续请求中追查，才能确认哪些信息保留下来、怎样继续供模型使用。
 
 ## 先分清当前输入中的信息来源
 
 前几章的历史通过 `input` 重发，或由 `previous_response_id` 引用。无论哪种方式，“项目要求相乘，但代码写成加法”这条判断，都要追到 README 的需求和 `src/price.ts` 的读取结果。
 
-规则、技能和环境也会加入上下文。它们有的在首次生成前附加，有的通过工具回传；消息的 `user` 角色无法单独说明来源。压缩前先分清这些入口，才知道摘要使用了什么材料。
+规则、技能和环境也会加入上下文，有的在首次生成前附加，有的通过工具回传。消息的 `user` 角色无法单独说明来源，追查摘要依据时还需要分清这些入口。
 
 <details>
 <summary>深入核对：从请求追查规则、技能与源码的来源</summary>
 
-下面复用三组既有实验。规则与技能的用途会在接下来两章展开，这里只定位入口：
+三组既有实验中，用户要求、规则、技能与源码分别从以下位置进入请求。规则与技能的用途见接下来两章。
 
 | 信息 | 真实入口 | 位置 |
 | --- | --- | --- |
@@ -42,17 +42,17 @@
 
 ## 点击压缩，看见了什么
 
-我们在包含修复过程和临时代号的原任务里，通过输入框的 `/` 菜单点击“压缩”。操作前，界面显示“压缩此聊天的上下文（已使用 5%）”；完成后显示“上下文已压缩”和“上下文用量：1%”。[界面观察记录](../evidence/desktop-lab/ui-observations.json)保留了这些文字。
+原任务保留着修复过程和临时代号，在输入框的 `/` 菜单点击“压缩”后，界面从“压缩此聊天的上下文（已使用 5%）”变为“上下文已压缩”和“上下文用量：1%”。这些文字见[界面观察记录](../evidence/desktop-lab/ui-observations.json)。
 
 这次通过原生菜单手动触发，没有等待容量达到自动压缩阈值。5% 与 1% 是界面取整后的用量比例，不能当作精确的 token 节省率。
 
-CPA 随后捕获到一份[压缩请求](../evidence/desktop-lab/10-compaction/00-request.request.json)。末尾要求以 `You are performing a CONTEXT CHECKPOINT COMPACTION` 开头，前面带着要整理的历史，包括修复前后的工具结果和临时代号。
+随后发出的[压缩请求](../evidence/desktop-lab/10-compaction/00-request.request.json)中，末尾要求以 `You are performing a CONTEXT CHECKPOINT COMPACTION` 开头，前面带着待整理的历史，包括修复前后的工具结果和临时代号。
 
-模型的[摘要输出](../evidence/desktop-lab/10-compaction/00-request.output-items.json)保留了这些事实：计算已从加法改成乘法、测试文件没有改、修复前后验证的结果，以及 `PRICE-A7`。它没有再次修改或测试文件；本次输出没有工具调用。
+模型的[摘要输出](../evidence/desktop-lab/10-compaction/00-request.output-items.json)保留了计算从加法改成乘法、测试文件未改、修复前后的验证结果，以及 `PRICE-A7`。这次输出没有工具调用，也没有再次修改或测试文件。
 
 ## 从摘要到真正替换历史
 
-模型写出摘要之后，应用是否真的用它接替了详细历史，还需要另一份证据。[本地压缩事件](../evidence/desktop-lab/10-compaction/compaction.json)记录了 `compacted` 事件，其中的 `compaction_response_id` 与 CPA 压缩响应的 ID 一致。
+[本地压缩事件](../evidence/desktop-lab/10-compaction/compaction.json)记录了应用怎样使用这份摘要：`compacted` 事件中的 `compaction_response_id` 与 CPA 压缩响应的 ID 一致。
 
 事件里的 `replacement_history` 有 6 项：5 条原用户消息，以及一条带接续说明的摘要消息。修复中的每次搜索和工具输出，没有作为原来的完整序列保留在这六项里。
 
@@ -65,7 +65,7 @@ flowchart LR
   N --> Q[后续请求使用接续材料]
 ```
 
-摘要响应说明模型写出了总结；`compacted` 事件说明应用记录了历史替换。下一步要查的是后续请求有没有用到这些替换材料。
+有了 `compacted` 事件，还需要对照后续请求，确认替换材料实际进入了下一次生成。
 
 <details>
 <summary>深入核对：压缩请求的元数据与 35 项输入</summary>
@@ -85,7 +85,7 @@ flowchart LR
 }
 ```
 
-它标记了手动压缩与本次 Responses 实现，不能据此要求所有版本都经过一个固定命名的独立 HTTP 接口。
+这些字段标记了手动压缩和本次使用的 Responses 实现，无法据此认定所有版本都使用同名的独立 HTTP 接口。
 
 请求没有 `previous_response_id`，而是带上 35 项 `input`：
 
@@ -118,9 +118,9 @@ flowchart LR
 
 界面写着“上下文已自动压缩”，但当次[压缩请求](../evidence/desktop-lab/10-compaction/00-request.request.json)记录 `trigger: "manual"`，操作记录也是菜单点击。触发方式应以这些记录为准；下方回答对应[压缩后追问](../evidence/desktop-lab/10-compaction-check/manifest.json)。
 
-打开[追问请求](../evidence/desktop-lab/10-compaction-check/00-request.request.json)，能找到原用户消息与刚生成的摘要。它共有 13 项输入，没有 `previous_response_id`。摘要被放在 `input[7]`，后面还附加当前应用指令、项目规则和新问题。这里使用的是重建后的输入。
+[追问请求](../evidence/desktop-lab/10-compaction-check/00-request.request.json)重建了输入，其中能找到原用户消息和刚生成的摘要。它共有 13 项输入，没有 `previous_response_id`。摘要位于 `input[7]`，后面还附加了当前应用指令、项目规则和新问题。
 
-三道问题答对，验证了这三项事实仍可使用。摘要没有保留完整搜索输出和每份文件正文；要核对其中一行，应查原始记录或重新读取。
+这三道问题答对，说明摘要保留的事实仍可用于回答。摘要没有保留完整搜索输出和每份文件正文；要核对其中一行，仍须查原始记录或重新读取。
 
 <details>
 <summary>深入核对：替换材料怎样进入下一请求</summary>
@@ -133,7 +133,7 @@ flowchart LR
 | `input[8..11]` | 当前应用、协作、项目规则与环境 |
 | `input[12]` | 新问题 |
 
-`input[7].role` 为 `user`，文字以 `Another language model started...` 开头。这是运行环境包装的接续材料，没有对应一次用户手写这段总结的操作。六项消息的 `id`、`role` 和 `content` 都与本地 `replacement_history` 对应相同，本地的内部消息元数据没有随请求重发。这样可以确认接续材料实际进入了下一次生成。答案见[追问输出](../evidence/desktop-lab/10-compaction-check/00-request.output-items.json)。
+`input[7].role` 为 `user`，文字以 `Another language model started...` 开头，但这段接续材料由运行环境包装，并非用户手写的总结。六项消息的 `id`、`role` 和 `content` 都与本地 `replacement_history` 对应相同，本地的内部消息元数据没有随请求重发。这一对应关系确认了后续请求使用的材料；实际答案见[追问输出](../evidence/desktop-lab/10-compaction-check/00-request.output-items.json)。
 
 压缩响应报告 25,806 输入 token、661 输出 token；后续追问报告 33,723 输入、63 输出，均无工具调用、排除预热。前者生成摘要，后者还带有当前运行环境并回答新问题，不能直接相减当作压缩节省量。
 
@@ -157,7 +157,7 @@ flowchart LR
 <details>
 <summary>深入核对：工具结果截断与用量计算</summary>
 
-后面的工具目录查询实验中，[返回结果](../evidence/desktop-lab/13-mcp/01-request.request.json)出现了 `Warning: truncated output (original token count: 41577)`。这是一次工具结果的截断提示，不能当作当前任务已经触发原生上下文压缩的证据。相反，第二章读取 README 的调用虽设置 `max_output_tokens: 10000`，返回里没有截断标记。输出上限、实际截断、模型上下文窗口需要分别判断。
+后面的工具目录查询实验中，[返回结果](../evidence/desktop-lab/13-mcp/01-request.request.json)出现了 `Warning: truncated output (original token count: 41577)`，说明那次工具结果被截断，不能据此认定任务已触发原生上下文压缩。第二章读取 README 的调用设置了 `max_output_tokens: 10000`，返回里却没有截断标记。因此，输出上限、实际截断和模型上下文窗口需要分别判断。
 
 三个正式响应的统计如下：
 

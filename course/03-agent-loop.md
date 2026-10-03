@@ -1,6 +1,6 @@
 # Agent Loop：一次修复怎样完成？
 
-读 README 只经过了一次工具往返。修复总价错误却需要五次请求：模型拿到文件以后，还要确认修改位置、提出补丁，再检查运行结果。
+读 README 经过了一次工具往返，修复总价错误则用了五次请求。模型拿到文件以后，还要确认修改位置、提出补丁，再检查运行结果。
 
 起始项目将单价 `10` 和数量 `3` 相加，得到 `13`，测试要求得到 `30`。这是[故障快照](../examples/01-baseline/README.md)中的真实状态。先前的[检查实验](../evidence/desktop-lab/06-tests/manifest.json)已经留下结果：类型检查通过，行为测试失败，报错包含 `13 !== 30`。两个变量的类型都是 `number`，所以类型检查没有发现运算规则写错。
 
@@ -10,21 +10,21 @@
 请修复商品总价计算错误：单价 10 元、数量 3 应返回 30 元。修改必要代码，运行 npm run typecheck、npm test 和 npm start 验证，并把 README 的当前问题说明更新为修复后的状态。
 ```
 
-这次工作需要留下几个可检查的结果：函数算对总价，原测试通过，示例输出 30，README 与修复后的状态一致。
+按这条要求，完成修复时应能确认：函数算对总价，原测试通过，示例输出 30，README 与修复后的状态一致。
 
 ## 五次请求怎样接在一起？
 
-[时间线](https://chrichuang218.github.io/agent-harness-notes/#/lesson/03-agent-loop?section=agent-loop-timeline)中的 R0 至 R4 对应证据文件的 `00-request` 至 `04-request`，是五次正式模型请求的阅读代号。沿每个工具结果往下看，它都会进入下一次请求，供模型决定继续做什么。四次工具往返之后，R4 给出完成说明，没有再提出调用。
+[时间线](https://chrichuang218.github.io/agent-harness-notes/#/lesson/03-agent-loop?section=agent-loop-timeline)用 R0 至 R4 标记五次正式模型请求，对应证据文件的 `00-request` 至 `04-request`。每个工具结果都会进入下一次请求，供模型决定下一步。四次工具往返之后，R4 给出完成说明，没有再提出调用。
 
-这次修复发生在已经加载项目规则和技能的任务中，第一批读取也包含一份本机技能说明。第 6、7 章再解释它们的作用；这里先追踪各次反馈怎样改变下一步动作。
+这次修复所在的任务已经加载了项目规则和技能，第一批读取也包含一份本机技能说明。它们的作用见第 6、7 章。
 
 ## 读到实现之后，先确认改哪里
 
 [R0 输出](../evidence/desktop-lab/07-fix/00-request.output-items.json)安排读取项目文件。返回结果进入 [R1 请求](../evidence/desktop-lab/07-fix/01-request.request.json)，模型这时才取得本次读取的函数和测试内容。
 
-下一次调用搜索 `calculateTotal`，找到实现、示例入口和测试中的调用。改动共享函数前，这次搜索把可能受影响的位置列了出来。
+下一次调用搜索 `calculateTotal`，找到实现、示例入口和测试中的调用，以便在修改共享函数前确认可能受影响的位置。
 
-随后模型提出补丁。下面是根据修复前后文件整理的代码差异：
+随后模型提出补丁，将函数中的加法改为乘法。修复前后的代码差异如下：
 
 ```diff
  export function calculateTotal(unitPrice: number, quantity: number): number {
@@ -45,7 +45,7 @@
 | `npm test` | 退出码 0，1 项测试通过 | 现有总价测试得到预期结果 |
 | `npm start` | 退出码 0，输出“总价：30 元” | 示例程序实际运行的结果 |
 
-这些结果一起进入 [R4 请求](../evidence/desktop-lab/07-fix/04-request.request.json)。重读内容还显示函数已使用乘法，README 已更新。模型随后给出[最终说明](../evidence/desktop-lab/07-fix/04-request.output-items.json)。它完成了本轮要求的总价修复；折扣功能在后续独立实验中提出并验证。
+这些结果一起进入 [R4 请求](../evidence/desktop-lab/07-fix/04-request.request.json)，重读内容也确认函数已使用乘法、README 已更新。模型据此给出[最终说明](../evidence/desktop-lab/07-fix/04-request.output-items.json)，完成本轮要求的总价修复。折扣功能在后续独立实验中提出并验证。
 
 <details>
 <summary>查看 Desktop 中的修复结果</summary>
@@ -58,9 +58,9 @@
 
 ## 循环为什么没有停在第一次输出？
 
-第一次输出只是读取要求，任务所需的文件内容还没到达。修改之后也一样：补丁返回不能代替测试，模型要拿到验证结果，才能按用户给出的条件判断完成。
+第一次输出提出读取要求时，模型尚未取得这次读取的文件内容。修改之后，它还要拿到验证结果，才能按用户给出的条件判断完成；补丁返回本身不能说明测试是否通过。
 
-Agent Loop 就是这种依据反馈继续生成的过程。五次是本轮的实际请求数，读取 README 用了两次；遇到工具失败，还可能转入错误处理。沿 `call_id` 配对动作与结果，再看下一次输出，才能解释每一步为什么发生。
+Agent Loop 按这样的反馈继续生成后续动作。请求次数取决于执行过程：本轮用了五次，读取 README 用了两次；工具失败还可能带来错误处理。沿 `call_id` 配对动作与结果，再看下一次输出，就能追踪每一步的依据。
 
 <details>
 <summary>深入核对：四次调用与五份请求的完整对应</summary>
@@ -82,7 +82,7 @@ C4 一次安排了三条验证命令及文件重读。R4 的 `input[0].output[0]
 <details>
 <summary>深入核对：修复前后的检查与用量</summary>
 
-在[修复前的检查](../evidence/desktop-lab/06-tests/01-request.request.json)中，类型检查退出码是 0，测试退出码是 1，并报告 `13 !== 30`。本轮没有把类型正确当作计算规则正确。
+在[修复前的检查](../evidence/desktop-lab/06-tests/01-request.request.json)中，类型检查退出码是 0，测试退出码是 1，并报告 `13 !== 30`：类型正确的代码仍可能算错结果。
 
 [故障快照](../examples/01-baseline/README.md)与[修复快照](../examples/07-fixed/README.md)可以独立运行。复现时先复制故障版到自己的目录，保留测试的预期值。已经修好的目录无法重新产生原来的故障。
 

@@ -1,15 +1,15 @@
 # 流式输出：一段“已修复”怎样逐渐出现？
 
-Desktop 中“已修复”这段说明是怎样逐渐显示出来的？第三章最后一次响应记录了 154 个 `response.*` 事件，其中 146 个追加文本片段，随后文本块、输出项和整个响应依次结束。
+第三章的“已修复”说明随文本片段逐渐返回。最后一次响应记录了 154 个 `response.*` 事件，其中 146 个追加文本，随后文本块、输出项和整个响应依次结束。
 
-完整序列在[修复阶段 04 事件](../evidence/desktop-lab/07-fix/04-request.events.json)，可以从第一条增量一路追到响应完成。
+在[修复阶段 04 事件](../evidence/desktop-lab/07-fix/04-request.events.json)中，可以按顺序查看第一条增量到响应完成的全部记录。
 
 <details>
 <summary>查看这段回答在 Desktop 中的样子</summary>
 
 ![总价修复完成后，Desktop 显示已修复和三项验证结果](../docs/images/desktop-lab/fix-result.png)
 
-这是[修复实验](../evidence/desktop-lab/07-fix/manifest.json)结束后的静态画面，只用来对应最终文字。分片顺序和完成事件由 CPA 日志证明，不能从截图还原。
+截图显示了[修复实验](../evidence/desktop-lab/07-fix/manifest.json)的最终回答；分片顺序和完成事件需要查看 CPA 日志，静态画面无法还原。
 
 </details>
 
@@ -21,7 +21,7 @@ Desktop 中“已修复”这段说明是怎样逐渐显示出来的？第三章
 “已” → “修” → “复” → “：[” → “src” → “/” → “price” → “.ts”
 ```
 
-这些真实片段组成“已修复：[src/price.ts…”，属于同一次模型响应，没有逐片重新请求模型或运行测试。
+这些片段拼成“已修复：[src/price.ts…”，都属于同一次模型响应，其间没有逐片重新请求模型或运行测试。
 
 第一条文本增量包含以下字段，省略日志时间戳等外层信息：
 
@@ -36,9 +36,9 @@ Desktop 中“已修复”这段说明是怎样逐渐显示出来的？第三章
 }
 ```
 
-`delta` 是本次新增文字，`item_id` 标明所属输出项，索引定位输出项和内容块，`sequence_number` 给出事件顺序。读流时先确认片段属于同一个对象，再按顺序拼接，才能避免把不同消息混在一起。
+`delta` 是本次新增文字，`item_id` 标明所属输出项，索引定位输出项和内容块，`sequence_number` 给出事件顺序。读流时按所属对象收集片段，再按顺序拼接，避免把不同消息混在一起。
 
-本例只有一个文本输出项。146 个文本增量拼接后，与 `response.output_text.done.text` 一致，也与 `response.output_item.done.item.content[0].text` 一致。这提供了核对正文是否漏片的办法。
+本例只有一个文本输出项。146 个文本增量拼接后，与 `response.output_text.done.text` 及 `response.output_item.done.item.content[0].text` 都一致，可以据此核对正文是否漏片。
 
 ## 不同的 done，结束了什么？
 
@@ -53,28 +53,28 @@ Desktop 中“已修复”这段说明是怎样逐渐显示出来的？第三章
 | `response.content_part.done` / `response.output_item.done` | 完成内容块和输出项 |
 | `response.completed` | 完成本次响应，带回用量等信息 |
 
-某个文本块完成后，响应仍可能有其他输出项。要判断结束范围，先看事件类型；`response.completed` 描述的是整次响应。
+某个文本块完成后，响应仍可能有其他输出项；`response.completed` 则表示整次响应完成。
 
-上一章还看到另一层边界：响应完整生成了工具调用，工具却在之后被用户中断。响应结束不会替后续工具宣布成功。
+上一章的模型响应完整生成了工具调用，工具却在随后被用户中断。响应结束只能说明生成结束，工具是否成功还要另查执行结果。
 
 ## 流里也可能是工具参数
 
 修复阶段 04 生成面向用户的说明，它之前的[阶段 03 事件](../evidence/desktop-lab/07-fix/03-request.events.json)则有 187 个 `response.custom_tool_call_input.delta`。这些片段组成 `exec` 的 JavaScript 输入，要求运行验证命令并重读文件。
 
-运行环境收到完整调用后执行工具，再把实际结果交给模型，才产生最后的说明。两个阶段的流分别承载工具输入和回答文本：
+运行环境收到完整调用后执行工具，把结果交给模型，模型才生成最后的说明。两个阶段的流分别包含工具输入和回答文本：
 
 | 阶段 | 主要增量类型 | 组装成什么 | 随后的动作 |
 | --- | --- | --- | --- |
 | 03 | `response.custom_tool_call_input.delta` | 工具调用的完整输入 | 执行验证并回传结果 |
 | 04 | `response.output_text.delta` | assistant 消息 | 显示最终回答 |
 
-这里生成的是工具的具体输入。执行结果要等工具运行后，才随下一请求返回。
+工具输入生成完成后，还要等待执行；执行结果随下一请求返回。
 
 ## 为什么完成事件里的 output 是空的？
 
-打开本样本的[完成事件](../evidence/desktop-lab/07-fix/04-request.response.json)，会看到 `response.output` 是空数组。回答文本已经在前面的流式事件里返回，空数组不能推翻那些事件中的正文。
+本样本的[完成事件](../evidence/desktop-lab/07-fix/04-request.response.json)中，`response.output` 是空数组。回答文本已经由前面的流式事件返回，空数组不表示模型没有生成正文。
 
-[输出项汇集](../evidence/desktop-lab/07-fix/04-request.output-items.json)包含从 `response.output_item.done` 取得的输出项；完成事件里的 `output` 仍为空。这是两种不同记录。
+[输出项汇集](../evidence/desktop-lab/07-fix/04-request.output-items.json)从 `response.output_item.done` 取得完整输出项，与完成事件中仍为空的 `output` 分开保存。
 
 只保存完成事件会丢失本样本的回答内容；只保存屏幕文字，则缺少响应标识、事件顺序和用量。
 
@@ -97,7 +97,7 @@ resp_0061bd7340416e34016abbe3868fc487d088322102a9cdf40e
 
 完整文本为 307 个 JavaScript 字符串长度单位；本阶段输出用量为 151 token。字符串长度、146 个文本增量和 token 数分别测量不同对象。整轮五次正式响应共有 1,056 输出 token，不能与最后一个阶段混为一谈。
 
-CPA 时间戳表示事件抵达代理的时间，能用来观察接收顺序与间隔。它不等于模型内部生成时间，也不是界面绘制时间，不能直接据此测出用户屏幕的逐字显示延迟。
+CPA 时间戳记录事件抵达代理的时刻，可用于观察接收顺序与间隔。模型内部生成和界面绘制发生在另外的环节，因此不能用这些时间戳直接测出屏幕上的逐字显示延迟。
 
 </details>
 

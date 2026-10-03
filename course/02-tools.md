@@ -1,8 +1,6 @@
 # 工具系统：谁读取了 README？
 
-模型收到项目路径以后，怎样取得 README 的内容？这次让 Codex 介绍项目，追踪一次文件读取。
-
-这份记录来自“你好”任务中的第三轮。用户输入是：
+模型收到项目路径以后，还需要读取 README，才能根据它介绍项目。“你好”任务的第三轮提出了这个要求：
 
 ```text
 请只阅读项目的 README.md，用三句话说明项目做什么、如何运行、当前已知问题。不要修改任何文件，也不要修复问题。
@@ -12,11 +10,9 @@ Desktop 随后显示一次读取操作，最终说明项目用于计算商品总
 
 ![Desktop 展开的 README 读取操作及三句话介绍](../docs/images/desktop-lab/readme-tool.png)
 
-展开这一轮后，界面显示“已读取 README.md”。工具怎样取得正文，可以沿[本轮记录](../evidence/desktop-lab/03-readme/manifest.json)往下追查。
+界面的“已读取 README.md”对应[本轮记录](../evidence/desktop-lab/03-readme/manifest.json)中的一次工具调用与返回。
 
 ## 文件内容在什么时候出现？
-
-下面是本轮实际经过的顺序：
 
 ```text
 请求模型介绍项目
@@ -28,7 +24,7 @@ Desktop 随后显示一次读取操作，最终说明项目用于计算商品总
 把结果交给模型，再生成项目介绍
 ```
 
-对应到日志，[第一份输出](../evidence/desktop-lab/03-readme/00-request.output-items.json)中的 `custom_tool_call` 要求执行读取；本机命令取得正文，把它放进[下一份请求](../evidence/desktop-lab/03-readme/01-request.request.json)。一次用户输入产生了两次模型请求。
+[第一份输出](../evidence/desktop-lab/03-readme/00-request.output-items.json)中的 `custom_tool_call` 要求执行读取。本机命令取得正文后，运行程序把结果放进[下一份请求](../evidence/desktop-lab/03-readme/01-request.request.json)，模型才据此生成介绍。因此，这一次用户输入产生了两次模型请求。
 
 工具定义、调用和结果分别出现在不同位置：
 
@@ -56,11 +52,11 @@ call_a288dLl8tyNv8JFlTJgNdtfK
 当前测试场景：单价为 10 元、数量为 3，预期总价为 30 元，程序实际输出 13 元。
 ```
 
-退出码表明读取命令正常结束，README 提供了回答中的数字。程序当前是否仍然输出 13，要到下一章实际运行测试才能确认。
+退出码表明读取命令正常结束，回答中的数字来自 README。下一章会实际运行测试，确认程序当前是否仍然输出 13。
 
 ## 第二次请求怎样接着处理？
 
-第二次请求只有一个新输入项，也就是刚才的工具结果。用户要求的“三句话”和“不要修改”没有再写一遍；请求通过 `previous_response_id` 引用第一次响应，继续处理已有任务。
+第二次请求只新增了刚才的工具结果。它通过 `previous_response_id` 引用第一次响应，接续用户要求，因此无需重写“三句话”和“不要修改”。
 
 `call_id` 用来找某个动作的返回，`previous_response_id` 用来接续之前的响应。第四章会比较响应引用与历史重发。
 
@@ -86,7 +82,7 @@ call_a288dLl8tyNv8JFlTJgNdtfK
 text(await tools.exec_command({cmd:"Get-Content -LiteralPath 'E:\\Develop\\github\\codex-ts-demo\\README.md' -Raw","max_output_tokens":10000}));
 ```
 
-`exec` 接收 JavaScript；其中的 `exec_command` 安排本地命令；PowerShell 的 `Get-Content -Raw` 返回文件文本；`text(...)` 把返回值装入外层输出。这几层执行都来自同一次模型工具调用。本样本没有名为 `read_file` 的调用。
+`exec` 接收这段 JavaScript，再由其中的 `exec_command` 安排本地命令。PowerShell 的 `Get-Content -Raw` 返回文件文本，`text(...)` 将返回值装入外层输出。这几层执行属于同一次模型工具调用，记录中没有名为 `read_file` 的调用。
 
 `max_output_tokens: 10000` 限制这次工具返回的输出规模。本次结果没有截断标记；它与模型的上下文窗口、整个任务的预算分别属于不同范围。
 
@@ -102,7 +98,7 @@ text(await tools.exec_command({cmd:"Get-Content -LiteralPath 'E:\\Develop\\githu
 | R0，阅读代号 | [13 项输入](../evidence/desktop-lab/03-readme/00-request.request.json)，未携带响应引用 | [提出读取调用](../evidence/desktop-lab/03-readme/00-request.output-items.json) |
 | R1，阅读代号 | [1 项工具返回](../evidence/desktop-lab/03-readme/01-request.request.json)，引用 R0 | [三句话介绍项目](../evidence/desktop-lab/03-readme/01-request.output-items.json) |
 
-R0 的输入中包含前两轮对话以及一条“我会只阅读……”的助手进度文字。那条文字在这份快照中已是输入，不能再计作该响应新增的输出。新建任务复现时，请求项数可能不同。
+R0 的输入包含前两轮对话和一条“我会只阅读……”的助手进度文字。后者已在这份快照的输入中，不能再计作该响应新增的输出。新建任务复现时，请求项数可能不同。
 
 R1 的 `previous_response_id` 原值为 `resp_0e37249022131978016abbe1b0762087d08637b9adb365b489`，与 [R0 完成事件](../evidence/desktop-lab/03-readme/00-request.response.json)中的 `response.id` 相同。
 

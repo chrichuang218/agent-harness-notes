@@ -5,10 +5,10 @@ const originalText = value => escapeHtml(value).replace(/\r/g, '&#13;');
 const jsonText = value => JSON.stringify(value, null, 2);
 const descriptions = [
   { title: '读取项目', inputSummary: '用户提出修复要求，并接续此前失败测试的响应。', outputSummary: '模型用一次 exec 安排读取技能、文件清单和项目文件。', feedback: '读取结果返回当前规则、实现与测试。Git 状态检查退出码为 1，因为目录未初始化 Git；其他读取仍取得了内容。' },
-  { title: '搜索调用位置', inputSummary: '模型收到第一批读取结果，再结合已有要求决定改哪里。', outputSummary: '模型搜索 calculateTotal 的定义、调用位置和项目规则。', feedback: '搜索结果列出计算函数、测试和示例入口，供下一次生成定位修改。' },
-  { title: '修改代码与说明', inputSummary: '模型收到搜索结果，已经能核对函数的使用位置。', outputSummary: '模型提出补丁，将加法改为乘法，并更新 README 的状态说明。', feedback: '修改工具只返回 {}，其中没有最终文件正文。后面还需要重读文件和运行验证。' },
-  { title: '验证修改', inputSummary: '模型收到修改工具的返回，用户要求的验证尚未执行。', outputSummary: '模型安排类型检查、测试、示例运行，并重读修改后的文件。', feedback: '命令结果和重读的文件一起回传。三个退出码与示例输出列在时间线末尾，可以打开原请求核对。' },
-  { title: '汇报结果', inputSummary: '模型收到三项验证结果和修改后的文件内容。', outputSummary: '模型据此汇报修复与验证，本次响应没有新的工具调用。' },
+  { title: '搜索调用位置', inputSummary: '第一批读取结果已进入请求，接下来要定位修改位置。', outputSummary: '模型搜索 calculateTotal 的定义、调用位置和项目规则。', feedback: '搜索结果带回计算函数、测试和示例入口的位置。' },
+  { title: '修改代码与说明', inputSummary: '输入包含搜索得到的函数使用位置。', outputSummary: '模型提出补丁，将加法改为乘法，并更新 README 的状态说明。', feedback: '修改工具返回 {}，没有附上最终文件正文。接下来还要重读文件、运行检查。' },
+  { title: '验证修改', inputSummary: '补丁返回已进入请求，用户要求的验证尚未执行。', outputSummary: '模型安排类型检查、测试、示例运行，并重读修改后的文件。', feedback: '命令结果与重读的文件一同回传，可在原请求中核对三个退出码和示例输出。' },
+  { title: '汇报结果', inputSummary: '模型收到三项验证结果和修改后的文件内容。', outputSummary: '模型汇报修复与验证结果，本次没有新的工具调用。' },
 ];
 
 // This view intentionally covers one recorded experiment. Stage labels explain
@@ -77,7 +77,7 @@ export async function mountAgentLoopTimeline(container, { experiment, loadJson, 
       <div class="loop-steps">
         <section class="loop-step"><span class="loop-step-label">模型收到</span><p>${row.inputSummary}</p>${link('本次新增输入', row.index, 'request', { input: 0 })}${raw(row.request.input, '展开本次 input 原文', 'data-loop-input')}</section>
         <section class="loop-step" ${row.call ? `data-loop-call-id="${escapeHtml(row.call.call_id)}"` : ''}><span class="loop-step-label">${row.call ? '模型提出工具调用' : '模型完成回答'}</span><p>${row.outputSummary}</p>${row.call ? `<p class="loop-call-label"><code>${callLabel}</code> · <code>${escapeHtml(row.call.name)}</code></p>` : ''}${link('本次模型输出', row.index, 'output')}${row.call ? raw(row.call.input, `展开 ${callLabel} 的完整调用代码`, 'data-loop-call-input') : raw(data.finalText, '展开最终回答原文', 'data-loop-panel-final-text')}</section>
-        ${row.result ? `<section class="loop-step loop-result" data-loop-result-call-id="${escapeHtml(row.call.call_id)}" data-loop-result-stage="${row.result.stageIndex}"><span class="loop-step-label">本地执行与结果回传</span><p>${row.feedback}</p><p class="loop-result-destination">${callLabel} 的结果进入 <strong>R${row.result.order}</strong>，位置为 <code>input[${row.result.inputIndex}]</code>。</p>${link(`查看 R${row.result.order} 中的返回结果`, row.result.stageIndex, 'request', { input: row.result.inputIndex }, 'data-loop-result-link')}${raw(row.result.item, '展开完整返回项目（含 call_id）', 'data-loop-result-item')}</section>` : `<section class="loop-step loop-result"><span class="loop-step-label">本轮结束</span><p>验证结果已经到达，最后的响应给出完成说明。没有第五次工具调用。</p>${link('核对最终验证输入', row.index, 'request', { input: 0 })}</section>`}
+        ${row.result ? `<section class="loop-step loop-result" data-loop-result-call-id="${escapeHtml(row.call.call_id)}" data-loop-result-stage="${row.result.stageIndex}"><span class="loop-step-label">本地执行与结果回传</span><p>${row.feedback}</p><p class="loop-result-destination">${callLabel} 的结果进入 <strong>R${row.result.order}</strong>，位置为 <code>input[${row.result.inputIndex}]</code>。</p>${link(`查看 R${row.result.order} 中的返回结果`, row.result.stageIndex, 'request', { input: row.result.inputIndex }, 'data-loop-result-link')}${raw(row.result.item, '展开完整返回项目（含 call_id）', 'data-loop-result-item')}</section>` : `<section class="loop-step loop-result"><span class="loop-step-label">本轮结束</span><p>最后的响应根据验证结果汇报完成，没有第五次工具调用。</p>${link('核对最终验证输入', row.index, 'request', { input: 0 })}</section>`}
       </div>
       <details class="loop-identities"><summary>响应与调用编号</summary><dl><div><dt>response.id</dt><dd><code>${escapeHtml(row.response.id)}</code></dd></div><div><dt>previous_response_id</dt><dd><code>${escapeHtml(row.request.previous_response_id || '本请求未携带')}</code></dd></div>${row.call ? `<div><dt>call_id</dt><dd><code>${escapeHtml(row.call.call_id)}</code></dd></div>` : ''}</dl></details>
       <nav class="loop-evidence-links" aria-label="R${row.order} 完整日志">${link('输入', row.index, 'request')}${link('输出', row.index, 'output')}${link('调用与结果配对', row.index, 'calls')}${link('完整原始请求', row.index, 'raw', { kind: 'requestFile' })}</nav>

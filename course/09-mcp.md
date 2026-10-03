@@ -1,8 +1,8 @@
 # MCP：单价 12 元是从哪里来的？
 
-前面的计算由用户给出单价。这次只告诉 Codex 商品编号 `NOTEBOOK`，它查询工具后回答 3 件共 36 元。单价 12 元从哪里来？
+前面的计算由用户给出单价。这次只告诉 Codex 商品编号 `NOTEBOOK`，它调用本地商品目录，查到单价 12 元后回答 3 件共 36 元。
 
-本地商品目录提供 `get_product_price` 工具，TypeScript 代码负责查询。MCP 约定客户端怎样发现和调用服务，本章沿实际查价过程核对它的输入与返回。
+商品目录提供 `get_product_price` 工具，由 TypeScript 代码执行查询。MCP 约定客户端怎样发现和调用这个服务。
 
 ## 先找到价格返回
 
@@ -14,9 +14,7 @@
 
 ![Desktop 显示使用 Product Catalog 集成，查询单价后回答三件共36元](../docs/images/desktop-lab/mcp-query.png)
 
-界面显示 Product Catalog 集成已使用，答案给出单价 12 元和总价 36 元。对应[查价记录](../evidence/desktop-lab/13-mcp/manifest.json)可以进一步核对价格返回的位置。
-
-模型先找到接口，再调用它，收到单价后计算答案。单价出现在[最后一次请求](../evidence/desktop-lab/13-mcp/02-request.request.json)的工具结果中；解析 `input[0].output[1].text` 得到：
+[查价记录](../evidence/desktop-lab/13-mcp/manifest.json)中，模型先找到接口，再调用它，收到单价后计算答案。单价出现在[最后一次请求](../evidence/desktop-lab/13-mcp/02-request.request.json)的工具结果中；解析 `input[0].output[1].text` 得到：
 
 ```json
 {
@@ -34,13 +32,13 @@
 }
 ```
 
-`unitPrice: 12` 在工具结果里已经出现。`content` 提供文字形式，`structuredContent` 提供结构化形式，两者都由服务返回。下一内容块带回 `src/price.ts`，其中计算函数使用 `unitPrice * quantity`。模型收到价格和实现后，才给出 `12 × 3 = 36 元`。
+服务返回了 `unitPrice: 12`，同时用 `content` 和 `structuredContent` 提供文字与结构化形式。下一内容块带回 `src/price.ts`，其中计算函数使用 `unitPrice * quantity`。模型根据价格和实现给出 `12 × 3 = 36 元`。
 
 这一轮读取了函数并计算答案，没有实际执行 `calculateTotal(12, 3)`。如果要证明程序对这个输入返回 36，还需要运行函数或增加对应测试。
 
 ## 调用之前，模型先找到了接口
 
-查价并非第一步。第一次模型响应生成一段 `exec` 代码，查询运行环境的工具目录，同时读取 `src/price.ts`。返回目录中出现了以下声明：
+第一次模型响应生成一段 `exec` 代码，查询运行环境的工具目录，同时读取 `src/price.ts`。目录返回了调用接口：
 
 ```ts
 declare const tools: {
@@ -57,7 +55,7 @@ declare const tools: {
 text(await tools.mcp__product_catalog__get_product_price({sku:"NOTEBOOK"}));
 ```
 
-运行环境把参数交给商品服务，查询结果随下一次请求回到模型。工具往返的中间多了一个执行查询的服务：
+运行环境把参数交给商品服务，服务执行查询，再将结果随下一次请求带回模型：
 
 ```mermaid
 sequenceDiagram
@@ -90,7 +88,7 @@ sequenceDiagram
 
 首请求顶层工具目录没有直接列出商品接口。模型从 `ALL_TOOLS` 取得声明，因此“顶层没看到名称”不足以判断工具不可用。那次广泛检索产生了截断，商品声明仍保留在结果开头；复现查询无需照搬这次额外检索。
 
-配置中的 `product_catalog` 与服务注册的 `get_product_price`，在本次 Code Mode 中组合成 `mcp__product_catalog__get_product_price`。上面的 TypeScript 声明是提供给模型的调用形式，服务的 Zod schema 则负责参数校验。声明不是原始 MCP `tools/list` JSON。
+配置中的 `product_catalog` 与服务注册的 `get_product_price`，在本次 Code Mode 中组合成 `mcp__product_catalog__get_product_price`。TypeScript 声明描述模型可用的调用形式，服务的 Zod schema 负责参数校验；原始 MCP `tools/list` 返回的是 JSON，不能与这段声明混为一谈。
 
 </details>
 
@@ -134,7 +132,7 @@ async ({ sku }) => {
 }
 ```
 
-SDK 将经过校验的参数交给处理函数。`readOnlyHint` 是提示性注解；实际只读行为来自实现只查 `Map`，没有写文件或访问网络。运行时的权限边界还需另外核对，第 11 章会做一次受限写入实验。
+SDK 将校验后的参数交给处理函数。`readOnlyHint` 是提示性注解；这个实现只查询 `Map`，没有写文件或访问网络，因此是只读的。运行时的权限边界还需另外核对，第 11 章会做一次受限写入实验。
 
 服务使用 `StdioServerTransport`。Desktop 启动本地 Node 进程，通过标准输入和标准输出与它通信，无需额外监听网络端口。stdout 用于 MCP 消息，调试日志应写入 stderr。
 
@@ -142,7 +140,7 @@ SDK 将经过校验的参数交给处理函数。`readOnlyHint` 是提示性注�
 
 ## 把这个服务接入自己的项目
 
-复现材料见[本章快照](../examples/13-mcp/README.md)和[配置示例](../examples/13-mcp/.codex/config.example.toml)。需要 Node.js 24 或更新版本，以及 Desktop 中已连接的本地 STDIO 服务。阅读现有记录可以直接进入下一节；自己操作时再展开配置。
+用[本章快照](../examples/13-mcp/README.md)和[配置示例](../examples/13-mcp/.codex/config.example.toml)复现时，需要 Node.js 24 或更新版本，并在 Desktop 中连接本地 STDIO 服务。
 
 <details>
 <summary>接入配置与已有检查</summary>
@@ -173,7 +171,7 @@ cwd = "C:/path/to/codex-ts-demo"
 
 项目配置需要受到 Codex 信任，规则见[官方配置文档](https://learn.chatgpt.com/docs/config-file/config-basic)。也可以在 Desktop 的 MCP 设置中添加 STDIO 服务，填写相同命令和参数；入口见 [MCP 文档](https://learn.chatgpt.com/docs/extend/mcp)。本次版本的位置是 `Settings > Plugins > MCP`，其他版本以实际界面为准。
 
-设置显示启用之后，发送本章查价要求，核对实际调用与返回。服务检查成功和设置启用，都还不能证明当前任务已使用工具。
+设置显示启用之后，发送本章查价要求，并核对实际调用与返回。服务检查成功只说明服务可用，当前任务是否使用它，还要看调用记录。
 
 </details>
 
@@ -195,7 +193,7 @@ CPA 位于 Codex 与模型服务之间。这里的 stdio MCP 通信在本地发�
 <details>
 <summary>参考解释</summary>
 
-服务目录中 `PENCIL` 单价为 3，预期总价为 9。还需要找到本次实际调用、对应结果中的单价，以及结果进入模型的请求。正确答案本身不能证明调用发生。这次 Desktop 查询只用了 `NOTEBOOK`；`PENCIL`、未知 SKU 和非法参数通过独立 SDK 检查，新的 Desktop 查询要用自己的日志核对。
+服务目录中 `PENCIL` 单价为 3，预期总价为 9。要确认工具被调用，还需找到调用记录、返回的单价和收到结果的模型请求。这次 Desktop 查询只用了 `NOTEBOOK`；`PENCIL`、未知 SKU 和非法参数通过独立 SDK 检查，新的 Desktop 查询要用自己的日志核对。
 
 </details>
 

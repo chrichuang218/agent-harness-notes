@@ -1,8 +1,8 @@
 # 目标、停止条件与续跑：下一步还需要做什么？
 
-工具返回以后，下一步可能是结束、处理错误，也可能是等待新的继续要求。先看原生 Goal 完成检查、缺少脚本后改用现有检查，以及用户中断后只执行剩余测试；再检查仍在运行的命令和过时补丁怎样处理。
+工具返回后，模型要根据结果和用户要求决定下一步：检查通过可以完成目标，命令失败可能需要读取配置，用户中断后则要核对哪些工作已经完成。仍在运行的命令需要继续取得结果，补丁失败也要先查明原因。
 
-这些任务各有自己的请求链，并非一个 Goal 的连续阶段；开始处理下一组记录时，需要先确认它的要求和项目状态。
+下面的实验各有独立的要求、项目状态和请求链，不属于同一个 Goal。
 
 ## 先给目标一个可检查的终点
 
@@ -12,9 +12,9 @@
 检查当前总价实现是否满足 README 的折扣约定，运行 npm run typecheck 和 npm test，每项至多一次。两项通过且给出退出码与结论后完成目标；不修改文件，不创建子智能体，不扩展任务。若失败就报告具体失败。
 ```
 
-目标给出了要核对的约定、必须取得的执行结果和范围。这次没有设置 token 预算。
+这个目标约定了完成条件，也限定了检查次数和工作范围，没有设置 token 预算。
 
-[首请求](../evidence/desktop-lab/17-goal/00-request.request.json)中的 user 消息以 `<codex_internal_context source="goal">` 开头。里面既有 `<objective>` 中的要求，也有围绕目标继续工作和核查完成条件的说明。输入框里的短目标经过了应用包装，才进入模型。
+[首请求](../evidence/desktop-lab/17-goal/00-request.request.json)中的 user 消息以 `<codex_internal_context source="goal">` 开头。除了 `<objective>` 中的要求，应用还加入了继续工作和核查完成条件的说明，一同发给模型。
 
 Codex 读取 README、实现、测试和配置，核对折扣的默认值、整数范围、异常和精度行为。随后各运行一次类型检查和测试，两项退出码均为 0，11 项测试通过。结果到达后，模型调用：
 
@@ -22,7 +22,7 @@ Codex 读取 README、实现、测试和配置，核对折扣的默认值、整�
 text(await tools.update_goal({status:"complete"}));
 ```
 
-[工具返回](../evidence/desktop-lab/17-goal/goal-state.json)记录状态为 `complete`。它发生在验证之后；前面的文件和命令结果才是本次目标达成的依据，状态值本身不能替代验收。
+[工具返回](../evidence/desktop-lab/17-goal/goal-state.json)记录状态为 `complete`。这次状态更新发生在验证之后，是否达到目标仍要根据前面的文件和命令结果判断。
 
 <details>
 <summary>深入核对：Goal 的五次请求与状态返回</summary>
@@ -53,9 +53,7 @@ npm error Missing script: "lint"
 
 错误进入[下一次请求](../evidence/desktop-lab/19-recovery/01-request.request.json)后，Codex 读取 `package.json` 和 `tsconfig.json`，找到了现有的 typecheck 与 test 脚本。用户已经允许在这种情况下改用现有检查，并明确不安装依赖、不新增脚本，因此模型接着运行这两项。
 
-类型检查成功，11 项测试通过。最终报告同时保留 lint 失败，以及替代检查通过这两个结果。
-
-收到错误之后，模型先提出读取配置，再提出替代检查。这是根据工具反馈调整动作的记录，没有发生 CPA 自动重发或反复运行缺失脚本的情况。
+类型检查成功，11 项测试通过。最终报告保留了 lint 失败和替代检查通过的结果。后续动作由模型读到错误和配置后提出，这期间没有 CPA 自动重发，也没有反复运行缺失的脚本。
 
 <details>
 <summary>深入核对：失败怎样影响后续动作</summary>
@@ -87,7 +85,7 @@ npm error Missing script: "lint"
 }
 ```
 
-外层 `Script completed` 和 `fulfilled` 表示编排或异步调用返回，具体命令是否成功仍看退出码及输出。npm 错误附带的一般提示也只是返回内容，不会自动改变用户限定的工作范围。
+外层 `Script completed` 和 `fulfilled` 表示编排或异步调用已经返回；判断具体命令是否成功，还要查看退出码及输出。npm 错误附带的一般提示属于返回内容，不会改变用户限定的工作范围。
 
 本实验 4 次正式请求、3 次外层调用，输入 token 合计 272,711，输出合计 397，排除预热。没有模拟网络超时、服务端重试或响应丢失。
 
@@ -101,7 +99,7 @@ npm error Missing script: "lint"
 aborted by user after 15.3s
 ```
 
-[本地中断记录](../evidence/desktop-lab/20-interrupted/interruption.json)随后出现 `turn_aborted`，原因为 `interrupted`。这轮没有继续调用 `npm test`，也没有最终回答。此时三个动作的状态可以明确区分：
+[本地中断记录](../evidence/desktop-lab/20-interrupted/interruption.json)随后出现 `turn_aborted`，原因为 `interrupted`。这轮没有继续调用 `npm test`，也没有最终回答。中断时各项工作停在了不同位置：
 
 | 动作 | 中断时的状态 | 依据 |
 | --- | --- | --- |
@@ -109,9 +107,9 @@ aborted by user after 15.3s
 | 等待 | 被取消 | 等待工具返回中断信息 |
 | 测试 | 尚未执行 | 该轮没有测试调用 |
 
-用户随后明确要求继续，只运行尚未执行的测试。恢复请求带回等待取消结果、运行环境的中断说明和新的继续要求，并引用此前发出等待调用的响应。模型可以同时看到先前的类型检查成功，以及等待未完成的事实。
+用户随后要求继续，只运行尚未执行的测试。恢复请求带回等待取消结果、运行环境的中断说明和新的继续要求，并引用此前发出等待调用的响应。模型因此能看到类型检查已成功，而等待被取消。
 
-[恢复阶段输出](../evidence/desktop-lab/20-resume/00-request.output-items.json)只提出 `npm test`，没有重跑类型检查或重启等待。工具返回退出码 0、11 项通过，模型再报告结果。原来的中断记录仍保留，恢复是新一轮中的两次模型请求。
+[恢复阶段输出](../evidence/desktop-lab/20-resume/00-request.output-items.json)只提出 `npm test`，没有重跑类型检查或重启等待。工具返回退出码 0、11 项通过后，模型报告结果。恢复发生在新一轮的两次模型请求中，原来的中断记录仍保留。
 
 <details>
 <summary>查看中断后只补测试的历史画面</summary>
@@ -159,7 +157,7 @@ aborted by user after 15.3s
 | `input[1]` | developer 中断说明 |
 | `input[2]` | 用户继续要求 |
 
-测试调用编号为 `call_PuqMbofyzZ4XDvPgK9HcuHGn`，结果在[恢复阶段 01 请求](../evidence/desktop-lab/20-resume/01-request.request.json)，最终说明见[对应输出](../evidence/desktop-lab/20-resume/01-request.output-items.json)。真正中断轮次有 2 次正式请求、2 次工具调用；恢复有 2 次请求、1 次调用。
+测试调用编号为 `call_PuqMbofyzZ4XDvPgK9HcuHGn`，结果在[恢复阶段 01 请求](../evidence/desktop-lab/20-resume/01-request.request.json)，最终说明见[对应输出](../evidence/desktop-lab/20-resume/01-request.output-items.json)。中断轮次有 2 次正式请求、2 次工具调用；恢复有 2 次请求、1 次调用。
 
 此前还做过一次等待 30 秒的[正常完成对照](../evidence/desktop-lab/20-uninterrupted-control/manifest.json)。它有 4 次请求，等待实际完成约 30.0257 秒，随后执行测试。那次在停止操作前已结束，不能算作中断成功。
 
@@ -167,9 +165,9 @@ aborted by user after 15.3s
 
 ## 继续之前，依据实际状态
 
-本例取消的是等待工具，没有文件修改。如果停止时正在写文件或运行后台进程，应先检查文件、进程或工具句柄，确认实际执行到了哪里。
+本例取消了等待工具，没有涉及文件修改。如果停止时正在写文件或运行后台进程，就需要先检查文件、进程或工具句柄，确认实际执行到了哪里。
 
-中断前，两次模型生成都有 `response.completed`；第二次生成的等待调用随后却被用户取消。模型生成结束、工具结束、任务完成各有自己的状态，下一章会从流式事件继续拆解。
+中断前，两次模型生成都有 `response.completed`，但第二次生成的等待调用随后被用户取消。模型生成结束时，工具可能还未完成，任务也可能尚未达到要求。下一章会从流式事件继续解释这些状态。
 
 ## 为下一步写出依据
 
@@ -195,9 +193,9 @@ BACKGROUND_TOTAL 27
 BACKGROUND_DONE 2026-10-03T02:40:12.726Z
 ```
 
-[最终返回](../evidence/desktop-lab/background-return/05-request.request.json)还给出 `exit_code: 0`。全轮只启动一个延迟进程，没有为了等待结果而重复执行脚本。
+[最终返回](../evidence/desktop-lab/background-return/05-request.request.json)还给出 `exit_code: 0`。全轮只启动了一个延迟进程，等待结果时复用了原会话。
 
-CPA 的工具返回可串起会话句柄，本地命令时间则补充了实际重叠的证据：延迟脚本运行约 35 秒，README 的读取发生在它启动之后、结束之前，见[时间核对](../evidence/desktop-lab/background-return/audit.json)。这和上一节取消等待不同：进程仍在执行，模型先安排了一件独立的读取工作，再继续回收结果。
+CPA 的工具返回串起了同一个会话句柄。本地命令时间还显示，延迟脚本运行约 35 秒，README 的读取发生在它启动之后、结束之前，见[时间核对](../evidence/desktop-lab/background-return/audit.json)。模型在进程运行期间安排了一次独立读取，随后继续回收结果。
 
 <details>
 <summary>查看同一句柄的启动与回收报告</summary>
@@ -213,7 +211,7 @@ CPA 的工具返回可串起会话句柄，本地命令时间则补充了实际�
 
 本轮共 6 次请求、5 次外层调用：启动、读取、三次回收。首次启动调用设置较短的 `yield_time_ms: 1000`，实际约 10 秒返回；它没有在 1 秒时停止脚本。`session_id` 用于找回同一个仍在运行的命令。
 
-外层 `Script completed` 只表明编排代码返回。内层结果仍有会话号、没有退出码时，不能据此宣布进程成功。最后的输出和退出码才确定本次命令完成，原生命令事件见[rollout 节选](../evidence/desktop-lab/background-return/rollout-events.json)。
+外层 `Script completed` 只表明编排代码已返回。内层结果仍有会话号、没有退出码时，还不能确定进程是否成功结束，需等到最后的输出和退出码才能判断执行结果，原生命令事件见[rollout 节选](../evidence/desktop-lab/background-return/rollout-events.json)。
 
 这次验证的是同一轮内的长进程与结果回收，没有关闭应用、跨机器恢复或定时调度。
 
@@ -233,6 +231,6 @@ CPA 的工具返回可串起会话句柄，本地命令时间则补充了实际�
 
 报告先列出上下文不匹配错误，再展示实际读到的加法实现和修改后的乘法。首次减法上下文由提示指定，完整过程见[审计](../evidence/desktop-lab/patch-recovery/audit.json)。
 
-这次错误说明补丁依赖的旧文本与文件不符，重新读取可以提供新的编辑依据。第 10 章的 Hook 拒绝则明确禁止修改目标，被拒之后没有换方法重试。决定怎样恢复前，要先读清错误和本轮允许的范围。
+这次补丁失败是因为旧文本与文件不符，重新读取后便有了修改依据。第 10 章的 Hook 拒绝明确禁止修改目标，被拒之后没有换方法重试。错误原因和本轮授权范围不同，后续动作也要随之调整。
 
 [上一章：多 Agent](12-multi-agent.md) · [下一章：流式输出与协议细节](14-streaming.md)
