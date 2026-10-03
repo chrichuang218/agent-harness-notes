@@ -11,7 +11,7 @@ const { experiments } = JSON.parse(await readFile('evidence/desktop-lab/index.js
 const captureReadme = process.argv.includes('--capture-readme');
 const basePath = '/agent-harness-notes/';
 const stages = experiments.flatMap(experiment => experiment.stages.map((stage, index) => ({ experiment, stage, index })));
-assert.equal(catalog.lessons.length, 15);
+assert.equal(catalog.lessons.length, 16);
 assert.equal(catalog.groups.length, 4);
 assert.ok(experiments.length > 0, 'The evidence index must contain experiments.');
 assert.ok(stages.length > 0, 'Every indexed stage must be verified.');
@@ -100,7 +100,7 @@ try {
   assert.ok((await page.locator('.home-page h1').boundingBox()).y >= (await page.locator('.site-header').boundingBox()).height, 'Fixed header must not cover the opening title.');
   assert.equal(await page.locator('.chapter:visible,.introduction:visible').count(), 0, 'The home page must not show the full course below its cards.');
   assert.equal(await page.locator('.learning-path .phase-section').count(), 4);
-  assert.equal(await page.locator('.learning-path .lesson-card').count(), 15);
+  assert.equal(await page.locator('.learning-path .lesson-card').count(), 16);
   for (const [index, group] of catalog.groups.entries()) {
     const phase = page.locator('.learning-path .phase-section').nth(index);
     assert.ok((await phase.innerText()).includes(group.title));
@@ -109,14 +109,12 @@ try {
     assert.deepEqual(actual, expected, group.id + ': cards must preserve the Chinese course order.');
   }
   assert.equal(await page.locator('dialog').count(), 0, 'Reading/evidence must not require a dialog.');
-  for (const name of ['learn-claude-code', 'how-claude-code-works']) {
-    const license = page.locator(`.site-footer a[href*="licenses/${name}.txt"]`);
-    assert.equal(await license.count(), 1, name + ': reference license link is missing.');
-    const licenseUrl = new URL(await license.getAttribute('href'), url).href;
-    assert.ok(licenseUrl.startsWith(url + 'licenses/'), 'License must resolve under the GitHub Pages base path.');
+  for (const [name, copyright] of [['learn-claude-code', '2024 shareAI Lab'], ['how-claude-code-works', '2025 Windy3f3f3f3f']]) {
+    const licenseUrl = url + `licenses/${name}.txt`;
     const licenseResponse = await context.request.get(licenseUrl);
     assert.equal(licenseResponse.status(), 200);
-    assert.ok((await licenseResponse.text()).includes('MIT License'));
+    const licenseText = await licenseResponse.text();
+    assert.ok(licenseText.includes('MIT License') && licenseText.includes('Copyright (c) ' + copyright));
   }
   await noOverflow('Desktop homepage');
   await mkdir('work', { recursive: true });
@@ -206,6 +204,67 @@ try {
     await page.locator('.introduction:visible').waitFor();
     assert.equal(await page.locator('.chapter:visible,.home-page:visible').count(), 0);
   }
+  const hookIds = ['hook-marker-repeat', 'hook-pre-tool', 'hook-post-tool', 'hook-c-trusted-ui', 'hook-a-baseline', 'hook-b-untrusted', 'hook-c-tool-origin'];
+  const hooks = catalog.lessons.find(lesson => lesson.id === '10-hooks');
+  assert.deepEqual(hooks.evidenceIds, hookIds, 'The independent Hooks chapter must own all seven Hook experiments.');
+  assert.equal(catalog.lessons[catalog.lessons.indexOf(hooks) - 1].id, '09-mcp');
+  assert.equal(catalog.lessons[catalog.lessons.indexOf(hooks) + 1].id, '10-permissions');
+  for (const lesson of catalog.lessons.filter(lesson => lesson !== hooks)) assert.ok(!lesson.evidenceIds.some(id => hookIds.includes(id)), lesson.id + ': stale Hook ownership');
+  await page.goto(url + '#/'); await page.locator('.home-page:visible').waitFor();
+  await page.locator('.lesson-card[data-card-lesson="10-hooks"]').click(); await waitChapter('10-hooks');
+  assert.equal(await page.locator('#chapter-10-hooks .chapter-number').textContent(), '10');
+  assert.equal(await page.locator('#chapter-10-hooks .prose img').count(), 3, 'The Hooks chapter must contain the three real event screenshots.');
+  assert.ok(await page.locator('#chapter-10-hooks .prose img').evaluateAll(images => images.every(image => !image.closest('details'))), 'All three Hook event screenshots must appear in the main article.');
+  await page.screenshot({ path: 'work/site-hooks-desktop.png', fullPage: false, animations: 'disabled' });
+  for (const experimentId of hookIds) {
+    const experiment = experiments.find(item => item.id === experimentId);
+    const previousOwners = experimentId === 'hook-pre-tool' ? ['10-permissions', '15-permissions'] : experimentId === 'hook-post-tool' ? ['15-architecture'] : ['06-agents', '04-agents'];
+    const request = await readJson(experiment.stages[0].requestFile);
+    const inputIndex = request.input.findIndex(item => Array.isArray(item.content) && item.content.length);
+    assert.ok(inputIndex >= 0, experimentId + ': a real content block is required for the legacy jump check.');
+    for (const previous of previousOwners) {
+      const params = new URLSearchParams({ experiment: experimentId, stage: '0', view: 'request', kind: 'eventsFile', input: String(inputIndex), content: '0' });
+      await page.goto(url + '#/lesson/' + previous + '?' + params);
+      const host = await waitWorkbench('10-hooks', experimentId, 0, 'request');
+      assert.equal(new URL(page.url()).hash, '#/lesson/10-hooks?' + params, previous + ': moving ownership must preserve every evidence parameter.');
+      const content = host.locator(`[data-full-content="input[${inputIndex}].content[0]"]`);
+      assert.ok(await content.isVisible(), previous + ': old content bookmark must reveal its exact block.');
+      const block = request.input[inputIndex].content[0];
+      assert.equal(await content.textContent(), typeof block.text === 'string' ? block.text : JSON.stringify(block, null, 2));
+      params.set('view', 'raw');
+      await page.goto(url + '#/lesson/' + previous + '?' + params);
+      const rawHost = await waitWorkbench('10-hooks', experimentId, 0, 'raw');
+      assert.equal(new URL(page.url()).hash, '#/lesson/10-hooks?' + params);
+      assert.equal(await rawHost.locator('.raw-select').inputValue(), 'eventsFile');
+      assert.equal(await rawHost.locator('[data-raw-content]').textContent(), await readFile(experiment.stages[0].eventsFile, 'utf8'));
+      await page.goto(url + '#/lesson/' + previous + '?file=' + encodeURIComponent(experiment.auditFile));
+      const supplement = page.locator('#supplement-10-hooks [data-supplement-content]');
+      await page.waitForFunction(path => {
+        const host = document.querySelector('#supplement-10-hooks');
+        return host?.dataset.sourcePath === path && host.getAttribute('aria-busy') === 'false' && host.getClientRects().length;
+      }, experiment.auditFile);
+      assert.equal(new URL(page.url()).hash, '#/lesson/10-hooks?file=' + encodeURIComponent(experiment.auditFile));
+      assert.equal(await supplement.textContent(), await readFile(experiment.auditFile, 'utf8'));
+    }
+  }
+  const expectedHookSections = {
+    '06-agents:06-agents-section-7': { lesson: '10-hooks', section: '10-hooks-section-2' },
+    '10-permissions:10-permissions-section-7': { lesson: '10-hooks', section: '10-hooks-section-3' },
+    '15-architecture:15-architecture-section-5': { lesson: '10-hooks', section: '10-hooks-section-4' },
+  };
+  assert.deepEqual(catalog.sectionRedirects, expectedHookSections);
+  for (const [previous, target] of Object.entries(expectedHookSections)) {
+    const [lesson, section] = previous.split(':');
+    await page.goto(url + '#/lesson/' + lesson + '?section=' + section);
+    await waitChapter('10-hooks');
+    assert.equal(new URL(page.url()).hash, '#/lesson/10-hooks?section=' + target.section);
+    assert.ok(await page.locator(`[id="${target.section}"]`).isVisible(), 'Relocated Hook section must exist.');
+    await page.reload(); await waitChapter('10-hooks');
+    assert.ok((await page.locator(`[id="${target.section}"]`).boundingBox()).y < 200, 'Relocated section must survive refresh.');
+    await page.goto(url + '#/lesson/' + lesson); await waitChapter(lesson);
+    assert.ok(await page.locator(`[id="${section}"]`).count(), 'The old section must retain its short reference.');
+  }
+  console.log('Verified independent Hooks entry, three screenshots, seven experiment owners and old owner/alias/file/content/section bookmarks.');
   // The context chapter once linked to experiments now taught elsewhere.
   // Existing bookmarks must retain their source, stage and view after moving.
   await page.goto(url + '#/lesson/09-context?experiment=03-readme&stage=1&view=raw&kind=responseFile');
@@ -486,6 +545,8 @@ try {
     await waitChapter('01-request');
     await noOverflow(`${width}px chapter heading jump`);
     if (width === 390) {
+      await page.goto(url + '#/lesson/10-hooks'); await waitChapter('10-hooks');
+      await page.screenshot({ path: 'work/site-hooks-mobile.png', fullPage: false, animations: 'disabled' });
       await page.goto(url + '#/lesson/01-request'); await waitChapter('01-request');
       await page.screenshot({ path: 'work/site-chapter-mobile.png', fullPage: false, animations: 'disabled' });
       await page.getByRole('button', { name: '展开学习目录' }).click();
@@ -507,14 +568,14 @@ try {
     }
   }
   await page.setViewportSize({ width: 1440, height: 1000 });
-  await page.goto(url + '#/lesson/10-permissions'); await waitChapter('10-permissions');
-  const desktopScreenshot = page.locator('#chapter-10-permissions .prose img').last();
+  await page.goto(url + '#/lesson/10-hooks'); await waitChapter('10-hooks');
+  const desktopScreenshot = page.locator('#chapter-10-hooks .prose img').last();
   await desktopScreenshot.scrollIntoViewIfNeeded();
   await page.screenshot({ path: 'work/site-screenshot-in-article.png', fullPage: false, animations: 'disabled' });
   await openWorkbench(hello, 1, 'request'); await page.screenshot({ path: 'work/site-workbench-desktop.png', fullPage: false, animations: 'disabled' });
   assert.deepEqual(errors, [], 'Browser errors must not be swallowed.');
   assert.deepEqual(badResources, [], 'Deployed-path assets must all load without failed requests.');
-  console.log(`Site checks passed at ${basePath}: four-phase/15-card homepage, separate guide and one visible chapter; chapter navigation/history, lazy-load race, all 20 legacy routes and intro aliases; ${foldedHeadings.length} folded headings; five-stage real timeline; all ${stages.length} full-evidence stages and ${previousCount} response links; copy/share and input/content refresh; native records, original image and license; 3 widths and dark theme; no overflow, resource or console errors.`);
+  console.log(`Site checks passed at ${basePath}: four-phase/${catalog.lessons.length}-card homepage, independent Hooks chapter and preserved bookmarks; separate guide and one visible chapter; chapter navigation/history, lazy-load race, all 20 legacy routes and intro aliases; ${foldedHeadings.length} folded headings; five-stage real timeline; all ${stages.length} full-evidence stages and ${previousCount} response links; copy/share and input/content refresh; native records, original image and license; 3 widths and dark theme; no overflow, resource or console errors.`);
 } catch (error) {
   const failedPage = browser?.contexts()[0]?.pages()[0];
   if (failedPage && !failedPage.isClosed()) {

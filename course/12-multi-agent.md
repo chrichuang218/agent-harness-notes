@@ -12,7 +12,7 @@
 
 ![父任务分别汇报两个子 Agent 的实现边界与测试覆盖发现](../docs/images/desktop-lab/multi-agent.png)
 
-父任务的历史回答分别列出 A 和 B 的发现。接下来沿[协作记录](../evidence/desktop-lab/16-multi-agent/manifest.json)追查这些结论怎样回来。
+父任务分别列出 A 和 B 的发现。沿[协作记录](../evidence/desktop-lab/16-multi-agent/manifest.json)可以追查这些结论怎样回来。
 
 父任务先调用 `spawn_agent` 创建 A。下一次请求收到的返回为：
 
@@ -33,7 +33,7 @@
 <details>
 <summary>深入核对：子任务的预热、继承上下文和工具循环</summary>
 
-第一次委派参数来自[父任务阶段 00 输出](../evidence/desktop-lab/16-multi-agent/00-request.output-items.json)。解析 `function_call.arguments` 可见以下字段；委派消息密文已脱敏：
+第一次委派参数来自[父任务阶段 00 输出](../evidence/desktop-lab/16-multi-agent/00-request.output-items.json)。解析 `function_call.arguments`，下面节选任务名和上下文继承参数：
 
 ```json
 {

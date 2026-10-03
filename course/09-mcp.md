@@ -6,7 +6,7 @@
 
 ## 先找到价格返回
 
-Desktop 中发送的要求如下。原始输入保存在[实验清单](../evidence/desktop-lab/13-mcp/manifest.json)，下面按普通文本展示：
+在 Desktop 中发送[查价要求](../evidence/desktop-lab/13-mcp/manifest.json)：
 
 ```text
 请使用 product_catalog MCP 的 get_product_price 工具查询 SKU NOTEBOOK 的单价，再读取 src/price.ts，计算 3 件的总价。必须以实际工具结果为依据；若该 MCP 工具不可用就如实说明，不要用读取商品目录源码代替调用。不要修改文件。
@@ -73,7 +73,7 @@ sequenceDiagram
     M-->>H: 3 件总价为 36 元
 ```
 
-图按实际记录整理。第一次目录查询已读过源码，第二次调用又读了一遍，因此实际动作没有完全遵循提示里“先查价，再读文件”的顺序。整轮有 3 次正式模型请求、2 次外层 `exec`，只有 1 次商品 MCP 查询。
+第一次目录查询已读过源码，第二次调用又读了一遍，因此实际动作没有完全遵循提示里“先查价，再读文件”的顺序。整轮有 3 次正式模型请求、2 次外层 `exec`，只有 1 次商品 MCP 查询。
 
 <details>
 <summary>深入核对：三个阶段怎样对应</summary>
@@ -134,7 +134,7 @@ async ({ sku }) => {
 }
 ```
 
-SDK 将经过校验的参数交给处理函数。`readOnlyHint` 是提示性注解；实际只读行为来自实现只查 `Map`，没有写文件或访问网络。运行时的权限边界需要另外核对，下一章会做一次写入实验。
+SDK 将经过校验的参数交给处理函数。`readOnlyHint` 是提示性注解；实际只读行为来自实现只查 `Map`，没有写文件或访问网络。运行时的权限边界还需另外核对，第 11 章会做一次受限写入实验。
 
 服务使用 `StdioServerTransport`。Desktop 启动本地 Node 进程，通过标准输入和标准输出与它通信，无需额外监听网络端口。stdout 用于 MCP 消息，调试日志应写入 stderr。
 
@@ -184,7 +184,7 @@ cwd = "C:/path/to/codex-ts-demo"
 
 [界面记录](../evidence/desktop-lab/ui-observations.json)中的 `mcp-project-config-visible` 显示服务已列出并启用。更早的状态面板和请求未看到它；进入设置确认后，再次发送任务才实际调用成功。实验没有重启，也没有确定此前缺席的内部原因。demo 未初始化 Git，但当时的 core 已读取受信任项目配置。
 
-CPA 位于 Codex 与模型服务之间。这里的 stdio MCP 通信在本地发生，不经过 CPA。CPA 可以证明模型发出了查价调用，下一次请求带回 12 元；本地配置、服务源码和独立 SDK 检查补充了服务一侧的证据。本实验未采集 MCP 底层 JSON-RPC 握手帧。
+CPA 位于 Codex 与模型服务之间。这里的 stdio MCP 通信在本地发生，不经过 CPA。CPA 可以证明模型发出了查价调用，下一次请求带回 12 元；本地配置、服务源码和独立 SDK 检查说明服务如何响应。现有记录不包含 MCP 底层 JSON-RPC 握手帧。
 
 </details>
 
@@ -195,8 +195,8 @@ CPA 位于 Codex 与模型服务之间。这里的 stdio MCP 通信在本地发�
 <details>
 <summary>参考解释</summary>
 
-服务目录中 `PENCIL` 单价为 3，预期总价为 9。还需要找到本次实际调用、对应结果中的单价，以及结果进入模型的请求。正确答案本身不能证明调用发生。公开 Desktop 样本只查询了 `NOTEBOOK`；`PENCIL`、未知 SKU 和非法参数已有独立 SDK 检查，新的 Desktop 查询要用自己的日志核对。
+服务目录中 `PENCIL` 单价为 3，预期总价为 9。还需要找到本次实际调用、对应结果中的单价，以及结果进入模型的请求。正确答案本身不能证明调用发生。这次 Desktop 查询只用了 `NOTEBOOK`；`PENCIL`、未知 SKU 和非法参数通过独立 SDK 检查，新的 Desktop 查询要用自己的日志核对。
 
 </details>
 
-[上一章：记忆与持久信息](08-memory.md) · [下一章：权限与安全](10-permissions.md)
+[上一章：记忆与持久信息](08-memory.md) · [下一章：Hooks](10-hooks.md)

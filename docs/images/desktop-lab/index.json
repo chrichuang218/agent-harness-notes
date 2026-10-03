@@ -110,7 +110,8 @@
       "height": 670,
       "chapters": [
         "03-agent-loop",
-        "14-streaming"
+        "14-streaming",
+        "15-architecture"
       ],
       "caption": "修复后的回答列出三项检查和退出码；这是完成后的静态画面，流式过程另由 CPA 事件核对。",
       "source": {
@@ -278,7 +279,7 @@
       "width": 920,
       "height": 235,
       "chapters": [
-        "06-agents"
+        "10-hooks"
       ],
       "caption": "输入框只询问本轮编号，回答出现 Hook 注入的编号；该轮没有模型工具调用。",
       "source": {
@@ -430,7 +431,7 @@
       "width": 920,
       "height": 760,
       "chapters": [
-        "10-permissions"
+        "10-hooks"
       ],
       "caption": "protected.txt 的补丁被 PreToolUse 拦截；allowed.txt 的独立补丁成功，原始拒绝信息保留。",
       "source": {
@@ -750,7 +751,7 @@
       "width": 920,
       "height": 755,
       "chapters": [
-        "15-architecture"
+        "10-hooks"
       ],
       "caption": "通过和故意失败的测试分别返回 0、1；失败断言为 13 !== 30，两个输出均进入 PostToolUse 记录。",
       "source": {

@@ -2,7 +2,7 @@
 
 工具返回以后，下一步可能是结束、处理错误，也可能是等待新的继续要求。先看原生 Goal 完成检查、缺少脚本后改用现有检查，以及用户中断后只执行剩余测试；再检查仍在运行的命令和过时补丁怎样处理。
 
-前三组使用同一个折扣项目，各有自己的请求链，并非一个 Goal 的连续阶段。后两组是 2026-10-03 补做的独立实验。
+这些任务各有自己的请求链，并非一个 Goal 的连续阶段；开始处理下一组记录时，需要先确认它的要求和项目状态。
 
 ## 先给目标一个可检查的终点
 
@@ -35,7 +35,7 @@ text(await tools.update_goal({status:"complete"}));
 | [03](../evidence/desktop-lab/17-goal/03-request.output-items.json) | 两项实际结果 | 说明结论，调用 `update_goal` |
 | [04](../evidence/desktop-lab/17-goal/04-request.output-items.json) | 状态更新结果 | 最终汇报 |
 
-[阶段 03 请求](../evidence/desktop-lab/17-goal/03-request.request.json)保存两项命令结果；[阶段 04 请求](../evidence/desktop-lab/17-goal/04-request.request.json)保存目标工具返回。状态证据文件只是解析该历史返回，没有另行查询或修改任务状态。本次也没有 `get_goal` 调用。
+[阶段 03 请求](../evidence/desktop-lab/17-goal/03-request.request.json)包含两项命令结果；[阶段 04 请求](../evidence/desktop-lab/17-goal/04-request.request.json)包含目标工具返回。本次没有 `get_goal` 调用，`complete` 状态来自 `update_goal` 的结果。
 
 整轮 5 次正式请求、4 次外层调用，后续各通过一个 `custom_tool_call_output` 与前一响应引用接续。目标工具返回的用量与耗时是独立统计，不与 CPA 的多次请求 token 求和混算。
 
@@ -143,7 +143,7 @@ aborted by user after 15.3s
 }
 ```
 
-15.3 秒是工具返回的已等待时长；整个中断轮次约 27.714 秒，还包含类型检查和模型处理，不能混用。公开索引保留 `status: "interrupted"` 和空回复，没有补造最终回答。
+15.3 秒是工具返回的已等待时长；整个中断轮次约 27.714 秒，还包含类型检查和模型处理，不能混用。索引中的 `status: "interrupted"` 对应这次中断，该轮没有最终回答。
 
 继续要求为：
 
@@ -184,7 +184,7 @@ aborted by user after 15.3s
 
 ## 补充实验：命令还在运行时，先做别的读取
 
-2026-10-03 的新实验启动 `node lab/background-delay.mjs`。脚本先输出开始标记，延迟后再输出总价与结束标记。用户要求只启动一次，在它运行期间读取 README 前 12 行，再用原句柄取得最终结果。
+运行 `node lab/background-delay.mjs`，脚本先输出开始标记，延迟后再输出总价与结束标记。用户要求只启动一次，在它运行期间读取 README 前 12 行，再用原句柄取得最终结果。
 
 [启动返回](../evidence/desktop-lab/background-return/01-request.request.json)给出了 `session_id: 48726` 和 `BACKGROUND_START`，没有 `exit_code`。这时命令仍在运行。模型接着调用另一个工具读取 README，然后用 `write_stdin` 回收同一会话的输出。前两次回收仍返回会话号，没有新增输出；第三次才带回：
 
@@ -202,7 +202,7 @@ CPA 的工具返回可串起会话句柄，本地命令时间则补充了实际�
 
 ![Desktop 最终报告保留后台会话48726、开始输出和回收的结束输出](../docs/images/desktop-lab/background-return.png)
 
-这张图是完成后的报告，不是运行期间的录像。会话号、读取时机与退出码仍需沿[本轮记录](../evidence/desktop-lab/background-return/manifest.json)和时间核对确认。
+报告列出同一会话的开始、结束输出和退出码。README 的读取是否发生在运行期间，需要与[本轮执行时间](../evidence/desktop-lab/background-return/audit.json)核对。
 
 </details>
 
@@ -219,7 +219,7 @@ CPA 的工具返回可串起会话句柄，本地命令时间则补充了实际�
 
 ## 补充实验：补丁找不到旧代码，先重新读取
 
-同日另一个实验在 `lab/patch-recovery/price.ts` 副本中观察编辑失败。提示故意指定过时的上下文 `return unitPrice - quantity;`，要求首次补丁先不读取目标。文件实际仍是加法，所以这次失败是受控实验条件，不能描述成模型偶然犯错。
+在 `lab/patch-recovery/price.ts` 副本中，提示故意指定过时的上下文 `return unitPrice - quantity;`，要求首次补丁先不读取目标。文件实际仍是加法，所以这次失败是受控实验条件，不能描述成模型偶然犯错。
 
 第一次 `apply_patch` 返回[上下文不匹配错误](../evidence/desktop-lab/patch-recovery/01-request.request.json)，包含 `Failed to find expected lines` 和那条减法表达式。模型随后读取当前文件，[读取结果](../evidence/desktop-lab/patch-recovery/02-request.request.json)显示 `return unitPrice + quantity;`，便按实际内容生成最小补丁，把加法改成乘法。
 
@@ -227,7 +227,7 @@ CPA 的工具返回可串起会话句柄，本地命令时间则补充了实际�
 
 ![Desktop 保留过时补丁的失败原文，以及重新读取、修改和测试结果](../docs/images/desktop-lab/patch-recovery.png)
 
-新实验的最终报告同时保留失败与恢复结果。首次减法上下文由实验提示指定，实际加法实现和修改后的乘法可与[审计](../evidence/desktop-lab/patch-recovery/audit.json)对应。
+报告先列出上下文不匹配错误，再展示实际读到的加法实现和修改后的乘法。首次减法上下文由提示指定，完整过程见[审计](../evidence/desktop-lab/patch-recovery/audit.json)。
 
 这次错误说明补丁依赖的旧文本与文件不符，重新读取可以提供新的编辑依据。第 10 章的 Hook 拒绝则明确禁止修改目标，被拒之后没有换方法重试。决定怎样恢复前，要先读清错误和本轮允许的范围。
 

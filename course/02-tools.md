@@ -106,7 +106,7 @@ R0 的输入中包含前两轮对话以及一条“我会只阅读……”的�
 
 R1 的 `previous_response_id` 原值为 `resp_0e37249022131978016abbe1b0762087d08637b9adb365b489`，与 [R0 完成事件](../evidence/desktop-lab/03-readme/00-request.response.json)中的 `response.id` 相同。
 
-两份完成事件的 `output` 都是空数组。读取调用和最终文字保存在各自的流式输出项完成事件中，工作台的“模型输出”由这些事件提取。原始顺序见 [R0 事件](../evidence/desktop-lab/03-readme/00-request.events.json)和 [R1 事件](../evidence/desktop-lab/03-readme/01-request.events.json)，第 14 章再拆解事件如何组成输出。
+两份完成事件的 `output` 都是空数组。读取调用和最终文字保存在各自的流式输出项完成事件中，工作台的“模型输出”由这些事件提取。原始顺序见 [R0 事件](../evidence/desktop-lab/03-readme/00-request.events.json)和 [R1 事件](../evidence/desktop-lab/03-readme/01-request.events.json)，第 15 章再拆解事件如何组成输出。
 
 两次输入用量分别为 33,015 和 33,407 token，合计 66,422；输出合计 185。第二次只新增一项结果，但还接续此前上下文，因此不能把输入 token 全算在 README 身上。
 

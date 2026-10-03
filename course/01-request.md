@@ -10,7 +10,7 @@
 
 ![Codex Desktop 中的问候、追问与读取 README](../docs/images/desktop-lab/hello-continuation.png)
 
-图中是重新打开的真实历史对话，本章对应第一轮问候，后两轮用于工具与会话的讲解。消息由 Computer Use 在输入框提交。[问候记录](../evidence/desktop-lab/01-hello/manifest.json)与实验者最初提供的[完整截图](../docs/images/desktop-hello-readme.png)仍可查阅。
+问候、追问和读取 README 是同一任务里的三轮输入。本章先看第一轮对应的[问候记录](../evidence/desktop-lab/01-hello/manifest.json)。
 
 问候位于 `input[6]`，也就是数组第七项。下面节选它的类型、角色和内容，省略消息 ID：
 
@@ -44,7 +44,7 @@
 
 这份可见请求没有 `role: "system"` 消息。应用的主要工作指令出现在 `developer` 消息中，AGENTS 则在前述 `user` 消息的内容块里。日常讨论中的“系统提示词”可能泛指应用附加指令；核对日志时应保留这些实际角色和字段位置。
 
-附加内容也可以来自运行时脚本。第 6 章的[编号 Hook 实验](06-agents.md)会追踪一个输入框中没有写出的编号：它由本地脚本生成，作为 `developer` 消息进入请求。
+附加内容也可以来自运行时脚本。第 10 章的[编号 Hook 实验](10-hooks.md)会追踪一个输入框中没有写出的编号：它由本地脚本生成，作为 `developer` 消息进入请求。
 
 ## 回复在哪份记录里？
 
@@ -52,7 +52,7 @@
 
 这次没有工具调用。模型直接生成文字，运行程序将它显示在 Desktop 中。请求中的工具定义只提供可用接口，本轮没有使用它们。
 
-本样本完成事件的 `response.output` 是空数组，文字已在前面的流式事件中返回。工作台从这些事件提取输出项，原记录仍然保留。第 14 章会解释这两种记录的关系。
+本样本完成事件的 `response.output` 是空数组，文字已在前面的流式事件中返回。“模型输出”显示这些事件中的输出项，第 15 章会解释它们与完成事件的关系。
 
 <details>
 <summary>深入核对：7 项输入里的所有内容块</summary>
@@ -113,7 +113,7 @@ CPA 还记录了一次[预热请求](../evidence/desktop-lab/01-hello/00-prewarm
 
 预热单独计数，没有混进正式请求数量。Token 是服务报告的用量单位，这组数字也受到当时规则和技能目录规模的影响。
 
-[流式事件](../evidence/desktop-lab/01-hello/01-request.events.json)中的 `response.output_item.done` 保存了最终问候；[完成事件](../evidence/desktop-lab/01-hello/01-request.response.json)保留其原始空 `output`。[输出项文件](../evidence/desktop-lab/01-hello/01-request.output-items.json)注明它来自事件提取，具体来源和脱敏记录见[实验清单](../evidence/desktop-lab/01-hello/manifest.json)。
+[流式事件](../evidence/desktop-lab/01-hello/01-request.events.json)中的 `response.output_item.done` 包含最终问候；[完成事件](../evidence/desktop-lab/01-hello/01-request.response.json)的 `output` 为空。[输出项文件](../evidence/desktop-lab/01-hello/01-request.output-items.json)汇集了前者，不能把它当作完成事件的原字段。各份记录可从[实验清单](../evidence/desktop-lab/01-hello/manifest.json)进入。
 
 </details>
 

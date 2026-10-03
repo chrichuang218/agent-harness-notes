@@ -6,7 +6,7 @@
 
 用户在 Desktop 提出修复要求。运行程序把要求和已有上下文组织成请求，经 CPA 发给模型服务。模型先后提出读取、搜索和修改调用；本地工具执行补丁，之后再运行检查。结果进入模型后，才产生最终完成说明。
 
-下面按职责画出本教程观察的连接，方框不代表每项都必须是独立进程：
+这些职责之间的连接如下，方框不代表各自独占一个进程：
 
 ```mermaid
 flowchart LR
@@ -37,6 +37,15 @@ Desktop 接收输入，展示操作、模式和回答；运行层组织上下文
 
 这些结果支持约定的总价场景，不覆盖所有非法金额或折扣行为。后来的折扣需求另有计划和 11 项测试。
 
+<details>
+<summary>对照 Desktop 中的完成报告</summary>
+
+![Desktop 修复完成报告列出三个检查结果与两个已编辑文件](../docs/images/desktop-lab/fix-result.png)
+
+完成报告列出三项检查。每项都应能回到[修复记录](../evidence/desktop-lab/07-fix/manifest.json)中的工具结果与文件正文，才能判断是否完成。
+
+</details>
+
 MCP 章节的 36 元来自模型收到单价 12 和乘法代码后的计算，那一轮没有实际运行函数。权限章节则有写入调用，但运行环境拒绝执行，文件也未改变。核对时要分清记录停在了哪一步。
 
 ## 哪一种记录能回答你的问题？
@@ -57,13 +66,11 @@ CPA 也有观察边界。本地 stdio MCP 的握手不经过它，模型服务�
 <details>
 <summary>深入核对：架构解释与旧样本的关系</summary>
 
-[最初两轮对话讲义](../lessons/01-codex-cpa-trace/学习文档.md)曾用本机进程检查确认 Desktop 启动 `codex.exe app-server`，后台还启动了 `codex-code-mode-host.exe`。那是旧样本的进程证据，不能据此假定本次所有运行版本的内部布局相同。
+[一次本机进程检查](../lessons/01-codex-cpa-trace/学习文档.md)确认 Desktop 启动 `codex.exe app-server`，后台还启动了 `codex-code-mode-host.exe`。这只能说明该次运行的进程布局，其他版本需要另查。
 
-当前这组实验支持的是本章图中的职责关系：模型调用经 CPA 留下记录，本地工具及 MCP 服务执行具体操作，rollout 补充任务、模式、协作和中断状态。这里没有完成当前版本逐行源码对应，也没有自建 Harness 与 Codex 的性能或架构比较。
+模型调用在 CPA 中可见，本地工具及 MCP 服务执行具体操作，rollout 则记录任务、模式、协作和中断状态。它们分别说明运行过程的不同部分。
 
 继续查源码可从 [Codex App Server](https://github.com/openai/codex/tree/main/codex-rs/app-server) 和[官方 App Server 文档](https://developers.openai.com/codex/app-server/)入手。源码分支和本机版本需要另行对应，不能把仓库最新实现直接当作这次历史运行。
-
-本次与旧样本的字段也有差异。例如旧两轮对话沿响应引用接续；新实验同时观察到了引用和历史重发。当前完成事件的 `output` 还可能为空，需要读取流式输出项。跨样本比较时先确认字段与来源，再解释机制。
 
 </details>
 
@@ -96,36 +103,19 @@ CPA 也有观察边界。本地 stdio MCP 的握手不经过它，模型服务�
 
 ## 补充实验：PostToolUse 记录了什么？
 
-2026-10-03，我们准备了两个独立测试文件：一个检查 `10 * 3` 等于 `30`，另一个故意要求 `10 + 3` 等于 `30`。通过 Desktop 输入框要求分别运行一次，失败后不修复、不重试，也不让模型读取 Hook 日志。
-
-两次实际返回如下：
-
-| 命令 | 退出码 | 测试结果 | 证据 |
-| --- | ---: | --- | --- |
-| `node --test .codex/hook-lab/pass.test.mjs` | 0 | 通过 1，失败 0 | [首次工具返回](../evidence/desktop-lab/hook-post-tool/01-request.request.json) |
-| `node --test .codex/hook-lab/fail.test.mjs` | 1 | 通过 0，失败 1，`13 !== 30` | [第二次工具返回](../evidence/desktop-lab/hook-post-tool/02-request.request.json) |
-
-模型的[最终报告](../evidence/desktop-lab/hook-post-tool/02-request.output-items.json)保留了这两个结果和原始断言错误。独立检查[文件哈希](../evidence/desktop-lab/hook-post-tool/file-observations.json)确认测试文件没有被修好，Hook 配置和脚本也未改变。
+[第 10 章的 PostToolUse 实验](10-hooks.md)可以用来对照 Hook 输出、工具退出码与模型报告。三者记录的内容不同，需要分别核对。
 
 <details>
 <summary>查看 Desktop 中保留的失败断言</summary>
 
-![Desktop 分别报告两个测试的退出码，并保留13不等于30的原始断言错误](../docs/images/desktop-lab/hook-post-tool.png)
-
-新实验同时保留通过结果和故意失败的原文，见[本轮记录](../evidence/desktop-lab/hook-post-tool/manifest.json)。Hook 取得的内容还要与下面的本地日志对照。
+对照失败命令的退出码与断言错误，见 [Hooks 章的 Desktop 画面](10-hooks.md)。
 
 </details>
-
-与此同时，`PostToolUse` 处理器在每次命令完成后记录返回内容，再返回 `{}`。它只是观察这两个指定测试，没有把失败改为成功。[Hook 日志](../evidence/desktop-lab/hook-post-tool/hook-events.json)里的 `tool_response` 实际是输出字符串，没有 `exit_code` 字段。这个字符串与 CPA 工具返回内层的 `output` 逐字一致；退出码需要从工具结果或原生命令完成事件读取。
-
-这样能分别回答三个问题：测试执行得到了什么，Hook 记录了什么，模型最后怎样报告。仅有一份 Hook 日志，不能补出它没有记录的退出码。
 
 <details>
 <summary>命令工具名称与记录范围</summary>
 
-本项目 Hook 的 matcher 是 `^Bash$`，对应这次运行层报告的命令工具名称。处理器只记录命令中包含 `.codex/hook-lab/pass.test.mjs` 或 `.codex/hook-lab/fail.test.mjs` 的事件，并返回 `{}`，源码见[配置与文件快照](../evidence/desktop-lab/hook-post-tool/file-observations.json)。这不能推广为所有命令都会被记录。
-
-CPA 的两次外层 `exec` 与 Hook 的原生 `tool_use_id` 分别保留自己的编号。[审计](../evidence/desktop-lab/hook-post-tool/audit.json)按轮次和实际命令核对两份输出，并将退出码与[rollout 命令事件](../evidence/desktop-lab/hook-post-tool/rollout-events.json)对应。本轮有 3 次模型请求、2 次工具调用，属于本地测试观察实验。
+参见 [Hooks 章的 PostToolUse 实验](10-hooks.md)：脚本只记录两条指定测试命令，日志不含退出码，不能推广到所有命令。
 
 </details>
 

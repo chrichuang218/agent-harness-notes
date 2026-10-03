@@ -52,7 +52,7 @@
 
 ![Desktop 总价修复完成画面，列出检查结果与两个已编辑文件](../docs/images/desktop-lab/fix-result.png)
 
-这张历史对话截图显示最终报告与文件变化入口。报告中的三项检查对应[修复实验](../evidence/desktop-lab/07-fix/manifest.json)，是否通过仍以刚才的工具返回为依据。
+完成报告列出三项检查，下面是两个文件的编辑入口。检查结果对应[修复实验](../evidence/desktop-lab/07-fix/manifest.json)中的工具返回。
 
 </details>
 
@@ -75,7 +75,7 @@ C2 返回函数的定义和调用位置。C3 调用外层 `exec` 中的 `tools.a
 
 C4 一次安排了三条验证命令及文件重读。R4 的 `input[0].output[0]` 是执行包装，`output[1]` 至 `output[4]` 依次对应类型检查、测试、示例运行和文件重读。各块 `text` 解析后可查看 `value.exit_code` 与 `value.output`。外层的 `fulfilled` 表示这项异步操作返回，具体命令是否成功仍要看退出码。
 
-原始完成事件和流式事件见[实验清单](../evidence/desktop-lab/07-fix/manifest.json)及工作台。五份完成事件的 `output` 均为空，输出项来自各自的 `response.output_item.done`；第 14 章将拆开其中一份事件记录。
+原始完成事件和流式事件见[实验清单](../evidence/desktop-lab/07-fix/manifest.json)及工作台。五份完成事件的 `output` 均为空，输出项来自各自的 `response.output_item.done`；第 15 章将拆开其中一份事件记录。
 
 </details>
 

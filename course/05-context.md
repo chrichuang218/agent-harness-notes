@@ -100,7 +100,7 @@ flowchart LR
 
 这些是数组下标，35 项不等于 35 条新用户消息。原历史中同时有 `custom_tool_call` 和 `custom_tool_call_output`，摘要可以依据修复前后的实际反馈。
 
-本地事件的 `window_number` 变为 1。`replacement_history` 的摘要消息长 1,349 个 JavaScript 字符串长度单位，记录完成状态、改动、验证、约束和代号。公开导出对加密内容与个人标识脱敏，没有把加密字段解密成正文。
+本地事件的 `window_number` 变为 1。`replacement_history` 的摘要消息长 1,349 个 JavaScript 字符串长度单位，记录完成状态、改动、验证、约束和代号。
 
 </details>
 
@@ -114,9 +114,9 @@ flowchart LR
 
 实际回答给出 `PRICE-A7`、`unitPrice * quantity`，以及 `npm run typecheck`、`npm test`、`npm start`，并指出三条命令退出码均为 0。这次也没有工具调用。
 
-![历史对话的压缩标记，以及压缩后对代号、表达式与验证命令的回答](../docs/images/desktop-lab/compaction.png)
+![对话中的压缩标记，以及压缩后对代号、表达式与验证命令的回答](../docs/images/desktop-lab/compaction.png)
 
-重新打开历史时，界面文案显示“上下文已自动压缩”。当次[压缩请求](../evidence/desktop-lab/10-compaction/00-request.request.json)明确记录 `trigger: "manual"`，操作记录也为菜单点击，不能从这条界面文案推断自动触发。下方回答对应[压缩后追问](../evidence/desktop-lab/10-compaction-check/manifest.json)。
+界面写着“上下文已自动压缩”，但当次[压缩请求](../evidence/desktop-lab/10-compaction/00-request.request.json)记录 `trigger: "manual"`，操作记录也是菜单点击。触发方式应以这些记录为准；下方回答对应[压缩后追问](../evidence/desktop-lab/10-compaction-check/manifest.json)。
 
 打开[追问请求](../evidence/desktop-lab/10-compaction-check/00-request.request.json)，能找到原用户消息与刚生成的摘要。它共有 13 项输入，没有 `previous_response_id`。摘要被放在 `input[7]`，后面还附加当前应用指令、项目规则和新问题。这里使用的是重建后的输入。
 

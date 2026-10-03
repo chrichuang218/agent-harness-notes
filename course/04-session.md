@@ -55,7 +55,7 @@
 
 两轮各有 1 次正式请求；第一轮另有预热，不能把它算成第三次用户输入。第二轮[完成事件](../evidence/desktop-lab/02-context/00-request.response.json)报告输入 32,930 token、输出 12 token，输入中 `cached_tokens` 为 13,568。重发历史与部分输入被服务计为缓存可以同时发生，下一章会继续解释这些计数。
 
-索引里的 `previousResponseId: null` 表示采集器没有找到响应引用。原始请求中没有 `previous_response_id` 字段，不是字段值为 `null`。
+索引里的 `previousResponseId: null` 表示没有响应引用。原始请求中没有 `previous_response_id` 字段，不是字段值为 `null`。
 
 </details>
 

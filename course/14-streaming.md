@@ -2,7 +2,7 @@
 
 Desktop 中“已修复”这段说明是怎样逐渐显示出来的？第三章最后一次响应记录了 154 个 `response.*` 事件，其中 146 个追加文本片段，随后文本块、输出项和整个响应依次结束。
 
-本章只拆这份已经保存的响应，不重新运行修复。完整序列在[修复阶段 04 事件](../evidence/desktop-lab/07-fix/04-request.events.json)。
+完整序列在[修复阶段 04 事件](../evidence/desktop-lab/07-fix/04-request.events.json)，可以从第一条增量一路追到响应完成。
 
 <details>
 <summary>查看这段回答在 Desktop 中的样子</summary>
@@ -74,7 +74,7 @@ Desktop 中“已修复”这段说明是怎样逐渐显示出来的？第三章
 
 打开本样本的[完成事件](../evidence/desktop-lab/07-fix/04-request.response.json)，会看到 `response.output` 是空数组。回答文本已经在前面的流式事件里返回，空数组不能推翻那些事件中的正文。
 
-完整事件序列和[输出项汇集](../evidence/desktop-lab/07-fix/04-request.output-items.json)都已保存。后者从 `response.output_item.done` 提取；原完成事件仍保留空 `output`。
+[输出项汇集](../evidence/desktop-lab/07-fix/04-request.output-items.json)包含从 `response.output_item.done` 取得的输出项；完成事件里的 `output` 仍为空。这是两种不同记录。
 
 只保存完成事件会丢失本样本的回答内容；只保存屏幕文字，则缺少响应标识、事件顺序和用量。
 
@@ -98,8 +98,6 @@ resp_0061bd7340416e34016abbe3868fc487d088322102a9cdf40e
 完整文本为 307 个 JavaScript 字符串长度单位；本阶段输出用量为 151 token。字符串长度、146 个文本增量和 token 数分别测量不同对象。整轮五次正式响应共有 1,056 输出 token，不能与最后一个阶段混为一谈。
 
 CPA 时间戳表示事件抵达代理的时间，能用来观察接收顺序与间隔。它不等于模型内部生成时间，也不是界面绘制时间，不能直接据此测出用户屏幕的逐字显示延迟。
-
-本章未实现双后端协议适配，也没有网络重试实验；观察对象是已经采集的这一套响应事件。
 
 </details>
 

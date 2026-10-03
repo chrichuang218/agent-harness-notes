@@ -15,7 +15,7 @@
     {
       "id": "extensions",
       "title": "扩展能力与控制执行",
-      "description": "在熟悉的项目里接入 MCP，观察权限、规划和多个 Agent 的工作。"
+      "description": "接入 MCP，观察 Hooks、权限、规划和多个 Agent 怎样参与工作。"
     },
     {
       "id": "reliability",
@@ -95,12 +95,7 @@
       "status": "verified",
       "evidenceIds": [
         "04-agents",
-        "03-readme",
-        "hook-marker-repeat",
-        "hook-c-trusted-ui",
-        "hook-a-baseline",
-        "hook-b-untrusted",
-        "hook-c-tool-origin"
+        "03-readme"
       ]
     },
     {
@@ -139,6 +134,23 @@
       ]
     },
     {
+      "id": "10-hooks",
+      "title": "Hooks：在运行过程中注入、拦截与观察",
+      "subtitle": "提交输入、执行工具时，本地脚本怎样参与这次运行？",
+      "group": "extensions",
+      "file": "course/10-hooks.md",
+      "status": "verified",
+      "evidenceIds": [
+        "hook-marker-repeat",
+        "hook-pre-tool",
+        "hook-post-tool",
+        "hook-c-trusted-ui",
+        "hook-a-baseline",
+        "hook-b-untrusted",
+        "hook-c-tool-origin"
+      ]
+    },
+    {
       "id": "10-permissions",
       "title": "权限与安全",
       "subtitle": "模型提出一个操作，是否就一定能执行？",
@@ -146,8 +158,7 @@
       "file": "course/10-permissions.md",
       "status": "verified",
       "evidenceIds": [
-        "15-permissions",
-        "hook-pre-tool"
+        "15-permissions"
       ]
     },
     {
@@ -215,8 +226,7 @@
         "07-fix",
         "13-mcp",
         "15-permissions",
-        "16-multi-agent",
-        "hook-post-tool"
+        "16-multi-agent"
       ]
     }
   ],
@@ -241,5 +251,19 @@
     "18-streaming": "14-streaming",
     "19-recovery": "13-autonomy",
     "20-interruption": "13-autonomy"
+  },
+  "sectionRedirects": {
+    "06-agents:06-agents-section-7": {
+      "lesson": "10-hooks",
+      "section": "10-hooks-section-2"
+    },
+    "10-permissions:10-permissions-section-7": {
+      "lesson": "10-hooks",
+      "section": "10-hooks-section-3"
+    },
+    "15-architecture:15-architecture-section-5": {
+      "lesson": "10-hooks",
+      "section": "10-hooks-section-4"
+    }
   }
 }

@@ -2,7 +2,7 @@
 
 读同一份 README，能不能让介绍使用固定前缀？我们加入项目规则，再发送第二章的阅读要求。回答多了“项目观察：”，而输入框里没有这几个字。
 
-这组实验采集于修复之前，当时总价仍是 `13`。本章讨论的是规则加载，复现原结果需要使用[起始项目](../examples/01-baseline/README.md)；使用修复后的项目也可以测试前缀，但项目状态的回答会不同。
+此时总价仍是 `13`。复现规则加载时，可以使用[起始项目](../examples/01-baseline/README.md)；修复后的项目也能测试前缀，但项目状态的回答会不同。
 
 ## 在文件里写约定，在输入框里提任务
 
@@ -71,7 +71,7 @@ flowchart LR
   F --> A[结合规则生成项目介绍]
 ```
 
-图依据请求和工具结果整理，只说明可见的组装关系；客户端内部怎样遍历目录查找规则文件，没有在这次网络记录中展示。
+请求显示了全局约定与项目规则的组装结果，客户端内部怎样遍历目录查找文件，还需其他记录才能判断。
 
 <details>
 <summary>深入核对：规则块的角色与相邻内容</summary>
@@ -113,7 +113,7 @@ flowchart LR
 
 读取前的进度文字以“我会只读取”开头，没有前缀；本次遵循格式的是最终介绍。至于“只读”要求，规则和用户消息里都有，仅凭没有修改调用，无法判断是哪一处单独起作用。
 
-`AGENTS.md` 提供参与模型决策的约定，不能据此认定某项操作在程序层面无法执行。实际权限限制会在第十章用工具拒绝结果检验。
+`AGENTS.md` 提供参与模型决策的约定，不能据此认定某项操作在程序层面无法执行。实际权限限制会在第十一章用工具拒绝结果检验。
 
 <details>
 <summary>深入核对：两次请求与读取结果的连接</summary>
@@ -125,7 +125,7 @@ flowchart LR
 
 读取的 `call_id` 是 `call_6ZAj4HZ4EYG6zE8yzenIHVk0`，它在第二请求的 `input[0].call_id` 中再次出现。`input[0].type` 为 `custom_tool_call_output`，`output[0]` 是外层执行包装，`output[1].text` 解析后包含退出码和 README 正文。
 
-第二请求的 `previous_response_id` 是第一响应的 `resp_040c808d0f406bc6016abbe279625087d09292441722b15d2b`。事件顺序可以在[首阶段](../evidence/desktop-lab/04-agents/00-request.events.json)与[第二阶段](../evidence/desktop-lab/04-agents/01-request.events.json)检查。第二阶段还包含已脱敏的加密 `reasoning` 项，不提供可读的完整内部思考。
+第二请求的 `previous_response_id` 是第一响应的 `resp_040c808d0f406bc6016abbe279625087d09292441722b15d2b`。事件顺序可以在[首阶段](../evidence/desktop-lab/04-agents/00-request.events.json)与[第二阶段](../evidence/desktop-lab/04-agents/01-request.events.json)检查。第二阶段还包含加密 `reasoning` 项，不能将它当作可读的完整内部思考。
 
 本轮共 2 次正式请求、1 次外层读取调用，输入 token 合计 66,169，输出合计 297，排除预热。
 
@@ -150,36 +150,12 @@ flowchart LR
 
 ## 补充实验：每轮生成的编号从哪里来？
 
-前面的项目规则来自文件。2026-10-03 的新实验使用另一种入口：在本地配置 `UserPromptSubmit` Hook，让脚本在提交时生成编号，经 `additionalContext` 交给 Codex。
-
-Computer Use 在真实 Desktop 输入框提交：
-
-```text
-本轮实验编号是什么？只根据已有上下文回答，不要读取文件或调用工具；没有就说“不知道”。
-```
-
-新任务回答 `HOOK-43141e17-ca46-4b06-8ba6-9b07205aa94d`，全轮只有一次请求，没有模型工具调用。它没有读取编号文件；[本地 Hook 事件](../evidence/desktop-lab/hook-marker-repeat/hook-events.json)先记录了编号，[请求](../evidence/desktop-lab/hook-marker-repeat/00-request.request.json)随后带上它，[输出](../evidence/desktop-lab/hook-marker-repeat/00-request.output-items.json)与编号一致。
-
-![输入框询问本轮编号，回答给出 Hook 注入的 UUID 编号](../docs/images/desktop-lab/hook-marker-repeat.png)
-
-2026-10-03 新实验的完成画面。输入框未写编号，回答中的值可与[Hook 和 CPA 审计](../evidence/desktop-lab/hook-marker-repeat/audit.json)逐项对应。
-
-请求里，问题在 `input[9].content[0].text`；编号在下一条 `role: "developer"` 消息的 `input[10].content[0].text`：
-
-```text
-本轮实验编号为 HOOK-43141e17-ca46-4b06-8ba6-9b07205aa94d。这是本轮 UserPromptSubmit Hook 自动生成并注入的编号。
-```
-
-这条路径解释了“没有工具调用，为什么仍然出现了新信息”：脚本在模型生成前已执行，输出参与请求组装。AGENTS 提供文件中的约定；这次 Hook 提供提交时生成的内容。模型提出的工具调用则发生在响应里，时间和入口都不同。
+项目约定之外，本地 Hook 也能在提交时附加内容。它生成的编号怎样进入请求，见[第 10 章 Hooks](10-hooks.md)。
 
 <details>
 <summary>提交路径、信任状态与字段核对</summary>
 
-这份新任务请求没有 `previous_response_id`，编号直接出现在当前输入里。[上游快照](../evidence/desktop-lab/hook-marker-repeat/00-request.upstream.json)与客户端请求逐值相同，[审计](../evidence/desktop-lab/hook-marker-repeat/audit.json)将本地 Hook、CPA 响应和 rollout 本轮用量记录相互对应。
-
-同日较早的一次[输入框实验](../evidence/desktop-lab/hook-c-trusted-ui/README.md)得到 `HOOK-5467aee6-40de-4432-8f83-93ed1bc73794`。那次问题在 `input[2]`，编号在 `input[3]` 的 `developer` 消息中；`client_metadata["x-codex-turn-metadata"]` 解码后为 `turn_trigger: "composer"`、`client_type: "desktop_app"`。它是在原任务中继续的一轮，字段位置与这次新任务不同。脚本及交接检查时的受信任状态见[配置快照](../evidence/desktop-lab/hook-c-trusted-ui/hook-definition-snapshot.json)。
-
-此前三组记录由 `create_thread` 提交，问题放在工具输出的委派内容里，`turn_trigger` 是 `app_tool_create_thread`；均未附加编号，回答“不知道”。它们和输入框轮次的提交方式、历史不同，不能用来证明普通输入框在各个信任状态下的行为差异。字段位置、来源审计与限制见[实验说明](../evidence/desktop-lab/hook-c-trusted-ui/README.md)。
+[UserPromptSubmit 实验](10-hooks.md)对照了新旧任务的字段位置。输入框与工具提交走不同路径，不能直接作为单变量的信任状态对照。
 
 </details>
 

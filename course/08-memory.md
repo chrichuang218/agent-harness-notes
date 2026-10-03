@@ -49,7 +49,7 @@ Codex 检查项目规则与目标文件是否存在，用 `apply_patch` 创建�
 
 ![新任务读取 DECISIONS 文件后回答项目决定，并标明文件来源](../docs/images/desktop-lab/file-memory-read.png)
 
-这是[文件笔记读取实验](../evidence/desktop-lab/12-memory-read/manifest.json)的历史画面，答案来源是指定文件，不能计作原生 Memories 召回。
+回答注明来源是 `docs/DECISIONS.md`，对应[文件笔记读取](../evidence/desktop-lab/12-memory-read/manifest.json)，不能计作原生 Memories 召回。
 
 两个实验的任务 ID 不同。[新任务首请求](../evidence/desktop-lab/12-memory-read/00-request.request.json)没有引用旧任务的响应；决定内容出现在[下一请求的工具结果](../evidence/desktop-lab/12-memory-read/01-request.request.json)中。解析 `input[0].output[1].text` 后，相关字段如下：
 
@@ -94,7 +94,7 @@ sequenceDiagram
 
 Desktop 还提供原生 Memories。我们在 `Settings > Personalization` 中只读检查了设置，[观察记录](../evidence/desktop-lab/ui-observations.json)的 `native-memory-settings` 项保留了“Codex 记忆”与 `Enable Codex memories` 开关。
 
-记录时主开关关闭，灰色、圆点在左；`Allow memories from tool-assisted chats` 控件不可用。本次没有改变开关，也没有导出个人记忆。因此已有证据支持“文件笔记跨任务写入和读取”，原生 Memories 的自动生成与召回仍未实测。
+本次检查时主开关关闭，灰色、圆点在左；`Allow memories from tool-assisted chats` 控件不可用。这里验证了文件笔记的跨任务写入和读取，原生 Memories 的自动生成与召回仍未实测。
 
 新任务回答“不支持折扣”的来源已在文件读取结果里，不能计作原生记忆召回成功。
 

@@ -6,10 +6,10 @@
 
 ## 一次任务怎样运行
 
-| 术语 | 在本教程中的含义 | 实测位置 |
+| 术语 | 含义 | 实测位置 |
 | --- | --- | --- |
 | Agent | 模型根据任务与反馈选择下一步动作，并通过工具影响外部环境的工作系统。 | [03 · 修复总价错误](course/03-agent-loop.md) |
-| Harness | 模型之外负责组织上下文、调度工具、维护状态和限制执行的程序。 | [15 · 模型、运行层与工具的职责](course/15-architecture.md) |
+| Harness | 模型之外负责组织上下文、调度工具、维护状态和限制执行的程序。 | [16 · 模型、运行层与工具的职责](course/15-architecture.md) |
 | Agent loop | 发送上下文、接收模型输出、执行工具、回传结果，再次请求模型的循环。最终回复、失败或中断会改变后续流程。 | [02 · 第一次工具闭环](course/02-tools.md)、[03 · 五次请求的完整修复](course/03-agent-loop.md) |
 | Codex Desktop | 发起任务、展示过程并组织项目工作的桌面入口。界面中的一次任务可产生多次模型请求。 | [01 · 输入框与实际请求](course/01-request.md) |
 | CPA | 本实验中位于 Codex 与上游服务之间的代理，用于转发并记录模型请求与响应。 | [01 · CPA 能看到什么](course/01-request.md) |
@@ -21,7 +21,7 @@
 
 ## 模型收到了什么
 
-| 术语 | 在本教程中的含义 | 实测位置 |
+| 术语 | 含义 | 实测位置 |
 | --- | --- | --- |
 | `input` | 某次请求携带的输入项目数组，可能包含初始上下文、历史消息、当前输入或工具结果。 | [04 · 历史重新放入输入](course/04-session.md) |
 | `role` | 消息角色标签。`user` 不足以单独证明文字是人在输入框里逐字输入的。 | [05 · 按来源辨认上下文](course/05-context.md) |
@@ -29,7 +29,7 @@
 | `content` | 消息里的内容块数组。一个消息可能包含多块文字，必须保留块的顺序和边界才能说明组装。 | [01 · 输入项与内容块](course/01-request.md)、[06 · 全局与项目规则](course/06-agents.md) |
 | 上下文 | 模型生成本次响应时可用的信息，包括当前问题及由客户端组织或接续的其他内容。 | [05 · 规则、技能、文件的不同入口](course/05-context.md) |
 | `AGENTS.md` | 项目工作约定文件。本例的规则由 Desktop 附加到请求中。 | [06 · 规则注入与回答变化](course/06-agents.md) |
-| Hook / `UserPromptSubmit` | 在指定运行事件发生时执行的处理程序。本例脚本在输入框提交时生成编号，通过 `additionalContext` 附加到请求；它不计作模型提出的工具调用。 | [06 · 编号怎样进入请求](course/06-agents.md) |
+| Hook / `UserPromptSubmit` | 在指定运行事件发生时执行的处理程序。本例脚本在输入框提交时生成编号，通过 `additionalContext` 附加到请求；它不计作模型提出的工具调用。 | [10 · 编号怎样进入请求](course/10-hooks.md) |
 | Skill | 可被发现和使用的一组工作方法。目录描述、技能正文、模型读取和实际执行需要分别核对。 | [07 · 显式使用项目 Skill](course/07-skills.md) |
 | `previous_response_id` | 引用已有响应以接续上下文的标识。未出现它不等于没有历史，客户端也可能重发历史。 | [02 · 工具结果后的响应引用](course/02-tools.md) |
 | 压缩 / Compaction | 把较长历史转为可继续工作的上下文。本例通过 Desktop 原生菜单触发，并记录真实历史替换。 | [05 · 原生压缩与压缩后追问](course/05-context.md) |
@@ -40,35 +40,35 @@
 
 ## 谁执行了动作
 
-| 术语 | 在本教程中的含义 | 实测位置 |
+| 术语 | 含义 | 实测位置 |
 | --- | --- | --- |
 | 工具定义 | 描述可用工具、参数和使用方式的内容；出现在请求里，不代表该工具已经执行。 | [02 · 定义、调用与执行](course/02-tools.md) |
 | `additional_tools` | 本次初始请求中承载工具定义的输入项类型，位于 `input[0]`；工具命名空间在它的 `tools` 中。 | [01 · 工具定义的位置](course/01-request.md) |
 | 工具调用 | 模型提出的结构化执行请求。宿主执行后再把结果交回后续模型请求。 | [02 · 谁打开了 README](course/02-tools.md) |
-| `PreToolUse` | 本例在补丁执行前检查目标路径，拒绝对指定文件的修改。检查范围只覆盖 `apply_patch` 补丁头中的精确目标。 | [10 · 受保护补丁与允许文件对照](course/10-permissions.md) |
-| `PostToolUse` | 本例在指定命令完成后记录输出，不改变结果。日志中的 `tool_response` 不含退出码，需要另外核对工具返回。 | [15 · 通过与故意失败的测试](course/15-architecture.md) |
+| `PreToolUse` | 本例在补丁执行前检查目标路径，拒绝对指定文件的修改。检查范围只覆盖 `apply_patch` 补丁头中的精确目标。 | [10 · 受保护补丁与允许文件对照](course/10-hooks.md) |
+| `PostToolUse` | 本例在指定命令完成后记录输出，不改变结果。日志中的 `tool_response` 不含退出码，需要另外核对工具返回。 | [10 · 通过与故意失败的测试](course/10-hooks.md) |
 | `call_id` | 对应一次调用与返回结果的标识，用来串起执行链条。 | [02 · 调用和结果配对](course/02-tools.md) |
 | `custom_tool_call` / `custom_tool_call_output` | 本次 `exec` 的实际调用和回传类型。调用的 `input` 是要执行的代码，回传的 `output` 是执行结果；它们通过相同的 `call_id` 对应。 | [02 · 读取 README 的完整往返](course/02-tools.md) |
-| `function_call_output` | 回传函数工具结果的一类输入项目；与本例 `exec` 使用的 `custom_tool_call_output` 保留实际类型区别。 | [11 · 澄清问题的回答回传](course/11-plan.md)、[13 · 等待工具的取消结果](course/13-autonomy.md) |
+| `function_call_output` | 回传函数工具结果的一类输入项目；与本例 `exec` 使用的 `custom_tool_call_output` 保留实际类型区别。 | [12 · 澄清问题的回答回传](course/11-plan.md)、[14 · 等待工具的取消结果](course/13-autonomy.md) |
 | 退出码 / Exit code | 外部进程报告的结束状态。本项目检查成功为 `0`，失败测试返回非零。 | [03 · 类型检查通过，测试失败](course/03-agent-loop.md) |
 | 行为验证 | 检查实际结果是否满足需求。模型的完成说明还需与测试及文件结果核对。 | [03 · 修复后运行三项检查](course/03-agent-loop.md) |
 | MCP | Model Context Protocol，用于让客户端发现并调用外部服务提供的能力。 | [09 · 外部商品信息工具](course/09-mcp.md) |
-| 规划 / Plan | 对任务步骤、约束和完成条件的安排。计划文本与实际执行状态分别核对。 | [11 · 计划与执行](course/11-plan.md) |
-| 文字进度 | 助手用文字描述待办、进行中与完成。本次 Default 实验没有找到计划状态工具，文字进度不计作原生计划事件。 | [11 · 普通任务中的文字进度](course/11-plan.md) |
-| 权限 / Sandbox | 执行环境对操作能力与批准条件的限制，区别于仅写在文字里的行为约定。 | [10 · 规则与实际执行边界](course/10-permissions.md) |
-| 多 Agent | 把部分工作交给具有自身上下文的其他 Agent，再收集结果。需要核对委派、独立执行与汇总。 | [12 · 分工与汇总](course/12-multi-agent.md) |
-| 目标与停止条件 | 用于判断是否继续工作的任务要求、验证条件及限制；不能只由“已完成”三个字证明。 | [13 · 何时继续，何时停止](course/13-autonomy.md) |
+| 规划 / Plan | 对任务步骤、约束和完成条件的安排。计划文本与实际执行状态分别核对。 | [12 · 计划与执行](course/11-plan.md) |
+| 文字进度 | 助手用文字描述待办、进行中与完成。本次 Default 实验没有找到计划状态工具，文字进度不计作原生计划事件。 | [12 · 普通任务中的文字进度](course/11-plan.md) |
+| 权限 / Sandbox | 执行环境对操作能力与批准条件的限制，区别于仅写在文字里的行为约定。 | [11 · 规则与实际执行边界](course/10-permissions.md) |
+| 多 Agent | 把部分工作交给具有自身上下文的其他 Agent，再收集结果。需要核对委派、独立执行与汇总。 | [13 · 分工与汇总](course/12-multi-agent.md) |
+| 目标与停止条件 | 用于判断是否继续工作的任务要求、验证条件及限制；不能只由“已完成”三个字证明。 | [14 · 何时继续，何时停止](course/13-autonomy.md) |
 
 ## 响应、恢复与证据
 
-| 术语 | 在本教程中的含义 | 实测位置 |
+| 术语 | 含义 | 实测位置 |
 | --- | --- | --- |
-| 流式事件 / Streaming event | 一次响应逐步生成时发出的事件；多段文本增量通常不是多次独立回答。 | [14 · 片段怎样组成回答](course/14-streaming.md) |
-| `response.output_text.delta` | 一段新增的输出文本，用于按顺序组装内容。 | [14 · 一条文本增量](course/14-streaming.md) |
-| `response.output_item.done` | 某个输出项目已经生成完成的事件，可据此提取完整输出项。 | [14 · 输出项与结束事件](course/14-streaming.md) |
+| 流式事件 / Streaming event | 一次响应逐步生成时发出的事件；多段文本增量通常不是多次独立回答。 | [15 · 片段怎样组成回答](course/14-streaming.md) |
+| `response.output_text.delta` | 一段新增的输出文本，用于按顺序组装内容。 | [15 · 一条文本增量](course/14-streaming.md) |
+| `response.output_item.done` | 某个输出项目已经生成完成的事件，可据此提取完整输出项。 | [15 · 输出项与结束事件](course/14-streaming.md) |
 | `response.completed` | 一次模型响应的完成事件。本样本中的 `response.output` 可能为空，不能据此断言没有输出。 | [01 · 回复在哪里](course/01-request.md) |
-| `output-items.json` | 从记录的流式事件中提取的输出项，是明确标注的衍生文件；未回填原完成事件。 | [14 · 原始事件与衍生输出](course/14-streaming.md) |
-| 重试与恢复 | 使用失败信息决定下一步，或在中断后继续工作；重新执行前应确认已经完成的动作。 | [13 · 错误反馈](course/13-autonomy.md)、[13 · 中断与继续](course/13-autonomy.md) |
-| 后台命令 / `session_id` | 命令工具返回运行中的会话句柄，之后可用同一句柄回收输出。外层调用返回不代表命令已经退出。 | [13 · 启动、读取与结果回收](course/13-autonomy.md) |
-| 脱敏快照 | 为公开而替换敏感内容、同时保留 JSON 结构的记录。处理路径与来源保存在实验说明中。 | [01 · 公开证据的边界](course/01-request.md) |
+| `output-items.json` | 流式事件中各个完整输出项的汇集，与完成事件中的 `response.output` 分别查看。 | [15 · 流式事件与输出项](course/14-streaming.md) |
+| 重试与恢复 | 使用失败信息决定下一步，或在中断后继续工作；重新执行前应确认已经完成的动作。 | [14 · 错误反馈](course/13-autonomy.md)、[14 · 中断与继续](course/13-autonomy.md) |
+| 后台命令 / `session_id` | 命令工具返回运行中的会话句柄，之后可用同一句柄回收输出。外层调用返回不代表命令已经退出。 | [14 · 启动、读取与结果回收](course/13-autonomy.md) |
+| 脱敏快照 | 以占位符替换敏感值的记录。`<USER_HOME>` 等占位符不代表模型当时收到的字面内容。 | [01 · 请求中的内容](course/01-request.md) |
 | 观察 / 推断 / 未验证 | 直接可核对的事实、由事实得出的解释，以及当前记录尚不能证明的内容。 | [05 · 压缩实验能证明什么](course/05-context.md) |

@@ -42,7 +42,7 @@ Codex 先读取项目，询问精度策略，生成计划；确认实施后才�
 
 [计划前](../evidence/desktop-lab/14-plan/files-before.json)和[计划后](../evidence/desktop-lab/14-plan/files-after-plan.json)的 14 个受监测文件哈希相同。结合操作记录，可以确认这阶段做了调查和基线检查，没有实施折扣。哈希比较的范围限于这些文件，不代表整个操作系统没有发生任何写入。
 
-调查也曾失败：demo 没有初始化 Git，`git status` 返回错误；一条 PowerShell 读取命令发生解析错误。模型读取错误后调整命令，再次取得文件内容。这些失败仍留在原始日志里。
+调查也曾失败：demo 没有初始化 Git，`git status` 返回错误；一条 PowerShell 读取命令发生解析错误。模型收到错误后调整命令，再次取得文件内容。
 
 <details>
 <summary>深入核对：六次计划请求与澄清调用</summary>
@@ -81,9 +81,9 @@ return (unitPrice * quantity) * ((100 - discountPercent) / 100);
 <details>
 <summary>查看历史计划、确认实施与完成结果</summary>
 
-![Desktop 历史对话中的折扣计划、执行此计划的确认与实施结果](../docs/images/desktop-lab/plan-and-implementation.png)
+![Desktop 对话中的折扣计划、执行此计划的确认与实施结果](../docs/images/desktop-lab/plan-and-implementation.png)
 
-上方是[计划阶段](../evidence/desktop-lab/14-plan/manifest.json)的调查和计划产物，下方是确认之后的[实施结果](../evidence/desktop-lab/14-plan-implement/manifest.json)。截图重开于 2026-10-03，实验时间以两份记录为准。
+上方是[计划阶段](../evidence/desktop-lab/14-plan/manifest.json)的调查和计划，下方是用户确认之后的[实施结果](../evidence/desktop-lab/14-plan-implement/manifest.json)。
 
 </details>
 
@@ -99,7 +99,7 @@ return (unitPrice * quantity) * ((100 - discountPercent) / 100);
 
 实施共 4 次正式请求、3 次外层调用。[界面观察](../evidence/desktop-lab/ui-observations.json)保留进入计划模式与选择实施的记录。
 
-计划和实施的沙箱均为 `danger-full-access`，审批策略均为 `never`；变化的是协作模式和本轮要求。字段见[运行时节选](../evidence/desktop-lab/15-permissions/runtime-context.json)。因此计划阶段文件未变可以证明遵守了工作阶段要求，不能据此推断系统级只读隔离。本章使用历史实验记录，实际时间上早于上一章的受限写入。
+计划和实施的沙箱均为 `danger-full-access`，审批策略均为 `never`；变化的是协作模式和本轮要求，见[运行时节选](../evidence/desktop-lab/15-permissions/runtime-context.json)。计划阶段文件未变说明遵守了暂不实施的要求，不能据此推断系统级只读隔离。
 
 </details>
 
@@ -116,13 +116,13 @@ return (unitPrice * quantity) * ((100 - discountPercent) / 100);
 
 ## 补充实验：普通任务中的文字进度
 
-2026-10-03，我们在 Default 模式要求 Codex 修复 `lab/plan-state/price.ts` 副本，并跟踪“读取、修复、测试”三步。提示要求优先使用可用的计划状态工具；如果没有，则明确标为文字进度。没有进入需要选择或确认的 Plan Mode。
+在 Default 模式要求 Codex 修复 `lab/plan-state/price.ts` 副本，并跟踪“读取、修复、测试”三步。提示要求优先使用可用的计划状态工具；如果没有，则明确标为文字进度。这轮没有进入 Plan Mode。
 
 模型先搜索本轮暴露的 `ALL_TOOLS` 目录，[返回结果](../evidence/desktop-lab/plan-status/01-request.request.json)为 `[]`。它随后说明没有找到相应工具，以进度文字继续：读取副本和测试之后，将读取标为完成；补丁返回之后，将修复标为完成；测试结果返回前，仍将测试标为进行中。
 
 ![执行中的文字进度，读取与修复已完成，指定测试仍在运行](../docs/images/desktop-lab/plan-progress.png)
 
-这张保留的执行中画面显示“测试进行中”，对应[本轮实际调用](../evidence/desktop-lab/plan-status/03-request.output-items.json)。其中的状态由助手文字表达，不是原生计划状态控件。
+界面显示“测试进行中”，下面是[正在执行的调用](../evidence/desktop-lab/plan-status/03-request.output-items.json)。进度由助手文字表达，不是原生计划状态控件。
 
 [最后一份请求](../evidence/desktop-lab/plan-status/04-request.request.json)带回 `node --test lab/plan-state/price.test.mjs` 的结果：退出码 0，通过 1，失败 0。模型收到结果后，才在[最终报告](../evidence/desktop-lab/plan-status/04-request.output-items.json)里把三步全部标为完成。独立[文件比较](../evidence/desktop-lab/plan-status/file-observations.json)确认副本仅从加法改为乘法，测试未改。
 

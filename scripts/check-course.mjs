@@ -13,6 +13,21 @@ let jsonChecked = 0;
 let experimentCount = 0;
 let stageCount = 0;
 let screenshotCount = 0;
+let screenshotChapterCount = 0;
+const preservedLessonIds = [
+  '01-request', '02-tools', '03-agent-loop', '04-session', '05-context',
+  '06-agents', '07-skills', '08-memory', '09-mcp', '10-permissions',
+  '11-plan', '12-multi-agent', '13-autonomy', '14-streaming', '15-architecture',
+];
+const preservedLegacyRoutes = {
+  '01-hello': '01-request', '02-context': '04-session', '03-readme': '02-tools',
+  '04-agents': '06-agents', '05-skills': '07-skills', '06-tests': '03-agent-loop',
+  '07-fix': '03-agent-loop', '08-session': '04-session', '09-context': '05-context',
+  '10-compaction': '05-context', '11-cache': '05-context', '12-memory': '08-memory',
+  '13-mcp': '09-mcp', '14-plan': '11-plan', '15-permissions': '10-permissions',
+  '16-multi-agent': '12-multi-agent', '17-goal': '13-autonomy',
+  '18-streaming': '14-streaming', '19-recovery': '13-autonomy', '20-interruption': '13-autonomy',
+};
 // Published v0.5.0 stages remain addressable when later experiments are added.
 const preservedStages = {
   '01-hello': ['00-prewarm', '01-request'],
@@ -94,7 +109,10 @@ if (catalog && index) {
   const lessons = Array.isArray(catalog.lessons) ? catalog.lessons : [];
   const groups = Array.isArray(catalog.groups) ? catalog.groups : [];
   const experiments = Array.isArray(index.experiments) ? index.experiments : [];
-  check(lessons.length === 15, `Expected 15 topic chapters; found ${lessons.length}.`);
+  check(lessons.length === 16, `Expected 16 topic chapters; found ${lessons.length}.`);
+  check(JSON.stringify(lessons.map(lesson => lesson.id).filter(id => id !== '10-hooks')) === JSON.stringify(preservedLessonIds), 'The original 15 chapter ids and their relative order must remain stable.');
+  const hooksPosition = lessons.findIndex(lesson => lesson.id === '10-hooks');
+  check(hooksPosition > 0 && lessons[hooksPosition - 1]?.id === '09-mcp' && lessons[hooksPosition + 1]?.id === '10-permissions', 'Hooks must follow MCP and precede permissions in catalog display order.');
   check(groups.length === 4, `Expected 4 groups; found ${groups.length}.`);
   experimentCount = experiments.length;
   stageCount = experiments.reduce((count, item) => count + (item.stages || []).length, 0);
@@ -158,23 +176,30 @@ if (catalog && index) {
         check(createHash('sha256').update(png).digest('hex') === image.sha256, `${image.id}: public PNG hash differs from the index.`);
       } catch (error) { failures.push(`${image.id}: cannot verify public screenshot: ${error.message}`); }
     }
-    for (const lesson of lessons) check(coveredChapters.has(lesson.id), `${lesson.id}: no screenshot mapping.`);
+    screenshotChapterCount = coveredChapters.size;
+    for (const id of ['hook-marker-repeat', 'hook-pre-tool', 'hook-post-tool']) {
+      check(images.find(image => image.id === id)?.chapters.includes('10-hooks'), `${id}: required Hooks screenshot is not mapped to the Hooks chapter.`);
+    }
   }
   const legacyRoutes = Object.entries(catalog.legacyRoutes || {});
   check(legacyRoutes.length === 20, 'All 20 previous chapter URLs need an explicit destination.');
+  for (const [previous, current] of Object.entries(preservedLegacyRoutes)) check(catalog.legacyRoutes?.[previous] === current, `Preserved legacy URL ${previous} must still resolve to ${current}`);
   for (const [previous, current] of legacyRoutes) {
     check(!lessons.some(lesson => lesson.id === previous), `Legacy URL conflicts with a current chapter: ${previous}`);
     check(lessons.some(lesson => lesson.id === current), `Legacy URL ${previous} has no current destination: ${current}`);
   }
+  const chapterTargets = new Map();
   for (let position = 0; position < lessons.length; position++) {
     const lesson = lessons[position];
-    check(typeof lesson.id === 'string' && lesson.id.startsWith(String(position + 1).padStart(2, '0') + '-'), `Lesson sequence mismatch at ${position + 1}: ${lesson.id}`);
+    check(typeof lesson.id === 'string' && /^[a-z\d-]+$/.test(lesson.id), `Invalid stable lesson id: ${lesson.id}`);
+    if (preservedLessonIds.includes(lesson.id)) check(lesson.file === `course/${lesson.id}.md`, `${lesson.id}: existing chapter file must remain stable.`);
     check(typeof lesson.title === 'string' && lesson.title.trim(), `Missing lesson title: ${lesson.id}`);
     check(groups.some(group => group.id === lesson.group), `Unknown group for ${lesson.id}: ${lesson.group}`);
     check(['verified', 'partial'].includes(lesson.status), `Invalid status for ${lesson.id}: ${lesson.status}`);
     check(typeof lesson.file === 'string' && /^course\/[^/]+\.md$/.test(lesson.file), `Invalid public lesson path for ${lesson.id}: ${lesson.file}`);
     if (typeof lesson.file !== 'string') continue;
     const { text, targets } = await documentLinks(lesson.file);
+    chapterTargets.set(lesson.id, new Set(targets));
     check(text.startsWith('# '), `${lesson.file}: missing Markdown title.`);
     if (position > 0) check(targets.includes(resolve(lessons[position - 1].file)), `${lesson.file}: missing link to previous chapter.`);
     if (position < lessons.length - 1) check(targets.includes(resolve(lessons[position + 1].file)), `${lesson.file}: missing link to next chapter.`);
@@ -185,6 +210,9 @@ if (catalog && index) {
       check(lesson.status === 'partial', '08-memory must remain partial until native generation and recall are actually tested.');
       check(text.includes('生成') && text.includes('召回') && /(?:生成|召回)[^\n]{0,60}(?:未实测|没有|未验证)/.test(text), '08-memory must explain that native memory generation/recall is not yet verified.');
     }
+  }
+  for (const image of screenshotIndex?.images || []) {
+    check(image.chapters?.some(chapter => chapterTargets.get(chapter)?.has(resolve(image.file))), `${image.id}: screenshot is not referenced by any mapped article.`);
   }
   check(lessons.some(lesson => lesson.id === '08-memory'), 'The memory chapter and its evidence boundary must be present.');
   for (const file of ['README.md', 'PROGRESS.md', 'GLOSSARY.md', 'CHANGELOG.md', 'course/introduction.md', 'THIRD_PARTY_NOTICES.md', 'site/docs/DESIGN.md', 'docs/images/desktop-lab/README.md']) await documentLinks(file);
@@ -234,5 +262,5 @@ if (failures.length) {
   console.error(`Course checks failed (${failures.length}):\n` + failures.map(message => '- ' + message).join('\n'));
   process.exitCode = 1;
 } else {
-  console.log(`Course checks passed: 15 chapters / 4 groups; 20 legacy chapter routes; ${experimentCount} experiments / ${stageCount} stages including all original 26 / 74; ${screenshotCount} screenshots mapped across all chapters; ${linksChecked} local links; ${jsonChecked} JSON files; 4 complete example snapshots. Runtime checks: intentional baseline failure, 1 fixed test, 11 discount tests. Memory remains explicitly partial.`);
+  console.log(`Course checks passed: 16 chapters / 4 groups; original 15 chapter ids and 20 legacy routes preserved; ${experimentCount} experiments / ${stageCount} stages including all original 26 / 74; ${screenshotCount} screenshots mapped to ${screenshotChapterCount} chapters; ${linksChecked} local links; ${jsonChecked} JSON files; 4 complete example snapshots. Runtime checks: intentional baseline failure, 1 fixed test, 11 discount tests. Memory remains explicitly partial.`);
 }

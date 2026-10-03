@@ -2,7 +2,7 @@
 
 如果希望每次概览都检查同几份文件、按同样的标准报告，可以把步骤写成 Skill。这次项目技能要求只读检查，最终回答确实指出了加法实现与乘法需求的差异。它在哪里获得步骤，又怎样取得文件内容？
 
-这组记录采集于总价修复之前，代码当时仍使用加法。第三章的修复发生在它之后；这里按概念重新查看当时的请求。
+这次只读检查发生在修复前，代码仍使用加法。
 
 ## 把只读检查写成一个技能
 
@@ -116,7 +116,7 @@ $price-project-check 请对当前项目做一次只读概览检查。
 
 这段代码安排并收集多个读取，若要判断底层命令在具体时间点是否重叠，还需时间记录。不能根据命令列表直接把它们计成四次模型决策。
 
-第二请求通过 `previous_response_id` 引用第一响应 `resp_0061bd7340416e34016abbe2dbb46487d0af4b34ab5dd4d0a3`。原始事件可见[第一阶段](../evidence/desktop-lab/05-skills/00-request.events.json)与[第二阶段](../evidence/desktop-lab/05-skills/01-request.events.json)，输出项从各自的 `response.output_item.done` 提取，原完成事件的空 `output` 没有被回填。
+第二请求通过 `previous_response_id` 引用第一响应 `resp_0061bd7340416e34016abbe2dbb46487d0af4b34ab5dd4d0a3`。原始事件见[第一阶段](../evidence/desktop-lab/05-skills/00-request.events.json)与[第二阶段](../evidence/desktop-lab/05-skills/01-request.events.json)。两份完成事件的 `output` 为空，具体输出在各自的 `response.output_item.done` 中。
 
 两次正式请求输入 token 合计 67,312，输出合计 707，均排除预热。
 
