@@ -40,6 +40,8 @@ npm test
 
 起始程序输出 13，类型检查通过，测试以 `13 !== 30` 失败。第 3 章修复这个错误，后续分别提供[修复版](examples/07-fixed/README.md)、[MCP 版](examples/13-mcp/README.md)和[折扣版](examples/14-discount/README.md)作为对照。
 
+Hooks、后台命令、补丁恢复和文字进度的脚本与测试见[运行状态练习](examples/runtime-lab/README.md)，其中分别提供起始文件和结果文件。
+
 每章会说明所用任务和项目状态。复现时的措辞、调用次数可能变化，需要对照自己的输入、文件和执行结果。
 
 ## 怎样对照日志

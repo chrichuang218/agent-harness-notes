@@ -186,6 +186,8 @@ aborted by user after 15.3s
 
 运行 `node lab/background-delay.mjs`，脚本先输出开始标记，延迟后再输出总价与结束标记。用户要求只启动一次，在它运行期间读取 README 前 12 行，再用原句柄取得最终结果。
 
+脚本见 [background-delay.mjs](../examples/runtime-lab/start/lab/background-delay.mjs)，它调用的折扣函数见 [src/price.ts](../examples/runtime-lab/start/src/price.ts)。复制[运行实验目录](../examples/runtime-lab/README.md)的 `start/`，在目录根用 Node.js 24 或更高版本运行本节命令，会等待约 35 秒再输出总价；工具会话的取得与回收仍在 Codex 任务中观察。
+
 [启动返回](../evidence/desktop-lab/background-return/01-request.request.json)给出了 `session_id: 48726` 和 `BACKGROUND_START`，没有 `exit_code`。这时命令仍在运行。模型接着调用另一个工具读取 README，然后用 `write_stdin` 回收同一会话的输出。前两次回收仍返回会话号，没有新增输出；第三次才带回：
 
 ```text
@@ -220,6 +222,8 @@ CPA 的工具返回可串起会话句柄，本地命令时间则补充了实际�
 ## 补充实验：补丁找不到旧代码，先重新读取
 
 在 `lab/patch-recovery/price.ts` 副本中，提示故意指定过时的上下文 `return unitPrice - quantity;`，要求首次补丁先不读取目标。文件实际仍是加法，所以这次失败是受控实验条件，不能描述成模型偶然犯错。
+
+这份[起始代码](../examples/runtime-lab/start/lab/patch-recovery/price.ts)与[测试](../examples/runtime-lab/start/lab/patch-recovery/price.test.mjs)可以直接运行。在复制后的 `start/` 目录用 Node.js 24 或更高版本执行 `node --test lab/patch-recovery/price.test.mjs`，加法版本应失败；[乘法结果](../examples/runtime-lab/results/lab/patch-recovery/price.ts)放在另一目录，便于修复后对照。
 
 第一次 `apply_patch` 返回[上下文不匹配错误](../evidence/desktop-lab/patch-recovery/01-request.request.json)，包含 `Failed to find expected lines` 和那条减法表达式。模型随后读取当前文件，[读取结果](../evidence/desktop-lab/patch-recovery/02-request.request.json)显示 `return unitPrice + quantity;`，便按实际内容生成最小补丁，把加法改成乘法。
 

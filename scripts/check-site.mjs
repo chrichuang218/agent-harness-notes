@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { readFile, mkdir } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
 import { resolve, extname } from 'node:path';
 import { chromium } from '@playwright/test';
 import { marked } from 'marked';
@@ -8,6 +9,11 @@ import { marked } from 'marked';
 const root = resolve('dist');
 const catalog = JSON.parse(await readFile('course/catalog.json', 'utf8'));
 const { experiments } = JSON.parse(await readFile('evidence/desktop-lab/index.json', 'utf8'));
+const screenshotIndex = JSON.parse(await readFile('docs/images/desktop-lab/index.json', 'utf8'));
+const permissionPictures = screenshotIndex.images.filter(image => image.chapters.includes('10-permissions') && image.experiments.some(experiment => experiment.id === '15-permissions'));
+assert.ok(permissionPictures.length, 'The permissions chapter needs its own screenshot of the sandbox experiment.');
+const sourceBase = 'https://github.com/chrichuang218/agent-harness-notes/blob/main/';
+const sha = bytes => createHash('sha256').update(bytes).digest('hex');
 const captureReadme = process.argv.includes('--capture-readme');
 const basePath = '/agent-harness-notes/';
 const stages = experiments.flatMap(experiment => experiment.stages.map((stage, index) => ({ experiment, stage, index })));
@@ -275,16 +281,38 @@ try {
   assert.ok(await page.locator('[data-workbench="02-tools"] [data-raw-content]').textContent() === await readFile(experiments.find(item => item.id === '03-readme').stages[1].responseFile, 'utf8'));
 
   const foldedHeadings = [];
+  const runtimeCodePaths = new Set();
   for (const lesson of catalog.lessons) {
     await page.goto(url + '#/lesson/' + lesson.id);
     await waitChapter(lesson.id);
     const chapter = page.locator('#chapter-' + lesson.id);
-    let expectedImages = 0;
-    marked.walkTokens(marked.lexer(await readFile(lesson.file, 'utf8')), token => { if (token.type === 'image') expectedImages++; });
-    assert.equal(await chapter.locator('.prose img').count(), expectedImages, lesson.id + ': article screenshot omitted.');
-    for (const image of await chapter.locator('.prose img').all()) {
+    const expectedImages = [], exampleLinks = [];
+    marked.walkTokens(marked.lexer(await readFile(lesson.file, 'utf8')), token => {
+      if (token.type === 'image') expectedImages.push(decodeURIComponent(new URL(token.href, 'https://local.invalid/' + lesson.file).pathname.slice(1)));
+      if (token.type === 'link') {
+        const path = token.href.startsWith(sourceBase) ? token.href.slice(sourceBase.length) : !/^https?:/.test(token.href) ? decodeURIComponent(new URL(token.href, 'https://local.invalid/' + lesson.file).pathname.slice(1)) : '';
+        if (path.startsWith('examples/runtime-lab/')) exampleLinks.push(path);
+      }
+    });
+    assert.equal(await chapter.locator('.prose img').count(), expectedImages.length, lesson.id + ': article screenshot omitted.');
+    for (const path of exampleLinks) {
+      assert.ok((await readFile(path)).length > 0, path + ': code link must resolve to a local file.');
+      const link = chapter.locator(`.prose a[href="${sourceBase + path}"]`);
+      assert.ok(await link.count(), path + ': the existing renderer must link directly to the GitHub file.');
+      runtimeCodePaths.add(path);
+    }
+    if (lesson.id === '10-permissions') {
+      const experiment = experiments.find(item => item.id === '15-permissions');
+      for (const picture of permissionPictures) {
+        assert.ok(expectedImages.includes(picture.file), 'The sandbox screenshot must be shown in its permissions chapter.');
+        assert.equal(picture.experiments.find(item => item.id === experiment.id).threadId, experiment.threadId, 'Screenshot and log must belong to the same historical task.');
+      }
+    }
+    for (const [imageIndex, image] of (await chapter.locator('.prose img').all()).entries()) {
       const source = new URL(await image.getAttribute('src'), url).href;
-      assert.equal((await context.request.get(source)).status(), 200, lesson.id + ': screenshot asset is missing.');
+      const response = await context.request.get(source);
+      assert.equal(response.status(), 200, lesson.id + ': screenshot asset is missing.');
+      if (permissionPictures.some(picture => picture.file === expectedImages[imageIndex])) assert.equal(sha(await response.body()), sha(await readFile(expectedImages[imageIndex])), 'The published sandbox screenshot must preserve the local image bytes.');
       assert.equal(await image.locator('..').getAttribute('href'), source, lesson.id + ': original image must keep the actual source URL.');
       assert.equal(await image.locator('..').getAttribute('target'), '_blank', lesson.id + ': original screenshot must open separately.');
       assert.equal(await image.locator('..').locator('a').count(), 0, lesson.id + ': screenshot link must not contain a nested link.');
@@ -300,6 +328,8 @@ try {
     if (expectedPrevious) assert.equal(await page.locator('.reader-page:visible .chapter-pagination [data-direction="previous"]').getAttribute('href'), '#/lesson/' + expectedPrevious);
     if (expectedNext) assert.equal(await page.locator('.reader-page:visible .chapter-pagination [data-direction="next"]').getAttribute('href'), '#/lesson/' + expectedNext);
   }
+  assert.ok(runtimeCodePaths.size > 0, 'The runnable examples must have direct file entries in the chapters.');
+  console.log(`Verified ${runtimeCodePaths.size} runtime-lab code links and ${permissionPictures.length} sandbox screenshots with exact image bytes.`);
   assert.ok(foldedHeadings.length, 'In-depth sections should be reachable through actual folded content headings.');
   for (const { id, lesson } of foldedHeadings) {
     await page.evaluate(() => document.querySelectorAll('.prose details').forEach(details => details.open = false));
@@ -567,6 +597,22 @@ try {
       await openWorkbench(hello, 1, 'request'); await page.screenshot({ path: 'work/site-workbench-mobile.png', fullPage: false, animations: 'disabled' });
     }
   }
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto(url + '#/lesson/10-permissions'); await waitChapter('10-permissions');
+  const permissionImage = page.locator('#chapter-10-permissions .prose img').first();
+  await permissionImage.scrollIntoViewIfNeeded();
+  await page.screenshot({ path: 'work/site-permission-desktop.png', fullPage: false, animations: 'disabled' });
+  const permissionPopup = context.waitForEvent('page');
+  await permissionImage.locator('..').click();
+  const permissionOriginal = await permissionPopup;
+  await permissionOriginal.waitForLoadState();
+  assert.equal(permissionOriginal.url(), await permissionImage.locator('..').getAttribute('href'));
+  await permissionOriginal.screenshot({ path: 'work/site-permission-original.png', fullPage: false });
+  await permissionOriginal.close();
+  await page.setViewportSize({ width: 390, height: 844 });
+  await permissionImage.scrollIntoViewIfNeeded();
+  await noOverflow('Mobile permissions screenshot');
+  await page.screenshot({ path: 'work/site-permission-mobile.png', fullPage: false, animations: 'disabled' });
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto(url + '#/lesson/10-hooks'); await waitChapter('10-hooks');
   const desktopScreenshot = page.locator('#chapter-10-hooks .prose img').last();

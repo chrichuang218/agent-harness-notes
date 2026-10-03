@@ -1,0 +1,1 @@
+HOOK-LAB ALLOWED-UPDATED: this file is the allowed patch control.

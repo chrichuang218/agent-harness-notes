@@ -214,6 +214,25 @@ if (catalog && index) {
   for (const image of screenshotIndex?.images || []) {
     check(image.chapters?.some(chapter => chapterTargets.get(chapter)?.has(resolve(image.file))), `${image.id}: screenshot is not referenced by any mapped article.`);
   }
+  const runtimeLabLinks = {
+    '10-hooks': ['README.md', 'start/.codex/hooks.example.json', 'start/.codex/hooks/prompt-marker.mjs',
+      'start/.codex/hooks/tool-experiment.mjs', 'start/.codex/hook-lab/protected.txt',
+      'start/.codex/hook-lab/allowed.txt', 'start/.codex/hook-lab/pass.test.mjs',
+      'start/.codex/hook-lab/fail.test.mjs', 'results/.codex/hook-lab/allowed.txt'],
+    '11-plan': ['start/lab/plan-state/price.ts', 'start/lab/plan-state/price.test.mjs', 'results/lab/plan-state/price.ts'],
+    '13-autonomy': ['start/lab/background-delay.mjs', 'start/src/price.ts',
+      'start/lab/patch-recovery/price.ts', 'start/lab/patch-recovery/price.test.mjs', 'results/lab/patch-recovery/price.ts'],
+  };
+  for (const [chapter, paths] of Object.entries(runtimeLabLinks)) {
+    for (const path of paths) {
+      const file = `examples/runtime-lab/${path}`;
+      check((await exists(file))?.isFile(), `Missing runtime example file: ${file}`);
+      check(chapterTargets.get(chapter)?.has(resolve(file)), `${chapter}: missing direct link to ${file}`);
+    }
+  }
+  for (const file of ['README.md', 'SOURCE.md', 'start/README.md']) await documentLinks(`examples/runtime-lab/${file}`);
+  await readJson('examples/runtime-lab/start/.codex/hooks.example.json');
+  await readJson('examples/runtime-lab/start/package.json');
   check(lessons.some(lesson => lesson.id === '08-memory'), 'The memory chapter and its evidence boundary must be present.');
   for (const file of ['README.md', 'PROGRESS.md', 'GLOSSARY.md', 'CHANGELOG.md', 'course/introduction.md', 'THIRD_PARTY_NOTICES.md', 'site/docs/DESIGN.md', 'docs/images/desktop-lab/README.md']) await documentLinks(file);
   for (const file of await readdir('lessons/02-desktop-lab-chronological')) if (file.endsWith('.md')) await documentLinks(`lessons/02-desktop-lab-chronological/${file}`);

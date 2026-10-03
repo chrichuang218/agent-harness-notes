@@ -18,6 +18,8 @@
 
 项目的 `.codex/hooks.json` 配置了三个 `command` 处理器。它们指向本地 Node 脚本，读取标准输入中的事件 JSON，再把结果写到标准输出。实际配置与脚本全文保存在[实验前文件快照](../evidence/desktop-lab/hook-pre-tool/file-observations.json)中。
 
+要自己运行，可以把[运行实验目录](../examples/runtime-lab/README.md)中的 `start/` 复制到独立目录，使用 Node.js 24 或更高版本。[hooks.example.json](../examples/runtime-lab/start/.codex/hooks.example.json)是未启用的配置模板；填写本机命令路径并完成配置与定义的信任审阅后，再提交相应任务。
+
 | 配置事件 | 触发位置 | 匹配与本次处理 |
 | --- | --- | --- |
 | `UserPromptSubmit` | 输入框提交时，模型生成之前 | 无工具 matcher；`prompt-marker.mjs` 生成编号，经 `additionalContext` 返回 |
@@ -44,6 +46,8 @@
 ## UserPromptSubmit：编号怎样进入请求？
 
 先看提交时的编号。项目配置 `UserPromptSubmit` Hook，让脚本在提交时生成编号，经 `additionalContext` 交给 Codex。
+
+对应源码是 [prompt-marker.mjs](../examples/runtime-lab/start/.codex/hooks/prompt-marker.mjs)，可以沿事件读取、编号生成和返回值查看它怎样提供这条信息。
 
 在 Desktop 输入框提交：
 
@@ -80,7 +84,7 @@
 
 ## PreToolUse：在补丁执行前拒绝
 
-demo 中有 `protected.txt` 和 `allowed.txt` 两个文件。项目 `PreToolUse` Hook 匹配 `apply_patch`，检查补丁文件头；目标为 `.codex/hook-lab/protected.txt` 时返回 `permissionDecision: "deny"`。配置和脚本见[文件快照](../evidence/desktop-lab/hook-pre-tool/file-observations.json)。
+demo 中有 [protected.txt](../examples/runtime-lab/start/.codex/hook-lab/protected.txt) 和 [allowed.txt](../examples/runtime-lab/start/.codex/hook-lab/allowed.txt) 两个文件。项目 `PreToolUse` Hook 匹配 `apply_patch`，检查补丁文件头；目标为 `.codex/hook-lab/protected.txt` 时返回 `permissionDecision: "deny"`。处理逻辑见 [tool-experiment.mjs](../examples/runtime-lab/start/.codex/hooks/tool-experiment.mjs)，当次配置见[文件快照](../evidence/desktop-lab/hook-pre-tool/file-observations.json)。
 
 用户要求先读取两份文件，再用两次独立补丁分别修改它们：受保护文件只尝试一次，被拒绝后不得重试或换写入方法；允许文件作为对照。原始要求见[首请求](../evidence/desktop-lab/hook-pre-tool/00-request.request.json)。这次实际过程是：读取原文，提交受保护补丁，收到拒绝，独立修改允许文件，最后重读两者。
 
@@ -96,6 +100,8 @@ Command blocked by PreToolUse hook: HOOK-LAB: apply_patch may not change .codex/
 
 界面显示补丁被拒绝，编辑入口只有 `allowed.txt`。两份文件的最终状态见[独立文件核对](../evidence/desktop-lab/hook-pre-tool/audit.json)。
 
+起始目录中的两个文件都含 `ORIGINAL`；[结果对照](../examples/runtime-lab/results/.codex/hook-lab/allowed.txt)只展示允许文件修改后的内容。
+
 这次拒绝来自工具执行前的项目 Hook，下一章再观察沙箱拒绝。这个 Hook 只检查 `apply_patch` 文件头中的精确目标，不能当作所有写入方式的通用防线。实验也没有尝试绕过它。
 
 <details>
@@ -110,6 +116,8 @@ Command blocked by PreToolUse hook: HOOK-LAB: apply_patch may not change .codex/
 ## PostToolUse：命令完成后记录返回
 
 两个独立测试文件中，一个检查 `10 * 3` 等于 `30`，另一个故意要求 `10 + 3` 等于 `30`。在 Desktop 输入框要求分别运行一次，失败后不修复、不重试，也不让模型读取 Hook 日志。
+
+代码分别在 [pass.test.mjs](../examples/runtime-lab/start/.codex/hook-lab/pass.test.mjs) 和 [fail.test.mjs](../examples/runtime-lab/start/.codex/hook-lab/fail.test.mjs)。在复制后的 `start/` 目录分别运行下面两条命令，失败测试应保持失败；命令本身不会启用 Hook，观察 Hook 仍需由配置完成的 Codex 任务调用它们。
 
 两次实际返回如下：
 

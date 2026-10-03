@@ -1,0 +1,43 @@
+{
+  "description": "Hook experiment: inject a random per-turn marker; record identifiers locally without recording prompts.",
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"<PROJECT_ROOT>/.codex/hooks/prompt-marker.mjs\"",
+            "timeout": 5,
+            "statusMessage": "生成本轮 Hook 实验编号"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "^apply_patch$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"<PROJECT_ROOT>/.codex/hooks/tool-experiment.mjs\"",
+            "statusMessage": "Hook lab: check protected patch",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "^Bash$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"<PROJECT_ROOT>/.codex/hooks/tool-experiment.mjs\"",
+            "statusMessage": "Hook lab: record test result",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

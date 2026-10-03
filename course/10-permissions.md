@@ -26,6 +26,10 @@ Access to the path 'E:\Develop\github\agent-harness-notes\work\permission-probe.
 
 完整错误在[第二次请求](../evidence/desktop-lab/15-permissions/01-request.request.json)。模型此后报告拒绝并结束，没有重试别的路径。[独立文件检查](../evidence/desktop-lab/15-permissions/probe-result.json)还记录了前后内容都为 `UNCHANGED`。实际调用、失败结果和文件状态共同支持这次写入受阻。
 
+![Desktop 展开 Set-Content 的权限拒绝与退出码1，模型随后报告停止](../docs/images/desktop-lab/permission-denial.png)
+
+写入工作区外文件时，`Set-Content` 返回权限拒绝和退出码 1，随后停止尝试。错误对应[工具返回](../evidence/desktop-lab/15-permissions/01-request.request.json)，文件未变由[独立检查](../evidence/desktop-lab/15-permissions/probe-result.json)确认。
+
 ## 沙箱和审批分别控制什么？
 
 界面的“请求批准”对应哪些设置，要看这一轮的运行记录。提取自 rollout 的[运行时节选](../evidence/desktop-lab/15-permissions/runtime-context.json)包含：

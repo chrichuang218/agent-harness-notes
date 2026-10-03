@@ -781,6 +781,44 @@
           "manifestFile": "evidence/desktop-lab/hook-post-tool/manifest.json"
         }
       ]
+    },
+    {
+      "id": "permission-denial",
+      "file": "docs/images/desktop-lab/permission-denial.png",
+      "sha256": "0667258967910dde2b730e1638661395766554bc472cc1cb21f91e396929f6b6",
+      "width": 920,
+      "height": 875,
+      "chapters": [
+        "10-permissions"
+      ],
+      "caption": "写入工作区外文件时，Set-Content 返回权限拒绝和退出码 1，随后停止尝试。",
+      "source": {
+        "captureMethod": "Computer Use / @oai/sky / Codex mode",
+        "originalStoredPrivately": true,
+        "originalFileName": "permission-denial.png",
+        "sha256": "afcdd9607108e05072527b0656a30f8a3ca10da4fb8472ef609cf5cc83df1f22",
+        "width": 2560,
+        "height": 1392,
+        "savedAt": "2026-10-03T04:32:46.099Z",
+        "displayState": "reopened-history"
+      },
+      "crop": {
+        "x": 1025,
+        "y": 125,
+        "width": 920,
+        "height": 875
+      },
+      "redactions": [],
+      "experiments": [
+        {
+          "id": "15-permissions",
+          "threadId": "01a0edfd-0bdc-7042-985c-5c6a957c6895",
+          "turnIds": [
+            "01a0ee0e-a997-7570-b627-f8e7ff302f83"
+          ],
+          "manifestFile": "evidence/desktop-lab/15-permissions/manifest.json"
+        }
+      ]
     }
   ]
 }

@@ -118,6 +118,8 @@ return (unitPrice * quantity) * ((100 - discountPercent) / 100);
 
 在 Default 模式要求 Codex 修复 `lab/plan-state/price.ts` 副本，并跟踪“读取、修复、测试”三步。提示要求优先使用可用的计划状态工具；如果没有，则明确标为文字进度。这轮没有进入 Plan Mode。
 
+可运行副本见[起始代码](../examples/runtime-lab/start/lab/plan-state/price.ts)与[对应测试](../examples/runtime-lab/start/lab/plan-state/price.test.mjs)。复制[运行实验目录](../examples/runtime-lab/README.md)的 `start/` 后，在目录根使用 Node.js 24 或更高版本执行 `node --test lab/plan-state/price.test.mjs`：起始加法应失败，改成乘法后通过；[修复结果](../examples/runtime-lab/results/lab/plan-state/price.ts)单独供对照，测试无需修改。
+
 模型先搜索本轮暴露的 `ALL_TOOLS` 目录，[返回结果](../evidence/desktop-lab/plan-status/01-request.request.json)为 `[]`。它随后说明没有找到相应工具，以进度文字继续：读取副本和测试之后，将读取标为完成；补丁返回之后，将修复标为完成；测试结果返回前，仍将测试标为进行中。
 
 ![执行中的文字进度，读取与修复已完成，指定测试仍在运行](../docs/images/desktop-lab/plan-progress.png)

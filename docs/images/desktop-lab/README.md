@@ -2,7 +2,7 @@
 
 [课程首页](../../../README.md) · [机器可读映射](index.json)
 
-这 19 张图片在 2026-10-03 从真实 Codex 模式窗口采集。公开版本只裁剪聊天中的相关区域，去掉无关项目、头像和输入法条，没有重绘界面或修改消息。图片保留裁剪后的原始像素尺寸，点击即可查看。
+这 20 张图片在 2026-10-03 从真实 Codex 模式窗口采集，映射覆盖 16 章。公开版本只裁剪聊天中的相关区域，去掉无关项目、头像和输入法条，没有重绘界面或修改消息。图片保留裁剪后的原始像素尺寸，点击即可查看。
 
 原始全窗口截图与可访问性文本保存在本地私有 `work/desktop-captures/`，不随仓库公开。映射 JSON 保存原图及公开图片的 SHA-256、裁剪矩形、章节、实验编号、任务和轮次。`savedAt` 是文件保存时间；旧实验截图为重新打开历史对话后补拍，实验发生时间以日志为准。
 
@@ -29,6 +29,7 @@
 | [受控实验先用过时上下文使补丁失败，再读取实际代码、修正补丁并通过测试。](patch-recovery.png) | [14 目标、停止条件与续跑](../../../course/13-autonomy.md) | [patch-recovery](../../../evidence/desktop-lab/patch-recovery/manifest.json) |
 | [历史中断后只补运行尚未完成的测试，已通过的类型检查没有重跑。](interruption-resume.png) | [14 目标、停止条件与续跑](../../../course/13-autonomy.md) | [20-interrupted](../../../evidence/desktop-lab/20-interrupted/manifest.json)、[20-resume](../../../evidence/desktop-lab/20-resume/manifest.json) |
 | [通过和故意失败的测试分别返回 0、1；失败断言为 13 !== 30，两个输出均进入 PostToolUse 记录。](hook-post-tool.png) | [10 Hooks](../../../course/10-hooks.md) | [hook-post-tool](../../../evidence/desktop-lab/hook-post-tool/manifest.json) |
+| [写入工作区外文件时，Set-Content 返回权限拒绝和退出码 1，随后停止尝试。](permission-denial.png) | [11 权限与安全](../../../course/10-permissions.md) | [15-permissions](../../../evidence/desktop-lab/15-permissions/manifest.json) |
 
 计划进度截图来自任务运行中，其余新实验图为完成后的画面。`plan-progress` 裁掉了上方含个人目录的读取命令行；实际测试命令和可见进度保留。原生计划状态工具本轮不可用，图中的清单明确是文字进度。
 
