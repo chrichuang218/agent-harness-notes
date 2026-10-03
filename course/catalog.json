@@ -1,6 +1,6 @@
 {
   "title": "Codex 是如何工作的",
-  "description": "从一句“你好”到修复代码，通过真实对话与请求日志理解 Agent。",
+  "description": "从“你好”这个 Hello World 开始，通过真实 Codex Desktop 请求、响应和请求中可见的完整上下文，理解 Agent 的运行。",
   "groups": [
     {
       "id": "basic",

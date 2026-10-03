@@ -115,6 +115,16 @@ try {
     assert.deepEqual(actual, expected, group.id + ': cards must preserve the Chinese course order.');
   }
   assert.equal(await page.locator('dialog').count(), 0, 'Reading/evidence must not require a dialog.');
+  assert.ok((await page.locator('.home-hero').innerText()).includes('Hello World'));
+  assert.ok((await page.locator('.home-hero > p').innerText()).includes('请求中可见的完整上下文'));
+  await page.locator('[data-hello-request]').click();
+  let helloEntry = await waitWorkbench('01-request', '01-hello', 1, 'request');
+  assert.ok((await helloEntry.locator('[data-item-path="input[6]"]').innerText()).includes('你好'), 'Hello World entry must open the real greeting request, not the prewarm.');
+  await page.goBack(); await page.locator('.home-page:visible').waitFor();
+  await page.locator('[data-hello-response]').click();
+  helloEntry = await waitWorkbench('01-request', '01-hello', 1, 'output');
+  assert.ok((await helloEntry.innerText()).includes(experiments.find(item => item.id === '01-hello').reply), 'Response entry must show the recorded greeting output.');
+  await page.goBack(); await page.locator('.home-page:visible').waitFor();
   for (const [name, copyright] of [['learn-claude-code', '2024 shareAI Lab'], ['how-claude-code-works', '2025 Windy3f3f3f3f']]) {
     const licenseUrl = url + `licenses/${name}.txt`;
     const licenseResponse = await context.request.get(licenseUrl);

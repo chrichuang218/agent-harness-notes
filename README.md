@@ -1,10 +1,12 @@
 # Codex 是如何工作的
 
-从一句“你好”到修复代码，通过真实对话与请求日志理解 Agent。
+给 Codex 发送“你好”，就是这份教程的 Hello World。
 
-一次修复为什么需要多次模型请求？这份教程用真实 Codex Desktop 实验、截图和请求日志，解释项目规则、工具结果怎样进入上下文，以及模型怎样根据返回结果继续工作。
+这份教程直接观察真实 Codex Desktop。已收录的模型请求、响应和请求中可见的完整上下文可以逐项展开，让你把界面里的操作与模型的输入输出对应起来。简单的 TypeScript 项目作为实验载体，用来观察文件读取、代码修复，以及 Skills、Hooks 和 MCP 的使用。
 
 [在线阅读](https://chrichuang218.github.io/how-codex-works/) · [完整修复案例](https://chrichuang218.github.io/how-codex-works/#/lesson/03-agent-loop?section=agent-loop-timeline)
+
+先打开“你好”的[真实请求与上下文](https://chrichuang218.github.io/how-codex-works/#/lesson/01-request?experiment=01-hello&stage=1&view=request)，再对照[响应与输出](https://chrichuang218.github.io/how-codex-works/#/lesson/01-request?experiment=01-hello&stage=1&view=output)。输入框里的两个字，只是模型收到的内容之一。
 
 [![Codex 修复总价错误后运行类型检查、测试和示例](docs/images/desktop-lab/fix-result.png)](https://chrichuang218.github.io/how-codex-works/#/lesson/03-agent-loop?section=agent-loop-timeline)
 
@@ -14,7 +16,7 @@
 
 课程分为四个阶段、16 个主题。按顺序阅读正文，遇到需要核对的字段，再展开“深入核对”或查看工作台里的完整输入输出。左侧当前章的箭头可以收起小节，长目录可独立滚动。
 
-第 3 章的时间线串起修复过程中的五次请求。每个节点显示模型的输入、调用和结果去向，并链接到对应证据。完整日志可以展开、复制和下载。
+第 3 章的时间线串起修复过程中的五次请求。每个节点显示模型的输入、调用和结果去向，并链接到对应证据。公开记录可以展开、复制和下载。
 
 | 阶段 | 章节 |
 | --- | --- |
@@ -49,6 +51,8 @@ Hooks、后台命令、补丁恢复和文字进度的脚本与测试见[运行�
 ## 怎样对照日志
 
 [实验索引](evidence/desktop-lab/index.json)关联 43 组实验、110 个请求阶段，其中 3 次为预热。每个阶段可以查看客户端请求、CPA 上游请求、流式事件、完成事件和输出项。
+
+公开记录是脱敏副本，敏感内容以占位符替换。这里的“完整上下文”限于所保存请求中可见的内容。
 
 截图展示操作和结果，工作台可切换请求、输出、工具往返和完整文件。判断工具是否执行、文件是否改变，还需要核对本地事件、文件内容与退出码。
 

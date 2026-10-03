@@ -1,10 +1,10 @@
 # 一次请求与提示词组装
 
-在 `codex-ts-demo` 项目中新建任务，发送“你好”。界面上的回答很短：
+把“你好”作为理解 Codex 的 Hello World。在 `codex-ts-demo` 项目中新建任务并发送这句问候，界面回答：
 
 > 你好！今天想一起做点什么？
 
-打开[这次正式请求](../evidence/desktop-lab/01-hello/01-request.request.json)：输入框里只有一句问候，请求的 `input` 却有 7 项。其余内容从哪里来？
+打开[这次正式请求](../evidence/desktop-lab/01-hello/01-request.request.json)：输入框里只有一句问候，请求的 `input` 却有 7 项。从这里开始逐项阅读请求中可见的完整上下文，看看其余内容来自哪里，再与响应对应。
 
 ## 先对上界面里的消息
 

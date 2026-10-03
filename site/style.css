@@ -53,3 +53,7 @@ body[data-view=home] #main{margin-left:0;padding:0 32px 80px}body[data-view=home
 .diagram-hint{font-size:12px!important;line-height:1.7;color:var(--muted)!important;margin-bottom:-14px!important}
 @media(min-width:761px){body[data-view=reader] .course-sidebar{width:260px}body[data-view=reader] #main,body[data-view=reader] .site-footer{margin-left:260px}}
 @media(max-width:760px){.chapter-toggle{flex-basis:40px;width:40px;height:40px}.chapter-outline a{min-height:36px;padding-top:8px;padding-bottom:8px;font-size:13px}}
+
+.hero-evidence-links{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 12px;margin:0 0 16px;font-size:13px;line-height:1.7}.hero-evidence-links>span{color:var(--muted)}
+.home-hero>.eyebrow{font-size:14px;letter-spacing:0}
+@media(max-width:760px){.home-hero>.eyebrow{font-size:12px}}
