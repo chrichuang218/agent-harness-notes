@@ -102,10 +102,6 @@ R0 的输入包含前两轮对话和一条“我会只阅读……”的助手�
 
 R1 的 `previous_response_id` 原值为 `resp_0e37249022131978016abbe1b0762087d08637b9adb365b489`，与 [R0 完成事件](../evidence/desktop-lab/03-readme/00-request.response.json)中的 `response.id` 相同。
 
-两份完成事件的 `output` 都是空数组。读取调用和最终文字保存在各自的流式输出项完成事件中，工作台的“模型输出”由这些事件提取。原始顺序见 [R0 事件](../evidence/desktop-lab/03-readme/00-request.events.json)和 [R1 事件](../evidence/desktop-lab/03-readme/01-request.events.json)，第 15 章再拆解事件如何组成输出。
-
-两次输入用量分别为 33,015 和 33,407 token，合计 66,422；输出合计 185。第二次只新增一项结果，但还接续此前上下文，因此不能把输入 token 全算在 README 身上。
-
 </details>
 
 ## 自己配对一次
@@ -118,5 +114,7 @@ R1 的 `previous_response_id` 原值为 `resp_0e37249022131978016abbe1b0762087d0
 第一次模型输出提出调用，本地执行以后，README 正文进入第二次请求的 `custom_tool_call_output`。调用和返回共用 `call_a288dLl8tyNv8JFlTJgNdtfK`；内层结果的 `exit_code` 为 0。最终介绍是第二次模型生成的结果。
 
 </details>
+
+已经能把一次调用与返回配对，下一章沿同样的方法追踪多次往返，观察模型怎样根据结果继续修复。
 
 [上一章：一次请求与提示词组装](01-request.md) · [下一章：Agent Loop](03-agent-loop.md)

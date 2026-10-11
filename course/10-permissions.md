@@ -77,23 +77,6 @@ Access to the path 'E:\Develop\github\agent-harness-notes\work\permission-probe.
 
 </details>
 
-## 下一章的“只做计划”又是什么限制？
-
-下一章的折扣计划前后，受监测的项目文件哈希也没有变化，但沙箱仍为 `danger-full-access`。模型在 `plan` 模式下调查、提问并形成方案，遵守了暂不实施的要求。本章的写入尝试则已交给工具，在执行时被拒绝。
-
-<details>
-<summary>深入核对：两组“文件没变”的运行条件</summary>
-
-| 阶段 | 协作模式 | 沙箱 | 审批策略 | 实际观察 |
-| --- | --- | --- | --- | --- |
-| 折扣计划 | `plan` | `danger-full-access` | `never` | 调查、澄清、出方案；监测文件未变 |
-| 确认实施 | `default` | `danger-full-access` | `never` | 修改文件并验证 |
-| 写入探针 | `default` | `workspace-write` | `on-request` | 实际写入被拒绝，文件未变 |
-
-运行字段来自同一份[节选](../evidence/desktop-lab/15-permissions/runtime-context.json)，对应源文件第 53、105、145 行。计划阶段的文件证据见[计划前](../evidence/desktop-lab/14-plan/files-before.json)和[计划后](../evidence/desktop-lab/14-plan/files-after-plan.json)。
-
-</details>
-
 ## 独立判断一次拒绝
 
 不看最终回答，从本章记录找出实际写入命令、对应错误和前后文件内容。假如只有最后一份文件检查，能否判断是模型没有尝试，还是系统拦截了写入？
@@ -101,19 +84,12 @@ Access to the path 'E:\Develop\github\agent-harness-notes\work\permission-probe.
 <details>
 <summary>参考解释</summary>
 
-文件未变无法区分这两种原因。阶段 00 的调用证明写入已提交执行；阶段 01 的结果证明命令失败；探针结果进一步确认文件仍为 `UNCHANGED`。计划模式下文件未变，也需要结合模式和操作记录解释。
+文件未变无法区分这两种原因。阶段 00 的调用证明写入已提交执行；阶段 01 的结果证明命令失败；探针结果进一步确认文件仍为 `UNCHANGED`。
 
 </details>
 
-## 补充实验：PreToolUse 在补丁执行前拒绝
+另一种拒绝来源见 [PreToolUse 补丁实验](10-hooks.md#PreToolUse：在补丁执行前拒绝)。
 
-项目 Hook 也可以在工具执行前拒绝调用，见[第 10 章的补丁对照](10-hooks.md)。判断拒绝原因时，需要分别核对运行权限和 Hook 事件。
-
-<details>
-<summary>Hook 事件怎样与 CPA 调用对应</summary>
-
-外层调用与原生 Hook 事件使用不同编号，如何对应见 [PreToolUse 实验](10-hooks.md)。
-
-</details>
+权限决定工具能否访问资源。下一章观察计划模式：先调查并确定做法，再由用户确认是否实施。
 
 [上一章：Hooks](10-hooks.md) · [下一章：Plan Mode](11-plan.md)

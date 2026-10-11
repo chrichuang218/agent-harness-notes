@@ -33,7 +33,33 @@
       "status": "verified",
       "evidenceIds": [
         "01-hello"
-      ]
+      ],
+      "readingGuide": {
+        "prerequisite": "可直接开始阅读；样本在故障版项目新建任务，尚未添加后面的项目规则。",
+        "focus": "比较两条 user 消息：input[5] 是应用附加的规则与环境，input[6] 是输入框里的“你好”。",
+        "targets": [
+          {
+            "label": "查看规则与环境",
+            "experiment": "01-hello",
+            "stage": 1,
+            "view": "request",
+            "input": 5
+          },
+          {
+            "label": "查看用户问候",
+            "experiment": "01-hello",
+            "stage": 1,
+            "view": "request",
+            "input": 6
+          },
+          {
+            "label": "对照问候回答",
+            "experiment": "01-hello",
+            "stage": 1,
+            "view": "output"
+          }
+        ]
+      }
     },
     {
       "id": "02-tools",
@@ -44,7 +70,26 @@
       "status": "verified",
       "evidenceIds": [
         "03-readme"
-      ]
+      ],
+      "readingGuide": {
+        "prerequisite": "接着第一章的原任务；样本已有问候和追问两轮历史，项目仍保留加法错误。",
+        "focus": "先看读取调用，再找相同 call_id 的返回；分清文件正文何时进入模型。",
+        "targets": [
+          {
+            "label": "读取调用与返回",
+            "experiment": "03-readme",
+            "stage": 0,
+            "view": "calls"
+          },
+          {
+            "label": "展开 README 返回",
+            "experiment": "03-readme",
+            "stage": 1,
+            "view": "request",
+            "input": 0
+          }
+        ]
+      }
     },
     {
       "id": "03-agent-loop",
@@ -56,7 +101,32 @@
       "evidenceIds": [
         "07-fix",
         "06-tests"
-      ]
+      ],
+      "readingGuide": {
+        "prerequisite": "会配对工具调用与返回。样本沿用故障项目及失败测试历史，已经加载项目规则和技能；它们的机制在后续章节学习。",
+        "focus": "沿 R0–R4 追踪新信息如何改变下一步，最后核对文件和三项检查是否满足用户要求。",
+        "targets": [
+          {
+            "label": "修复开始",
+            "experiment": "07-fix",
+            "stage": 0,
+            "view": "request"
+          },
+          {
+            "label": "修复后的验证返回",
+            "experiment": "07-fix",
+            "stage": 4,
+            "view": "request",
+            "input": 0
+          },
+          {
+            "label": "阶段练习：修复前检查",
+            "experiment": "06-tests",
+            "stage": 0,
+            "view": "request"
+          }
+        ]
+      }
     },
     {
       "id": "04-session",
@@ -70,7 +140,31 @@
         "08-session-seed",
         "08-session-new",
         "08-session-resume"
-      ]
+      ],
+      "readingGuide": {
+        "prerequisite": "理解一次用户轮次可以包含多次模型请求。对照同项目的新任务与原任务，临时代号只写在原聊天中。",
+        "focus": "分别查当前 input 与响应引用，解释原任务答对而新任务不知道的来源。",
+        "targets": [
+          {
+            "label": "历史直接重发",
+            "experiment": "02-context",
+            "stage": 0,
+            "view": "request"
+          },
+          {
+            "label": "新任务追问",
+            "experiment": "08-session-new",
+            "stage": 0,
+            "view": "request"
+          },
+          {
+            "label": "原任务追问",
+            "experiment": "08-session-resume",
+            "stage": 0,
+            "view": "request"
+          }
+        ]
+      }
     },
     {
       "id": "05-context",
@@ -84,7 +178,32 @@
         "10-compaction-check",
         "02-context",
         "07-fix"
-      ]
+      ],
+      "readingGuide": {
+        "prerequisite": "接续已经修复并设置 PRICE-A7 的原任务；样本通过原生菜单手动压缩，不是等待自动阈值。",
+        "focus": "核对压缩摘要、本地替换历史和后续请求，区分压缩、历史引用与缓存计数。",
+        "targets": [
+          {
+            "label": "压缩生成的摘要",
+            "experiment": "10-compaction",
+            "stage": 0,
+            "view": "output"
+          },
+          {
+            "label": "本地历史替换",
+            "experiment": "10-compaction",
+            "stage": 0,
+            "view": "raw",
+            "kind": "compactionFile"
+          },
+          {
+            "label": "压缩后的追问",
+            "experiment": "10-compaction-check",
+            "stage": 0,
+            "view": "request"
+          }
+        ]
+      }
     },
     {
       "id": "06-agents",
@@ -96,7 +215,27 @@
       "evidenceIds": [
         "04-agents",
         "03-readme"
-      ]
+      ],
+      "readingGuide": {
+        "prerequisite": "项目仍为故障版；本轮新增项目 AGENTS.md，要求只读 README 并改变回答前缀。",
+        "focus": "从请求的规则块找到项目约定，再对照工具范围和回答前缀。",
+        "targets": [
+          {
+            "label": "规则进入首请求",
+            "experiment": "04-agents",
+            "stage": 0,
+            "view": "request",
+            "input": 5,
+            "content": 1
+          },
+          {
+            "label": "按约定回答",
+            "experiment": "04-agents",
+            "stage": 1,
+            "view": "output"
+          }
+        ]
+      }
     },
     {
       "id": "07-skills",
@@ -108,7 +247,27 @@
       "evidenceIds": [
         "05-skills",
         "07-fix"
-      ]
+      ],
+      "readingGuide": {
+        "prerequisite": "项目保留加法错误并已有项目规则；本轮显式选择只读概览技能。",
+        "focus": "比较技能目录、显式附加正文和之后的工具读取，确认正文第一次进入请求的时机。",
+        "targets": [
+          {
+            "label": "显式附加的技能正文",
+            "experiment": "05-skills",
+            "stage": 0,
+            "view": "request",
+            "input": 7
+          },
+          {
+            "label": "之后读取的文件",
+            "experiment": "05-skills",
+            "stage": 1,
+            "view": "request",
+            "input": 0
+          }
+        ]
+      }
     },
     {
       "id": "08-memory",
@@ -127,7 +286,31 @@
         "native-memory-recall-on",
         "native-memory-recall-consolidated",
         "native-memory-recall-consolidated-off"
-      ]
+      ],
+      "readingGuide": {
+        "prerequisite": "文件笔记实验使用修复版项目并新建任务读取；原生记忆另用独立来源聊天和开关对照，不能与文件笔记混作一次运行。",
+        "focus": "分清笔记读取与原生摘要注入；对照整合后启用、关闭记忆的新任务。",
+        "targets": [
+          {
+            "label": "从文件读取笔记",
+            "experiment": "12-memory-read",
+            "stage": 1,
+            "view": "request"
+          },
+          {
+            "label": "整合后启用记忆",
+            "experiment": "native-memory-recall-consolidated",
+            "stage": 0,
+            "view": "request"
+          },
+          {
+            "label": "独立关闭对照",
+            "experiment": "native-memory-recall-consolidated-off",
+            "stage": 0,
+            "view": "request"
+          }
+        ]
+      }
     },
     {
       "id": "09-mcp",
@@ -138,7 +321,31 @@
       "status": "verified",
       "evidenceIds": [
         "13-mcp"
-      ]
+      ],
+      "readingGuide": {
+        "prerequisite": "使用 MCP 项目快照并连接商品目录服务；样本任务已读项目笔记，本轮只给商品编号和数量。",
+        "focus": "先找到单价 12 的返回，再追查模型如何发现接口、传入 NOTEBOOK 并取得服务结果。",
+        "targets": [
+          {
+            "label": "发现服务接口",
+            "experiment": "13-mcp",
+            "stage": 0,
+            "view": "calls"
+          },
+          {
+            "label": "商品查询往返",
+            "experiment": "13-mcp",
+            "stage": 1,
+            "view": "calls"
+          },
+          {
+            "label": "取得价格后的请求",
+            "experiment": "13-mcp",
+            "stage": 2,
+            "view": "request"
+          }
+        ]
+      }
     },
     {
       "id": "10-hooks",
@@ -155,7 +362,32 @@
         "hook-a-baseline",
         "hook-b-untrusted",
         "hook-c-tool-origin"
-      ]
+      ],
+      "readingGuide": {
+        "prerequisite": "理解规则、技能和工具调用。三种 Hook 各有独立受控实验，提交路径、信任与允许目标以各段配置为准。",
+        "focus": "比较提交时注入、执行前拦截、执行后记录三个时机，分别核对 Hook 事件与工具结果。",
+        "targets": [
+          {
+            "label": "提交编号",
+            "experiment": "hook-marker-repeat",
+            "stage": 0,
+            "view": "request"
+          },
+          {
+            "label": "补丁被拦截",
+            "experiment": "hook-pre-tool",
+            "stage": 1,
+            "view": "calls"
+          },
+          {
+            "label": "执行后的观察",
+            "experiment": "hook-post-tool",
+            "stage": 0,
+            "view": "raw",
+            "kind": "hookEventsFile"
+          }
+        ]
+      }
     },
     {
       "id": "10-permissions",
@@ -166,7 +398,25 @@
       "status": "verified",
       "evidenceIds": [
         "15-permissions"
-      ]
+      ],
+      "readingGuide": {
+        "prerequisite": "样本在 workspace-write 和 on-request 条件下只尝试一次写入；目标是工作区外的探针文件。",
+        "focus": "找到实际写入尝试、权限错误与文件前后结果，判断是谁阻止了动作。",
+        "targets": [
+          {
+            "label": "提出写入尝试",
+            "experiment": "15-permissions",
+            "stage": 0,
+            "view": "calls"
+          },
+          {
+            "label": "拒绝后回传结果",
+            "experiment": "15-permissions",
+            "stage": 1,
+            "view": "request"
+          }
+        ]
+      }
     },
     {
       "id": "11-plan",
@@ -177,9 +427,32 @@
       "status": "verified",
       "evidenceIds": [
         "14-plan",
-        "14-plan-implement",
-        "plan-status"
-      ]
+        "14-plan-implement"
+      ],
+      "readingGuide": {
+        "prerequisite": "从修复版进入折扣需求；先在 Plan Mode 调查与澄清，再经用户确认实施。金额是否舍入是本次待决策项。",
+        "focus": "查用户的精度选择怎样回传，分清计划阶段检查和实施后的功能验证。",
+        "targets": [
+          {
+            "label": "金额精度的提问与选择",
+            "experiment": "14-plan",
+            "stage": 3,
+            "view": "calls"
+          },
+          {
+            "label": "确认后的实施",
+            "experiment": "14-plan-implement",
+            "stage": 0,
+            "view": "request"
+          },
+          {
+            "label": "实施最终输出",
+            "experiment": "14-plan-implement",
+            "stage": 3,
+            "view": "output"
+          }
+        ]
+      }
     },
     {
       "id": "12-multi-agent",
@@ -192,7 +465,31 @@
         "16-multi-agent",
         "16-agent-a",
         "16-agent-b"
-      ]
+      ],
+      "readingGuide": {
+        "prerequisite": "折扣功能已实施；父任务明确委派两个只读审查，不允许子任务修改项目。",
+        "focus": "分别检查委派要求、子 Agent 上下文与独立结果，再看父任务如何汇集。",
+        "targets": [
+          {
+            "label": "父任务委派",
+            "experiment": "16-multi-agent",
+            "stage": 0,
+            "view": "output"
+          },
+          {
+            "label": "子 Agent A 首次正式请求",
+            "experiment": "16-agent-a",
+            "stage": 1,
+            "view": "request"
+          },
+          {
+            "label": "子 Agent B 首次正式请求",
+            "experiment": "16-agent-b",
+            "stage": 1,
+            "view": "request"
+          }
+        ]
+      }
     },
     {
       "id": "13-autonomy",
@@ -208,8 +505,39 @@
         "20-interrupted",
         "20-resume",
         "background-return",
-        "patch-recovery"
-      ]
+        "patch-recovery",
+        "plan-status"
+      ],
+      "readingGuide": {
+        "prerequisite": "在折扣版与独立运行状态副本中观察不同实验；原生 Goal、文字进度、失败、中断和续跑各有独立记录。",
+        "focus": "每次区分“工具已返回”“进程已结束”和“任务已完成”，从文件与退出码确认继续工作的依据。",
+        "targets": [
+          {
+            "label": "原生 Goal",
+            "experiment": "17-goal",
+            "stage": 0,
+            "view": "request"
+          },
+          {
+            "label": "普通任务文字进度",
+            "experiment": "plan-status",
+            "stage": 0,
+            "view": "request"
+          },
+          {
+            "label": "中断后续跑",
+            "experiment": "20-resume",
+            "stage": 0,
+            "view": "request"
+          },
+          {
+            "label": "后台命令回收",
+            "experiment": "background-return",
+            "stage": 0,
+            "view": "request"
+          }
+        ]
+      }
     },
     {
       "id": "14-streaming",
@@ -220,7 +548,33 @@
       "status": "verified",
       "evidenceIds": [
         "07-fix"
-      ]
+      ],
+      "readingGuide": {
+        "prerequisite": "复用第 3 章最后一次已验证的修复响应；本章只研究响应怎样生成，不重新验收修复。",
+        "focus": "将增量拼成输出项，并区分文本结束、输出项结束与响应结束。",
+        "targets": [
+          {
+            "label": "原始流式事件",
+            "experiment": "07-fix",
+            "stage": 4,
+            "view": "raw",
+            "kind": "eventsFile"
+          },
+          {
+            "label": "汇集的完整输出项",
+            "experiment": "07-fix",
+            "stage": 4,
+            "view": "output"
+          },
+          {
+            "label": "原完成事件",
+            "experiment": "07-fix",
+            "stage": 4,
+            "view": "raw",
+            "kind": "responseFile"
+          }
+        ]
+      }
     },
     {
       "id": "15-architecture",
@@ -234,7 +588,31 @@
         "13-mcp",
         "15-permissions",
         "16-multi-agent"
-      ]
+      ],
+      "readingGuide": {
+        "prerequisite": "已能追踪请求、工具返回与执行状态。沿用前面已核验的案例，改为判断各组件职责与证据范围。",
+        "focus": "按待回答的问题选记录：界面、请求、运行层事件、工具结果与最终文件分别能证明什么。",
+        "targets": [
+          {
+            "label": "模型提出补丁",
+            "experiment": "07-fix",
+            "stage": 2,
+            "view": "output"
+          },
+          {
+            "label": "工具返回与验证",
+            "experiment": "07-fix",
+            "stage": 4,
+            "view": "request"
+          },
+          {
+            "label": "权限拒绝的对照",
+            "experiment": "15-permissions",
+            "stage": 1,
+            "view": "request"
+          }
+        ]
+      }
     }
   ],
   "legacyRoutes": {
@@ -271,6 +649,42 @@
     "15-architecture:15-architecture-section-5": {
       "lesson": "10-hooks",
       "section": "10-hooks-section-4"
+    },
+    "05-context:05-context-section-1": {
+      "lesson": "05-context",
+      "section": "05-context-section-0"
+    },
+    "06-agents:06-agents-section-4": {
+      "lesson": "02-tools",
+      "section": "02-tools-section-1"
+    },
+    "07-skills:07-skills-section-4": {
+      "lesson": "02-tools",
+      "section": "02-tools-section-3"
+    },
+    "08-memory:08-memory-section-1": {
+      "lesson": "08-memory",
+      "section": "08-memory-section-0"
+    },
+    "08-memory:08-memory-section-3": {
+      "lesson": "08-memory",
+      "section": "08-memory-section-2"
+    },
+    "10-permissions:10-permissions-section-4": {
+      "lesson": "11-plan",
+      "section": "11-plan-section-2"
+    },
+    "10-permissions:10-permissions-section-5": {
+      "lesson": "11-plan",
+      "section": "11-plan-section-5"
+    },
+    "11-plan:11-plan-section-7": {
+      "lesson": "13-autonomy",
+      "section": "13-autonomy-section-10"
+    },
+    "15-architecture:15-architecture-section-1": {
+      "lesson": "03-agent-loop",
+      "section": "03-agent-loop-section-2"
     }
   }
 }

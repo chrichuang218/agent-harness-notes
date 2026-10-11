@@ -112,36 +112,8 @@ return (unitPrice * quantity) * ((100 - discountPercent) / 100);
 
 </details>
 
-## 补充实验：普通任务中的文字进度
+普通任务中的文字进度不能证明进入了 Plan Mode，其完整对照见[文字进度何时算完成](13-autonomy.md#文字进度何时算完成？)。
 
-在 Default 模式要求 Codex 修复 `lab/plan-state/price.ts` 副本，并跟踪“读取、修复、测试”三步。提示要求优先使用可用的计划状态工具；如果没有，则明确标为文字进度。这轮没有进入 Plan Mode。
-
-可运行副本见[起始代码](../examples/runtime-lab/start/lab/plan-state/price.ts)与[对应测试](../examples/runtime-lab/start/lab/plan-state/price.test.mjs)。复制[运行实验目录](../examples/runtime-lab/README.md)的 `start/` 后，在目录根使用 Node.js 24 或更高版本执行 `node --test lab/plan-state/price.test.mjs`：起始加法应失败，改成乘法后通过；[修复结果](../examples/runtime-lab/results/lab/plan-state/price.ts)单独供对照，测试无需修改。
-
-模型先搜索本轮暴露的 `ALL_TOOLS` 目录，[返回结果](../evidence/desktop-lab/plan-status/01-request.request.json)为 `[]`。它随后说明没有找到相应工具，以进度文字继续：读取副本和测试之后，将读取标为完成；补丁返回之后，将修复标为完成；测试结果返回前，仍将测试标为进行中。
-
-![执行中的文字进度，读取与修复已完成，指定测试仍在运行](../docs/images/desktop-lab/plan-progress.png)
-
-界面显示“测试进行中”，下面是[正在执行的调用](../evidence/desktop-lab/plan-status/03-request.output-items.json)。进度由助手文字表达，不是原生计划状态控件。
-
-[最后一份请求](../evidence/desktop-lab/plan-status/04-request.request.json)带回 `node --test lab/plan-state/price.test.mjs` 的结果：退出码 0，通过 1，失败 0。模型收到结果后，才在[最终报告](../evidence/desktop-lab/plan-status/04-request.output-items.json)里把三步全部标为完成。独立[文件比较](../evidence/desktop-lab/plan-status/file-observations.json)确认副本仅从加法改为乘法，测试未改。
-
-本轮的文字进度与执行记录一致，但没有原生计划工具调用或状态事件。前面的折扣实验进入了原生 Plan Mode，并保存了计划与实施记录；进度文字不能作为进入该模式或更新原生计划状态的证据。
-
-<details>
-<summary>查看文字进度的完成报告</summary>
-
-![测试通过后，Desktop 最终报告将三步文字进度标为完成](../docs/images/desktop-lab/plan-final.png)
-
-完成报告仍明确标为“文字进度”。退出码 0 和三步的依据见[逐阶段核对](../evidence/desktop-lab/plan-status/audit.json)。
-
-</details>
-
-<details>
-<summary>这次没有验证到的原生状态</summary>
-
-本地 `turn_context` 记录模式为 `default`，全轮有 5 次请求、4 次工具调用。工具目录查询使用 `update_plan|plan state|plan status|planning tool`；空结果只说明这次查询没有找到匹配条目，不能推广到所有 Codex 版本或模式。[审计](../evidence/desktop-lab/plan-status/audit.json)列出了各阶段进度与实际调用，[rollout 节选](../evidence/desktop-lab/plan-status/rollout-events.json)保留运行模式和执行事件。
-
-</details>
+折扣功能已有实现和验证结果。下一章把实现边界和测试覆盖交给两个子任务，观察它们怎样各自检查并交回结论。
 
 [上一章：权限与安全](10-permissions.md) · [下一章：多 Agent](12-multi-agent.md)

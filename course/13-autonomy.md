@@ -43,6 +43,38 @@ text(await tools.update_goal({status:"complete"}));
 
 </details>
 
+## 文字进度何时算完成？
+
+在 Default 模式要求 Codex 修复 `lab/plan-state/price.ts` 副本，并跟踪“读取、修复、测试”三步。提示要求优先使用可用的计划状态工具；如果没有，则明确标为文字进度。这轮没有进入 Plan Mode。
+
+可运行副本见[起始代码](../examples/runtime-lab/start/lab/plan-state/price.ts)与[对应测试](../examples/runtime-lab/start/lab/plan-state/price.test.mjs)。复制[运行实验目录](../examples/runtime-lab/README.md)的 `start/` 后，在目录根使用 Node.js 24 或更高版本执行 `node --test lab/plan-state/price.test.mjs`：起始加法应失败，改成乘法后通过；[修复结果](../examples/runtime-lab/results/lab/plan-state/price.ts)单独供对照，测试无需修改。
+
+模型先搜索本轮暴露的 `ALL_TOOLS` 目录，[返回结果](../evidence/desktop-lab/plan-status/01-request.request.json)为 `[]`。它随后说明没有找到相应工具，以进度文字继续：读取副本和测试之后，将读取标为完成；补丁返回之后，将修复标为完成；测试结果返回前，仍将测试标为进行中。
+
+![执行中的文字进度，读取与修复已完成，指定测试仍在运行](../docs/images/desktop-lab/plan-progress.png)
+
+界面显示“测试进行中”，下面是[正在执行的调用](../evidence/desktop-lab/plan-status/03-request.output-items.json)。进度由助手文字表达，不是原生计划状态控件。
+
+[最后一份请求](../evidence/desktop-lab/plan-status/04-request.request.json)带回 `node --test lab/plan-state/price.test.mjs` 的结果：退出码 0，通过 1，失败 0。模型收到结果后，才在[最终报告](../evidence/desktop-lab/plan-status/04-request.output-items.json)里把三步全部标为完成。独立[文件比较](../evidence/desktop-lab/plan-status/file-observations.json)确认副本仅从加法改为乘法，测试未改。
+
+本轮的文字进度与执行记录一致，但没有原生计划工具调用或状态事件。[折扣实验](11-plan.md)进入了原生 Plan Mode，并保存了计划与实施记录；进度文字不能作为进入该模式或更新原生计划状态的证据。
+
+<details>
+<summary>查看文字进度的完成报告</summary>
+
+![测试通过后，Desktop 最终报告将三步文字进度标为完成](../docs/images/desktop-lab/plan-final.png)
+
+完成报告仍明确标为“文字进度”。退出码 0 和三步的依据见[逐阶段核对](../evidence/desktop-lab/plan-status/audit.json)。
+
+</details>
+
+<details>
+<summary>这次没有验证到的原生状态</summary>
+
+本地 `turn_context` 记录模式为 `default`，全轮有 5 次请求、4 次工具调用。工具目录查询使用 `update_plan|plan state|plan status|planning tool`；空结果只说明这次查询没有找到匹配条目，不能推广到所有 Codex 版本或模式。[审计](../evidence/desktop-lab/plan-status/audit.json)列出了各阶段进度与实际调用，[rollout 节选](../evidence/desktop-lab/plan-status/rollout-events.json)保留运行模式和执行事件。
+
+</details>
+
 ## 命令失败后，哪些继续动作仍然有意义？
 
 另一轮实验故意要求先运行 `npm run lint`。项目没有该脚本，执行返回退出码 1：
@@ -71,23 +103,9 @@ npm error Missing script: "lint"
 | [02](../evidence/desktop-lab/19-recovery/02-request.output-items.json) | 真实脚本定义 | 运行已有 typecheck 与 test |
 | [03](../evidence/desktop-lab/19-recovery/03-request.output-items.json) | 两项退出码 0，11 项测试通过 | 分别报告失败与成功 |
 
-首个调用编号为 `call_Mlqrto9sxxi6WgYe0n7tE2ty`，读取配置为 `call_OchDQ0cGzHrbt3ceSdbM1CI1`，替代检查为 `call_4tMi1tCpS1AQfLCUS713w1zY`。各结果通过同一编号进入下一请求，四份请求均新增一项输入并引用前一响应。
+两条替代检查的结果带有 `command` 标签，可以在[最后请求](../evidence/desktop-lab/19-recovery/03-request.request.json)中分别核对退出码和输出。npm 错误附带的一般提示不会改变用户限定的工作范围。
 
-最后一次外层调用用 `Promise.allSettled` 安排两条命令。结果包含 `command` 标签，可以分别核对退出码。解析[最后请求](../evidence/desktop-lab/19-recovery/03-request.request.json)中的类型检查内容块，可见以下字段节选：
-
-```json
-{
-  "command": "npm run typecheck",
-  "status": "fulfilled",
-  "value": {
-    "exit_code": 0
-  }
-}
-```
-
-外层 `Script completed` 和 `fulfilled` 表示编排或异步调用已经返回；判断具体命令是否成功，还要查看退出码及输出。npm 错误附带的一般提示属于返回内容，不会改变用户限定的工作范围。
-
-本实验 4 次正式请求、3 次外层调用，输入 token 合计 272,711，输出合计 397，排除预热。没有模拟网络超时、服务端重试或响应丢失。
+[完整记录](../evidence/desktop-lab/19-recovery/manifest.json)保留了四次请求中的失败与后续动作。本实验没有模拟网络超时、服务端重试或响应丢失。
 
 </details>
 
@@ -169,18 +187,7 @@ aborted by user after 15.3s
 
 中断前，两次模型生成都有 `response.completed`，但第二次生成的等待调用随后被用户取消。模型生成结束时，工具可能还未完成，任务也可能尚未达到要求。下一章会从流式事件继续解释这些状态。
 
-## 为下一步写出依据
-
-只看中断与恢复的输入输出，列出“已完成、被取消、尚未执行”三类动作，并为每类标一份证据。然后判断：假如中断的是修改文件工具，还需要先检查什么，才能决定是否执行剩余测试？
-
-<details>
-<summary>参考解释</summary>
-
-类型检查的退出码 0 在中断阶段 01 请求中；等待取消在本地事件和恢复首请求中；测试只在恢复轮次发出并返回成功。如果被中断的是修改工具，要先核对实际文件是否未改、已改或部分改动，以及工具是否仍在运行，再选择补做、继续或报告问题。原计划中的顺序不能替代这些状态。
-
-</details>
-
-## 补充实验：命令还在运行时，先做别的读取
+## 命令还在运行时，怎样取得最终结果？
 
 运行 `node lab/background-delay.mjs`，脚本先输出开始标记，延迟后再输出总价与结束标记。用户要求只启动一次，在它运行期间读取 README 前 12 行，再用原句柄取得最终结果。
 
@@ -217,7 +224,7 @@ CPA 的工具返回串起了同一个会话句柄。本地命令时间还显示�
 
 </details>
 
-## 补充实验：补丁找不到旧代码，先重新读取
+## 补丁找不到旧代码，先重新读取
 
 在 `lab/patch-recovery/price.ts` 副本中，提示故意指定过时的上下文 `return unitPrice - quantity;`，要求首次补丁先不读取目标。文件实际仍是加法，所以这次失败是受控实验条件，不能描述成模型偶然犯错。
 
@@ -232,5 +239,18 @@ CPA 的工具返回串起了同一个会话句柄。本地命令时间还显示�
 报告先列出上下文不匹配错误，再展示实际读到的加法实现和修改后的乘法。首次减法上下文由提示指定，完整过程见[审计](../evidence/desktop-lab/patch-recovery/audit.json)。
 
 这次补丁失败是因为旧文本与文件不符，重新读取后便有了修改依据。第 10 章的 Hook 拒绝明确禁止修改目标，被拒之后没有换方法重试。错误原因和本轮授权范围不同，后续动作也要随之调整。
+
+## 为下一步写出依据
+
+只看中断与恢复的输入输出，列出“已完成、被取消、尚未执行”三类动作，并为每类标一份证据。然后判断：假如中断的是修改文件工具，还需要先检查什么，才能决定是否执行剩余测试？
+
+<details>
+<summary>参考解释</summary>
+
+类型检查的退出码 0 在中断阶段 01 请求中；等待取消在本地事件和恢复首请求中；测试只在恢复轮次发出并返回成功。如果被中断的是修改工具，要先核对实际文件是否未改、已改或部分改动，以及工具是否仍在运行，再选择补做、继续或报告问题。原计划中的顺序不能替代这些状态。
+
+</details>
+
+本章用执行结果判断下一步。下一章查看同一次模型响应内部的流式事件，分清生成结束与工具执行结束。
 
 [上一章：多 Agent](12-multi-agent.md) · [下一章：流式输出与协议细节](14-streaming.md)

@@ -88,37 +88,7 @@ $price-project-check 请对当前项目做一次只读概览检查。
 
 [第一次输出](../evidence/desktop-lab/05-skills/00-request.output-items.json)用一个 `exec` 一并安排技能文件和三个项目文件的读取。四份结果合在一个 `custom_tool_call_output` 中，进入[第二份请求](../evidence/desktop-lab/05-skills/01-request.request.json)，随后生成[最终说明](../evidence/desktop-lab/05-skills/01-request.output-items.json)。读取技能与读取项目文件之间没有另一轮模型决策。
 
-<details>
-<summary>深入核对：四条命令怎样回到同一个调用</summary>
-
-外层调用的字段节选为：
-
-```json
-{
-  "type": "custom_tool_call",
-  "call_id": "call_liyjTQFrR1JWvixVysn2Xm73",
-  "name": "exec"
-}
-```
-
-代码使用 `Promise.allSettled` 收集四个 `tools.exec_command` 的返回：
-
-| 命令 | 第二请求中的内容块 |
-| --- | --- |
-| `Get-Content -LiteralPath '.agents/skills/price-project-check/SKILL.md' -Raw` | `input[0].output[1]`，`file: "SKILL.md"` |
-| `Get-Content -LiteralPath 'README.md' -Raw` | `input[0].output[2]`，`file: "README.md"` |
-| `Get-Content -LiteralPath 'package.json' -Raw` | `input[0].output[3]`，`file: "package.json"` |
-| `Get-Content -LiteralPath 'src/price.ts' -Raw` | `input[0].output[4]`，`file: "src/price.ts"` |
-
-`output[0]` 是统一执行包装，因此总计 5 个内容块。文件结果的 `text` 为 JSON 字符串，解析后有 `file`、`status` 和 `value`，其中 `value.exit_code` 是命令退出码，`value.output` 是文件正文。四份结果共用 `call_liyjTQFrR1JWvixVysn2Xm73`，没有四个独立的外层 `call_id`。
-
-四条命令来自同一次模型决策。代码负责安排并收集读取结果；要判断底层命令的执行时间是否重叠，还需时间记录。
-
-第二请求通过 `previous_response_id` 引用第一响应 `resp_0061bd7340416e34016abbe2dbb46487d0af4b34ab5dd4d0a3`。原始事件见[第一阶段](../evidence/desktop-lab/05-skills/00-request.events.json)与[第二阶段](../evidence/desktop-lab/05-skills/01-request.events.json)。两份完成事件的 `output` 为空，具体输出在各自的 `response.output_item.done` 中。
-
-两次正式请求输入 token 合计 67,312，输出合计 707，均排除预热。
-
-</details>
+第二请求的 `input[0].output[1]` 标为 `file: "SKILL.md"`，带回再次读取的技能正文；后面三个内容块分别是 README、package 和计算函数。四份结果共用一次外层调用，判断底层命令的执行时间是否重叠仍需时间记录。调用与返回的字段读法见[工具系统](02-tools.md#用同一个编号找到返回结果)。
 
 ## 看输出有没有按步骤工作
 
@@ -155,5 +125,7 @@ $price-project-check 请对当前项目做一次只读概览检查。
 首请求 `input[7]` 已含完整技能正文，第二请求的 `input[0].output[1]` 又带回文件内容。只看后者会误以为工具读取是首次加载。调用代码和四份返回只涉及文件读取，没有 npm 执行；最终回答明确说“未运行测试”，与本轮执行范围一致。
 
 </details>
+
+规则和技能都能把已有文件中的信息交给模型。下一章换一个问题：新任务怎样取得此前聊天留下的项目决定？
 
 [上一章：AGENTS.md](06-agents.md) · [下一章：记忆与持久信息](08-memory.md)

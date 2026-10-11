@@ -75,18 +75,16 @@ C2 返回函数的定义和调用位置。C3 调用外层 `exec` 中的 `tools.a
 
 C4 一次安排了三条验证命令及文件重读。R4 的 `input[0].output[0]` 是执行包装，`output[1]` 至 `output[4]` 依次对应类型检查、测试、示例运行和文件重读。各块 `text` 解析后可查看 `value.exit_code` 与 `value.output`。外层的 `fulfilled` 表示这项异步操作返回，具体命令是否成功仍要看退出码。
 
-原始完成事件和流式事件见[实验清单](../evidence/desktop-lab/07-fix/manifest.json)及工作台。五份完成事件的 `output` 均为空，输出项来自各自的 `response.output_item.done`；第 15 章将拆开其中一份事件记录。
+每次请求与输出的完整记录见[实验清单](../evidence/desktop-lab/07-fix/manifest.json)及工作台。
 
 </details>
 
 <details>
-<summary>深入核对：修复前后的检查与用量</summary>
+<summary>深入核对：用项目快照复现修复</summary>
 
 在[修复前的检查](../evidence/desktop-lab/06-tests/01-request.request.json)中，类型检查退出码是 0，测试退出码是 1，并报告 `13 !== 30`：类型正确的代码仍可能算错结果。
 
 [故障快照](../examples/01-baseline/README.md)与[修复快照](../examples/07-fixed/README.md)可以独立运行。复现时先复制故障版到自己的目录，保留测试的预期值。已经修好的目录无法重新产生原来的故障。
-
-本轮 `response.usage` 报告输入合计 191,862 token、输出合计 1,056，排除预热。各阶段的完整统计放在[第 5 章](05-context.md)：多次请求反复使用已有上下文，不能把求和当作新增内容量，缓存计数也包含在输入中。
 
 </details>
 
@@ -100,5 +98,20 @@ C4 一次安排了三条验证命令及文件重读。R4 的 `input[0].output[0]
 R3 的简短修改返回没有证明最终函数、README 和三条验证命令的结果。R4 补齐这些内容：函数使用乘法，README 已更新，类型检查和测试退出码均为 0，示例输出 30。它们支持本轮约定范围内的修复完成。
 
 </details>
+
+## 阶段练习：独立追踪另一段工具往返
+
+这次换用尚未在正文拆解的[修复前检查记录](../evidence/desktop-lab/06-tests/manifest.json)。这是保留的真实实验，项目仍有加法错误。先看[第一次请求](../evidence/desktop-lab/06-tests/00-request.request.json)、[模型调用](../evidence/desktop-lab/06-tests/00-request.output-items.json)和[返回结果所在请求](../evidence/desktop-lab/06-tests/01-request.request.json)，暂时不看最终回答。
+
+完成三个判断：从请求中找到本轮用户要求；用 `call_id` 对上动作与返回；说明类型检查通过、测试失败分别支持什么结论。最后判断这些记录是否足以证明错误已修复，并指出你的依据。
+
+<details>
+<summary>核对思路</summary>
+
+用户要求运行检查；模型输出提出工具调用，下一份请求带回相同 `call_id` 的结果。返回中类型检查退出码为 0，测试退出码为 1，并出现 `13 !== 30`。这只能确认当前类型检查通过、已有行为测试失败，没有修改和修复后验证的证据，因此不能声称已修复。可以打开[该轮最终回答](../evidence/desktop-lab/06-tests/01-request.output-items.json)对照自己的解释。
+
+</details>
+
+接下来把视角从一轮修复移到多轮对话：修复结束后再问一句，原来的信息怎样继续进入模型？
 
 [上一章：工具系统](02-tools.md) · [下一章：任务与会话](04-session.md)

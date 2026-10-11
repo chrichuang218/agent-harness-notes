@@ -2,7 +2,7 @@
 
 加入项目规则后，再发送第二章的 README 阅读要求，回答就多了“项目观察：”这个前缀。输入框里没有这几个字，它们来自项目根目录的规则文件。
 
-此时总价仍是 `13`。复现规则加载时，可以使用[起始项目](../examples/01-baseline/README.md)；修复后的项目也能测试前缀，但项目状态的回答会不同。
+本轮从仍输出 `13` 的[起始项目](../examples/01-baseline/README.md)出发，加入下面的规则后新建 Desktop 任务。修复后的项目也能测试前缀，但回答中的项目状态会不同。
 
 ## 在文件里写约定，在输入框里提任务
 
@@ -114,22 +114,6 @@ flowchart LR
 `AGENTS.md` 提供参与模型决策的约定，不能据此认定某项操作在程序层面无法执行。实际权限限制会在第十一章用工具拒绝结果检验。
 
 <details>
-<summary>深入核对：两次请求与读取结果的连接</summary>
-
-| 阶段 | 请求与输出 | 对应记录 |
-| --- | --- | --- |
-| `00-request` | 7 项输入；输出进度消息和一个读取调用 | [请求](../evidence/desktop-lab/04-agents/00-request.request.json)、[输出项](../evidence/desktop-lab/04-agents/00-request.output-items.json) |
-| `01-request` | 1 项读取结果；输出最终说明，没有新增调用 | [请求](../evidence/desktop-lab/04-agents/01-request.request.json)、[输出项](../evidence/desktop-lab/04-agents/01-request.output-items.json) |
-
-读取的 `call_id` 是 `call_6ZAj4HZ4EYG6zE8yzenIHVk0`，它在第二请求的 `input[0].call_id` 中再次出现。`input[0].type` 为 `custom_tool_call_output`，`output[0]` 是外层执行包装，`output[1].text` 解析后包含退出码和 README 正文。
-
-第二请求的 `previous_response_id` 是第一响应的 `resp_040c808d0f406bc6016abbe279625087d09292441722b15d2b`。事件顺序可以在[首阶段](../evidence/desktop-lab/04-agents/00-request.events.json)与[第二阶段](../evidence/desktop-lab/04-agents/01-request.events.json)检查。第二阶段还包含加密 `reasoning` 项，不能将它当作可读的完整内部思考。
-
-本轮共 2 次正式请求、1 次外层读取调用，输入 token 合计 66,169，输出合计 297，排除预热。
-
-</details>
-
-<details>
 <summary>深入核对：官方规则发现机制与本次实测范围</summary>
 
 [官方 AGENTS.md 文档](https://learn.chatgpt.com/docs/agent-configuration/agents-md)说明，全局配置位置优先使用 `AGENTS.override.md`，否则使用 `AGENTS.md`；项目范围沿项目根到当前目录逐层收集，每层至多选择一份规则文件，更靠近当前目录的规则作用更具体。
@@ -146,15 +130,8 @@ flowchart LR
 
 保存自己的请求与回答，标出规则进入的位置和回答使用前缀的位置。
 
-## 补充实验：每轮生成的编号从哪里来？
+提交时由脚本生成的新内容，见 [Hooks 的编号实验](10-hooks.md#UserPromptSubmit：编号怎样进入请求？)。
 
-项目约定之外，本地 Hook 也能在提交时附加内容。它生成的编号怎样进入请求，见[第 10 章 Hooks](10-hooks.md)。
-
-<details>
-<summary>提交路径、信任状态与字段核对</summary>
-
-[UserPromptSubmit 实验](10-hooks.md)对照了新旧任务的字段位置。输入框与工具提交走不同路径，不能直接作为单变量的信任状态对照。
-
-</details>
+项目规则约定了回答方式。下一章把一次检查所需的步骤写成 Skill，观察它怎样被选择和使用。
 
 [上一章：上下文管理](05-context.md) · [下一章：Skills](07-skills.md)

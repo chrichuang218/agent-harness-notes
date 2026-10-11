@@ -57,3 +57,80 @@ body[data-view=home] #main{margin-left:0;padding:0 32px 80px}body[data-view=home
 .hero-evidence-links{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 12px;margin:0 0 16px;font-size:13px;line-height:1.7}.hero-evidence-links>span{color:var(--muted)}
 .home-hero>.eyebrow{font-size:14px;letter-spacing:0}
 @media(max-width:760px){.home-hero>.eyebrow{font-size:12px}}
+
+/* Keep prose comfortable while evidence, code and diagrams retain their space. */
+.prose{font-size:17px;line-height:1.9}
+.prose>p,.prose>ul,.prose>ol,.prose>h1,.prose>h2,.prose>h3,.prose>h4,.prose>h5,.prose>h6,.prose>blockquote,.chapter-header{max-width:740px;margin-left:auto;margin-right:auto}
+.prose>p:has(>.image-original){max-width:none}
+.prose [data-passage]{scroll-margin-top:88px}
+.prose details{font-size:16px;line-height:1.85}
+.prose details>summary{font-size:15px;min-height:44px}
+.prose details p,.prose details ul,.prose details ol{max-width:740px}
+.chapter-prerequisite{font-size:14px;line-height:1.85;color:var(--muted);padding:15px 0;margin-bottom:0}
+.chapter-prerequisite strong{display:block;color:var(--ink);font-size:13px;margin-bottom:3px}
+.reading-options{font-size:14px!important;line-height:1.8!important;margin:12px auto 18px!important}
+#continue-reading{margin:20px auto;padding:15px 20px;border:1px solid var(--line);border-radius:9px;max-width:600px;font-size:15px;background:var(--soft)}
+#continue-reading a{display:block}
+#continue-reading small{display:block;font-size:12px;color:var(--muted);margin-top:6px}
+.sidebar-close{display:none;margin:12px 16px 0 auto;min-width:64px;min-height:44px;color:var(--accent);font-size:14px}
+.menu-open .sidebar-close{display:block}
+.menu-open .directory-search{position:static}
+body[data-view=home] #focus-toggle{display:none}
+body.focus-reading[data-view=reader] #main,body.focus-reading[data-view=reader] .site-footer{margin-left:0}
+body.focus-reading .course-sidebar{display:none}
+body.focus-reading[data-view=reader] .menu-toggle{display:block}
+body.focus-reading .reader-page{max-width:1000px}
+.directory-search{gap:7px}
+#chapter-search{font-size:14px;min-width:0;min-height:42px}
+#chapter-search::-webkit-search-cancel-button{display:none}
+#clear-search{flex-shrink:0;width:30px;height:42px;border-radius:5px;color:var(--muted);font-size:22px}
+#search-status{margin:0;padding:0 19px 14px;font-size:13px;line-height:1.7;color:var(--muted)}
+#search-results{padding:0 11px 30px}
+.search-result{display:flex;flex-direction:column;gap:5px;margin-bottom:8px;padding:12px;border:1px solid var(--line);border-radius:8px;overflow-wrap:anywhere;color:var(--ink)}
+.search-result:hover{background:var(--soft);text-decoration:none;border-color:var(--accent)}
+.search-result .chapter-title{font-size:11px;color:var(--accent)}
+.result-section{font-size:14px;font-weight:600;line-height:1.6}
+.result-context{font-size:12px;line-height:1.8;color:var(--muted)}
+.search-destination{outline:2px solid var(--accent);outline-offset:7px;border-radius:2px}
+.search-highlight{background:#f9e4a1;color:#30272b;border-radius:2px}
+.dark .search-highlight{background:#796123;color:#fff4c7}
+.term-trigger{font:inherit;line-height:inherit;color:inherit;padding:0;border-bottom:1px dotted var(--accent);border-radius:0;text-align:inherit}
+.term-trigger:hover{color:var(--accent);background:var(--tint)}
+.term-popover{position:fixed;inset:auto;margin:0;width:340px;max-width:calc(100vw - 24px);max-height:calc(100vh - 100px);overflow:auto;padding:21px;border:1px solid var(--line);border-radius:12px;background:var(--paper);color:var(--ink);box-shadow:0 8px 40px #20133128;font-size:15px;line-height:1.8;z-index:65}
+.term-popover strong{display:block;margin-right:25px;overflow-wrap:anywhere}
+.term-popover p{margin:12px 0}
+.term-popover a{font-size:13px}
+.term-popover [data-close-term]{position:absolute;right:4px;top:3px;width:40px;height:40px;color:var(--muted);font-size:22px}
+.reading-return{margin:10px 0;font-size:14px}
+.reading-return:empty{display:none}
+.evidence-focus{background:var(--tint);border-left:3px solid var(--accent);border-radius:6px;padding:15px 18px;margin:18px 0;font-size:15px;line-height:1.8}
+.evidence-focus>strong{font-size:13px;color:var(--accent)}
+.evidence-focus p{margin:5px 0 12px}
+.reading-targets{display:flex;flex-wrap:wrap;gap:8px}
+.reading-targets a{padding:8px 12px;border:1px solid var(--line);border-radius:6px;background:var(--paper);font-size:14px;min-height:42px}
+.request-metadata details{padding:10px 0;border-bottom:1px solid var(--line)}
+.request-metadata summary{cursor:pointer;min-height:36px;font-size:13px;color:var(--muted)}
+.sample-scope{font-size:12px;color:var(--muted);line-height:1.8;margin:8px 0}
+.sample-scope>a{margin-left:6px}
+.workbench-tabs{flex-wrap:wrap;overflow:visible;gap:3px;border-bottom:1px solid var(--line)}
+.workbench-tabs button{min-height:44px;margin-bottom:0;border-radius:5px 5px 0 0;font-size:13px}
+.workbench-intro,.request-intro,.field-note,.evidence-notice,.conversation summary{font-size:13px}
+.request-controls button,.input-actions button,.code-toolbar button,.source-actions button{min-height:34px;font-size:12px}
+.workbench .content-block>summary,.workbench .content-block summary>code,.workbench .content-preview,.workbench .raw-details>summary,.workbench .metadata{font-size:12px}
+.workbench .content-block summary>small,.workbench .role-badge,.workbench .item-description{font-size:11px}
+.table-scroll{border:1px solid var(--line);border-radius:7px}
+.table-scroll table{margin:-1px;width:calc(100% + 2px)}
+@media(max-width:760px){
+  .site-header{padding:0 12px}.header-actions{gap:3px}.header-actions button{min-width:36px;min-height:42px;padding:5px}
+  .brand{font-size:14px}.brand-icon{width:25px;height:25px}
+  .prose{font-size:16px;line-height:1.9}.prose details{font-size:15px}
+  .breadcrumb,.chapter-meta{font-size:12px}.chapter-prerequisite{font-size:13px}
+  .workbench select{font-size:13px;min-height:44px}.workbench-selectors label{font-size:13px}
+  .workbench-tabs button{font-size:13px;padding:10px 12px}
+  .workbench-intro,.request-intro,.experiment-count,.field-note,.evidence-notice,.conversation>div,.conversation summary{font-size:13px}
+  .request-controls{gap:8px 16px}.request-controls button,.input-actions button,.code-toolbar button,.source-actions button{min-height:40px;font-size:12px}
+  .request-metadata dl,.request-metadata dt,.request-metadata dd,.request-metadata code,.trace-item>summary strong,.trace-item>summary>code{font-size:12px}
+  .code-toolbar{font-size:12px;gap:9px}.source-path{font-size:12px}
+  .prose table{font-size:14px}.prose .code-panel pre,.code-panel pre,.trace-item-body .code-panel pre{font-size:13px}
+  .reading-targets a{font-size:13px}.evidence-focus{font-size:14px;padding:13px}
+}

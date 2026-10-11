@@ -239,15 +239,17 @@ if (catalog && index) {
     }
   }
   for (const image of screenshotIndex?.images || []) {
-    check(image.chapters?.some(chapter => chapterTargets.get(chapter)?.has(resolve(image.file))), `${image.id}: screenshot is not referenced by any mapped article.`);
+    // The index records the historical chapter mapping. Moving an explanation
+    // must preserve the image and a current reading entry, not its old location.
+    check([...chapterTargets.values()].some(targets => targets.has(resolve(image.file))), `${image.id}: historical screenshot has no current course reference.`);
   }
   const runtimeLabLinks = {
     '10-hooks': ['README.md', 'start/.codex/hooks.example.json', 'start/.codex/hooks/prompt-marker.mjs',
       'start/.codex/hooks/tool-experiment.mjs', 'start/.codex/hook-lab/protected.txt',
       'start/.codex/hook-lab/allowed.txt', 'start/.codex/hook-lab/pass.test.mjs',
       'start/.codex/hook-lab/fail.test.mjs', 'results/.codex/hook-lab/allowed.txt'],
-    '11-plan': ['start/lab/plan-state/price.ts', 'start/lab/plan-state/price.test.mjs', 'results/lab/plan-state/price.ts'],
     '13-autonomy': ['start/lab/background-delay.mjs', 'start/src/price.ts',
+      'start/lab/plan-state/price.ts', 'start/lab/plan-state/price.test.mjs', 'results/lab/plan-state/price.ts',
       'start/lab/patch-recovery/price.ts', 'start/lab/patch-recovery/price.test.mjs', 'results/lab/patch-recovery/price.ts'],
   };
   for (const [chapter, paths] of Object.entries(runtimeLabLinks)) {
@@ -262,6 +264,16 @@ if (catalog && index) {
   await readJson('examples/runtime-lab/start/package.json');
   check(lessons.some(lesson => lesson.id === '08-memory'), 'The memory chapter and its evidence boundary must be present.');
   for (const file of ['README.md', 'PROGRESS.md', 'GLOSSARY.md', 'CHANGELOG.md', 'course/introduction.md', 'THIRD_PARTY_NOTICES.md', 'site/docs/DESIGN.md', 'docs/images/desktop-lab/README.md']) await documentLinks(file);
+  const sectionIds = await readJson('course/section-ids.json');
+  const baseline = await readJson('docs/section-baseline.json');
+  check(Boolean(baseline?.commit) && Array.isArray(baseline?.sections), 'Section compatibility needs its recorded commit and heading baseline.');
+  for (const item of baseline?.sections || []) {
+    const target = catalog.sectionRedirects?.[`${item.lesson}:${item.section}`] || { lesson: item.lesson, section: item.section };
+    check(Object.values(sectionIds?.[target.lesson] || {}).includes(target.section), `${item.lesson}/${item.section}: no stable section or explicit migration destination.`);
+  }
+  for (const [source, target] of Object.entries(catalog.sectionRedirects || {})) {
+    check(Boolean(sectionIds?.[target.lesson]) && Object.values(sectionIds[target.lesson]).includes(target.section), `${source}: section redirect has no registered destination.`);
+  }
   for (const file of await readdir('lessons/02-desktop-lab-chronological')) if (file.endsWith('.md')) await documentLinks(`lessons/02-desktop-lab-chronological/${file}`);
   const coveredExperiments = new Set(lessons.flatMap(lesson => lesson.evidenceIds || []));
   for (const experiment of experiments) check(coveredExperiments.has(experiment.id), `Experiment missing from the reader: ${experiment.id}`);

@@ -4,41 +4,7 @@
 
 ## 先分清当前输入中的信息来源
 
-前几章的历史通过 `input` 重发，或由 `previous_response_id` 引用。无论哪种方式，“项目要求相乘，但代码写成加法”这条判断，都要追到 README 的需求和 `src/price.ts` 的读取结果。
-
-规则、技能和环境也会加入上下文，有的在首次生成前附加，有的通过工具回传。消息的 `user` 角色无法单独说明来源，追查摘要依据时还需要分清这些入口。
-
-<details>
-<summary>深入核对：从请求追查规则、技能与源码的来源</summary>
-
-三组既有实验中，用户要求、规则、技能与源码分别从以下位置进入请求。规则与技能的用途见接下来两章。
-
-| 信息 | 真实入口 | 位置 |
-| --- | --- | --- |
-| 用户要求 | 输入框消息 | [规则实验首请求](../evidence/desktop-lab/04-agents/00-request.request.json)的 `input[6]` |
-| 项目约定 | 运行环境附加的规则块 | 同请求 `input[5].content[1].text` |
-| 可用技能说明 | 技能目录 | [技能首请求](../evidence/desktop-lab/05-skills/00-request.request.json)的 `input[2].content[1].text` |
-| 显式选用的技能正文 | 附加的 `<skill>` 块 | 同请求 `input[7]` |
-| README 与源码 | 读取文件后的工具结果 | [技能第二请求](../evidence/desktop-lab/05-skills/01-request.request.json)的 `input[0].output` |
-
-技能首请求提到 `src/price.ts`，但尚未带入 `unitPrice + quantity` 实现。第二请求的对应内容块解析后有以下字段，省略执行耗时等信息：
-
-```json
-{
-  "file": "src/price.ts",
-  "status": "fulfilled",
-  "value": {
-    "exit_code": 0,
-    "output": "export function calculateTotal(unitPrice: number, quantity: number): number {\n  return unitPrice + quantity;\n}\n\r\n"
-  }
-}
-```
-
-这份结果证明当时读取到了加法实现。若文件后来被修改，要判断当前实现就应重新读取。
-
-读 README、加入规则、显式技能检查各有两次正式请求。这六份客户端请求与对应上游请求的 `input` 和 `previous_response_id` 一致，例如[技能首次上游请求](../evidence/desktop-lab/05-skills/00-request.upstream.json)与[后续上游请求](../evidence/desktop-lab/05-skills/01-request.upstream.json)。本地工具负责读取；CPA 转发的是已经包含读取结果的请求。
-
-</details>
+上一章已经区分历史重发与响应引用。本章继续使用原任务中的修复记录和临时代号，追踪“生成摘要 → 替换历史 → 新请求使用摘要”这条链。文件来自[工具读取](02-tools.md)，项目规则和技能的具体入口分别在[第 6 章](06-agents.md)与[第 7 章](07-skills.md)核对。
 
 ## 点击压缩，看见了什么
 
@@ -209,5 +175,7 @@ flowchart LR
 代号和三条验证命令明确保留在摘要中，实际追问也回答了它们。完整搜索输出没有作为原来的工具序列保留，不能仅凭摘要期待逐字复原；这道问题没有在原实验中实际追问。若要继续检验，需要另做实验，并保留新请求与输出。当前材料也未验证达到容量阈值后的自动压缩或自动截断策略。
 
 </details>
+
+历史整理只是上下文来源之一。下一章加入一条项目约定，核对它怎样在生成前进入请求并影响回答。
 
 [上一章：任务与会话](04-session.md) · [下一章：AGENTS.md](06-agents.md)

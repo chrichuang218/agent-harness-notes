@@ -42,15 +42,13 @@ Codex 的 Hello World 就是一句“你好”。在 `codex-ts-demo` 项目中�
 
 这份可见请求没有 `role: "system"` 消息。应用的主要工作指令出现在 `developer` 消息中，AGENTS 则在前述 `user` 消息的内容块里。日常讨论中的“系统提示词”可能泛指应用附加指令；核对日志时应保留这些实际角色和字段位置。
 
-附加内容也可以来自运行时脚本。第 10 章的[编号 Hook 实验](10-hooks.md)会追踪一个输入框中没有写出的编号：它由本地脚本生成，作为 `developer` 消息进入请求。
-
 ## 回复在哪份记录里？
 
 那句问候保存在[输出项记录](../evidence/desktop-lab/01-hello/01-request.output-items.json)中，也显示在工作台的“模型输出”里。它是一条助手消息，`role` 为 `assistant`，`phase` 为 `final_answer`。
 
 这次没有工具调用，模型直接生成文字，运行程序将它显示在 Desktop 中。请求虽然带有工具定义，模型仍可以直接回答。
 
-本样本完成事件的 `response.output` 是空数组，文字已在前面的流式事件中返回。“模型输出”显示这些事件中的输出项，第 15 章会解释它们与完成事件的关系。
+本章直接使用工作台的“模型输出”对照回答。需要追查它与原始响应文件的关系时，可读[流式输出](14-streaming.md#为什么完成事件里的-output-是空的)。
 
 <details>
 <summary>深入核对：7 项输入里的所有内容块</summary>
@@ -100,18 +98,11 @@ Codex 的 Hello World 就是一句“你好”。在 `codex-ts-demo` 项目中�
 </details>
 
 <details>
-<summary>深入核对：预热、正式响应与用量</summary>
+<summary>深入核对：预热与正式请求</summary>
 
 CPA 还记录了一次[预热请求](../evidence/desktop-lab/01-hello/00-prewarm.request.json)，其中 `generate: false`，只有工具定义与基础工作说明两项输入，没有生成普通回答。它们与正式请求的前两项深比较相同。
 
-| 阶段 | 输入项 | 输入 token | 输出 token | 工具调用 |
-| --- | ---: | ---: | ---: | ---: |
-| 预热 | 2 | 18,673 | 0 | 0 |
-| 正式问候 | 7 | 32,774 | 13 | 0 |
-
-预热单独计数，没有混进正式请求数量。Token 是服务报告的用量单位，这组数字也受到当时规则和技能目录规模的影响。
-
-[流式事件](../evidence/desktop-lab/01-hello/01-request.events.json)中的 `response.output_item.done` 包含最终问候；[完成事件](../evidence/desktop-lab/01-hello/01-request.response.json)的 `output` 为空。[输出项文件](../evidence/desktop-lab/01-hello/01-request.output-items.json)汇集了前者，不能把它当作完成事件的原字段。各份记录可从[实验清单](../evidence/desktop-lab/01-hello/manifest.json)进入。
+因此，在列表里选择“正式请求”才能看到完整的七项输入和问候回答。预热单独计数，不是用户额外发送了一次“你好”。各份记录仍可从[实验清单](../evidence/desktop-lab/01-hello/manifest.json)进入；用量的读法集中在[上下文管理](05-context.md#重发引用缓存各自改变什么)。
 
 </details>
 
@@ -125,5 +116,7 @@ CPA 还记录了一次[预热请求](../evidence/desktop-lab/01-hello/00-prewarm
 `input[6]` 包含“你好”，与截图中的输入对应；`input[5]` 包含 AGENTS 规则、工作目录和环境标签。判断来源需要看内容，不能只凭 `role: "user"`。
 
 </details>
+
+现在已经能区分输入框里的文字与应用附加的内容。下一章让它读取 README，观察文件正文怎样进入后续请求。
 
 [回到导读](introduction.md) · [下一章：工具系统](02-tools.md)

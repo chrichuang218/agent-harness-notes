@@ -1,0 +1,650 @@
+{
+  "commit": "339d51e",
+  "sections": [
+    {
+      "lesson": "introduction",
+      "section": "introduction-section-0",
+      "title": "先认识这个项目"
+    },
+    {
+      "lesson": "introduction",
+      "section": "introduction-section-1",
+      "title": "从操作到机制"
+    },
+    {
+      "lesson": "introduction",
+      "section": "introduction-section-2",
+      "title": "怎样对照证据阅读"
+    },
+    {
+      "lesson": "01-request",
+      "section": "01-request-section-0",
+      "title": "先对上界面里的消息"
+    },
+    {
+      "lesson": "01-request",
+      "section": "01-request-section-1",
+      "title": "其余六项在告诉模型什么？"
+    },
+    {
+      "lesson": "01-request",
+      "section": "01-request-section-2",
+      "title": "回复在哪份记录里？"
+    },
+    {
+      "lesson": "01-request",
+      "section": "01-request-section-3",
+      "title": "深入核对：7 项输入里的所有内容块"
+    },
+    {
+      "lesson": "01-request",
+      "section": "01-request-section-4",
+      "title": "消息与内容块的边界"
+    },
+    {
+      "lesson": "01-request",
+      "section": "01-request-section-5",
+      "title": "请求级配置与来源"
+    },
+    {
+      "lesson": "01-request",
+      "section": "01-request-section-6",
+      "title": "深入核对：预热、正式响应与用量"
+    },
+    {
+      "lesson": "01-request",
+      "section": "01-request-section-7",
+      "title": "自己找到两条 user 消息"
+    },
+    {
+      "lesson": "02-tools",
+      "section": "02-tools-section-0",
+      "title": "文件内容在什么时候出现？"
+    },
+    {
+      "lesson": "02-tools",
+      "section": "02-tools-section-1",
+      "title": "用同一个编号找到返回结果"
+    },
+    {
+      "lesson": "02-tools",
+      "section": "02-tools-section-2",
+      "title": "第二次请求怎样接着处理？"
+    },
+    {
+      "lesson": "02-tools",
+      "section": "02-tools-section-3",
+      "title": "深入核对：exec 怎样执行到 PowerShell？"
+    },
+    {
+      "lesson": "02-tools",
+      "section": "02-tools-section-4",
+      "title": "深入核对：两份请求的字段与来源"
+    },
+    {
+      "lesson": "02-tools",
+      "section": "02-tools-section-5",
+      "title": "自己配对一次"
+    },
+    {
+      "lesson": "03-agent-loop",
+      "section": "03-agent-loop-section-0",
+      "title": "五次请求怎样接在一起？"
+    },
+    {
+      "lesson": "03-agent-loop",
+      "section": "03-agent-loop-section-1",
+      "title": "读到实现之后，先确认改哪里"
+    },
+    {
+      "lesson": "03-agent-loop",
+      "section": "03-agent-loop-section-2",
+      "title": "修改返回以后，还需要检查什么？"
+    },
+    {
+      "lesson": "03-agent-loop",
+      "section": "03-agent-loop-section-3",
+      "title": "循环为什么没有停在第一次输出？"
+    },
+    {
+      "lesson": "03-agent-loop",
+      "section": "03-agent-loop-section-4",
+      "title": "深入核对：四次调用与五份请求的完整对应"
+    },
+    {
+      "lesson": "03-agent-loop",
+      "section": "03-agent-loop-section-5",
+      "title": "深入核对：修复前后的检查与用量"
+    },
+    {
+      "lesson": "03-agent-loop",
+      "section": "03-agent-loop-section-6",
+      "title": "先判断，再打开最终回答"
+    },
+    {
+      "lesson": "04-session",
+      "section": "04-session-section-0",
+      "title": "“我刚才说了什么？”的答案在哪里"
+    },
+    {
+      "lesson": "04-session",
+      "section": "04-session-section-1",
+      "title": "深入核对：两轮问候的输入位置、标识与用量"
+    },
+    {
+      "lesson": "04-session",
+      "section": "04-session-section-2",
+      "title": "给原任务一个临时代号"
+    },
+    {
+      "lesson": "04-session",
+      "section": "04-session-section-3",
+      "title": "沿引用找到代号"
+    },
+    {
+      "lesson": "04-session",
+      "section": "04-session-section-4",
+      "title": "深入核对：任务 ID、响应 ID 与三份请求"
+    },
+    {
+      "lesson": "04-session",
+      "section": "04-session-section-5",
+      "title": "这个对照证明了什么"
+    },
+    {
+      "lesson": "05-context",
+      "section": "05-context-section-0",
+      "title": "先分清当前输入中的信息来源"
+    },
+    {
+      "lesson": "05-context",
+      "section": "05-context-section-1",
+      "title": "深入核对：从请求追查规则、技能与源码的来源"
+    },
+    {
+      "lesson": "05-context",
+      "section": "05-context-section-2",
+      "title": "点击压缩，看见了什么"
+    },
+    {
+      "lesson": "05-context",
+      "section": "05-context-section-3",
+      "title": "从摘要到真正替换历史"
+    },
+    {
+      "lesson": "05-context",
+      "section": "05-context-section-4",
+      "title": "深入核对：压缩请求的元数据与 35 项输入"
+    },
+    {
+      "lesson": "05-context",
+      "section": "05-context-section-5",
+      "title": "压缩以后还能回答什么"
+    },
+    {
+      "lesson": "05-context",
+      "section": "05-context-section-6",
+      "title": "深入核对：替换材料怎样进入下一请求"
+    },
+    {
+      "lesson": "05-context",
+      "section": "05-context-section-7",
+      "title": "重发、引用、缓存各自改变什么"
+    },
+    {
+      "lesson": "05-context",
+      "section": "05-context-section-8",
+      "title": "深入核对：工具结果截断与用量计算"
+    },
+    {
+      "lesson": "05-context",
+      "section": "05-context-section-9",
+      "title": "先预测，再核对摘要"
+    },
+    {
+      "lesson": "06-agents",
+      "section": "06-agents-section-0",
+      "title": "在文件里写约定，在输入框里提任务"
+    },
+    {
+      "lesson": "06-agents",
+      "section": "06-agents-section-1",
+      "title": "规则在第一次生成前已经送达"
+    },
+    {
+      "lesson": "06-agents",
+      "section": "06-agents-section-2",
+      "title": "深入核对：规则块的角色与相邻内容"
+    },
+    {
+      "lesson": "06-agents",
+      "section": "06-agents-section-3",
+      "title": "规则约束回答方式，文件提供项目事实"
+    },
+    {
+      "lesson": "06-agents",
+      "section": "06-agents-section-4",
+      "title": "深入核对：两次请求与读取结果的连接"
+    },
+    {
+      "lesson": "06-agents",
+      "section": "06-agents-section-5",
+      "title": "深入核对：官方规则发现机制与本次实测范围"
+    },
+    {
+      "lesson": "06-agents",
+      "section": "06-agents-section-6",
+      "title": "自己换一次前缀"
+    },
+    {
+      "lesson": "06-agents",
+      "section": "06-agents-section-7",
+      "title": "补充实验：每轮生成的编号从哪里来？"
+    },
+    {
+      "lesson": "07-skills",
+      "section": "07-skills-section-0",
+      "title": "把只读检查写成一个技能"
+    },
+    {
+      "lesson": "07-skills",
+      "section": "07-skills-section-1",
+      "title": "首次请求里已经有完整正文"
+    },
+    {
+      "lesson": "07-skills",
+      "section": "07-skills-section-2",
+      "title": "深入核对：目录、用户消息和附加正文的字段"
+    },
+    {
+      "lesson": "07-skills",
+      "section": "07-skills-section-3",
+      "title": "步骤怎样变成文件读取"
+    },
+    {
+      "lesson": "07-skills",
+      "section": "07-skills-section-4",
+      "title": "深入核对：四条命令怎样回到同一个调用"
+    },
+    {
+      "lesson": "07-skills",
+      "section": "07-skills-section-5",
+      "title": "看输出有没有按步骤工作"
+    },
+    {
+      "lesson": "07-skills",
+      "section": "07-skills-section-6",
+      "title": "没有点名技能时，也要看实际加载路径"
+    },
+    {
+      "lesson": "07-skills",
+      "section": "07-skills-section-7",
+      "title": "深入核对：修复任务中的 ponytail 读取"
+    },
+    {
+      "lesson": "07-skills",
+      "section": "07-skills-section-8",
+      "title": "判断正文何时进入"
+    },
+    {
+      "lesson": "08-memory",
+      "section": "08-memory-section-0",
+      "title": "先把决定写到磁盘"
+    },
+    {
+      "lesson": "08-memory",
+      "section": "08-memory-section-1",
+      "title": "深入核对：一行笔记的五次请求"
+    },
+    {
+      "lesson": "08-memory",
+      "section": "08-memory-section-2",
+      "title": "新任务从文件取得内容"
+    },
+    {
+      "lesson": "08-memory",
+      "section": "08-memory-section-3",
+      "title": "深入核对：新任务的读取链"
+    },
+    {
+      "lesson": "08-memory",
+      "section": "08-memory-section-4",
+      "title": "让原生记忆保存一条展示偏好"
+    },
+    {
+      "lesson": "08-memory",
+      "section": "08-memory-section-5",
+      "title": "已经提取，为什么新聊天还不知道？"
+    },
+    {
+      "lesson": "08-memory",
+      "section": "08-memory-section-6",
+      "title": "深入核对：提取、整合与等待条件"
+    },
+    {
+      "lesson": "08-memory",
+      "section": "08-memory-section-7",
+      "title": "整合之后，偏好进入了新请求"
+    },
+    {
+      "lesson": "08-memory",
+      "section": "08-memory-section-8",
+      "title": "深入核对：从来源聊天到回答"
+    },
+    {
+      "lesson": "08-memory",
+      "section": "08-memory-section-9",
+      "title": "哪些信息适合放在哪里？"
+    },
+    {
+      "lesson": "08-memory",
+      "section": "08-memory-section-10",
+      "title": "为答案确定来源"
+    },
+    {
+      "lesson": "09-mcp",
+      "section": "09-mcp-section-0",
+      "title": "先找到价格返回"
+    },
+    {
+      "lesson": "09-mcp",
+      "section": "09-mcp-section-1",
+      "title": "调用之前，模型先找到了接口"
+    },
+    {
+      "lesson": "09-mcp",
+      "section": "09-mcp-section-2",
+      "title": "深入核对：三个阶段怎样对应"
+    },
+    {
+      "lesson": "09-mcp",
+      "section": "09-mcp-section-3",
+      "title": "服务里的 TypeScript 做了什么？"
+    },
+    {
+      "lesson": "09-mcp",
+      "section": "09-mcp-section-4",
+      "title": "深入核对：工具定义与处理函数"
+    },
+    {
+      "lesson": "09-mcp",
+      "section": "09-mcp-section-5",
+      "title": "把这个服务接入自己的项目"
+    },
+    {
+      "lesson": "09-mcp",
+      "section": "09-mcp-section-6",
+      "title": "深入核对：复现环境与证据边界"
+    },
+    {
+      "lesson": "09-mcp",
+      "section": "09-mcp-section-7",
+      "title": "换一个商品，先预测再核对"
+    },
+    {
+      "lesson": "10-hooks",
+      "section": "10-hooks-section-0",
+      "title": "Hook 与 AGENTS.md、Skills 有什么区别？"
+    },
+    {
+      "lesson": "10-hooks",
+      "section": "10-hooks-section-1",
+      "title": "配置、审阅信任与触发时机"
+    },
+    {
+      "lesson": "10-hooks",
+      "section": "10-hooks-section-2",
+      "title": "UserPromptSubmit：编号怎样进入请求？"
+    },
+    {
+      "lesson": "10-hooks",
+      "section": "10-hooks-section-3",
+      "title": "PreToolUse：在补丁执行前拒绝"
+    },
+    {
+      "lesson": "10-hooks",
+      "section": "10-hooks-section-4",
+      "title": "PostToolUse：命令完成后记录返回"
+    },
+    {
+      "lesson": "10-hooks",
+      "section": "10-hooks-section-5",
+      "title": "沿一次触发核对到结果"
+    },
+    {
+      "lesson": "10-permissions",
+      "section": "10-permissions-section-0",
+      "title": "一次有范围的写入尝试"
+    },
+    {
+      "lesson": "10-permissions",
+      "section": "10-permissions-section-1",
+      "title": "沙箱和审批分别控制什么？"
+    },
+    {
+      "lesson": "10-permissions",
+      "section": "10-permissions-section-2",
+      "title": "模型被告知边界，工具受到实际限制"
+    },
+    {
+      "lesson": "10-permissions",
+      "section": "10-permissions-section-3",
+      "title": "深入核对：从模式变化到停止的请求链"
+    },
+    {
+      "lesson": "10-permissions",
+      "section": "10-permissions-section-4",
+      "title": "下一章的“只做计划”又是什么限制？"
+    },
+    {
+      "lesson": "10-permissions",
+      "section": "10-permissions-section-5",
+      "title": "深入核对：两组“文件没变”的运行条件"
+    },
+    {
+      "lesson": "10-permissions",
+      "section": "10-permissions-section-6",
+      "title": "独立判断一次拒绝"
+    },
+    {
+      "lesson": "10-permissions",
+      "section": "10-permissions-section-7",
+      "title": "补充实验：PreToolUse 在补丁执行前拒绝"
+    },
+    {
+      "lesson": "11-plan",
+      "section": "11-plan-section-0",
+      "title": "从一个未完全确定的需求开始"
+    },
+    {
+      "lesson": "11-plan",
+      "section": "11-plan-section-1",
+      "title": "一次用户选择怎样回到模型？"
+    },
+    {
+      "lesson": "11-plan",
+      "section": "11-plan-section-2",
+      "title": "计划阶段已经用了工具，也运行了测试"
+    },
+    {
+      "lesson": "11-plan",
+      "section": "11-plan-section-3",
+      "title": "深入核对：六次计划请求与澄清调用"
+    },
+    {
+      "lesson": "11-plan",
+      "section": "11-plan-section-4",
+      "title": "确认实施，才开始改变项目"
+    },
+    {
+      "lesson": "11-plan",
+      "section": "11-plan-section-5",
+      "title": "深入核对：四次实施请求与阶段边界"
+    },
+    {
+      "lesson": "11-plan",
+      "section": "11-plan-section-6",
+      "title": "判断一个计划能不能验收"
+    },
+    {
+      "lesson": "11-plan",
+      "section": "11-plan-section-7",
+      "title": "补充实验：普通任务中的文字进度"
+    },
+    {
+      "lesson": "12-multi-agent",
+      "section": "12-multi-agent-section-0",
+      "title": "创建任务返回了什么？"
+    },
+    {
+      "lesson": "12-multi-agent",
+      "section": "12-multi-agent-section-1",
+      "title": "子任务从什么上下文开始？"
+    },
+    {
+      "lesson": "12-multi-agent",
+      "section": "12-multi-agent-section-2",
+      "title": "深入核对：子任务的预热、继承上下文和工具循环"
+    },
+    {
+      "lesson": "12-multi-agent",
+      "section": "12-multi-agent-section-3",
+      "title": "等待结束，结论从哪里进来？"
+    },
+    {
+      "lesson": "12-multi-agent",
+      "section": "12-multi-agent-section-4",
+      "title": "深入核对：父任务五次请求与结果位置"
+    },
+    {
+      "lesson": "12-multi-agent",
+      "section": "12-multi-agent-section-5",
+      "title": "两份结论的依据并不相同"
+    },
+    {
+      "lesson": "12-multi-agent",
+      "section": "12-multi-agent-section-6",
+      "title": "共享项目时，怎样判断实际并行与文件变化？"
+    },
+    {
+      "lesson": "12-multi-agent",
+      "section": "12-multi-agent-section-7",
+      "title": "深入核对：子任务的实际起止时间"
+    },
+    {
+      "lesson": "12-multi-agent",
+      "section": "12-multi-agent-section-8",
+      "title": "从汇总倒查一条发现"
+    },
+    {
+      "lesson": "13-autonomy",
+      "section": "13-autonomy-section-0",
+      "title": "先给目标一个可检查的终点"
+    },
+    {
+      "lesson": "13-autonomy",
+      "section": "13-autonomy-section-1",
+      "title": "深入核对：Goal 的五次请求与状态返回"
+    },
+    {
+      "lesson": "13-autonomy",
+      "section": "13-autonomy-section-2",
+      "title": "命令失败后，哪些继续动作仍然有意义？"
+    },
+    {
+      "lesson": "13-autonomy",
+      "section": "13-autonomy-section-3",
+      "title": "深入核对：失败怎样影响后续动作"
+    },
+    {
+      "lesson": "13-autonomy",
+      "section": "13-autonomy-section-4",
+      "title": "用户停止时，已经做完的工作会丢吗？"
+    },
+    {
+      "lesson": "13-autonomy",
+      "section": "13-autonomy-section-5",
+      "title": "深入核对：中断前、取消结果与恢复输入"
+    },
+    {
+      "lesson": "13-autonomy",
+      "section": "13-autonomy-section-6",
+      "title": "继续之前，依据实际状态"
+    },
+    {
+      "lesson": "13-autonomy",
+      "section": "13-autonomy-section-7",
+      "title": "为下一步写出依据"
+    },
+    {
+      "lesson": "13-autonomy",
+      "section": "13-autonomy-section-8",
+      "title": "补充实验：命令还在运行时，先做别的读取"
+    },
+    {
+      "lesson": "13-autonomy",
+      "section": "13-autonomy-section-9",
+      "title": "补充实验：补丁找不到旧代码，先重新读取"
+    },
+    {
+      "lesson": "14-streaming",
+      "section": "14-streaming-section-0",
+      "title": "片段怎样组成同一条消息？"
+    },
+    {
+      "lesson": "14-streaming",
+      "section": "14-streaming-section-1",
+      "title": "不同的 done，结束了什么？"
+    },
+    {
+      "lesson": "14-streaming",
+      "section": "14-streaming-section-2",
+      "title": "流里也可能是工具参数"
+    },
+    {
+      "lesson": "14-streaming",
+      "section": "14-streaming-section-3",
+      "title": "为什么完成事件里的 output 是空的？"
+    },
+    {
+      "lesson": "14-streaming",
+      "section": "14-streaming-section-4",
+      "title": "深入核对：生成之前的输入、事件序号与用量"
+    },
+    {
+      "lesson": "14-streaming",
+      "section": "14-streaming-section-5",
+      "title": "自己核对一次拼接"
+    },
+    {
+      "lesson": "15-architecture",
+      "section": "15-architecture-section-0",
+      "title": "沿一条修改追到磁盘"
+    },
+    {
+      "lesson": "15-architecture",
+      "section": "15-architecture-section-1",
+      "title": "同一个“完成”，要分别回答几个问题"
+    },
+    {
+      "lesson": "15-architecture",
+      "section": "15-architecture-section-2",
+      "title": "哪一种记录能回答你的问题？"
+    },
+    {
+      "lesson": "15-architecture",
+      "section": "15-architecture-section-3",
+      "title": "深入核对：架构解释与旧样本的关系"
+    },
+    {
+      "lesson": "15-architecture",
+      "section": "15-architecture-section-4",
+      "title": "用自己的新日志完成一次验收"
+    },
+    {
+      "lesson": "15-architecture",
+      "section": "15-architecture-section-5",
+      "title": "补充实验：PostToolUse 记录了什么？"
+    }
+  ]
+}

@@ -78,13 +78,11 @@ sequenceDiagram
 
 | 阶段 | 模型新获得什么 | 随后输出 |
 | --- | --- | --- |
-| [00 请求](../evidence/desktop-lab/13-mcp/00-request.request.json) | 12 项输入，包含基础上下文、重发的项目笔记历史和查价要求 | [查询工具目录并读文件](../evidence/desktop-lab/13-mcp/00-request.output-items.json) |
+| [00 请求](../evidence/desktop-lab/13-mcp/00-request.request.json) | 查价要求与已有上下文 | [查询工具目录并读文件](../evidence/desktop-lab/13-mcp/00-request.output-items.json) |
 | [01 请求](../evidence/desktop-lab/13-mcp/01-request.request.json) | 工具声明与首次文件读取结果 | [调用 MCP 并再次读文件](../evidence/desktop-lab/13-mcp/01-request.output-items.json) |
 | [02 请求](../evidence/desktop-lab/13-mcp/02-request.request.json) | 单价与重读的计算函数 | [最终答案](../evidence/desktop-lab/13-mcp/02-request.output-items.json) |
 
-首请求没有 `previous_response_id`；`input[0..5]` 是工具和基础上下文，`input[6..10]` 重发此前读取项目笔记的过程，`input[11]` 是本次要求。后两次请求分别引用前一响应。
-
-第一次外层调用编号为 `call_75g7fEltP0HEVgJJJOpXMJns`，第二次为 `call_p7bdY59aNNKkV0ISyHbxziJ8`，各自结果通过同一 `call_id` 返回。外层结果类型是 `custom_tool_call_output`；MCP 结果在其中一个内容块里，不能再算成一次额外的模型生成。
+MCP 结果放在外层 `custom_tool_call_output` 的一个内容块里，与文件读取结果一起返回；收到这些内容后，模型才开始下一次生成。
 
 首请求顶层工具目录没有直接列出商品接口。模型从 `ALL_TOOLS` 取得声明，因此“顶层没看到名称”不足以判断工具不可用。那次广泛检索产生了截断，商品声明仍保留在结果开头；复现查询无需照搬这次额外检索。
 
@@ -196,5 +194,7 @@ CPA 位于 Codex 与模型服务之间。这里的 stdio MCP 通信在本地发�
 服务目录中 `PENCIL` 单价为 3，预期总价为 9。要确认工具被调用，还需找到调用记录、返回的单价和收到结果的模型请求。这次 Desktop 查询只用了 `NOTEBOOK`；`PENCIL`、未知 SKU 和非法参数通过独立 SDK 检查，新的 Desktop 查询要用自己的日志核对。
 
 </details>
+
+MCP 查询由模型提出调用后执行。下一章观察运行层在提交问题或执行工具时自动触发的 Hook 脚本。
 
 [上一章：记忆与持久信息](08-memory.md) · [下一章：Hooks](10-hooks.md)

@@ -76,26 +76,16 @@
 
 [输出项汇集](../evidence/desktop-lab/07-fix/04-request.output-items.json)从 `response.output_item.done` 取得完整输出项，与完成事件中仍为空的 `output` 分开保存。
 
+前面章节也使用了这种记录方式：[第一章问候的完成事件](../evidence/desktop-lab/01-hello/01-request.response.json)中 `output` 为空，问候保存在[流式事件](../evidence/desktop-lab/01-hello/01-request.events.json)里；第二章读取 README 的两份完成事件和第三章修复的五份完成事件也都为空。各阶段的工作台“模型输出”取自对应的流式输出项，原始记录仍分别保存在[读取实验](../evidence/desktop-lab/03-readme/manifest.json)和[修复实验](../evidence/desktop-lab/07-fix/manifest.json)中。这些是本教程样本的观察，其他记录应检查各自的实际字段。
+
 只保存完成事件会丢失本样本的回答内容；只保存屏幕文字，则缺少响应标识、事件顺序和用量。
 
 <details>
-<summary>深入核对：生成之前的输入、事件序号与用量</summary>
+<summary>深入核对：事件序号与计量单位</summary>
 
-[阶段 03 输出](../evidence/desktop-lab/07-fix/03-request.output-items.json)提出验证调用，编号为 `call_6YUxjdksnb3eIeh5ySJjO2p8`。[阶段 04 请求](../evidence/desktop-lab/07-fix/04-request.request.json)通过同一编号带回 typecheck、test、start 和文件重读的结果，并用 `previous_response_id` 引用前一响应：
+这份最终响应的事件序号从 0 开始：0/1 建立响应，2/3 建立输出项和内容块，4 至 149 追加文本，150 返回完整文本，151/152 结束块与输出项，153 结束响应。`sequence_number` 管事件顺序，`call_id` 管调用与结果的配对，不能互换。
 
-```text
-resp_0061bd7340416e34016abbe37f911087d0833167280989557b
-```
-
-随后产生的最终响应 ID 为：
-
-```text
-resp_0061bd7340416e34016abbe3868fc487d088322102a9cdf40e
-```
-
-其事件序号从 0 开始：0/1 建立响应，2/3 建立输出项和内容块，4 至 149 追加文本，150 返回完整文本，151/152 结束块与输出项，153 结束响应。`sequence_number` 管事件顺序，`call_id` 管调用与结果的配对，不能互换。
-
-完整文本为 307 个 JavaScript 字符串长度单位；本阶段输出用量为 151 token。字符串长度、146 个文本增量和 token 数分别测量不同对象。整轮五次正式响应共有 1,056 输出 token，不能与最后一个阶段混为一谈。
+完整文本为 307 个 JavaScript 字符串长度单位；本阶段输出用量为 151 token。字符串长度、146 个文本增量和 token 数分别测量不同对象；跨请求统计用量的方法见[上下文管理](05-context.md#重发引用缓存各自改变什么)。
 
 CPA 时间戳记录事件抵达代理的时刻，可用于观察接收顺序与间隔。模型内部生成和界面绘制发生在另外的环节，因此不能用这些时间戳直接测出屏幕上的逐字显示延迟。
 
@@ -111,5 +101,7 @@ CPA 时间戳记录事件抵达代理的时刻，可用于观察接收顺序与�
 按同一 `item_id`、`output_index` 和 `content_index` 分组，依序拼接 `delta`，与 `output_text.done.text` 及 `output_item.done` 中的正文比较。随后核对整个响应的完成、失败或未完成事件。本样本最后是 `response.completed`，正文则从先前事件取得。
 
 </details>
+
+已经能从流式事件还原一次模型输出。最后一章把这些记录放回整个运行过程，判断每个组件负责什么、应该向哪里找证据。
 
 [上一章：目标、停止条件与续跑](13-autonomy.md) · [下一章：完整复盘：架构与验证](15-architecture.md)

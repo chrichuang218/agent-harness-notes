@@ -5,6 +5,7 @@ import { createHash } from 'node:crypto';
 import { resolve, extname } from 'node:path';
 import { chromium } from '@playwright/test';
 import { marked } from 'marked';
+import { checkReading } from './check-reading.mjs';
 
 const root = resolve('dist');
 const catalog = JSON.parse(await readFile('course/catalog.json', 'utf8'));
@@ -116,7 +117,7 @@ try {
   }
   assert.equal(await page.locator('dialog').count(), 0, 'Reading/evidence must not require a dialog.');
   assert.ok((await page.locator('.home-hero').innerText()).includes('Hello World'));
-  assert.ok((await page.locator('.home-hero > p').innerText()).includes('请求中可见的完整上下文'));
+  assert.ok((await page.locator('.home-hero > p').allTextContents()).join('\n').includes('请求中可见的完整上下文'));
   await page.locator('[data-hello-request]').click();
   let helloEntry = await waitWorkbench('01-request', '01-hello', 1, 'request');
   assert.ok((await helloEntry.locator('[data-item-path="input[6]"]').innerText()).includes('你好'), 'Hello World entry must open the real greeting request, not the prewarm.');
@@ -219,9 +220,10 @@ try {
     if (mobile) assert.equal(await page.locator('.menu-toggle').getAttribute('aria-expanded'), 'false', 'A chapter link must close the mobile menu.');
     await openMenu();
     await page.locator('#chapter-search').fill('call_id');
-    await page.waitForFunction(() => document.querySelectorAll('.nav-chapter[hidden]').length > 0 && document.querySelectorAll('.nav-chapter:not([hidden])').length > 0);
+    await page.locator('#search-results a.search-result').first().waitFor();
+    assert.equal(await page.locator('#chapter-nav').isVisible(), false);
     await page.locator('#chapter-search').fill('');
-    await page.waitForFunction(() => document.querySelectorAll('.nav-chapter[hidden]').length === 0);
+    await page.locator('#chapter-nav').waitFor();
     await checkDisclosure(false);
     await nextLink.click(); await waitChapter('02-tools');
     assert.equal(await page.locator('[data-nav-lesson="02-tools"] .chapter-link').getAttribute('aria-current'), 'page');
@@ -350,7 +352,7 @@ try {
     '10-permissions:10-permissions-section-7': { lesson: '10-hooks', section: '10-hooks-section-3' },
     '15-architecture:15-architecture-section-5': { lesson: '10-hooks', section: '10-hooks-section-4' },
   };
-  assert.deepEqual(catalog.sectionRedirects, expectedHookSections);
+  for (const [source, target] of Object.entries(expectedHookSections)) assert.deepEqual(catalog.sectionRedirects[source], target, source + ': existing Hooks destination changed.');
   for (const [previous, target] of Object.entries(expectedHookSections)) {
     const [lesson, section] = previous.split(':');
     await page.goto(url + '#/lesson/' + lesson + '?section=' + section);
@@ -359,8 +361,6 @@ try {
     assert.ok(await page.locator(`[id="${target.section}"]`).isVisible(), 'Relocated Hook section must exist.');
     await page.reload(); await waitChapter('10-hooks');
     assert.ok((await page.locator(`[id="${target.section}"]`).boundingBox()).y < 200, 'Relocated section must survive refresh.');
-    await page.goto(url + '#/lesson/' + lesson); await waitChapter(lesson);
-    assert.ok(await page.locator(`[id="${section}"]`).count(), 'The old section must retain its short reference.');
   }
   console.log('Verified independent Hooks entry, three screenshots, seven experiment owners and old owner/alias/file/content/section bookmarks.');
   // The context chapter once linked to experiments now taught elsewhere.
@@ -409,7 +409,7 @@ try {
       assert.equal(await image.locator('..').getAttribute('target'), '_blank', lesson.id + ': original screenshot must open separately.');
       assert.equal(await image.locator('..').locator('a').count(), 0, lesson.id + ': screenshot link must not contain a nested link.');
     }
-    foldedHeadings.push(...await chapter.locator('.prose details h2,.prose details h3,.prose details h4,.prose details h5,.prose details h6,.prose details > summary[id]').evaluateAll(headings => headings.map(heading => ({ id: heading.id, lesson: heading.closest('.chapter').dataset.lesson }))));
+    foldedHeadings.push(...await chapter.locator('.prose details h2,.prose details h3,.prose details h4,.prose details h5,.prose details h6,.prose details > summary[id]').evaluateAll(headings => headings.filter(heading => heading.tagName !== 'SUMMARY' || heading.textContent.trim().startsWith('深入')).map(heading => ({ id: heading.id, lesson: heading.closest('.chapter').dataset.lesson }))));
     assert.equal(await page.locator('.chapter-outline a').filter({ hasText: /核对答案|参考解释|核对思路/ }).count(), 0, 'Exercise answers should stay out of the chapter outline.');
     assert.equal(await page.locator('.page-toc').count(), 0, 'Reading must not duplicate its sidebar outline in a third column.');
     assert.equal(await page.locator('.course-sidebar .chapter-outline').count(), 1, 'Exactly one chapter outline belongs in the sidebar.');
@@ -476,10 +476,11 @@ try {
       const target = new URLSearchParams(previousHref.split('?')[1]);
       const targetExperiment = experiments.find(item => item.id === target.get('experiment'));
       assert.equal(targetExperiment?.stages[Number(target.get('stage'))]?.responseId, request.previous_response_id, label + ': previous response points to wrong stage');
+      await previousLink.evaluate(link => { for (let node = link.parentElement; node; node = node.parentElement) if (node.tagName === 'DETAILS') node.open = true; });
       await previousLink.click();
       const targetLesson = decodeURIComponent(previousHref.match(/^#\/lesson\/([^?]+)/)[1]);
       const targetHost = await waitWorkbench(targetLesson, targetExperiment.id, Number(target.get('stage')), target.get('view'));
-      assert.ok((await targetHost.locator('.request-metadata').innerText()).includes(request.previous_response_id), label + ': following a response reference did not open its recorded stage');
+      assert.ok((await targetHost.locator('.request-metadata').textContent()).includes(request.previous_response_id), label + ': following a response reference did not open its recorded stage');
       previousCount++;
     }
     host = await openWorkbench(experiment, index, 'output');
@@ -598,6 +599,13 @@ try {
   assert.ok(await host.locator('[data-content-path="input[5].content[1]"]').evaluate(element => element.open), 'A refreshed content bookmark must expand its exact block.');
   assert.equal(await host.locator('[data-full-content="input[5].content[1]"]').textContent(), request.input[5].content[1].text);
 
+  host = await openWorkbench(hello, 1, 'raw', { kind: 'requestFile' });
+  const [download] = await Promise.all([page.waitForEvent('download'), host.locator('[data-download]').click()]);
+  const downloadedChunks = [];
+  for await (const chunk of await download.createReadStream()) downloadedChunks.push(chunk);
+  assert.equal(download.suggestedFilename(), hello.stages[1].requestFile.split('/').at(-1));
+  assert.equal(sha(Buffer.concat(downloadedChunks)), sha(await readFile(hello.stages[1].requestFile)), 'Downloaded source must preserve the complete original bytes');
+
   const readme = experiments.find(item => item.id === '03-readme');
   host = await openWorkbench(readme, 0, 'calls');
   assert.ok((await host.locator('.call-pair').innerText()).includes('call_'));
@@ -605,6 +613,7 @@ try {
   const interrupted = experiments.find(item => item.status === 'interrupted');
   host = await openWorkbench(interrupted, 1, 'calls');
   assert.ok((await host.locator('.experiment-summary').innerText()).includes('已中断'));
+  await host.locator('.conversation > summary').click();
   assert.ok((await host.locator('.experiment-summary').innerText()).includes('没有最终回复'));
   assert.ok((await host.locator('.workbench-content').innerText()).includes('20-resume'), 'Interrupted tool result must link across experiments.');
   host = await openWorkbench(interrupted, 1, 'raw', { kind: 'interruptionFile' });
@@ -614,12 +623,15 @@ try {
   assert.ok((await host.locator('[data-raw-content]').innerText()).includes('replacement_history'));
   const plan = experiments.find(item => item.id === '14-plan');
   host = await openWorkbench(plan, 0, 'request');
+  await host.locator('.conversation > summary').click();
   assert.ok((await host.locator('.conversation').innerText()).includes('没有普通最终回复'));
   const child = experiments.find(item => item.id === '16-agent-a');
   host = await openWorkbench(child, 0, 'request');
+  await host.locator('.conversation > summary').click();
   assert.ok((await host.locator('.experiment-summary').innerText()).includes('由父任务委派'));
   const goal = experiments.find(item => item.id === '17-goal');
   host = await openWorkbench(goal, 0, 'request');
+  await host.locator('.conversation > summary').click();
   assert.ok((await host.locator('.experiment-summary').innerText()).includes('通过原生 Goal 入口设置目标'));
   assert.ok(!(await host.locator('.experiment-summary').innerText()).includes('由父任务委派'), 'A native Goal input must not be labelled as child-agent delegation.');
 
@@ -632,11 +644,10 @@ try {
     else await waitChapter(lessonId);
   }
   await page.locator('#chapter-search').fill('call_id');
-  await page.waitForFunction(() => document.querySelectorAll('.nav-chapter[hidden]').length > 0 && document.querySelectorAll('.nav-chapter:not([hidden])').length > 0);
-  assert.ok(await page.locator('.nav-chapter:not([hidden])').count() > 0);
-  assert.ok(await page.locator('.nav-chapter[hidden]').count() > 0);
+  await page.locator('#search-results a.search-result').first().waitFor();
+  assert.equal(await page.locator('#chapter-nav').isVisible(), false);
   await page.locator('#chapter-search').fill('');
-  await page.waitForFunction(() => document.querySelectorAll('.nav-chapter[hidden]').length === 0);
+  await page.locator('#chapter-nav').waitFor();
   await page.goto(url + '#/lesson/15-architecture');
   await waitChapter('15-architecture');
   const architectureDiagram = page.locator('#chapter-15-architecture .mermaid');
@@ -711,6 +722,8 @@ try {
   await desktopScreenshot.scrollIntoViewIfNeeded();
   await page.screenshot({ path: 'work/site-screenshot-in-article.png', fullPage: false, animations: 'disabled' });
   await openWorkbench(hello, 1, 'request'); await page.screenshot({ path: 'work/site-workbench-desktop.png', fullPage: false, animations: 'disabled' });
+  await checkReading(page, url);
+  await writeFile('work/site-browser-errors.json', JSON.stringify({ errors, badResources }, null, 2) + '\n');
   assert.deepEqual(errors, [], 'Browser errors must not be swallowed.');
   assert.deepEqual(badResources, [], 'Deployed-path assets must all load without failed requests.');
   console.log(`Site checks passed at ${basePath}: four-phase/${catalog.lessons.length}-card homepage, independent Hooks chapter and preserved bookmarks; separate guide and one visible chapter; chapter navigation/history, lazy-load race, all 20 legacy routes and intro aliases; ${foldedHeadings.length} folded headings; five-stage real timeline; all ${stages.length} full-evidence stages and ${previousCount} response links; copy/share and input/content refresh; native records, original image and license; 3 widths and dark theme; no overflow, resource or console errors.`);

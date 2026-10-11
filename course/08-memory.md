@@ -22,23 +22,6 @@ Codex 检查项目规则与目标文件是否存在，用 `apply_patch` 创建�
 
 [修改输出](../evidence/desktop-lab/12-memory-write/02-request.output-items.json)记录了补丁，[最后请求](../evidence/desktop-lab/12-memory-write/04-request.request.json)带回实际重读的正文和退出码 0。决定已经保存在项目文件中，即使新任务不接续原对话，也可以通过读取取得它。
 
-<details>
-<summary>深入核对：一行笔记的五次请求</summary>
-
-这轮共 5 次正式请求、4 次外层工具调用，输入每次新增 1 项，并通过 `previous_response_id` 接续历史：
-
-| 阶段 | 新获得的信息 | 模型提出的动作 |
-| --- | --- | --- |
-| [00](../evidence/desktop-lab/12-memory-write/00-request.request.json) | 写入决定的用户要求 | 搜索规则与已有 `DECISIONS.md` |
-| [01](../evidence/desktop-lab/12-memory-write/01-request.request.json) | 搜索得到项目 `AGENTS.md` 等信息 | 读取规则，检查 `docs` 和目标文件是否存在 |
-| [02](../evidence/desktop-lab/12-memory-write/02-request.request.json) | 规则与存在性检查结果 | 用 `apply_patch` 创建文件 |
-| [03](../evidence/desktop-lab/12-memory-write/03-request.request.json) | 修改工具返回 `{}` | 重新读取文件 |
-| [04](../evidence/desktop-lab/12-memory-write/04-request.request.json) | 文件正文与退出码 0 | 汇报已记录 |
-
-阶段 02 的调用编号 `call_DSJ0OJJ2QNh19LfsKRsx1o5A` 在下一请求的返回中出现。简短的 `{}` 不包含落盘正文，随后重读才确认了文件实际保存的内容。
-
-</details>
-
 ## 新任务从文件取得内容
 
 随后在同一项目下新建任务，发送：
@@ -80,17 +63,6 @@ sequenceDiagram
 ```
 
 新任务内部仍通过工具回传和响应引用接续；跨任务传递则经过磁盘文件。
-
-<details>
-<summary>深入核对：新任务的读取链</summary>
-
-首请求有 7 项输入，没有 `previous_response_id`。[第一次输出](../evidence/desktop-lab/12-memory-read/00-request.output-items.json)提出读取，调用编号是 `call_Lrw0R8e67zTmGTkq5mPT5GAj`。
-
-第二请求中的 `custom_tool_call_output` 使用同一编号，并通过 `previous_response_id` 引用这个新任务的第一次响应。最终[输出项](../evidence/desktop-lab/12-memory-read/01-request.output-items.json)引用文件来源回答。
-
-读取共 2 次正式请求、1 次外层工具调用。写入与读取的统计都排除预热，它们是普通文件操作，没有被计为原生记忆后台任务。
-
-</details>
 
 ## 让原生记忆保存一条展示偏好
 
@@ -205,5 +177,7 @@ sequenceDiagram
 第一次开启记忆的新聊天虽然已经收到原生记忆块，但其中还没有这条偏好；当时来源提取完成，全局整合尚未完成。检查后台状态、请求内容和回答，才能分别判断保存到了哪一步、模型实际得到了什么。
 
 </details>
+
+至此，已经能沿文件读取或原生记忆块追查跨任务信息。下一章把来源换成本地商品服务，观察模型怎样取得请求中原本没有的单价。
 
 [上一章：Skills](07-skills.md) · [下一章：MCP](09-mcp.md)
