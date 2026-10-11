@@ -58,9 +58,9 @@ body[data-view=home] #main{margin-left:0;padding:0 32px 80px}body[data-view=home
 .home-hero>.eyebrow{font-size:14px;letter-spacing:0}
 @media(max-width:760px){.home-hero>.eyebrow{font-size:12px}}
 
-/* Keep prose comfortable while evidence, code and diagrams retain their space. */
+/* Narrow text and wider evidence share the reader's left edge. */
 .prose{font-size:17px;line-height:1.9}
-.prose>p,.prose>ul,.prose>ol,.prose>h1,.prose>h2,.prose>h3,.prose>h4,.prose>h5,.prose>h6,.prose>blockquote,.chapter-header{max-width:740px;margin-left:auto;margin-right:auto}
+.prose>p,.prose>ul,.prose>ol,.prose>h1,.prose>h2,.prose>h3,.prose>h4,.prose>h5,.prose>h6,.prose>blockquote,.chapter-header{max-width:740px;margin-left:0;margin-right:0}
 .prose>p:has(>.image-original){max-width:none}
 .prose [data-passage]{scroll-margin-top:88px}
 .prose details{font-size:16px;line-height:1.85}
@@ -96,7 +96,7 @@ body.focus-reading .reader-page{max-width:1000px}
 .dark .search-highlight{background:#796123;color:#fff4c7}
 .term-trigger{font:inherit;line-height:inherit;color:inherit;padding:0;border-bottom:1px dotted var(--accent);border-radius:0;text-align:inherit}
 .term-trigger:hover{color:var(--accent);background:var(--tint)}
-.term-popover{position:fixed;inset:auto;margin:0;width:340px;max-width:calc(100vw - 24px);max-height:calc(100vh - 100px);overflow:auto;padding:21px;border:1px solid var(--line);border-radius:12px;background:var(--paper);color:var(--ink);box-shadow:0 8px 40px #20133128;font-size:15px;line-height:1.8;z-index:65}
+.term-popover{position:fixed;inset:auto;margin:0;width:340px;max-width:calc(100% - 24px);max-height:calc(100vh - 100px);overflow:auto;padding:21px;border:1px solid var(--line);border-radius:12px;background:var(--paper);color:var(--ink);box-shadow:0 8px 40px #20133128;font-size:15px;line-height:1.8;z-index:65}
 .term-popover strong{display:block;margin-right:25px;overflow-wrap:anywhere}
 .term-popover p{margin:12px 0}
 .term-popover a{font-size:13px}
@@ -119,7 +119,9 @@ body.focus-reading .reader-page{max-width:1000px}
 .workbench .content-block>summary,.workbench .content-block summary>code,.workbench .content-preview,.workbench .raw-details>summary,.workbench .metadata{font-size:12px}
 .workbench .content-block summary>small,.workbench .role-badge,.workbench .item-description{font-size:11px}
 .table-scroll{border:1px solid var(--line);border-radius:7px}
-.table-scroll table{margin:-1px;width:calc(100% + 2px)}
+.table-scroll table{margin:0;width:100%}
+/* Mermaid's neutral grayscale follows the dark theme; historical images stay unchanged. */
+.dark .mermaid{filter:invert(.9)}
 @media(max-width:760px){
   .site-header{padding:0 12px}.header-actions{gap:3px}.header-actions button{min-width:36px;min-height:42px;padding:5px}
   .brand{font-size:14px}.brand-icon{width:25px;height:25px}
@@ -134,3 +136,4 @@ body.focus-reading .reader-page{max-width:1000px}
   .prose table{font-size:14px}.prose .code-panel pre,.code-panel pre,.trace-item-body .code-panel pre{font-size:13px}
   .reading-targets a{font-size:13px}.evidence-focus{font-size:14px;padding:13px}
 }
+@media(max-width:360px){.brand-icon{display:none}}

@@ -16,7 +16,156 @@ async function settled(page, lesson) {
   }, lesson);
 }
 
+export async function checkDiagramReentry(page, url, label = 'local') {
+  const probe = await page.context().browser().newPage({ viewport: { width: 1440, height: 1000 }, reducedMotion: 'reduce' });
+  const errors = [];
+  probe.on('pageerror', error => errors.push(error.message));
+  probe.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
+  probe.on('response', response => { if (response.status() >= 400) errors.push(`${response.status()} ${response.url()}`); });
+  let releaseModule;
+  const moduleGate = new Promise(resolve => { releaseModule = resolve; });
+  const moduleUrl = /\/mermaid[^/]*\.js(?:\?|$)/;
+  try {
+    await probe.goto(url); await probe.locator('#main[aria-busy="false"]').waitFor();
+    await probe.route(moduleUrl, async request => { await moduleGate; await request.continue(); });
+    const pendingModule = probe.waitForRequest(moduleUrl, { timeout: 10_000 });
+    await probe.evaluate(hash => { location.hash = hash; }, route('05-context'));
+    const requested = await pendingModule;
+    const sourceId = await probe.locator('#chapter-05-context code.language-mermaid').evaluate(node => node.parentElement.id);
+    const section = sectionIds['05-context']['从摘要到真正替换历史'];
+    await probe.locator(`.chapter-outline a[data-section="${section}"]`).click();
+    await probe.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+    releaseModule();
+    await settled(probe, '05-context'); await probe.waitForLoadState('networkidle');
+    const result = await probe.locator('#chapter-05-context').evaluate((chapter, section) => ({
+      diagramCount: chapter.querySelectorAll('.mermaid').length,
+      svgCount: chapter.querySelectorAll('.mermaid > svg').length,
+      hintCount: chapter.querySelectorAll('.diagram-hint').length,
+      diagramId: chapter.querySelector('.mermaid')?.id,
+      passageId: chapter.querySelector('.mermaid')?.dataset.passage,
+      anchorTop: document.getElementById(section).getBoundingClientRect().top,
+      hash: location.hash,
+    }), section);
+    await mkdir('work', { recursive: true });
+    await writeFile(`work/reading-diagram-reentry-${label}.json`, JSON.stringify({ delayedModule: requested.url(), sourceId, ...result, errors }, null, 2) + '\n');
+    await probe.screenshot({ path: `work/reading-diagram-reentry-${label}.png`, animations: 'disabled' });
+    assert.equal(result.diagramCount, 1, 'Re-entering during Mermaid import must not duplicate the diagram');
+    assert.equal(result.svgCount, 1);
+    assert.equal(result.hintCount, 1, 'Re-entering during Mermaid import must not duplicate its scroll hint');
+    assert.equal(result.diagramId, sourceId);
+    assert.equal(result.passageId, sourceId, 'The rendered diagram must retain the source paragraph anchor');
+    assert.equal(result.hash, route('05-context', { section }));
+    assert.ok(result.anchorTop >= 60 && result.anchorTop < 200, 'The last clicked section must win after diagram rendering');
+    assert.deepEqual(errors, [], 'Diagram re-entry caused a browser or resource error');
+    console.log(`Diagram re-entry checks passed (${label}): delayed Mermaid import, real section click, one diagram/SVG/hint, stable passage ID and correct final anchor.`);
+  } finally {
+    releaseModule();
+    await probe.unrouteAll({ behavior: 'wait' });
+    await probe.close();
+  }
+}
+
+export async function checkReaderLayout(page, url, label = 'local') {
+  await mkdir('work', { recursive: true });
+  const cases = [], failures = [], observedKinds = new Set();
+  for (const width of [2560, 1440, 390]) {
+    await page.setViewportSize({ width, height: width === 390 ? 844 : 1000 });
+    for (const focus of [false, true]) {
+      for (const lesson of ['01-request', 'introduction']) {
+        await page.goto(url + route(lesson)); await settled(page, lesson);
+        if (await page.locator('#focus-toggle').getAttribute('aria-pressed') !== String(focus)) await page.locator('#focus-toggle').click();
+        await page.evaluate(() => new Promise(resolve => requestAnimationFrame(resolve)));
+        const geometry = await page.evaluate(lesson => {
+          const article = document.querySelector(`[data-reader-page="${lesson}"]`);
+          const reader = article.closest('.reader-page');
+          const prose = article.querySelector('.prose');
+          const blocks = [];
+          const collect = (kind, nodes) => {
+            for (const node of nodes) if (node?.getClientRects().length) {
+              const box = node.getBoundingClientRect();
+              blocks.push({ kind, id: node.id, left: box.left, width: box.width,
+                ...(kind === 'table' ? { clientWidth: node.clientWidth, scrollWidth: node.scrollWidth, clientHeight: node.clientHeight, scrollHeight: node.scrollHeight } : {}) });
+            }
+          };
+          collect('breadcrumb', [reader.querySelector('.breadcrumb')]);
+          collect('chapter-header', [article.querySelector('.chapter-header')]);
+          // Compare outer block edges. Quote padding, code padding, and list
+          // markers are deliberately outside this alignment contract.
+          for (const [kind, selector] of Object.entries({
+            'guide-title': ':scope > h1', paragraph: ':scope > p', heading: ':scope > h2',
+            blockquote: ':scope > blockquote', code: ':scope > .code-panel',
+            image: ':scope > p > .image-original, :scope > .image-original',
+            table: ':scope > .table-scroll', details: ':scope > details', list: ':scope > ul, :scope > ol',
+          })) collect(kind, prose.querySelectorAll(selector));
+          collect('workbench', article.querySelectorAll(':scope > .workbench'));
+          collect('pagination', [reader.querySelector('.chapter-pagination')]);
+          return { readerLeft: reader.getBoundingClientRect().left, blocks, overflow: document.documentElement.scrollWidth > innerWidth + 1 };
+        }, lesson);
+        cases.push({ width, focus, lesson, ...geometry });
+        for (const block of geometry.blocks) {
+          observedKinds.add(block.kind);
+          const delta = block.left - geometry.readerLeft;
+          if (Math.abs(delta) > 1) failures.push(`${width}px ${focus ? 'focus' : 'normal'} ${lesson} ${block.kind}: left ${block.left}, reader ${geometry.readerLeft}, delta ${delta}`);
+          if (block.kind === 'table') {
+            if (block.scrollHeight > block.clientHeight) failures.push(`${width}px ${focus ? 'focus' : 'normal'} ${lesson} table: needless vertical scroll ${block.scrollHeight} > ${block.clientHeight}`);
+            if (width >= 1440 && lesson === '01-request' && block === geometry.blocks.find(item => item.kind === 'table') && block.scrollWidth > block.clientWidth) failures.push(`${width}px ${focus ? 'focus' : 'normal'} first input table: needless horizontal scroll ${block.scrollWidth} > ${block.clientWidth}`);
+          }
+        }
+        if (geometry.overflow) failures.push(`${width}px ${focus ? 'focus' : 'normal'} ${lesson}: horizontal page overflow`);
+        await page.screenshot({ path: `work/reading-layout-${lesson}-${width}-${focus ? 'focus' : 'normal'}-${label}.png`, animations: 'disabled' });
+      }
+    }
+  }
+  await writeFile(`work/reading-layout-${label}.json`, JSON.stringify({ url, cases, failures }, null, 2) + '\n');
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  if (await page.locator('#focus-toggle').getAttribute('aria-pressed') === 'true') await page.locator('#focus-toggle').click();
+  for (const kind of ['breadcrumb', 'chapter-header', 'guide-title', 'paragraph', 'heading', 'blockquote', 'code', 'image', 'table', 'details', 'workbench', 'pagination']) assert.ok(observedKinds.has(kind), 'Layout coverage is missing ' + kind);
+  assert.equal(failures.length, 0, `${failures.length} reader layout failures:\n` + failures.slice(0, 8).join('\n'));
+  assert.equal(await page.locator('#introduction a[href="https://github.com/router-for-me/CLIProxyAPI/blob/main/README_CN.md"]').getAttribute('target'), '_blank', 'An external GitHub document must still open separately');
+  await page.goto(url + route('03-agent-loop')); await settled(page, '03-agent-loop');
+  const timelineLink = page.locator('#chapter-03-agent-loop .prose > p').getByRole('link', { name: '时间线', exact: true });
+  assert.equal(await timelineLink.getAttribute('href'), route('03-agent-loop', { section: 'agent-loop-timeline' }), 'The published chapter link must become a local reader route');
+  assert.notEqual(await timelineLink.getAttribute('target'), '_blank');
+  const original = new URL(page.url()), pageCount = page.context().pages().length;
+  await timelineLink.click();
+  await page.waitForURL(destination => destination.origin === original.origin && destination.pathname === original.pathname && destination.hash === route('03-agent-loop', { section: 'agent-loop-timeline' }));
+  await settled(page, '03-agent-loop');
+  assert.equal(page.context().pages().length, pageCount, 'The timeline link must not open another page');
+  assert.ok(await page.locator('#agent-loop-timeline').evaluate(node => node.getBoundingClientRect().top >= 60 && node.getBoundingClientRect().top < 200), 'The same-page link must reveal the timeline');
+  await checkDiagramReentry(page, url, label);
+  const termViewports = [];
+  for (const width of [375, 390, 320]) {
+    await page.setViewportSize({ width, height: 844 });
+    await page.goto(url + route('01-request')); await settled(page, '01-request');
+    const termId = await page.locator('#chapter-01-request .prose > p .term-trigger').evaluateAll(nodes => nodes.filter(node => node.getClientRects().length).sort((a, b) => b.getBoundingClientRect().left - a.getBoundingClientRect().left)[0]?.dataset.term);
+    assert.ok(termId !== undefined, 'The narrow-screen check needs a real paragraph term');
+    const term = page.locator(`#chapter-01-request .term-trigger[data-term="${termId}"]`);
+    await term.scrollIntoViewIfNeeded(); await term.press('Enter');
+    await page.locator('#term-definition:popover-open').waitFor();
+    const box = await page.locator('#term-definition').evaluate(node => {
+      const rect = node.getBoundingClientRect();
+      const actions = document.querySelector('.header-actions').getBoundingClientRect();
+      const brand = document.querySelector('.brand').getBoundingClientRect();
+      return { innerWidth, clientWidth: document.documentElement.clientWidth, left: rect.left, right: rect.right, width: rect.width, overflowY: getComputedStyle(node).overflowY,
+        actionsLeft: actions.left, actionsRight: actions.right, brandRight: brand.right };
+    });
+    termViewports.push(box);
+    await page.screenshot({ path: `work/reading-term-viewport-${width}-${label}.png`, animations: 'disabled' });
+    assert.ok(box.left >= 11 && box.right <= box.clientWidth - 11, 'The term explanation must keep both viewport gutters: ' + JSON.stringify(box));
+    assert.ok(box.actionsLeft >= 0 && box.actionsRight <= box.clientWidth + 1, 'Header actions must stay inside the visible viewport: ' + JSON.stringify(box));
+    assert.ok(box.brandRight <= box.actionsLeft + 1, 'The brand and header actions must not overlap: ' + JSON.stringify(box));
+    assert.ok(['auto', 'scroll'].includes(box.overflowY), 'Long term definitions must remain scrollable');
+    await page.keyboard.press('Escape');
+    assert.equal(await page.locator('#term-definition:popover-open').count(), 0);
+    assert.ok(await term.evaluate(node => node === document.activeElement), 'Escape must restore the original term focus on a narrow screen');
+  }
+  await writeFile(`work/reading-term-viewports-${label}.json`, JSON.stringify(termViewports, null, 2) + '\n');
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  console.log(`Reader layout checks passed (${label}): ${cases.length} chapter/guide scenarios at 2560px, 1440px and 390px, normal/focus mode; shared outer left edge; no needless table scrollbars or page overflow; same-page timeline/external GitHub links; 375px/390px/320px header and term bounds, scrolling and Escape focus.`);
+}
+
 export async function checkReading(page, url, label = 'local') {
+  await checkReaderLayout(page, url, label);
   await mkdir('work', { recursive: true });
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto(url);
@@ -242,7 +391,8 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   page.on('response', response => { if (response.status() >= 400) errors.push(`${response.status()} ${response.url()}`); });
   page.on('requestfailed', request => errors.push(`${request.failure()?.errorText}: ${request.url()}`));
   try {
-    await checkReading(page, url.endsWith('/') ? url : url + '/', 'live');
+    const check = process.argv.includes('--diagram-only') ? checkDiagramReentry : process.argv.includes('--layout-only') ? checkReaderLayout : checkReading;
+    await check(page, url.endsWith('/') ? url : url + '/', 'live');
     assert.deepEqual(errors, [], 'Published reader has console or resource failures');
   } catch (error) {
     await mkdir('work', { recursive: true });

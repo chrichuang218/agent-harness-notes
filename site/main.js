@@ -33,6 +33,7 @@ let readingReady = false;
 let saveTimer;
 let evidenceReturn;
 const pageLoads = new Map();
+const diagramRenders = new WeakMap();
 const outlines = new Map();
 const collapsedOutlines = new Set();
 
@@ -307,6 +308,8 @@ function decorateMarkdown(container, lesson) {
   });
   container.querySelectorAll('a').forEach(link => {
     const original = link.getAttribute('href') || '';
+    // Published course links stay in this reader, including local previews.
+    if (original.startsWith('https://chrichuang218.github.io/how-codex-works/#/')) { link.href = original.slice(original.indexOf('#')); return; }
     if (/^https?:/.test(original)) { link.target = '_blank'; link.rel = 'noopener'; return; }
     if (link.classList.contains('heading-anchor')) return;
     if (original.startsWith('#')) {
@@ -382,26 +385,33 @@ async function ensurePage(lesson) {
   pageLoads.set(lesson.id, pending);
   return pending;
 }
-async function renderDiagrams(page) {
+function renderDiagrams(page) {
+  if (diagramRenders.has(page)) return diagramRenders.get(page);
   const codes = page.querySelectorAll('code.language-mermaid');
   if (!codes.length) return;
-  const { default: mermaid } = await import('mermaid');
-  codes.forEach(code => {
-    const pre = code.parentElement;
-    const div = document.createElement('div'); div.className = 'mermaid'; div.textContent = code.textContent;
-    div.id = pre.id; div.dataset.passage = pre.dataset.passage;
-    pre.replaceWith(div);
-  });
-  mermaid.initialize({ startOnLoad: false, securityLevel: 'strict', theme: 'neutral', fontFamily: 'Arial, Microsoft YaHei, sans-serif' });
-  await mermaid.run({ nodes: page.querySelectorAll('.mermaid') });
-  page.querySelectorAll('.mermaid').forEach(diagram => {
-    const svg = diagram.querySelector('svg');
-    if (!svg) return;
-    const width = svg.viewBox.baseVal.width;
-    if (width > 0) { svg.style.width = Math.ceil(width) + 'px'; svg.style.maxWidth = 'none'; svg.style.height = 'auto'; }
-    const hint = document.createElement('p'); hint.className = 'diagram-hint'; hint.textContent = '图表保持原始字号，可在框内横向滚动。';
-    diagram.before(hint); diagram.tabIndex = 0; diagram.setAttribute('role', 'region'); diagram.setAttribute('aria-label', '架构图，可横向滚动查看');
-  });
+  const pending = (async () => {
+    const { default: mermaid } = await import('mermaid');
+    codes.forEach(code => {
+      const pre = code.parentElement;
+      const div = document.createElement('div'); div.className = 'mermaid'; div.textContent = code.textContent;
+      div.id = pre.id; div.dataset.passage = pre.dataset.passage;
+      pre.replaceWith(div);
+    });
+    mermaid.initialize({ startOnLoad: false, securityLevel: 'strict', theme: 'neutral', fontFamily: 'Arial, Microsoft YaHei, sans-serif' });
+    await mermaid.run({ nodes: page.querySelectorAll('.mermaid') });
+    page.querySelectorAll('.mermaid').forEach(diagram => {
+      const svg = diagram.querySelector('svg');
+      if (!svg) return;
+      const width = svg.viewBox.baseVal.width;
+      if (width > 0) { svg.style.width = Math.ceil(width) + 'px'; svg.style.maxWidth = 'none'; svg.style.height = 'auto'; }
+      const hint = document.createElement('p'); hint.className = 'diagram-hint'; hint.textContent = '图表保持原始字号，可在框内横向滚动。';
+      diagram.before(hint); diagram.tabIndex = 0; diagram.setAttribute('role', 'region'); diagram.setAttribute('aria-label', '架构图，可横向滚动查看');
+    });
+  })();
+  // A second route can enter this page while Mermaid is still importing.
+  // Share the entire render, including its hints, rather than starting again.
+  diagramRenders.set(page, pending);
+  return pending;
 }
 function showPage(page, lesson) {
   const previousLesson = activeLesson;
@@ -565,7 +575,7 @@ async function handleClick(event) {
     if (lesson) { link.href = href(lesson.id, { section: resolveSection(lesson.id, entry.source?.split('#')[1]) }); link.textContent = entry.sourceLabel + ' →'; }
     popover.showPopover(); term.setAttribute('aria-expanded', 'true');
     const rect = term.getBoundingClientRect();
-    popover.style.left = `${Math.max(12, Math.min(rect.left, innerWidth - popover.offsetWidth - 12))}px`;
+    popover.style.left = `${Math.max(12, Math.min(rect.left, document.documentElement.clientWidth - popover.offsetWidth - 12))}px`;
     popover.style.top = `${Math.max(76, Math.min(rect.bottom + 8, innerHeight - popover.offsetHeight - 12))}px`;
     popover.querySelector('[data-close-term]').focus({ preventScroll: true });
     return;
